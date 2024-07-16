@@ -1,0 +1,117 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: magumagu
+      POSTGRES_PASSWORD: magumagu
+      POSTGRES_DB: bookkoo
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - eureka-net
+
+  eureka-server:
+    container_name: eureka-server
+    build:
+      context: ./eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - eureka-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  book-service:
+    container_name: book-service
+    build:
+      context: ./book-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - eureka-net
+    restart: on-failure
+    environment:
+    - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  bookkoo-gateway:
+    container_name: bookkoo-gateway
+    build:
+      context: ./bookkoo-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      book-service:
+        condition: service_started
+      curation-service:
+        condition: service_started
+      library-service:
+        condition: service_started
+      member-service:
+        condition: service_started
+    networks:
+      - eureka-net
+    restart: on-failure
+    environment:
+    - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  curation-service:
+    container_name: curation-service
+    build:
+      context: ./curation-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - eureka-net
+    restart: on-failure
+    environment:
+    - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  library-service:
+    container_name: library-service
+    build:
+      context: ./library-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - eureka-net
+    restart: on-failure
+    environment:
+    - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  member-service:
+    container_name: member-service
+    build:
+      context: ./member-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - eureka-net
+    restart: on-failure
+    environment:
+    - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+networks:
+  eureka-net:
+
+volumes:
+  postgres_data:
