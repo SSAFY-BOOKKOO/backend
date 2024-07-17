@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: magumagu
       POSTGRES_DB: bookkoo
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - book_postgres_data:/var/lib/postgresql/data
     networks:
@@ -21,7 +21,7 @@ services:
       POSTGRES_PASSWORD: magumagu
       POSTGRES_DB: bookkoo
     ports:
-      - "5433:5432"
+      - "5435:5432"
     volumes:
       - curation_postgres_data:/var/lib/postgresql/data
     networks:
@@ -49,7 +49,7 @@ services:
       POSTGRES_PASSWORD: magumagu
       POSTGRES_DB: bookkoo
     ports:
-      - "5435:5432"
+      - "5432:5432"
     volumes:
       - member_postgres_data:/var/lib/postgresql/data
     networks:
