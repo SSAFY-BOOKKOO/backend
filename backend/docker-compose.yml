@@ -1,7 +1,7 @@
 services:
-  db:
+  book-db:
     image: postgres:latest
-    container_name: postgres
+    container_name: book-postgres
     environment:
       POSTGRES_USER: magumagu
       POSTGRES_PASSWORD: magumagu
@@ -9,7 +9,48 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - book_postgres_data:/var/lib/postgresql/data
+    networks:
+      - eureka-net
+  curation-db:
+    image: postgres:latest
+    container_name: curation-postgres
+    environment:
+      POSTGRES_USER: magumagu
+      POSTGRES_PASSWORD: magumagu
+      POSTGRES_DB: bookkoo
+    ports:
+      - "5433:5432"
+    volumes:
+      - curation_postgres_data:/var/lib/postgresql/data
+    networks:
+      - eureka-net
+
+  library-db:
+    image: postgres:latest
+    container_name: library-postgres
+    environment:
+      POSTGRES_USER: magumagu
+      POSTGRES_PASSWORD: magumagu
+      POSTGRES_DB: bookkoo
+    ports:
+      - "5434:5432"
+    volumes:
+      - library_postgres_data:/var/lib/postgresql/data
+    networks:
+      - eureka-net
+      
+  member-db:
+    image: postgres:latest
+    container_name: member-postgres
+    environment:
+      POSTGRES_USER: magumagu
+      POSTGRES_PASSWORD: magumagu
+      POSTGRES_DB: bookkoo
+    ports:
+      - "5435:5432"
+    volumes:
+      - member_postgres_data:/var/lib/postgresql/data
     networks:
       - eureka-net
 
@@ -41,6 +82,9 @@ services:
     restart: on-failure
     environment:
     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    - SPRING_DATASOURCE_URL=jdbc:postgresql://book-db:5432/book_db
+    - SPRING_DATASOURCE_USERNAME=magumagu
+    - SPRING_DATASOURCE_PASSWORD=magumagu
 
   bookkoo-gateway:
     container_name: bookkoo-gateway
@@ -79,6 +123,9 @@ services:
     restart: on-failure
     environment:
     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    - SPRING_DATASOURCE_URL=jdbc:postgresql://curation-db:5432/book_db
+    - SPRING_DATASOURCE_USERNAME=magumagu
+    - SPRING_DATASOURCE_PASSWORD=magumagu
 
   library-service:
     container_name: library-service
@@ -94,6 +141,9 @@ services:
     restart: on-failure
     environment:
     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    - SPRING_DATASOURCE_URL=jdbc:postgresql://library-db:5432/book_db
+    - SPRING_DATASOURCE_USERNAME=magumagu
+    - SPRING_DATASOURCE_PASSWORD=magumagu
 
   member-service:
     container_name: member-service
@@ -109,9 +159,15 @@ services:
     restart: on-failure
     environment:
     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    - SPRING_DATASOURCE_URL=jdbc:postgresql://member-db:5432/book_db
+    - SPRING_DATASOURCE_USERNAME=magumagu
+    - SPRING_DATASOURCE_PASSWORD=magumagu
 
 networks:
   eureka-net:
 
 volumes:
-  postgres_data:
+  book_postgres_data:
+  curation_postgres_data:
+  library_postgres_data:
+  member_postgres_data:
