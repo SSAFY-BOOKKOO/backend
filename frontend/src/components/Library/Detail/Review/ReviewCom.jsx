@@ -1,75 +1,49 @@
 // src/components/Library/Detail/Review/ReviewCom.jsx
-import { useState } from 'react';
 
-const ReviewCom = ({ bookId, currentUserId = 1, onBackClick }) => {
-  const [reviews, setReviews] = useState([]);
-  const [newReview, setNewReview] = useState('');
-  const [editingReviewId, setEditingReviewId] = useState(null);
-  const [editingReviewText, setEditingReviewText] = useState('');
+//src/assets/pencil.png
+import React, {useState} from 'react';
+import { useLocation } from 'react-router-dom';
+import pencilIcon from '../../../../assets/pencil.png';
 
-  const handleAddReview = () => {
-    if (newReview.trim()) {
-      const newReviewObj = {
-        id: reviews.length + 1,
-        text: newReview,
-        userId: currentUserId,
-      };
-      setReviews([...reviews, newReviewObj]);
-      setNewReview('');
-    }
-  };
 
-  const handleEditReview = (id, text) => {
-    setReviews(reviews.map((review) => (review.id === id ? { ...review, text } : review)));
-    setEditingReviewId(null);
-    setEditingReviewText('');
-  };
 
-  const handleDeleteReview = (id) => {
-    setReviews(reviews.filter((review) => review.id !== id));
-  };
+const ReviewCom=()=>{
+  // 책 제목 받아오기
+  const { state } = useLocation();
+  const { title } = state.book;
+  const [editReview, setEditingReview]=useState(false)
+  const [reviewText, setReviewText]=useState('');
 
-  const canEditOrDelete = (review) => review.userId === currentUserId;
+  const handleSaveReview=()=>{
+    setEditingReview(false)
+  }
 
-  return (
+  return(
     <div>
-      <h1>한줄평</h1>
-      {reviews.map((review) => (
-        <div key={review.id}>
-          {editingReviewId === review.id ? (
-            <div>
-              <input
-                type="text"
-                value={editingReviewText}
-                onChange={(e) => setEditingReviewText(e.target.value)}
-              />
-              <button onClick={() => handleEditReview(review.id, editingReviewText)}>수정 완료</button>
-            </div>
-          ) : (
-            <div>
-              <p>{review.text}</p>
-              {canEditOrDelete(review) && (
-                <>
-                  <button onClick={() => { setEditingReviewId(review.id); setEditingReviewText(review.text); }}>수정</button>
-                  <button onClick={() => handleDeleteReview(review.id)}>삭제</button>
-                </>
-              )}
-            </div>
-          )}
-        </div>
-      ))}
-      <div>
-        <input
-          type="text"
-          value={newReview}
-          onChange={(e) => setNewReview(e.target.value)}
-          placeholder="한줄평 작성"
-        />
-        <button onClick={handleAddReview}>추가</button>
+      <h1>{title}</h1>
+      <div className='bg-gray-200'>
+        {editReview ? (
+          <textarea
+            // 수정할 때 저장한 글 보이게 하기 -> value
+            value={reviewText}
+            onChange={(e)=>setReviewText(e.target.value)}
+          ></textarea>
+        ) : (
+          <p>{reviewText || '수정 버튼을 누르세요'}</p>
+        )}
       </div>
-      <button onClick={onBackClick}>책 정보 보기</button>
+      <button 
+        onClick={()=>{
+          if (editReview) {
+            handleSaveReview()
+          } else {
+            setEditingReview(true);
+          }
+        }}>
+        {editReview? '저장': <img src={pencilIcon} alt="수정" style={{ width: '20px', height: '20px' }}/>}
+      </button>
     </div>
-  );
-};
+  )
+}
 
-export default ReviewCom;
+export default ReviewCom
