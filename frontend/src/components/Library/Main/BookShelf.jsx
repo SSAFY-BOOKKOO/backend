@@ -7,11 +7,11 @@ const BookShelf = ({ books, dragStart, dragEnter, drop }) => {
 
     return (
       <div className='flex justify-center mb-4'>
-        <div className='flex flex-nowrap justify-center w-full bg-gray-700 p-2 rounded-xl shadow-lg'>
+        <div className='flex flex-nowrap justify-center w-full bg-yellow-900 p-2 rounded-xl shadow-lg'>
           {shelfBooks.map((item, idx) => (
             <div
               key={start + idx}
-              className='bg-blue-500 hover:bg-blue-600 text-white m-1 p-1 w-20 h-48 sm:w-24 sm:h-64 text-center rounded-lg cursor-pointer shadow-md flex items-center justify-center'
+              className='bg-green-500 hover:bg-blue-600 text-white m-1 p-1 w-20 h-48 sm:w-24 sm:h-64 text-center rounded-lg cursor-pointer shadow-md flex items-center justify-center'
               draggable
               onDragStart={e => dragStart(e, start + idx)}
               onDragEnter={e => dragEnter(e, start + idx)}
@@ -36,7 +36,7 @@ const BookShelf = ({ books, dragStart, dragEnter, drop }) => {
 
   return (
     <div className='p-4 min-h-screen flex flex-col items-center '>
-      <div className='p-2 bg-gray-700 rounded-xl shadow-lg w-full max-w-full overflow-x-auto'>
+      <div className='p-2 bg-yellow-700 rounded-xl shadow-lg w-full max-w-full overflow-x-auto'>
         {renderShelf(0)} {/* 1층 */}
         {renderShelf(9)} {/* 2층 */}
         {renderShelf(18)} {/* 3층 */}

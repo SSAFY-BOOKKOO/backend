@@ -7,8 +7,8 @@ import BookShelf from '../components/Library/Main/BookShelf';
 
 const member = {
   nickname: 'user1',
-  followers: 120,
-  following: 150,
+  followers: ['user2', 'user3'],
+  following: ['user4', 'user5', 'user6'],
   profilePicture: 'https://via.placeholder.com/100',
 };
 
@@ -73,7 +73,7 @@ const LibraryMain = () => {
   };
 
   const changeLibraryName = () => {
-    if (newLibraryName.trim()) {
+    if (newLibraryName.trim() && newLibraryName.length <= 10) {
       setLibraries(prev => {
         const newLibraries = [...prev];
         newLibraries[activeLibrary].name = newLibraryName;
@@ -81,29 +81,35 @@ const LibraryMain = () => {
       });
       setNewLibraryName('');
       setShowModal(false);
+    } else {
+      alert('서재 이름은 10자 이내로 설정해야 합니다.');
     }
   };
 
-  const clearLibrary = () => {
+  const deleteLibrary = () => {
     setLibraries(prev => {
-      const newLibraries = [...prev];
-      newLibraries[activeLibrary].books = [];
+      const newLibraries = prev.filter((_, index) => index !== activeLibrary);
       return newLibraries;
     });
+    setActiveLibrary(0); // 첫 번째 서재로 이동
     setShowMenu(false);
   };
 
   const createLibrary = () => {
     if (createLibraryName.trim()) {
-      setLibraries([...libraries, { name: createLibraryName, books: [] }]);
-      setActiveLibrary(libraries.length);
-      setCreateLibraryName('');
-      setShowCreateModal(false);
+      if (createLibraryName.length > 10) {
+        alert('서재 이름은 10자 이내로 설정해야 합니다.');
+      } else {
+        setLibraries([...libraries, { name: createLibraryName, books: [] }]);
+        setActiveLibrary(libraries.length);
+        setCreateLibraryName('');
+        setShowCreateModal(false);
+      }
     }
   };
 
   return (
-    <>
+    <div className='bg-white min-h-screen'>
       <MemberProfile member={member} />
 
       <LibraryModal
@@ -124,7 +130,7 @@ const LibraryMain = () => {
 
       <div className='text-center p-4'>
         <h2 className='text-xl sm:text-2xl font-bold text-gray-700'>
-          {libraries[activeLibrary].name}
+          {libraries[activeLibrary]?.name || '서재가 없습니다'}
         </h2>
       </div>
 
@@ -136,16 +142,18 @@ const LibraryMain = () => {
         setShowMenu={setShowMenu}
         setShowModal={setShowModal}
         setShowCreateModal={setShowCreateModal}
-        clearLibrary={clearLibrary}
+        deleteLibrary={deleteLibrary}
       />
 
-      <BookShelf
-        books={libraries[activeLibrary].books}
-        dragStart={dragStart}
-        dragEnter={dragEnter}
-        drop={drop}
-      />
-    </>
+      {libraries.length > 0 && (
+        <BookShelf
+          books={libraries[activeLibrary].books}
+          dragStart={dragStart}
+          dragEnter={dragEnter}
+          drop={drop}
+        />
+      )}
+    </div>
   );
 };
 

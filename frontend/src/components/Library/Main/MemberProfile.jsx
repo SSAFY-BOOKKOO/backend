@@ -14,10 +14,10 @@ const MemberProfile = ({ member }) => (
         </h1>
         <div className='flex justify-center sm:justify-start space-x-4 mt-2'>
           <div>
-            <span className='font-bold'>{member.followers}</span> 팔로워
+            <span className='font-bold'>{member.followers.length}</span> 팔로워
           </div>
           <div>
-            <span className='font-bold'>{member.following}</span> 팔로잉
+            <span className='font-bold'>{member.following.length}</span> 팔로잉
           </div>
         </div>
       </div>

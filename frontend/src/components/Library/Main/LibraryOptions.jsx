@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from '../../@common/Button';
 
 const LibraryOptions = ({
   activeLibrary,
@@ -8,64 +9,79 @@ const LibraryOptions = ({
   setShowMenu,
   setShowModal,
   setShowCreateModal,
-  clearLibrary,
-}) => (
-  <div className='flex items-center justify-between w-full px-4 relative'>
-    <select
-      className='p-2 border rounded-lg'
-      value={activeLibrary}
-      onChange={e => setActiveLibrary(Number(e.target.value))}
-    >
-      {libraries.map((library, index) => (
-        <option key={index} value={index}>
-          {library.name}
-        </option>
-      ))}
-    </select>
-    <button
-      className='p-2 bg-pink-500 text-white rounded-lg ml-2'
-      onClick={() => setShowMenu(true)} // + 버튼 클릭 시 더보기 메뉴 표시
-    >
-      +
-    </button>
-    {showMenu && (
-      <div className='absolute top-full right-0 mt-2 bg-white shadow-lg rounded-lg p-4 z-10 w-64'>
-        <button
-          className='absolute top-2 right-2 text-gray-400 hover:text-gray-600'
-          onClick={() => setShowMenu(false)}
-        >
-          ✕
-        </button>
-        <button
-          onClick={() => {
-            setShowMenu(false);
-            setShowModal(true);
-          }}
-          className='bg-blue-500 text-white p-2 rounded-lg w-full mb-2'
-        >
-          서재명 변경
-        </button>
-        <button
-          onClick={() => {
-            setShowMenu(false);
-            clearLibrary();
-          }}
-          className='bg-red-500 text-white p-2 rounded-lg w-full'
-        >
-          모든 책 삭제
-        </button>
-        <button
-          onClick={() => {
-            setShowMenu(false);
-            setShowCreateModal(true);
-          }}
-          className='bg-green-500 text-white p-2 rounded-lg w-full mt-2'
-        >
-          서재 생성
-        </button>
-      </div>
-    )}
-  </div>
-);
+  deleteLibrary,
+}) => {
+  const handleDeleteLibrary = () => {
+    if (libraries.length <= 1) {
+      alert('서재가 하나만 남아 있어 삭제할 수 없습니다.');
+    } else {
+      setShowMenu(false);
+      deleteLibrary();
+    }
+  };
+
+  return (
+    <div className='flex items-center justify-between w-full px-4 relative'>
+      <select
+        className='p-2 border rounded-lg bg-white text-black text-center'
+        style={{ width: '250px' }}
+        value={activeLibrary}
+        onChange={e => setActiveLibrary(Number(e.target.value))}
+      >
+        {libraries.map((library, index) => (
+          <option key={index} value={index}>
+            {library.name}
+          </option>
+        ))}
+      </select>
+      <Button
+        text='+'
+        color='text-white bg-pink-500 active:bg-pink-600'
+        size='medium'
+        onClick={() => setShowMenu(true)}
+      />
+      {showMenu && (
+        <div className='absolute top-full right-0 mt-2 bg-white shadow-lg rounded-lg p-4 z-10 w-64'>
+          <Button
+            text='✕'
+            color='text-gray-400 bg-transparent hover:text-gray-600'
+            size='small'
+            onClick={() => setShowMenu(false)}
+            className='absolute top-1 right-1'
+          />
+          <div className='mt-4'>
+            <Button
+              text='서재명 변경'
+              color='text-white bg-blue-500 active:bg-blue-600'
+              size='medium'
+              onClick={() => {
+                setShowMenu(false);
+                setShowModal(true);
+              }}
+              className='w-full mb-2'
+            />
+            <Button
+              text='서재 삭제'
+              color='text-white bg-red-500 active:bg-red-600'
+              size='medium'
+              onClick={() => handleDeleteLibrary()}
+              className='w-full'
+            />
+            <Button
+              text='서재 생성'
+              color='text-white bg-green-500 active:bg-green-600'
+              size='medium'
+              onClick={() => {
+                setShowMenu(false);
+                setShowCreateModal(true);
+              }}
+              className='w-full mt-2'
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default LibraryOptions;
