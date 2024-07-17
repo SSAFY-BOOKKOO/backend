@@ -5,24 +5,36 @@ import WrapContainer from '../components/Layout/WrapContainer';
 import Button from '../components/@common/Button';
 import BookSearchListItem from '../components/Library/Search/BookSearchListItem';
 import BookInfoTag from '../components/Library/Search/BookInfoTag';
-import useModal from '../hooks/useModal';
 import { books } from '../mocks/BookData';
 
 const LibrarySearch = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [searchText, setSearchText] = useState('');
-  const [selectedTag, setSelectedTag] = useState(null);
+  const [selectedTag, setSelectedTag] = useState('');
+  const [searchBooks, setSearchBooks] = useState([]);
+  const [isSearched, setIsSearched] = useState(false);
 
-  const { isOpen, openModal, closeModal } = useModal();
+  useEffect(() => {
+    const query = searchParams.get('query');
+    if (query) {
+      setSearchText(query);
+      handleSearch(query);
+    }
+  }, []);
 
-  const handleSearch = searchText => {
-    // 검색 로직
+  const handleSearch = text => {
+    // 검색 연동 필요
+
+    setSearchBooks(books);
+    setIsSearched(true);
+    setSearchParams({ text: text, category: selectedTag });
   };
 
-  // 검색 버튼 클릭 시 호출되는 함수
   const onSearchButtonClick = e => {
     e.preventDefault();
+    handleSearch(searchText);
   };
 
   const showDetailPage = id => {
@@ -37,21 +49,30 @@ const LibrarySearch = () => {
           placeholder='검색어를 입력해주세요'
           value={searchText}
           onChange={e => setSearchText(e.target.value)}
-          onClick={handleSearch}
         />
+        <Button type='submit'>검색</Button>
       </form>
       <BookInfoTag selectedTag={selectedTag} setSelectedTag={setSelectedTag} />
-      {books?.length > 0 ? <p className='mt-2 mb-4'>도서 검색 결과</p> : ''}
-      <div>
-        {books?.map(book => (
-          <BookSearchListItem
-            key={book.book_id}
-            book={book}
-            onClick={() => showDetailPage(book.book_id)}
-          />
-        ))}
-      </div>
+      {isSearched && (
+        <>
+          {searchBooks?.length > 0 ? (
+            <p className='mt-2 mb-4'>도서 검색 결과 ({searchBooks.length}건)</p>
+          ) : (
+            <p className='mt-2 mb-4'>검색 결과가 없습니다.</p>
+          )}
+          <div>
+            {searchBooks.map(book => (
+              <BookSearchListItem
+                key={book.book_id}
+                book={book}
+                onClick={() => showDetailPage(book.book_id)}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </WrapContainer>
   );
 };
+
 export default LibrarySearch;
