@@ -6,6 +6,7 @@ import Button from '../components/@common/Button';
 import BookSearchListItem from '../components/Library/Search/BookSearchListItem';
 import BookInfoTag from '../components/Library/Search/BookInfoTag';
 import { books } from '../mocks/BookData';
+import { IoSearchSharp, IoArrowBack } from 'react-icons/io5';
 
 const LibrarySearch = () => {
   const navigate = useNavigate();
@@ -17,10 +18,13 @@ const LibrarySearch = () => {
   const [isSearched, setIsSearched] = useState(false);
 
   useEffect(() => {
-    const query = searchParams.get('query');
-    if (query) {
-      setSearchText(query);
-      handleSearch(query);
+    const queryText = searchParams.get('text');
+    const queryCategory = searchParams.get('category');
+
+    if (queryText) {
+      setSearchText(queryText);
+      setSelectedTag(queryCategory);
+      handleSearch(queryText);
     }
   }, []);
 
@@ -43,14 +47,29 @@ const LibrarySearch = () => {
 
   return (
     <WrapContainer>
-      <form className='' onSubmit={onSearchButtonClick}>
-        <Input
-          id='searchText'
-          placeholder='검색어를 입력해주세요'
-          value={searchText}
-          onChange={e => setSearchText(e.target.value)}
-        />
-        <Button type='submit'>검색</Button>
+      <form
+        className='mb-4 w-full flex flex-row items-center justify-center'
+        onSubmit={onSearchButtonClick}
+      >
+        <button
+          type='button'
+          className='p-2'
+          onClick={() => navigate(`/library`)}
+        >
+          <IoArrowBack />
+        </button>
+        <div className='flex-grow'>
+          <Input
+            id='searchText'
+            placeholder='검색어를 입력해주세요'
+            value={searchText}
+            onChange={e => setSearchText(e.target.value)}
+          />
+        </div>
+
+        <button type='submit' onClick={handleSearch} className='p-2'>
+          <IoSearchSharp className='w-5 h-5' />
+        </button>
       </form>
       <BookInfoTag selectedTag={selectedTag} setSelectedTag={setSelectedTag} />
       {isSearched && (
