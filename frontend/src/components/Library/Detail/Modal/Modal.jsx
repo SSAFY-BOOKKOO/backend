@@ -1,27 +1,30 @@
 // src/components/Library/Detail/Modal/Modal.jsx
-
 import React, { useState } from 'react';
 
-const Modal = ({onDelete}) => {
-  const [menuVisible, setMenuVisible] = useState(false); // Corrected useState syntax
+const Modal = ({ bookId, onDelete }) => {
+  const [menuVisible, setMenuVisible] = useState(false);
 
   const toggleMenu = () => {
-    setMenuVisible(!menuVisible); // Corrected setMenuVisible naming
+    setMenuVisible(!menuVisible);
   };
 
   const handleOptionClick = (option) => {
     console.log(option);
 
-    if (option=='삭제') {
-      onDelete();
+    if (option === '삭제') {
+      // BookDelete 컴포넌트의 handleDelete 호출
+      handleDelete();
     }
 
-    setMenuVisible(false); // Corrected setMenuVisible naming
+    setMenuVisible(false);
+  };
+
+  const handleDelete = () => {
+    onDelete(bookId);
   };
 
   return (
     <div style={{ position: 'relative' }}>
-      {/* 점 3개 */}
       <div
         className="menu-icon"
         onClick={toggleMenu}
@@ -30,7 +33,6 @@ const Modal = ({onDelete}) => {
         &#x22EE;
       </div>
 
-      {/* 선택지 option */}
       {menuVisible && (
         <div
           className="menu"

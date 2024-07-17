@@ -1,8 +1,7 @@
 // src/pages/LibraryDetail.jsx
 import React,{ useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import Modal from '../components/Library/Detail/Modal/Modal';
-// import ReviewCom from '../components/Library/Detail/Review/ReviewCom';
 import ReviewCom from '../components/Library/Detail/Review/ReviewCom';
 
 
@@ -11,9 +10,17 @@ const LibraryDetail = () => {
   const { state } = useLocation();
   const { id } = useParams();
   const [showReview, setShowReview] = useState(false);
+  const navigate = useNavigate();
+
 
   // book 정보 받기
   const { title, author, publisher, year, summary, cover_url } = state.book;
+  
+  // 삭제 로직
+  const handleDelete = (bookId) => {
+    console.log({bookId})
+    navigate('/', { state: { deleteBookId: bookId } });
+  };
 
   return (
     <div className="flex flex-col items-center min-h-screen">
@@ -25,7 +32,7 @@ const LibraryDetail = () => {
       ) : (
         <div className="p-4 bg-rose-100 rounded-lg w-10/12 h-screen max-w-md">
           {/* modal: 책 삭제, 서재 이동, 색 변경 */}
-          <Modal />
+          <Modal bookId={id} onDelete={handleDelete}/>
 
           <div className="flex flex-col items-center p-10">
             <img

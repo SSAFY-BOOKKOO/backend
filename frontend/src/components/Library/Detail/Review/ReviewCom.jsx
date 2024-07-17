@@ -21,15 +21,16 @@ const ReviewCom=()=>{
   return(
     <div>
       <h1>{title}</h1>
-      <div className='bg-gray-200'>
+      <div className='bg-gray-200 w-96 p-4 h-48'>
         {editReview ? (
           <textarea
-            // 수정할 때 저장한 글 보이게 하기 -> value
+            className="w-full h-full p-2 border border-gray-400 rounded resize-none"
+            // 수정할 때 저장한 글 보이게 하기 
             value={reviewText}
             onChange={(e)=>setReviewText(e.target.value)}
           ></textarea>
         ) : (
-          <p>{reviewText || '수정 버튼을 누르세요'}</p>
+          <p>{reviewText || '한줄평을 작성해 보세요!'}</p>
         )}
       </div>
       <button 
@@ -40,8 +41,10 @@ const ReviewCom=()=>{
             setEditingReview(true);
           }
         }}>
-        {editReview? '저장': <img src={pencilIcon} alt="수정" style={{ width: '20px', height: '20px' }}/>}
+        {editReview? '저장': <img src={pencilIcon} alt="작성" style={{ width: '20px', height: '20px' }}/>}
       </button>
+        
+      <p className='pt-20'>파도 타기</p>
     </div>
   )
 }

@@ -1,10 +1,9 @@
 // src/pages/Home.jsx
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Home = () => {
-  // 임의로 제시한 북리스트
-  const books = [
+  const [books, setBooks] = useState([
     {
       id: 1,
       title: "모순",
@@ -35,14 +34,37 @@ const Home = () => {
       summary: "한국 현대사의 격동기를 배경으로 한 대하소설로, 여순사건부터 한국 전쟁까지의 이야기를 다루고 있다.",
       cover_url: "https://image.yes24.com/goods/123400303/L"
     }
-  ];
-  
-  // detail 페이지로 넘기기
+  ]);
+
   const navigate = useNavigate();
+  const location = useLocation();
+
+  
+
+  useEffect(() => {
+    if (location.state&&location.state.deleteBookId) {
+      // 삭제될 bookId
+      console.log('state:', location.state)
+      console.log('useEffect triggered:', location.state.deleteBookId);
+      handleDeleteBook(location.state.deleteBookId);
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    console.log('Updated books:', books);
+  }, [books]);
+
+  // 개별 책 삭제
+  const handleDeleteBook = (bookId) => {
+    console.log('Deleting book with ID:', bookId);
+    setBooks(prevBooks => prevBooks.filter(book => book.id !== bookId));
+  };
 
   const handleBookClick = (book) => {
     navigate(`/detail/${book.id}`, { state: { book } });
   };
+
+
 
   return (
     <div>
@@ -53,6 +75,7 @@ const Home = () => {
             <button onClick={() => handleBookClick(book)}>
               {book.title}
             </button>
+            {/* <BookDelete bookId={book.id} onDelete={handleDeleteBook} /> */}
           </li>
         ))}
       </ul>
