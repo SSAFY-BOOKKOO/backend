@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
-import Library from './components/Library/LibraryMain';
+import LibraryMain from './pages/LibraryMain.jsx';
+import Register from './pages/Register.jsx';
 
 const router = createBrowserRouter([
   {
@@ -9,7 +10,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'library',
-        element: <Library />,
+        element: <LibraryMain />,
+      },
+      {
+        path: 'register',
+        element: <Register />,
       },
     ],
   },
