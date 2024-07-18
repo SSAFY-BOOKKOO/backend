@@ -17,16 +17,17 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
 
+    /**
+     * 책 생성
+     *
+     * @param bookDto : 책 생성 데이터
+     * @return 생성한 책
+     */
     @Override
     @Transactional
     public ResponseBookDto createBook(RequestCreateBookDto bookDto) {
         // DTO를 엔티티로 변환
-        Book book = Book.builder()
-                        .author(bookDto.author())
-                        .publisher(bookDto.publisher())
-                        .summary(bookDto.summary())
-                        .title(bookDto.title())
-                        .build();
+        Book book = bookDto.toBook();
 
         // 책 저장
         Book savedBook = bookRepository.save(book);
@@ -34,6 +35,7 @@ public class BookServiceImpl implements BookService {
         // 엔티티를 DTO로 변환
         return ResponseBookDto.builder()
                               .id(savedBook.getId())
+                              .coverImgUrl(savedBook.getCoverImgUrl())
                               .author(savedBook.getAuthor())
                               .publisher(savedBook.getPublisher())
                               .summary(savedBook.getSummary())
@@ -59,6 +61,7 @@ public class BookServiceImpl implements BookService {
                     // 더 효율적인 방법 있는지 생각해봐야지
                     .map(book -> ResponseBookDto.builder()
                                                 .id(book.getId())
+                                                .coverImgUrl(book.getCoverImgUrl())
                                                 .author(book.getAuthor())
                                                 .publisher(book.getPublisher())
                                                 .summary(book.getSummary())
@@ -80,6 +83,7 @@ public class BookServiceImpl implements BookService {
 
         return ResponseBookDto.builder()
                               .id(book.getId())
+                              .coverImgUrl(book.getCoverImgUrl())
                               .author(book.getAuthor())
                               .publisher(book.getPublisher())
                               .summary(book.getSummary())
@@ -101,6 +105,7 @@ public class BookServiceImpl implements BookService {
         bookRepository.delete(book);
         return ResponseBookDto.builder()
                               .id(book.getId())
+                              .coverImgUrl(book.getCoverImgUrl())
                               .author(book.getAuthor())
                               .publisher(book.getPublisher())
                               .summary(book.getSummary())
