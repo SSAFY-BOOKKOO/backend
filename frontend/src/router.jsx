@@ -3,6 +3,8 @@ import App from './App.jsx';
 import Library from './components/Library/LibraryMain';
 import LibrarySearch from './pages/LibrarySearch.jsx';
 import LibrarySearchDetail from './pages/LibrarySearchDetail.jsx';
+import LibraryMain from './pages/LibraryMain.jsx';
+import Register from './pages/Register.jsx';
 
 const router = createBrowserRouter([
   {
@@ -11,7 +13,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'library',
-        element: <Library />,
+        element: <LibraryMain />,
+      },
+      {
+        path: 'register',
+        element: <Register />,
       },
       {
         path: 'library/search',
