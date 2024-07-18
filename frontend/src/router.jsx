@@ -1,5 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
+import Library from './components/Library/LibraryMain';
+import LibrarySearch from './pages/LibrarySearch.jsx';
+import LibrarySearchDetail from './pages/LibrarySearchDetail.jsx';
 import LibraryMain from './pages/LibraryMain.jsx';
 import Register from './pages/Register.jsx';
 
@@ -15,6 +18,14 @@ const router = createBrowserRouter([
       {
         path: 'register',
         element: <Register />,
+      },
+      {
+        path: 'library/search',
+        element: <LibrarySearch />,
+      },
+      {
+        path: 'library/search/:bookId',
+        element: <LibrarySearchDetail />,
       },
     ],
   },
