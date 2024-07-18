@@ -41,7 +41,7 @@ public class MemberController {
 
     @GetMapping("/register/validation")
     public ResponseEntity<HttpStatus> checkEmailValidation(
-        @RequestBody RequestCertificationDto requestCertificationDto
+        RequestCertificationDto requestCertificationDto
     ) {
         log.info("data : {}", requestCertificationDto);
 
