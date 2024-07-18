@@ -18,7 +18,7 @@ const ShelfSelectStep = () => {
 
   return (
     <div>
-      <h2>서재</h2>
+      <h2 className='mb-3 text-lg'>서재</h2>
       <CreateSelectButton
         options={shelves}
         selected={bookData.library}

@@ -17,7 +17,7 @@ const StarRating = ({ selected, onChange }) => {
 
   return (
     <div>
-      <div className='flex flex-row'>
+      <div className='flex flex-row mb-3'>
         {[1, 2, 3, 4, 5].map(index => (
           <GoStarFill
             className={`cursor-pointer ${index <= rating ? 'text-yellow-500' : 'text-gray-300'}`}
