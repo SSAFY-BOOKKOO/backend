@@ -9,6 +9,7 @@ import lombok.Builder;
  */
 
 @Builder
-public record ResponseCurationDto(String writer, String title, String coverImgUrl) {
+public record ResponseCurationDto(Long curationId, String writer, String title,
+                                  String coverImgUrl) {
 
 }
