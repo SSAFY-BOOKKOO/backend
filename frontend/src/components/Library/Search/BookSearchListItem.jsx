@@ -1,10 +1,11 @@
 import Button from '../../@common/Button';
 
-const BookSearchListItem = ({ book, onClick }) => {
+const BookSearchListItem = ({ book, onClick, onCreateClick }) => {
   const handleButtonClick = e => {
     e.stopPropagation();
 
     // 등록 페이지로 이동
+    onCreateClick();
   };
 
   return (

@@ -7,6 +7,8 @@ import BookSearchListItem from '../components/Library/Search/BookSearchListItem'
 import BookInfoTag from '../components/Library/Search/BookInfoTag';
 import { books } from '../mocks/BookData';
 import { IoSearchSharp, IoArrowBack } from 'react-icons/io5';
+import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
+import useModal from '@hooks/useModal';
 
 const LibrarySearch = () => {
   const navigate = useNavigate();
@@ -16,6 +18,8 @@ const LibrarySearch = () => {
   const [selectedTag, setSelectedTag] = useState('');
   const [searchBooks, setSearchBooks] = useState([]);
   const [isSearched, setIsSearched] = useState(false);
+
+  const { isOpen, toggleModal } = useModal();
 
   useEffect(() => {
     const queryText = searchParams.get('text');
@@ -85,11 +89,16 @@ const LibrarySearch = () => {
                 key={book.book_id}
                 book={book}
                 onClick={() => showDetailPage(book.book_id)}
+                onCreateClick={toggleModal}
               />
             ))}
           </div>
         </>
       )}
+      <BookCreateModal
+        isCreateModalOpen={isOpen}
+        toggleCreateModal={toggleModal}
+      />
     </WrapContainer>
   );
 };
