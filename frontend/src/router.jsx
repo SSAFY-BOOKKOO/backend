@@ -1,6 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
 import Library from './components/Library/LibraryMain';
+import LibrarySearch from './pages/LibrarySearch.jsx';
+import LibrarySearchDetail from './pages/LibrarySearchDetail.jsx';
 
 const router = createBrowserRouter([
   {
@@ -10,6 +12,14 @@ const router = createBrowserRouter([
       {
         path: 'library',
         element: <Library />,
+      },
+      {
+        path: 'library/search',
+        element: <LibrarySearch />,
+      },
+      {
+        path: 'library/search/:bookId',
+        element: <LibrarySearchDetail />,
       },
     ],
   },
