@@ -32,4 +32,12 @@ public class CurationSend {
 
     @Column(nullable = false)
     private Boolean isStored;
+
+    public void read() {
+        isRead = true;
+    }
+
+    public void store() {
+        isStored = true;
+    }
 }
