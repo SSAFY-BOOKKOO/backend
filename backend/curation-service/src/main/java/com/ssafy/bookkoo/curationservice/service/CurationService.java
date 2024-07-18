@@ -1,25 +1,34 @@
 package com.ssafy.bookkoo.curationservice.service;
 
+import com.ssafy.bookkoo.curationservice.dto.RequestCreateCurationDto;
+import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDetailDto;
+import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDto;
+import java.util.List;
+
 public interface CurationService {
 
-    //TODO 큐레이션 생성
+    // 큐레이션 생성 및 전송
+    void createCuration(Long writer, RequestCreateCurationDto requestCreateCurationDto);
 
-    //TODO 큐레이션 전송
+    // 큐레이션 디테일 가져오기 (읽기 처리 )
+    ResponseCurationDetailDto getCurationDetail(Long id);
 
-    //TODO 내가 받은 큐레이션 가져오기
+    // 내가 받은 큐레이션 가져오기
+    List<ResponseCurationDto> getCurationList(Long receiver);
 
-    //TODO 큐레이션 디테일 가져오기 (읽기 처리)
+    // 큐레이션 보관하기
+    void storeCuration(Long id);
 
-    //TODO 큐레이션 보관하기
+    // 큐레이션 삭제 (지정삭제)
+    void deleteCuration(Long id);
 
-    //TODO 큐레이션 삭제 (지정삭제)
+    // 내가 보낸 큐레이션 정보 보기
+    List<ResponseCurationDto> getSentCurations(Long writer);
 
     //TODO 큐레이션 스케쥴 삭제
 
     //TODO 챗봇
 
     //TODO 알림 메일 전송
-
-    //TODO 내가 보낸 큐레이션 정보 보기
 
 }
