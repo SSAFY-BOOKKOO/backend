@@ -42,7 +42,7 @@ const Home = () => {
   
 
   useEffect(() => {
-    if (location.state&&location.state.deleteBookId) {
+    if (location.state?.deleteBookId) {
       // 삭제될 bookId
       console.log('state:', location.state)
       console.log('useEffect triggered:', location.state.deleteBookId);

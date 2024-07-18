@@ -1,8 +1,9 @@
+import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
 import LibraryHome from './pages/LibraryHome.jsx'
-// import LibraryDetail from './pages/LibraryDetail.jsx';
 import LibraryDetail from './pages/LibraryDetail.jsx';
+
 
 const router = createBrowserRouter([
   {
@@ -16,8 +17,8 @@ const router = createBrowserRouter([
       {
         path:'/detail/:id',
         element:<LibraryDetail/>
-
-      }
+      },
+      
     ]
   },
 ]);

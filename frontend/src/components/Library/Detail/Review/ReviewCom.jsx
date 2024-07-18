@@ -5,8 +5,7 @@ import pencilIcon from '../../../../assets/pencil.png';
 import Button from '../../../@common/Button';
 import refreshIcon from '../../../../assets/refresh.png'; // 새로고침 아이콘 추가
 
-
-const ReviewCom = () => {
+const ReviewCom = ({ onBackClick }) => {
   // 책 제목 받아오기
   const { state } = useLocation();
   const { title } = state.book;
@@ -34,11 +33,13 @@ const ReviewCom = () => {
     setReviews(newReviews);
   }
 
-
   return (
     <div className="flex flex-col items-center p-4 bg-yellow-100 rounded-lg w-10/12 max-w-md h-full">
       <h1 className="text-2xl font-bold mb-4">{title}</h1>
-      <div className="relative bg-gray-200 w-72 p-4 h-48 rounded-lg opacity-70">
+      <div
+        className="relative bg-gray-200 w-72 p-4 h-48 rounded-lg opacity-70 cursor-pointer"
+        onClick={onBackClick}
+      >
         {editReview ? (
           <textarea
             className="w-full h-full p-2 border border-gray-400 rounded resize-none"
@@ -47,20 +48,21 @@ const ReviewCom = () => {
             onChange={(e) => setReviewText(e.target.value)}
           ></textarea>
         ) : (
-          <p>{reviewText || '한줄평을 작성해 보세요!'}</p>
+          <p className="w-full h-full p-2 border border-gray-400 rounded resize-none">{reviewText || '한줄평을 작성해 보세요!'}</p>
         )}
         <Button
           text={editReview ? '저장' : ''}
           size="small"
           color="text-black bg-rose-300"
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             if (editReview) {
               handleSaveReview();
             } else {
               setEditingReview(true);
             }
           }}
-          className="absolute top-2 right-2"
+          className="absolute top-5 right-5"
         >
           {!editReview && <img src={pencilIcon} alt="작성" style={{ width: '20px', height: '20px' }} />}
         </Button>

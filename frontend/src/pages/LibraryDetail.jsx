@@ -1,4 +1,6 @@
+// src/components/Library/Detail/LibraryDetail.jsx
 import React, { useState } from 'react';
+import { AiFillStar } from 'react-icons/ai';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import Modal from '../components/Library/Detail/Modal/Modal';
@@ -34,8 +36,7 @@ const LibraryDetail = () => {
           {showReview ? (
               <ReviewCom
                 bookId={id}
-                onBackClick={() => setShowReview(false)
-                }
+                onBackClick={() => setShowReview(false)}
               />
           ) : (
             // 책 담는 틀
@@ -47,7 +48,7 @@ const LibraryDetail = () => {
                 <img
                   src={cover_url}
                   alt={title}
-                  className="w-72 h-96 cursor-pointer rounded-md"
+                  className="w-72 h-96 cursor-pointer rounded-lg shadow-xl"
                   onClick={() => setShowReview(true)}
                 />
                 <div className="mt-6 p-4 bg-white rounded-md opacity-70	">
@@ -57,8 +58,11 @@ const LibraryDetail = () => {
                     <p className="text-sm text-gray-500">{publisher}</p>
                   </div>
                   <p className="mt-2 text-sm text-gray-500">{summary}</p>
-                  <p className="mt-2">별점 영역</p>
+                  <div className="flex space-x-1 pt-3">
+                    {Array(5).fill(<AiFillStar className="text-red-500"  />)}
+                  </div>
                 </div>
+
               </div>
             </div>
           )}

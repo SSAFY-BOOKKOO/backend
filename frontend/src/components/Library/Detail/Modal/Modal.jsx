@@ -24,35 +24,32 @@ const Modal = ({ bookId, onDelete }) => {
   };
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div className="relative">
       <div
-        className="menu-icon"
+        className="absolute top-0 right-0 z-10 cursor-pointer"
         onClick={toggleMenu}
-        style={{ position: 'absolute', top: 0, right: 0, zIndex: 1, cursor: 'pointer' }}
       >
         &#x22EE;
       </div>
 
       {menuVisible && (
-        <div
-          className="menu"
-          style={{
-            position: 'absolute',
-            top: 20,
-            right: 0,
-            background: 'white',
-            border: '1px solid #ccc',
-            borderRadius: '8px',
-            zIndex: 0,
-          }}
-        >
-          <div className="menu-item" onClick={() => handleOptionClick('삭제')} style={{ padding: '8px 16px', cursor: 'pointer' }}>
+        <div className="absolute top-5 right-0 bg-white border border-gray-300 rounded-lg z-0">
+          <div
+            className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+            onClick={() => handleOptionClick('삭제')}
+          >
             삭제
           </div>
-          <div className="menu-item" onClick={() => handleOptionClick('서재 이동')} style={{ padding: '8px 16px', cursor: 'pointer' }}>
+          <div
+            className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+            onClick={() => handleOptionClick('서재 이동')}
+          >
             서재 이동
           </div>
-          <div className="menu-item" onClick={() => handleOptionClick('색 변경')} style={{ padding: '8px 16px', cursor: 'pointer' }}>
+          <div
+            className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+            onClick={() => handleOptionClick('색 변경')}
+          >
             색 변경
           </div>
         </div>
