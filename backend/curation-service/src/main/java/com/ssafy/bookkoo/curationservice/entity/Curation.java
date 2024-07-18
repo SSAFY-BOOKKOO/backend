@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 
 /**
@@ -13,6 +15,8 @@ import jakarta.persistence.Id;
  * @author dino9881
  */
 @Entity
+@Getter
+@RequiredArgsConstructor
 public class Curation {
 
     @Id
