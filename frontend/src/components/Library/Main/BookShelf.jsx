@@ -18,7 +18,7 @@ const BookShelf = ({ books, dragStart, dragEnter, drop }) => {
               onDragEnd={drop}
               onDragOver={e => e.preventDefault()}
             >
-              <span className='writing-vertical'>
+              <span className='writing-vertical text-xs sm:text-base'>
                 {item.length > 10 ? `${item.substring(0, 10)}...` : item}
               </span>
             </div>
@@ -35,7 +35,7 @@ const BookShelf = ({ books, dragStart, dragEnter, drop }) => {
   };
 
   return (
-    <div className='p-4 min-h-screen flex flex-col items-center '>
+    <div className='p-4 min-h-screen flex flex-col items-center'>
       <div className='p-2 bg-yellow-700 rounded-xl shadow-lg w-full max-w-full overflow-x-auto'>
         {renderShelf(0)} {/* 1층 */}
         {renderShelf(9)} {/* 2층 */}
