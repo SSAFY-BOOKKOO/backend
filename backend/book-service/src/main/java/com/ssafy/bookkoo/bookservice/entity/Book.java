@@ -6,14 +6,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Book {
 
     @Id
@@ -32,4 +31,12 @@ public class Book {
 
     @Column(name = "title", nullable = false)
     private String title;
+
+    @Builder
+    public Book(String author, String publisher, String summary, String title) {
+        this.author = author;
+        this.publisher = publisher;
+        this.summary = summary;
+        this.title = title;
+    }
 }
