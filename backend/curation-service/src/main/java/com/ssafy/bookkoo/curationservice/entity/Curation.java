@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 
 /**
  * Curation 담당 Entity
+ *
  * @author dino9881
  */
 @Entity
@@ -18,13 +19,16 @@ public class Curation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 20)
+    private String title;
+
     @Column
     private Long writer;
 
     @Column
     private Long book;
 
-    @Column
+    @Column(length = 500)
     private String contents;
 
 }
