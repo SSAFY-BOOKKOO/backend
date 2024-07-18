@@ -6,7 +6,7 @@ import React from 'react';
  * full="full" (full 너비 필요한 경우)
  */
 
-const Button = ({ text, color, size, onClick, full, className, ...props }) => {
+const Button = ({ text, color, size, onClick, full, className, children, ...props }) => {
   const sizeClasses = {
     small: 'px-3 py-1 text-sm',
     medium: 'px-4 py-2 text-base',
@@ -28,7 +28,7 @@ const Button = ({ text, color, size, onClick, full, className, ...props }) => {
 
   return (
     <button className={buttonClasses} onClick={onClick} {...props}>
-      {text}
+       {text || children}
     </button>
   );
 };
