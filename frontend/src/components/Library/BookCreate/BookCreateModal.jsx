@@ -1,12 +1,14 @@
 import { useAtom } from 'jotai';
+import { useResetAtom } from 'jotai/utils';
 import { modalStepAtom, bookDataAtom } from '@atoms/bookCreateAtom';
 import ReadingStatusStep from './ReadingStatusStep';
 import InfoStep from './InfoStep';
 import ShelfSelectStep from './ShelfSelectStep';
 import Button from '../../@common/Button';
+import { useEffect, useState } from 'react';
 
 const BookCreateModal = ({ isCreateModalOpen, toggleCreateModal }) => {
-  const [step, setStep] = useAtom(modalStepAtom);
+  const [step, setStep] = useState(1);
   const [bookData, setBookData] = useAtom(bookDataAtom);
 
   const handleNext = () => {
@@ -21,17 +23,19 @@ const BookCreateModal = ({ isCreateModalOpen, toggleCreateModal }) => {
     toggleCreateModal();
     setStep(1);
     setBookData({
-      status: '',
+      status: 'reading',
       startDate: '',
       endDate: '',
       rating: 0,
       color: '',
-      library: '',
+      library: 'library1',
     });
   };
 
   const handleComplete = () => {
     reset();
+
+    // 등록 서버 연동
   };
 
   if (!isCreateModalOpen) return null;
@@ -46,7 +50,7 @@ const BookCreateModal = ({ isCreateModalOpen, toggleCreateModal }) => {
           </div>
         </div>
 
-        <div className='h-2/3 max-h-80 overflow-y-auto'>
+        <div className='h-2/3 max-h-80 overflow-y-auto scrollbar-none'>
           {step === 1 && <ReadingStatusStep />}
           {step === 2 && <InfoStep />}
           {step === 3 && <ShelfSelectStep />}
