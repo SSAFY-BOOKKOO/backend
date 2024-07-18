@@ -29,6 +29,7 @@ const Button = ({ text, color, size, onClick, full, className, children, ...prop
   return (
     <button className={buttonClasses} onClick={onClick} {...props}>
        {text || children}
+      {children}
     </button>
   );
 };
