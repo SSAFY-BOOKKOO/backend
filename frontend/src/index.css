@@ -20,6 +20,27 @@
   scrollbar-width: none; /* 파이어폭스 */
 }
 
+
+/* 레터 삭제 */
+.card {
+  transition: transform 0.3s ease-in-out;
+}
+
+.card.slide {
+  transform: translateX(-100px);
+}
+
+.delete-button {
+  width: 100px;
+  height: 100%;
+  background-color: red;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 8px 8px 0;
+}
+
 @font-face {
   font-family: 'Pretendard';
   src: url('@assets/fonts/Pretendard-Regular.woff2') format('woff2');
