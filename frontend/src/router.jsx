@@ -7,7 +7,9 @@ import LibrarySearch from './pages/LibrarySearch.jsx';
 import LibrarySearchDetail from './pages/LibrarySearchDetail.jsx';
 import LibraryMain from './pages/LibraryMain.jsx';
 import Register from './pages/Register.jsx';
-import CurationHome from './pages/CurationHome.jsx';
+import CurationReceive from './pages/CurationReceive.jsx';
+import CurationSend from './pages/CurationSend.jsx';
+import CurationStore from './pages/CurationStore.jsx';
 
 const router = createBrowserRouter([
   {
@@ -39,8 +41,16 @@ const router = createBrowserRouter([
         element: <LibrarySearchDetail />,
       },
       {
-        path: 'curation',
-        element:<CurationHome/>,
+        path: 'curation/receive',
+        element:<CurationReceive/>,
+      },
+      {
+        path: 'curation/send',
+        element:<CurationSend/>,
+      },
+      {
+        path: 'curation/store',
+        element:<CurationStore/>,
       },
     ],
   },
