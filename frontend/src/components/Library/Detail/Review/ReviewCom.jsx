@@ -1,4 +1,3 @@
-// src/components/Library/Detail/Review/ReviewCom.jsx
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import pencilIcon from '@assets/icons/pencil.png';
@@ -24,7 +23,7 @@ const ReviewCom = ({ onBackClick }) => {
   };
 
   const handleReviewRefresh = () => {
-    //임의로 새 데이터
+    // 임의로 새 데이터
     const newReviews = [
       { nickname: '라이언', text: '새로운 한줄평~~~' },
       { nickname: '어피치', text: '새로운 한줄평~~~' },
@@ -33,19 +32,27 @@ const ReviewCom = ({ onBackClick }) => {
     setReviews(newReviews);
   };
 
+  const handleContainerClick = (e) => {
+    if (editReview) {
+      e.stopPropagation(); // editReview 상태에서는 클릭 이벤트 막기
+    } else {
+      onBackClick();
+    }
+  };
+
   return (
     <div className='flex flex-col items-center p-4 bg-yellow-100 rounded-lg w-10/12 max-w-md h-full'>
       <h1 className='text-2xl font-bold mb-4'>{title}</h1>
       <div
         className='relative bg-gray-200 w-72 p-4 h-48 rounded-lg opacity-70 cursor-pointer'
-        onClick={onBackClick}
+        onClick={handleContainerClick}
       >
         {editReview ? (
           <textarea
             className='w-full h-full p-2 border border-gray-400 rounded resize-none'
-            // 수정할 때 저장한 글 보이게 하기
             value={reviewText}
             onChange={e => setReviewText(e.target.value)}
+            onClick={e => e.stopPropagation()} // textarea 클릭 시 이벤트 전파 막기
           ></textarea>
         ) : (
           <p className='w-full h-full p-2 border border-gray-400 rounded resize-none'>
@@ -57,7 +64,7 @@ const ReviewCom = ({ onBackClick }) => {
           size='small'
           color='text-black bg-rose-300'
           onClick={e => {
-            e.stopPropagation();
+            e.stopPropagation(); // 버튼 클릭 시 이벤트 전파 막기
             if (editReview) {
               handleSaveReview();
             } else {
