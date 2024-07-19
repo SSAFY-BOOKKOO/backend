@@ -1,12 +1,14 @@
 package com.ssafy.bookkoo.memberservice.entity;
 
 import com.ssafy.bookkoo.memberservice.global.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.UUID;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -15,12 +17,12 @@ import lombok.NoArgsConstructor;
 public class Member extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "member_id")
-    private UUID memberId;
+    private String memberId;
 
     @Column(name = "email")
     private String email;
@@ -31,16 +33,13 @@ public class Member extends BaseEntity {
     @Column(name = "is_social")
     private Boolean isSocial;
 
-    @Column(name = "categories")
-    private String categories;
 
     @Builder
-    public Member(Long id, UUID memberId, String email, String password, Boolean isSocial, String categories) {
+    public Member(Long id, String memberId, String email, String password, Boolean isSocial) {
         this.id = id;
         this.memberId = memberId;
         this.email = email;
         this.password = password;
         this.isSocial = isSocial;
-        this.categories = categories;
     }
 }
