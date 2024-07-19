@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Input from '../@common/Input';
 import Button from '../@common/Button';
-import Main from '../layout/Main';
+import Main from '../Layout/Main';
 
 const Register = () => {
   const [step, setStep] = useState(1);

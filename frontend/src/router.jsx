@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
-import LibraryHome from './pages/LibraryHome.jsx'
+import LibraryHome from './pages/LibraryHome.jsx';
 import LibraryDetail from './pages/LibraryDetail.jsx';
 import LibrarySearch from './pages/LibrarySearch.jsx';
 import LibrarySearchDetail from './pages/LibrarySearchDetail.jsx';
@@ -12,14 +12,14 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
-    children:[
+    children: [
       {
-        path:'/',
-        element: <LibraryHome/>
+        path: '/',
+        element: <LibraryHome />,
       },
       {
-        path:'/detail/:id',
-        element:<LibraryDetail/>
+        path: '/detail/:id',
+        element: <LibraryDetail />,
       },
       {
         path: 'library',
@@ -36,10 +36,8 @@ const router = createBrowserRouter([
       {
         path: 'library/search/:bookId',
         element: <LibrarySearchDetail />,
-      }
-      
-    ]
-    
+      },
+    ],
   },
 ]);
 

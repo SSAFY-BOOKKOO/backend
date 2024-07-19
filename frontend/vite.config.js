@@ -25,6 +25,10 @@ export default defineConfig({
         find: '@constants',
         replacement: path.resolve(__dirname, 'src/constants'),
       },
+      {
+        find: '@mocks',
+        replacement: path.resolve(__dirname, 'src/mocks'),
+      },
     ],
   },
 });
