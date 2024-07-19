@@ -8,7 +8,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import org.apache.hc.core5.net.URIBuilder;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +33,7 @@ public class AladinAPIHandler {
      * @throws URISyntaxException
      */
     public static ResponseAladinAPI searchBooksFromAladin(AladinAPISearchParams params)
-        throws IOException, InterruptedException, URISyntaxException, ParseException {
+        throws IOException, InterruptedException, URISyntaxException {
         URI uri = new URIBuilder(BASE_URL + "itemSearch.aspx")
             .addParameter("ttbkey", apiKey)
             .addParameter("Query", params.getQuery())
