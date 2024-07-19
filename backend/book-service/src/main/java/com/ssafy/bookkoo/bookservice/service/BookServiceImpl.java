@@ -4,10 +4,10 @@ import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
+import com.ssafy.bookkoo.bookservice.mapper.BookMapper;
 import com.ssafy.bookkoo.bookservice.repository.BookRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private final BookMapper bookMapper = BookMapper.INSTANCE;
 
     /**
      * 책 생성
@@ -27,20 +28,13 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public ResponseBookDto createBook(RequestCreateBookDto bookDto) {
         // DTO를 엔티티로 변환
-        Book book = bookDto.toBook();
+        Book book = bookMapper.toEntity(bookDto);
 
         // 책 저장
         Book savedBook = bookRepository.save(book);
 
         // 엔티티를 DTO로 변환
-        return ResponseBookDto.builder()
-                              .id(savedBook.getId())
-                              .coverImgUrl(savedBook.getCoverImgUrl())
-                              .author(savedBook.getAuthor())
-                              .publisher(savedBook.getPublisher())
-                              .summary(savedBook.getSummary())
-                              .title(savedBook.getTitle())
-                              .build();
+        return bookMapper.toResponseDto(savedBook);
     }
 
     /**
@@ -57,17 +51,7 @@ public class BookServiceImpl implements BookService {
     public List<ResponseBookDto> getBooks(String type, String content, int offset, int limit) {
         List<Book> books = bookRepository.findByConditions(type, content, offset, limit);
 
-        return books.stream()
-                    // 더 효율적인 방법 있는지 생각해봐야지
-                    .map(book -> ResponseBookDto.builder()
-                                                .id(book.getId())
-                                                .coverImgUrl(book.getCoverImgUrl())
-                                                .author(book.getAuthor())
-                                                .publisher(book.getPublisher())
-                                                .summary(book.getSummary())
-                                                .title(book.getTitle())
-                                                .build())
-                    .collect(Collectors.toList());
+        return bookMapper.toResponseDtoList(books);
     }
 
     /**
@@ -81,14 +65,7 @@ public class BookServiceImpl implements BookService {
     public ResponseBookDto getBook(Long bookId) {
         Book book = findBookByIdWithException(bookId);
 
-        return ResponseBookDto.builder()
-                              .id(book.getId())
-                              .coverImgUrl(book.getCoverImgUrl())
-                              .author(book.getAuthor())
-                              .publisher(book.getPublisher())
-                              .summary(book.getSummary())
-                              .title(book.getTitle())
-                              .build();
+        return bookMapper.toResponseDto(book);
     }
 
     /**
@@ -103,14 +80,7 @@ public class BookServiceImpl implements BookService {
         Book book = findBookByIdWithException(bookId);
 
         bookRepository.delete(book);
-        return ResponseBookDto.builder()
-                              .id(book.getId())
-                              .coverImgUrl(book.getCoverImgUrl())
-                              .author(book.getAuthor())
-                              .publisher(book.getPublisher())
-                              .summary(book.getSummary())
-                              .title(book.getTitle())
-                              .build();
+        return bookMapper.toResponseDto(book);
     }
 
     private Book findBookByIdWithException(Long bookId) {
