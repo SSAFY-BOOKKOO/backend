@@ -1,10 +1,14 @@
 package com.ssafy.bookkoo.memberservice.controller;
 
+import com.ssafy.bookkoo.memberservice.dto.RequestAdditionalInfo;
 import com.ssafy.bookkoo.memberservice.dto.RequestCertificationDto;
 import com.ssafy.bookkoo.memberservice.dto.RequestRegisterDto;
+import com.ssafy.bookkoo.memberservice.exception.EmailDuplicateException;
+import com.ssafy.bookkoo.memberservice.exception.NickNameDuplicateException;
 import com.ssafy.bookkoo.memberservice.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,14 +23,18 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    /**
+     * 등록 시 등록된 memberId 반환
+     * @param requestRegisterDto
+     * @return
+     */
     @PostMapping("/register")
     @Operation(description = "회원가입을 통해 새로운 유저를 등록합니다.", summary = "회원가입")
-    public ResponseEntity<HttpStatus> register(
+    public ResponseEntity<String > register(
         @Valid @RequestBody RequestRegisterDto requestRegisterDto
     ) {
-        memberService.register(requestRegisterDto);
-        return ResponseEntity.ok()
-                             .build();
+        String memberId = memberService.register(requestRegisterDto);
+        return ResponseEntity.ok(memberId);
     }
 
     @PostMapping("/register/validation")
@@ -34,7 +42,7 @@ public class MemberController {
     public ResponseEntity<HttpStatus> sendEmailValidation(
         @RequestBody String email
     ) {
-        log.info("email : {}", email);
+        log.info("이메일 email로 인증번호 전송 : {}", email);
         memberService.sendCertiNumToEmail(email);
         return ResponseEntity.ok()
                              .build();
@@ -45,14 +53,42 @@ public class MemberController {
     public ResponseEntity<HttpStatus> checkEmailValidation(
         RequestCertificationDto requestCertificationDto
     ) {
-        log.info("data : {}", requestCertificationDto);
-
         memberService.checkValidationEmail(requestCertificationDto);
         return ResponseEntity.ok()
                              .build();
     }
 
-    //TODO: 닉네임 중복 체크 API개발
-    //TODO: 추가 정보 저장 API개발
+    @GetMapping("/duplicate/email")
+    @Operation(description = "이메일을 받아 중복 체크를 합니다.", summary = "이메일 중복 체크")
+    public ResponseEntity<HttpStatus> checkDuplicateEmail(
+        @RequestParam(name = "email") String email
+    ) {
+        if (!memberService.checkDuplEmail(email)) {
+            throw new EmailDuplicateException();
+        }
+        return ResponseEntity.ok()
+                             .build();
+    }
 
+    @GetMapping("/duplicate/nickName")
+    @Operation(description = "닉네임을 받아 중복 체크를 합니다.", summary = "닉네임 중복 체크")
+    public ResponseEntity<HttpStatus> checkDuplicateNickName(
+        @RequestParam(name = "nickName") String nickName
+    ) {
+        if (!memberService.checkDuplNickName(nickName)) {
+            throw new NickNameDuplicateException();
+        }
+        return ResponseEntity.ok()
+                             .build();
+    }
+
+    @PostMapping("/register/info")
+    @Operation(description = "memberId, 닉네임, 카테고리, 출생년도, 소개글을 받아 추가정보를 저장합니다.", summary = "추가 정보 저장")
+    public ResponseEntity<HttpStatus> registerAdditionalInfo(
+        @RequestBody RequestAdditionalInfo requestAdditionalInfo
+    ) {
+        memberService.registerAdditionalInfo(requestAdditionalInfo);
+        return ResponseEntity.ok()
+                             .build();
+    }
 }
