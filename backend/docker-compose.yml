@@ -69,6 +69,17 @@ services:
     networks:
       - eureka-net
 
+# 레디스 추가
+  member-redis:
+    image: redis:latest
+    container_name: member-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - eureka-net
+
   # eureka-server:
   #   container_name: eureka-server
   #   build:
@@ -200,3 +211,4 @@ volumes:
   library_postgres_data:
   member_postgres_data:
   auth_postgres_data:
+  redis_data:

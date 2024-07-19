@@ -1,0 +1,21 @@
+package com.ssafy.bookkoo.bookservice.util.AladinAPI;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class AladinBookItem {
+
+    private String author;
+    private String isbn;
+    private String description;
+    private String title;
+    private String pubDate;
+    private String categoryName;
+    private String cover;
+    private String publisher;
+    private Integer categoryId;
+}
