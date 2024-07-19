@@ -1,19 +1,23 @@
 package com.ssafy.bookkoo.memberservice.service;
 
+import com.ssafy.bookkoo.memberservice.dto.RequestAdditionalInfo;
 import com.ssafy.bookkoo.memberservice.dto.RequestCertificationDto;
 import com.ssafy.bookkoo.memberservice.dto.RequestRegisterDto;
 import com.ssafy.bookkoo.memberservice.entity.CertificationNumber;
 import com.ssafy.bookkoo.memberservice.entity.Member;
+import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import com.ssafy.bookkoo.memberservice.exception.EmailNotValidException;
+import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.memberservice.repository.CertificationRepository;
+import com.ssafy.bookkoo.memberservice.repository.MemberInfoRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberRepository;
 import java.util.Collections;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -21,6 +25,7 @@ import java.util.UUID;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final MemberInfoRepository memberInfoRepository;
     private final CertificationRepository certificationRepository;
     private final PasswordEncoder passwordEncoder;
     private final AwsSesService awsSesService;
@@ -35,15 +40,16 @@ public class MemberServiceImpl implements MemberService {
      * @param requestRegisterDto
      */
     @Override
-    public void register(RequestRegisterDto requestRegisterDto) {
+    public String register(RequestRegisterDto requestRegisterDto) {
         Member member = Member.builder()
-                              .memberId(UUID.randomUUID())
+                              .memberId(UUID.randomUUID().toString())
                               .email(requestRegisterDto.email())
                               .password(passwordEncoder.encode(requestRegisterDto.password()))
                               .isSocial(Boolean.FALSE)
                               .build();
 
-        memberRepository.save(member);
+        Member save = memberRepository.save(member);
+        return save.getMemberId();
     }
 
     /**
@@ -97,10 +103,44 @@ public class MemberServiceImpl implements MemberService {
      * 비밀번호 초기화 및 이메일로 초기화된 비밀번호 전송
      *
      * @param email
+     * @return 중복이 아니면 ? true : false
      */
     @Override
     public void resetPassword(String email) {
 
+    }
+
+    /**
+     * 닉네임 중복 체크
+     *
+     * @param nickName
+     */
+    @Override
+    public boolean checkDuplNickName(String nickName) {
+        return memberInfoRepository.findByNickName(nickName)
+                                   .isEmpty();
+    }
+
+    /**
+     * 이메일을 통해 추가정보 등록
+     *
+     * @param requestAdditionalInfo
+     */
+    @Override
+    @Transactional
+    public void registerAdditionalInfo(RequestAdditionalInfo requestAdditionalInfo) {
+        log.info(requestAdditionalInfo.memberId());
+        Member member = memberRepository.findByMemberId(requestAdditionalInfo.memberId())
+                                        .orElseThrow(MemberNotFoundException::new);
+
+        MemberInfo memberInfo = MemberInfo.builder()
+                                          .memberId(member.getMemberId())
+                                          .nickName(requestAdditionalInfo.nickName())
+                                          .year(requestAdditionalInfo.year())
+                                          .introduction(requestAdditionalInfo.introduction())
+                                          .build();
+
+        memberInfoRepository.save(memberInfo);
     }
 
 }

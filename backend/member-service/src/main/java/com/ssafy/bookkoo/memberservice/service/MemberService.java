@@ -1,11 +1,12 @@
 package com.ssafy.bookkoo.memberservice.service;
 
+import com.ssafy.bookkoo.memberservice.dto.RequestAdditionalInfo;
 import com.ssafy.bookkoo.memberservice.dto.RequestCertificationDto;
 import com.ssafy.bookkoo.memberservice.dto.RequestRegisterDto;
 
 public interface MemberService {
 
-    void register(RequestRegisterDto requestRegisterDto);
+    String register(RequestRegisterDto requestRegisterDto);
 
     boolean checkDuplEmail(String email);
 
@@ -14,4 +15,8 @@ public interface MemberService {
     boolean checkValidationEmail(RequestCertificationDto requestCertificationDto);
 
     void resetPassword(String email);
+
+    boolean checkDuplNickName(String nickName);
+
+    void registerAdditionalInfo(RequestAdditionalInfo requestAdditionalInfo);
 }
