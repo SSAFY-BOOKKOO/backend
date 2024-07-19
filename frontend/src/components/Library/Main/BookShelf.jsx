@@ -1,27 +1,57 @@
 import React from 'react';
+import { useDrag, useDrop } from 'react-dnd';
 
-const BookShelf = ({ books, dragStart, dragEnter, drop }) => {
+const ItemType = 'BOOK';
+
+const Book = ({ item, index, moveBook }) => {
+  const [{ isDragging }, dragRef] = useDrag({
+    type: ItemType,
+    item: { id: item.id, originalIndex: index },
+    collect: monitor => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  const [, dropRef] = useDrop({
+    accept: ItemType,
+    hover: draggedItem => {
+      if (draggedItem.id !== item.id) {
+        moveBook(draggedItem.originalIndex, index);
+        draggedItem.originalIndex = index;
+      }
+    },
+  });
+
+  return (
+    <div
+      ref={node => dragRef(dropRef(node))}
+      className='bg-green-500 hover:bg-blue-600 text-white m-1 p-1 w-20 h-48 sm:w-24 sm:h-64 text-center rounded-lg cursor-pointer shadow-md flex items-center justify-center'
+      style={{ opacity: isDragging ? 0.5 : 1 }}
+    >
+      <span className='writing-vertical text-xs sm:text-base'>
+        {item.title.length > 10
+          ? `${item.title.substring(0, 10)}...`
+          : item.title}
+      </span>
+    </div>
+  );
+};
+
+const BookShelf = ({ books, moveBook }) => {
   const renderShelf = start => {
-    const shelfBooks = books.slice(start, start + 9); // 현재 층의 책 목록 슬라이싱
-    const emptySlots = 9 - shelfBooks.length; // 빈 슬롯 계산
+    const shelfBooks = books.slice(start, start + 9);
+    const emptySlots = 9 - shelfBooks.length;
 
     return (
       <div className='flex justify-center mb-4'>
         <div className='flex flex-nowrap justify-center w-full bg-yellow-900 p-2 rounded-xl shadow-lg'>
           {shelfBooks.map((item, idx) => (
-            <div
-              key={start + idx}
-              className='bg-green-500 hover:bg-blue-600 text-white m-1 p-1 w-20 h-48 sm:w-24 sm:h-64 text-center rounded-lg cursor-pointer shadow-md flex items-center justify-center'
-              draggable
-              onDragStart={e => dragStart(e, start + idx)}
-              onDragEnter={e => dragEnter(e, start + idx)}
-              onDragEnd={drop}
-              onDragOver={e => e.preventDefault()}
-            >
-              <span className='writing-vertical text-xs sm:text-base'>
-                {item.length > 10 ? `${item.substring(0, 10)}...` : item}
-              </span>
-            </div>
+            <Book
+              key={item.id}
+              item={item}
+              index={start + idx}
+              moveBook={moveBook}
+            />
           ))}
           {Array.from({ length: emptySlots }).map((_, idx) => (
             <div
@@ -37,9 +67,15 @@ const BookShelf = ({ books, dragStart, dragEnter, drop }) => {
   return (
     <div className='p-4 min-h-screen flex flex-col items-center'>
       <div className='p-2 bg-yellow-700 rounded-xl shadow-lg w-full max-w-full overflow-x-auto'>
-        {renderShelf(0)} {/* 1층 */}
-        {renderShelf(9)} {/* 2층 */}
-        {renderShelf(18)} {/* 3층 */}
+        {books.length > 0 ? (
+          <>
+            {renderShelf(0)} {/* 1층 */}
+            {renderShelf(9)} {/* 2층 */}
+            {renderShelf(18)} {/* 3층 */}
+          </>
+        ) : (
+          <p className='text-center text-gray-500'>서재에 책이 없습니다.</p>
+        )}
       </div>
     </div>
   );
