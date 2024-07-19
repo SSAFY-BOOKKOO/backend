@@ -37,12 +37,17 @@ public class Book {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Column(name = "isbn", nullable = false)
+    private String isbn;
+
     @Builder
-    public Book(String coverImgUrl, String author, String publisher, String summary, String title) {
+    public Book(String coverImgUrl, String author, String publisher, String summary, String title,
+        String isbn) {
         this.coverImgUrl = coverImgUrl;
         this.author = author;
         this.publisher = publisher;
         this.summary = summary;
         this.title = title;
+        this.isbn = isbn;
     }
 }
