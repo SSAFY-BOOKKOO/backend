@@ -7,6 +7,7 @@ import com.ssafy.bookkoo.memberservice.entity.CertificationNumber;
 import com.ssafy.bookkoo.memberservice.entity.Member;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import com.ssafy.bookkoo.memberservice.exception.EmailNotValidException;
+import com.ssafy.bookkoo.memberservice.exception.EmailSendFailException;
 import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.memberservice.repository.CertificationRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberInfoRepository;
@@ -28,7 +29,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberInfoRepository memberInfoRepository;
     private final CertificationRepository certificationRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AwsSesService awsSesService;
+    private final MailSendService mailSendService;
     private final Long EXPIRED_TIME = 1800L; //30분 만료 시간
 
     /**
@@ -72,14 +73,20 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public void sendCertiNumToEmail(String email) {
+        String certNum = UUID.randomUUID()
+                            .toString();
         CertificationNumber certificationNumber = CertificationNumber.builder()
                                                                      .email(email)
-                                                                     .certNum(UUID.randomUUID()
-                                                                                  .toString())
+                                                                     .certNum(certNum)
                                                                      .ttl(EXPIRED_TIME)
                                                                      .build();
+
         certificationRepository.save(certificationNumber);
-        awsSesService.send("테스트 제목", "테스트 컨텐츠", Collections.singletonList(email));
+        try {
+            mailSendService.sendMail("북꾸북꾸 이메일 인증번호", certNum, Collections.singletonList(email));
+        } catch (Exception e) {
+            throw new EmailSendFailException();
+        }
     }
 
     /**
@@ -103,11 +110,21 @@ public class MemberServiceImpl implements MemberService {
      * 비밀번호 초기화 및 이메일로 초기화된 비밀번호 전송
      *
      * @param email
-     * @return 중복이 아니면 ? true : false
      */
     @Override
-    public void resetPassword(String email) {
-
+    public void passwordReset(String email) {
+        String password = UUID.randomUUID()
+                              .toString();
+        Member member = memberRepository.findByEmail(email)
+                                        .orElseThrow(() -> new MemberNotFoundException(email));
+        try {
+            mailSendService.sendMail("북꾸북꾸 임시 비밀번호 발급", password, Collections.singletonList(email));
+            member.setPassword(passwordEncoder.encode(password));
+            memberRepository.save(member);
+            memberRepository.flush();
+        } catch (Exception e) {
+            throw new EmailSendFailException();
+        }
     }
 
     /**
