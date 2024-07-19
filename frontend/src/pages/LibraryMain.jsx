@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import { MultiBackend, TouchTransition } from 'react-dnd-multi-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
+import { useNavigate, useLocation } from 'react-router-dom';
 import MemberProfile from '../components/Library/Main/MemberProfile';
 import LibraryModal from '../components/Library/Main/LibraryModal';
 import CreateLibraryModal from '../components/Library/Main/CreateLibraryModal';
 import LibraryOptions from '../components/Library/Main/LibraryOptions';
 import BookShelf from '../components/Library/Main/BookShelf';
+import { books as initialBooks } from '../mocks/BookData'; // 데이터를 가져옵니다
 
 const HTML5toTouch = {
   backends: [
@@ -39,41 +41,31 @@ const LibraryMain = () => {
   const [newLibraryName, setNewLibraryName] = useState('');
   const [createLibraryName, setCreateLibraryName] = useState('');
   const [activeLibrary, setActiveLibrary] = useState(0);
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [libraries, setLibraries] = useState([
     {
       name: '서재 1',
-      books: [
-        { id: 1, title: '미움받을 용기' },
-        { id: 2, title: '하루의 취향' },
-        { id: 3, title: '죽고 싶지만 떡볶이는 먹고 싶어' },
-        { id: 4, title: '그릿' },
-        { id: 5, title: '나미야 잡화점의 기적' },
-        { id: 6, title: '아몬드' },
-        { id: 7, title: '종의 기원' },
-        { id: 8, title: '멋진 신세계' },
-        { id: 9, title: '불편한 편의점' },
-        { id: 10, title: '여행의 이유' },
-        { id: 11, title: '지적 대화를 위한 넓고 얕은 지식' },
-        { id: 12, title: '마법천자문' },
-        { id: 13, title: '달러구트 꿈 백화점' },
-        { id: 14, title: '봉제인형 살인사건' },
-        { id: 15, title: '무례한 사람에게 웃으며 대처하는 법' },
-        { id: 16, title: '더 해빙' },
-      ],
+      books: initialBooks.slice(0, 5), // 첫 5권을 서재 1에 배치합니다
     },
     {
       name: '서재 2',
-      books: [
-        { id: 17, title: '책 1' },
-        { id: 18, title: '책 2' },
-        { id: 19, title: '책 3' },
-        { id: 20, title: '책 4' },
-        { id: 21, title: '책 5' },
-        { id: 22, title: '책 6' },
-        { id: 23, title: '책 7' },
-      ],
+      books: initialBooks.slice(5, 10), // 나머지 5권을 서재 2에 배치합니다
     },
   ]);
+
+  useEffect(() => {
+    if (location.state && location.state.deleteBookId) {
+      const deleteBookId = location.state.deleteBookId;
+      setLibraries(prevLibraries => {
+        return prevLibraries.map(library => ({
+          ...library,
+          books: library.books.filter(book => book.book_id !== deleteBookId),
+        }));
+      });
+    }
+  }, [location.state]);
 
   const moveBook = (fromIndex, toIndex) => {
     const newList = [...libraries[activeLibrary].books];
@@ -122,6 +114,10 @@ const LibraryMain = () => {
     }
   };
 
+  const handleBookClick = book => {
+    navigate(`/library/detail/${book.book_id}`, { state: { book } });
+  };
+
   return (
     <DndProvider backend={MultiBackend} options={HTML5toTouch}>
       <div className='bg-white min-h-screen'>
@@ -164,6 +160,7 @@ const LibraryMain = () => {
           <BookShelf
             books={libraries[activeLibrary]?.books || []}
             moveBook={moveBook}
+            onBookClick={handleBookClick}
           />
         )}
       </div>

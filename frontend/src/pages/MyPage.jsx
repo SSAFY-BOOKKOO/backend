@@ -58,7 +58,7 @@ const MyPage = () => {
         <div>
           <Link to='/mypage/statistics'>
             <button className='p-4 rounded-full'>
-              <img src='src\assets\icons\statistics.png' alt='statistics' />
+              <img src='@assets\icons\statistics.png' alt='statistics' />
             </button>
           </Link>
           <p className='mt-2'>통계</p>
@@ -91,7 +91,7 @@ const MyPage = () => {
         <div>
           <Link to='/mypage/friend'>
             <button className='p-4 rounded-full'>
-              <img src='src\assets\icons\friends.png' alt='friend' />
+              <img src='@assets\icons\friends.png' alt='friend' />
             </button>
           </Link>
           <p className='mt-2'>친구</p>
