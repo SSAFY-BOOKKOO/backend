@@ -55,6 +55,20 @@ services:
     networks:
       - eureka-net
 
+  auth-db:
+    image: postgres:latest
+    container_name: auth-postgres
+    environment:
+      POSTGRES_USER: magumagu
+      POSTGRES_PASSWORD: magumagu
+      POSTGRES_DB: bookkoo
+    ports:
+      - "5436:5432"
+    volumes:
+      - auth_postgres_data:/var/lib/postgresql/data
+    networks:
+      - eureka-net
+
   # eureka-server:
   #   container_name: eureka-server
   #   build:
@@ -185,3 +199,4 @@ volumes:
   curation_postgres_data:
   library_postgres_data:
   member_postgres_data:
+  auth_postgres_data:
