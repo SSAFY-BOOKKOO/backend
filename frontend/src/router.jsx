@@ -11,6 +11,7 @@ import CurationReceive from './pages/CurationReceive.jsx';
 import CurationSend from './pages/CurationSend.jsx';
 import CurationStore from './pages/CurationStore.jsx';
 import Login from './pages/Login.jsx';
+import CurationChatBot from './pages/CurationChatBot.jsx';
 
 const router = createBrowserRouter([
   {
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
       {
         path: 'curation/store',
         element: <CurationStore />,
+      },
+      {
+        path: 'curation/chatbot',
+        element: <CurationChatBot />,
       },
     ],
   },
