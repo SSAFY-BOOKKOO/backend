@@ -6,9 +6,15 @@ import com.ssafy.bookkoo.bookservice.entity.Book;
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
 import com.ssafy.bookkoo.bookservice.mapper.BookMapper;
 import com.ssafy.bookkoo.bookservice.repository.BookRepository;
+import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPIHandler;
+import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPISearchParams;
+import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinAPI;
 import jakarta.transaction.Transactional;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,6 +22,7 @@ import org.springframework.stereotype.Service;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private final AladinAPIHandler aladinAPIHandler;
     private final BookMapper bookMapper = BookMapper.INSTANCE;
 
     /**
@@ -81,6 +88,12 @@ public class BookServiceImpl implements BookService {
 
         bookRepository.delete(book);
         return bookMapper.toResponseDto(book);
+    }
+
+    @Override
+    public ResponseAladinAPI searchBooksFromAladin(AladinAPISearchParams params)
+        throws IOException, InterruptedException, URISyntaxException, ParseException {
+        return aladinAPIHandler.searchBooksFromAladin(params);
     }
 
     private Book findBookByIdWithException(Long bookId) {

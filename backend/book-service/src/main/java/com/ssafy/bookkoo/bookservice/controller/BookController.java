@@ -4,9 +4,15 @@ import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
 import com.ssafy.bookkoo.bookservice.dto.RequestSearchBookFilterDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.service.BookService;
+import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPISearchParams;
+import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinAPI;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.parser.ParseException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -77,5 +83,18 @@ public class BookController {
         ResponseBookDto bookDto = bookService.deleteBook(bookId);
         return ResponseEntity.ok()
                              .body(bookDto);
+    }
+
+    /**
+     * 알라딘 API를 사용한 검색
+     *
+     * @param params : AladinAPISearchParams
+     * @return 검색 결과 반환
+     */
+    @GetMapping("/api/search")
+    @Operation(summary = "알라딘 API 검색", description = "알라딘 API를 사용하여 책 검색")
+    public ResponseAladinAPI aladinSearchBooks(@Valid @ModelAttribute AladinAPISearchParams params)
+        throws IOException, URISyntaxException, InterruptedException, ParseException {
+        return bookService.searchBooksFromAladin(params);
     }
 }
