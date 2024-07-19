@@ -36,8 +36,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.authorizeHttpRequests(auth -> auth.requestMatchers(
-                                                                  new AntPathRequestMatcher("/member/register"),
-                                                                  new AntPathRequestMatcher("/member/**"),
+                                                                  //TODO: 개발 끝나면 필터 적용 다시 하기
+                                                                  new AntPathRequestMatcher("/members/**"),
                                                                   new AntPathRequestMatcher("/swagger-ui/**"),
                                                                   new AntPathRequestMatcher("/v3/api-docs/**"),
                                                                   new AntPathRequestMatcher("/api-docs/**"),
