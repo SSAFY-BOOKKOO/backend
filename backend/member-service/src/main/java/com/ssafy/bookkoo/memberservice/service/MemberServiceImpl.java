@@ -7,12 +7,15 @@ import com.ssafy.bookkoo.memberservice.entity.Member;
 import com.ssafy.bookkoo.memberservice.exception.EmailNotValidException;
 import com.ssafy.bookkoo.memberservice.repository.CertificationRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberRepository;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
@@ -20,6 +23,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final CertificationRepository certificationRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AwsSesService awsSesService;
     private final Long EXPIRED_TIME = 1800L; //30분 만료 시간
 
     /**
@@ -69,6 +73,7 @@ public class MemberServiceImpl implements MemberService {
                                                                      .ttl(EXPIRED_TIME)
                                                                      .build();
         certificationRepository.save(certificationNumber);
+        awsSesService.send("테스트 제목", "테스트 컨텐츠", Collections.singletonList(email));
     }
 
     /**
@@ -97,4 +102,5 @@ public class MemberServiceImpl implements MemberService {
     public void resetPassword(String email) {
 
     }
+
 }
