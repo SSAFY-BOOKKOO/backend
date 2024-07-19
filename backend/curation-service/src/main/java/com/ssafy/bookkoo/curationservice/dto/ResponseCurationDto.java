@@ -1,9 +1,15 @@
 package com.ssafy.bookkoo.curationservice.dto;
 
 import lombok.Builder;
-import lombok.Data;
+
+/**
+ * Curation 목록 조회 응답 DTO
+ *
+ * @author dino9881
+ */
 
 @Builder
-public record ResponseCurationDto() {
+public record ResponseCurationDto(Long curationId, String writer, String title,
+                                  String coverImgUrl) {
 
 }
