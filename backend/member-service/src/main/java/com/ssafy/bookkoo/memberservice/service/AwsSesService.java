@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AwsSesService {
+public class AwsSesService implements MailSendService {
 
     private final AmazonSimpleEmailService amazonSimpleEmailService;
 
-    public void send(String subject, String content, List<String> receivers) {
+    public boolean sendMail(String subject, String content, List<String> receivers) {
         try {
             final AwsSesDto awsSesDto = AwsSesDto.builder()
                                                  .to(receivers)
@@ -33,6 +33,7 @@ public class AwsSesService {
             e.printStackTrace();
         }
 
+        return true;
     }
 
 }
