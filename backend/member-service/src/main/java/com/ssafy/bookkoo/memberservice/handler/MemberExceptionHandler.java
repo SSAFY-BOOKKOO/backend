@@ -15,6 +15,7 @@ public class MemberExceptionHandler {
      */
     @ExceptionHandler(EmailNotValidException.class)
     public ResponseEntity<String> handleEmailDuplicateException(EmailNotValidException e) {
+        //TODO: ok -> 다른 상태코드 + 메시지로 변경
         return ResponseEntity.ok(e.getMessage());
     }
 }
