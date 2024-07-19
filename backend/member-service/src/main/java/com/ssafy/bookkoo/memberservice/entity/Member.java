@@ -1,14 +1,18 @@
 package com.ssafy.bookkoo.memberservice.entity;
 
+import com.ssafy.bookkoo.memberservice.global.BaseEntity;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.UUID;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-public class Member {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,11 +34,7 @@ public class Member {
     @Column(name = "categories")
     private String categories;
 
-    protected Member() {
-    }
-
     @Builder
-
     public Member(Long id, UUID memberId, String email, String password, Boolean isSocial, String categories) {
         this.id = id;
         this.memberId = memberId;
