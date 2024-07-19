@@ -3,7 +3,7 @@
 const BackButton = () => {
   return (
     <button
-      className="flex items-center text-2xl font-bold focus:outline-none"
+      className='flex items-center text-2xl font-bold focus:outline-none'
       onClick={() => window.history.back()}
     >
       <span>&lt;</span>
@@ -12,4 +12,3 @@ const BackButton = () => {
 };
 
 export default BackButton;
-
