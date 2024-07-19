@@ -1,6 +1,7 @@
 // src/components/Curation/Tab.jsx
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import letterPlus from '../../assets/icons/letterPlus.png'
 
 const Tab = () => {
   return (
@@ -29,6 +30,12 @@ const Tab = () => {
         }
       >
         보관 레터
+      </NavLink>
+      <NavLink
+        to="/curation/letter-create"
+        className="px-4 py-2 rounded"
+      >
+        <img src={letterPlus} alt="Create Letter" className="w-6 h-6" />
       </NavLink>
     </div>
 
