@@ -10,6 +10,7 @@ import Register from './pages/Register.jsx';
 import CurationReceive from './pages/CurationReceive.jsx';
 import CurationSend from './pages/CurationSend.jsx';
 import CurationStore from './pages/CurationStore.jsx';
+import Login from './pages/Login.jsx';
 
 const router = createBrowserRouter([
   {
@@ -42,17 +43,21 @@ const router = createBrowserRouter([
       },
       {
         path: 'curation/receive',
-        element:<CurationReceive/>,
+        element: <CurationReceive />,
       },
       {
         path: 'curation/send',
-        element:<CurationSend/>,
+        element: <CurationSend />,
       },
       {
         path: 'curation/store',
-        element:<CurationStore/>,
+        element: <CurationStore />,
       },
     ],
+  },
+  {
+    path: '/login',
+    element: <Login />,
   },
 ]);
 
