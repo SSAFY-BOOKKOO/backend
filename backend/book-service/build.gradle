@@ -50,6 +50,10 @@ dependencies {
     // MapStruct
     implementation 'org.mapstruct:mapstruct:1.4.2.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+
+    // json
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+
 }
 
 dependencyManagement {
