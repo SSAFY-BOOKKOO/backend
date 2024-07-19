@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.bookservice.controller;
 
 import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
+import com.ssafy.bookkoo.bookservice.dto.RequestSearchBookFilterDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,11 +10,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -42,12 +43,10 @@ public class BookController {
     @GetMapping
     @Operation(summary = "책 목록 조회", description = "책 조회(필터링 포함)시 사용하는 API")
     public ResponseEntity<List<ResponseBookDto>> getBooks(
-        @RequestParam(required = false) String type,
-        @RequestParam(required = false) String content,
-        @RequestParam(required = false, defaultValue = "0") Integer offset,
-        @RequestParam(required = false, defaultValue = "10") Integer limit
+        @ModelAttribute RequestSearchBookFilterDto filterDto
     ) {
-        List<ResponseBookDto> books = bookService.getBooks(type, content, offset, limit);
+        List<ResponseBookDto> books = bookService.getBooks(filterDto.type(), filterDto.content(),
+            filterDto.offset(), filterDto.limit());
         return ResponseEntity.ok()
                              .body(books);
     }
