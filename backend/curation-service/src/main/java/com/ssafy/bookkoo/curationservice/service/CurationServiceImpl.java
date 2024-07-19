@@ -6,6 +6,7 @@ import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDto;
 import com.ssafy.bookkoo.curationservice.entity.Curation;
 import com.ssafy.bookkoo.curationservice.entity.CurationSend;
 import com.ssafy.bookkoo.curationservice.exception.CurationNotFoundException;
+import com.ssafy.bookkoo.curationservice.feign.FeignBookService;
 import com.ssafy.bookkoo.curationservice.repository.CurationRepository;
 import com.ssafy.bookkoo.curationservice.repository.CurationSendRepository;
 import jakarta.transaction.Transactional;
@@ -24,6 +25,7 @@ public class CurationServiceImpl implements CurationService {
 
     final CurationRepository curationRepository;
     final CurationSendRepository curationSendRepository;
+    final FeignBookService feignBookService;
 
     /**
      * Curation을 생성하고 전송하는 메서드 생성시 팔로워와 랜덤 멤버 3명에게 전송한다.
@@ -34,6 +36,7 @@ public class CurationServiceImpl implements CurationService {
     @Transactional
     @Override
     public void createCuration(Long writer, RequestCreateCurationDto createCurationDto) {
+        System.out.println(feignBookService.getBook(1L));
         Curation curation = Curation.builder()
                                     .writer(writer)
                                     .book(createCurationDto.bookId())
