@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Input from '../components/@common/Input';
-import WrapContainer from '../components/Layout/WrapContainer';
+import WrapContainer from '../components/layout/WrapContainer';
 import Button from '../components/@common/Button';
 import BookSearchListItem from '../components/Library/Search/BookSearchListItem';
 import BookInfoTag from '../components/Library/Search/BookInfoTag';
