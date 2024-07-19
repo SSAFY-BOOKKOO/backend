@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -27,6 +28,7 @@ public class Member extends BaseEntity {
     @Column(name = "email")
     private String email;
 
+    @Setter
     @Column(name = "password")
     private String password;
 
