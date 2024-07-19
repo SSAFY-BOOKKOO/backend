@@ -9,6 +9,8 @@ import Register from './pages/Register.jsx';
 import MyPage from './pages/MyPage.jsx';
 import Statistics from './pages/Statistics.jsx';
 import Friend from './pages/Friend.jsx';
+import Notification from './pages/Notification.jsx';
+import Profile from './pages/Profile.jsx';
 
 const router = createBrowserRouter([
   {
@@ -46,6 +48,14 @@ const router = createBrowserRouter([
       {
         path: '/mypage',
         element: <MyPage />,
+      },
+      {
+        path: '/notification',
+        element: <Notification />,
+      },
+      {
+        path: '/mypage/profile',
+        element: <Profile />,
       },
     ],
   },

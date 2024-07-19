@@ -1,5 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import settingIcon from '@assets/icons/setting.png';
+import statisticsIcon from '@assets/icons/statistics.png';
+import friendsIcon from '@assets/icons/friends.png';
 
 const MyPage = () => {
   const member = {
@@ -25,13 +28,11 @@ const MyPage = () => {
           </div>
         </div>
         <div className='flex space-x-4'>
-          <button className='p-2 rounded'>
-            <img
-              src='src\assets\icons\setting.png'
-              alt='setting'
-              className='w-8 h-8'
-            />
-          </button>
+          <Link to='/mypage/profile'>
+            <button className='p-2 rounded'>
+              <img src={settingIcon} alt='setting' className='w-8 h-8' />
+            </button>
+          </Link>
         </div>
       </div>
       <hr className='my-4' />
@@ -58,7 +59,7 @@ const MyPage = () => {
         <div>
           <Link to='/mypage/statistics'>
             <button className='p-4 rounded-full'>
-              <img src='@assets\icons\statistics.png' alt='statistics' />
+              <img src={statisticsIcon} alt='statistics' />
             </button>
           </Link>
           <p className='mt-2'>통계</p>
@@ -91,7 +92,7 @@ const MyPage = () => {
         <div>
           <Link to='/mypage/friend'>
             <button className='p-4 rounded-full'>
-              <img src='@assets\icons\friends.png' alt='friend' />
+              <img src={friendsIcon} alt='friend' />
             </button>
           </Link>
           <p className='mt-2'>친구</p>
