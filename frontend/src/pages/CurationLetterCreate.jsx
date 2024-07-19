@@ -1,11 +1,12 @@
-// src/pages/CurationLetterCreate.jsx
 import React, { useState } from 'react';
 import Input from '../components/@common/Input';
 import Button from '../components/@common/Button';
+import BookSearch from '../components/Curation/BookSearch';
 
 const CreateLetter = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
@@ -15,13 +16,25 @@ const CreateLetter = () => {
     setContent(e.target.value);
   };
 
+  const handleSearchButtonClick = () => {
+    setIsSearchModalOpen(true);
+  };
+
+  const handleSearchModalClose = () => {
+    setIsSearchModalOpen(false);
+  };
+
   return (
     <div className="flex flex-col items-center p-4 mx-8">
       <div className="w-full max-w-md">
         <div className="bg-gray-100 p-4 rounded-lg mb-4">
           <div className="flex items-center justify-between">
             <p className="text-gray-700">검색 영역</p>
-            <button className="px-4 py-2 bg-gray-300 rounded-lg text-gray-700">
+            {/* 검색 버튼 누르면 BookSearch 연결 */}
+            <button 
+              className="px-4 py-2 bg-gray-300 rounded-lg text-gray-700"
+              onClick={handleSearchButtonClick}
+            >
               검색
             </button>
           </div>
@@ -41,8 +54,12 @@ const CreateLetter = () => {
             onChange={handleContentChange}
           ></textarea>
         </div>
-        <Button text="레터 전송" className="w-full py-3 bg-blue-300 rounded-lg text-gray-950" />
+        <Button text="레터 전송" className="w-full py-3 bg-blue-500 rounded-lg text-gray-950" />
       </div>
+      <BookSearch 
+        isOpen={isSearchModalOpen} 
+        onRequestClose={handleSearchModalClose}
+      />
     </div>
   );
 };
