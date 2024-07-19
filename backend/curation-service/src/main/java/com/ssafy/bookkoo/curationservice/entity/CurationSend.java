@@ -1,5 +1,6 @@
 package com.ssafy.bookkoo.curationservice.entity;
 
+import com.ssafy.bookkoo.curationservice.global.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @Entity
 @Getter
 @RequiredArgsConstructor
-public class CurationSend {
+public class CurationSend extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
