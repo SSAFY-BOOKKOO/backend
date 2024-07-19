@@ -8,7 +8,6 @@ import com.ssafy.bookkoo.memberservice.exception.NickNameDuplicateException;
 import com.ssafy.bookkoo.memberservice.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,12 +24,13 @@ public class MemberController {
 
     /**
      * 등록 시 등록된 memberId 반환
+     *
      * @param requestRegisterDto
      * @return
      */
     @PostMapping("/register")
     @Operation(description = "회원가입을 통해 새로운 유저를 등록합니다.", summary = "회원가입")
-    public ResponseEntity<String > register(
+    public ResponseEntity<String> register(
         @Valid @RequestBody RequestRegisterDto requestRegisterDto
     ) {
         String memberId = memberService.register(requestRegisterDto);
@@ -70,10 +70,10 @@ public class MemberController {
                              .build();
     }
 
-    @GetMapping("/duplicate/nickName")
+    @GetMapping("/duplicate/name")
     @Operation(description = "닉네임을 받아 중복 체크를 합니다.", summary = "닉네임 중복 체크")
     public ResponseEntity<HttpStatus> checkDuplicateNickName(
-        @RequestParam(name = "nickName") String nickName
+        @RequestParam(name = "name") String nickName
     ) {
         if (!memberService.checkDuplNickName(nickName)) {
             throw new NickNameDuplicateException();
@@ -88,6 +88,16 @@ public class MemberController {
         @RequestBody RequestAdditionalInfo requestAdditionalInfo
     ) {
         memberService.registerAdditionalInfo(requestAdditionalInfo);
+        return ResponseEntity.ok()
+                             .build();
+    }
+
+    @PostMapping("/password/reset")
+    @Operation(description = "가입한 이메일에 대한 비밀번호를 초기화 합니다.", summary = "비밀번호 초기화")
+    public ResponseEntity<HttpStatus> passwordReset(
+        @RequestBody String email
+    ) {
+        memberService.passwordReset(email);
         return ResponseEntity.ok()
                              .build();
     }
