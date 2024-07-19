@@ -8,8 +8,15 @@ import lombok.Builder;
  * @author dino9881
  */
 @Builder
-public record ResponseCurationDetailDto(String coverImgUrl, String curationTitle, String writer,
-                                        String content, String createdAt,
-                                        String bookTitle, String author, String summary) {
+public record ResponseCurationDetailDto(
+    String coverImgUrl,
+    String curationTitle,
+    String writer,
+    String content,
+    String createdAt,
+    String bookTitle,
+    String author,
+    String summary
+) {
 
 }

@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CurationSendRepository extends JpaRepository<CurationSend, Long> {
 
-    List<CurationSend> getCurationSendByReceiver(Long receiverId);
+    List<CurationSend> findCurationSendsByReceiver(Long receiverId);
 
-    List<CurationSend> getCurationSendByCurationWriter(Long writerId);
+    List<CurationSend> findCurationSendsByCurationWriter(Long writerId);
 }

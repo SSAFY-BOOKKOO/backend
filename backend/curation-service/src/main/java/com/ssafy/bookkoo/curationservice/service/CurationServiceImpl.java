@@ -80,7 +80,7 @@ public class CurationServiceImpl implements CurationService {
      */
     @Override
     public List<ResponseCurationDto> getCurationList(Long receiver) {
-        List<CurationSend> curationSendByReceiver = curationSendRepository.getCurationSendByReceiver(
+        List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByReceiver(
             receiver);
         for (CurationSend curationSend : curationSendByReceiver) {
             //멤버 서비스에 닉네임 요청
@@ -122,7 +122,7 @@ public class CurationServiceImpl implements CurationService {
      */
     @Override
     public List<ResponseCurationDto> getSentCurations(Long writer) {
-        List<CurationSend> curationSendByReceiver = curationSendRepository.getCurationSendByCurationWriter(
+        List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByCurationWriter(
             writer);
         for (CurationSend curationSend : curationSendByReceiver) {
             //멤버 서비스에 닉네임 요청
