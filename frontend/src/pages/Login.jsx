@@ -4,6 +4,7 @@ import WrapContainer from '../components/Layout/WrapContainer';
 import Button from '../components/@common/Button';
 import useInput from '../hooks/useInput';
 import { useNavigate } from 'react-router-dom';
+import SocialLoginButton from '@components/Login/SocialLoginButton';
 
 const Login = () => {
   const {
@@ -51,7 +52,7 @@ const Login = () => {
   return (
     <div className='h-screen flex items-center justify-center'>
       <WrapContainer className='flex justify-center items-center'>
-        <div className='flex justify-center  items-center'>
+        <div className='flex justify-center  items-center '>
           <div className='w-11/12'>
             <h2 className='text-center text-3xl font-bold mb-8'>북꾸북꾸</h2>
             <form>
@@ -98,8 +99,8 @@ const Login = () => {
                 비밀번호 찾기
               </p>
             </div>
-
             {/* 소셜 로그인 */}
+            <SocialLoginButton />
           </div>
         </div>
       </WrapContainer>
