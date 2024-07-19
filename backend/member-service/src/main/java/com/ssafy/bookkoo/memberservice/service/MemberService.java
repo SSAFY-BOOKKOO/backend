@@ -14,7 +14,7 @@ public interface MemberService {
 
     boolean checkValidationEmail(RequestCertificationDto requestCertificationDto);
 
-    void resetPassword(String email);
+    void passwordReset(String email);
 
     boolean checkDuplNickName(String nickName);
 
