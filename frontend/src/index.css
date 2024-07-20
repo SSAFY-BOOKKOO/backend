@@ -20,7 +20,6 @@
   scrollbar-width: none; /* 파이어폭스 */
 }
 
-
 /* 레터 삭제 */
 .card {
   transition: transform 0.3s ease-in-out;
