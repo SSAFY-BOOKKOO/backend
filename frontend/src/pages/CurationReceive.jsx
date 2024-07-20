@@ -70,7 +70,7 @@ const CurationReceive = () => {
   };
 
   return (
-    <div className='flex flex-col h-screen'>
+    <div className='flex flex-col min-h-[calc(100vh-56px)]'>
       <Tab />
       <div className='flex-1 overflow-y-auto px-4'>
         {letters.map(letter => (
