@@ -4,7 +4,7 @@ import com.ssafy.bookkoo.authservice.entity.Member;
 import com.ssafy.bookkoo.authservice.entity.RefreshToken;
 import com.ssafy.bookkoo.authservice.repository.RefreshTokenRepository;
 import com.ssafy.bookkoo.authservice.service.TokenService;
-import com.ssafy.bookkoo.authservice.util.TokenProvider;
+import com.ssafy.bookkoo.authservice.util.TokenGenerator;
 import java.time.Duration;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
 
-    private final TokenProvider tokenProvider;
+    private final TokenGenerator tokenGenerator;
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final Duration ACCESS_TOKEN_EXPIRATION = Duration.ofHours(1);
@@ -34,7 +34,7 @@ public class TokenServiceImpl implements TokenService {
         RefreshToken refreshToken = RefreshToken.builder()
                                                 .memberId(member.getMemberId()
                                                                 .toString())
-                                                .refreshToken(tokenProvider.generateToken(member,
+                                                .refreshToken(tokenGenerator.generateToken(member,
                                                     REFRESH_TOKEN_EXPIRATION))
                                                 .ttl(REFRESH_TOKEN_EXPIRATION.getSeconds())
                                                 .build();
@@ -51,7 +51,7 @@ public class TokenServiceImpl implements TokenService {
      */
     @Override
     public String createAccessToken(Member member) {
-        return tokenProvider.generateToken(member, ACCESS_TOKEN_EXPIRATION);
+        return tokenGenerator.generateToken(member, ACCESS_TOKEN_EXPIRATION);
     }
 
     /**
