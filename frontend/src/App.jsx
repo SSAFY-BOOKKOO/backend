@@ -1,8 +1,6 @@
-import React from 'react'; // eslint-disable-line no-unused-vars
 import { Outlet } from 'react-router-dom';
-// import BackButton from './components/@common/Back';
 import Header from './components/Layout/Header';
-import Footer from './components/Layout/Footer';
+import BottomTab from './components/Layout/BottomTab';
 import Main from './components/Layout/Main';
 
 const App = () => {
@@ -10,6 +8,7 @@ const App = () => {
     <Main>
       <Header />
       <Outlet />
+      <BottomTab />
     </Main>
   );
 };
