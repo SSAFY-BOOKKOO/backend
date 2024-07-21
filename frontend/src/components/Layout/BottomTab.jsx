@@ -8,8 +8,8 @@ import myPage from '@assets/icons/mypage.png';
 
 const navItems = [
   { path: '/library', icon: library, label: '나만의 서재' },
-  { path: '/curation/receive', icon: community, label: '큐레이션 레터' },
-  { path: '/community', icon: curation, label: '북톡' },
+  { path: '/curation/receive', icon: curation, label: '큐레이션 레터' },
+  { path: '/booktalk', icon: community, label: '북톡' },
   { path: '/mypage', icon: myPage, label: '마이페이지' },
 ];
 
