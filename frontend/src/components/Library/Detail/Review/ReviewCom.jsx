@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { AiFillStar } from 'react-icons/ai';
 import pencilIcon from '@assets/icons/pencil.png';
 import Button from '../../../@common/Button';
 import refreshIcon from '@assets/icons/refresh.png'; // 새로고침 아이콘 추가
 
-const ReviewCom = ({ onBackClick }) => {
-  // 책 제목 받아오기
-  const { state } = useLocation();
-  const { title } = state.book;
+const ReviewCom = ({ onBackClick, book }) => {
+  const { title, author, publisher, summary, cover_img_url } = book;
   const [editReview, setEditingReview] = useState(false);
   const [reviewText, setReviewText] = useState('');
 
@@ -32,7 +30,7 @@ const ReviewCom = ({ onBackClick }) => {
     setReviews(newReviews);
   };
 
-  const handleContainerClick = (e) => {
+  const handleContainerClick = e => {
     if (editReview) {
       e.stopPropagation(); // editReview 상태에서는 클릭 이벤트 막기
     } else {
@@ -41,66 +39,76 @@ const ReviewCom = ({ onBackClick }) => {
   };
 
   return (
-    <div className='flex flex-col items-center p-4 bg-yellow-100 rounded-lg w-10/12 max-w-md h-full'>
-      <h1 className='text-2xl font-bold mb-4'>{title}</h1>
-      <div
-        className='relative bg-gray-200 w-72 p-4 h-48 rounded-lg opacity-70 cursor-pointer'
-        onClick={handleContainerClick}
-      >
-        {editReview ? (
-          <textarea
-            className='w-full h-full p-2 border border-gray-400 rounded resize-none'
-            value={reviewText}
-            onChange={e => setReviewText(e.target.value)}
-            onClick={e => e.stopPropagation()} // textarea 클릭 시 이벤트 전파 막기
-          ></textarea>
-        ) : (
-          <p className='w-full h-full p-2 border border-gray-400 rounded resize-none'>
-            {reviewText || '한줄평을 작성해 보세요!'}
-          </p>
-        )}
-        <Button
-          text={editReview ? '저장' : ''}
-          size='small'
-          color='text-black bg-rose-300'
-          onClick={e => {
-            e.stopPropagation(); // 버튼 클릭 시 이벤트 전파 막기
-            if (editReview) {
-              handleSaveReview();
-            } else {
-              setEditingReview(true);
-            }
-          }}
-          className='absolute top-5 right-5'
-        >
-          {!editReview && (
+    // 전체 담는 틀
+    <div className='relative bg-zinc-300 rounded-lg w-10/12 max-w-md h-full min-h-[600px] overflow-auto'>
+      <div className='flex flex-col items-center p-4 pr-4 '>
+        <h1 className='text-3xl font-bold m-4 pb-4'>{title}</h1>
+
+        <div className='flex justify-between items-center w-72 pb-4'>
+          <h3 className='text-lg font-bold'>추천사</h3>
+          <button onClick={handleReviewRefresh}>
             <img
-              src={pencilIcon}
-              alt='작성'
-              style={{ width: '20px', height: '20px' }}
+              src={refreshIcon}
+              alt='새로고침'
+              style={{ width: '24px', height: '24px' }}
             />
-          )}
-        </Button>
-      </div>
-      <div className='flex justify-between items-center w-72 pt-12 pb-4'>
-        <h1 className='text-2xl font-bold'>파도 타기</h1>
-        <button onClick={handleReviewRefresh}>
-          <img
-            src={refreshIcon}
-            alt='새로고침'
-            style={{ width: '24px', height: '24px' }}
-          />
-        </button>
-      </div>
-      <div>
+          </button>
+        </div>
+
+        {/* 파도 탄 글 */}
         {reviews.map((review, index) => (
-          <div key={index} className='mb-2'>
-            <div className='bg-gray-200 w-72 p-4 mb-14 h-auto rounded-lg opacity-70'>
+          <div key={index} className='mb-2 pr-5'>
+            <div className='bg-white w-72 p-2  mb-4 h-auto rounded-lg opacity-70'>
               <p className='font-bold'>{review.nickname}</p>
               <p>{review.text}</p>
             </div>
           </div>
         ))}
+      </div>
+
+      {/* 한줄평 쓰기 - 띠지 영역(핑크) */}
+      <div className='mt-6 p-4 pl-10 bg-pink-500 rounded-b-md opacity-70 w-full '>
+        <div
+          className='relative bg-white w-5/6 h-40 rounded-lg opacity-70 cursor-pointer'
+          onClick={handleContainerClick}
+        >
+          {editReview ? (
+            <textarea
+              className='w-full h-full p-2 bg-white border border-gray-400 rounded resize-none'
+              value={reviewText}
+              onChange={e => setReviewText(e.target.value)}
+              onClick={e => e.stopPropagation()} // textarea 클릭 시 이벤트 전파 막기
+            ></textarea>
+          ) : (
+            <p className='w-full h-40 p-2 border border-gray-400 rounded resize-none'>
+              {reviewText || '한줄평을 작성해 보세요!'}
+            </p>
+          )}
+          <Button
+            text={editReview ? '저장' : ''}
+            size='small'
+            color='text-black bg-rose-300'
+            onClick={e => {
+              e.stopPropagation(); // 버튼 클릭 시 이벤트 전파 막기
+              if (editReview) {
+                handleSaveReview();
+              } else {
+                setEditingReview(true);
+              }
+            }}
+            className='absolute top-2 right-2'
+          >
+            {!editReview && (
+              <img
+                src={pencilIcon}
+                alt='작성'
+                style={{ width: '20px', height: '20px' }}
+              />
+            )}
+          </Button>
+        </div>
+        {/* 하드커버 선 */}
+        <div className='absolute shadow-2xl	right-6 top-0 bottom-0 w-1 bg-gray-500'></div>
       </div>
     </div>
   );
