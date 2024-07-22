@@ -43,7 +43,7 @@ const LibraryDetail = () => {
 
               <div className='flex flex-col items-center p-10'>
                 <img
-                  src={cover_url}
+                  src={cover_img_url}
                   alt={title}
                   className='w-72 h-96 cursor-pointer rounded-lg shadow-xl'
                   onClick={() => setShowReview(true)}
