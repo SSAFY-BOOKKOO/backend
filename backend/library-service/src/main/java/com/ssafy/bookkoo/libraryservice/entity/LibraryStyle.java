@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -25,10 +26,14 @@ public class LibraryStyle {
     private Library library;
 
     @Column
+    @Setter
     private String libraryColor;
 
     @Builder
-    public LibraryStyle(Library library, String libraryColor) {
+    public LibraryStyle(
+        Library library,
+        String libraryColor
+    ) {
         this.library = library;
         this.libraryId = library.getId();
         this.libraryColor = libraryColor;
