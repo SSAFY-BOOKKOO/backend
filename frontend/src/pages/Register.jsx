@@ -1,12 +1,13 @@
 // src/pages/RegisterPage.jsx
 import React from 'react';
 import Register from '../components/Register/Register.jsx';
+import WrapContainer from '../components/Layout/WrapContainer.jsx';
 
 const RegisterPage = () => {
   return (
-    <div className='bg-gray-100 min-h-screen flex items-center justify-center'>
+    <WrapContainer>
       <Register />
-    </div>
+    </WrapContainer>
   );
 };
 

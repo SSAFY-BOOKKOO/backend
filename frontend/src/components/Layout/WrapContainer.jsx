@@ -1,8 +1,6 @@
-const WrapContainer = ({ children }) => {
+const WrapContainer = ({ children, className }) => {
   return (
-    <div className='max-w-[50rem] mx-auto px-4 box-border w-full'>
-      {children}
-    </div>
+    <div className={`w-full px-4 box-border ${className}`}>{children}</div>
   );
 };
 

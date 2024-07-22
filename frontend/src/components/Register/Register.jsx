@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Input from '../@common/Input';
 import Button from '../@common/Button';
 import Main from '../Layout/Main';
+import WrapContainer from '../Layout/WrapContainer';
 
 const Register = () => {
   const [step, setStep] = useState(1);
@@ -79,7 +80,7 @@ const Register = () => {
   };
 
   return (
-    <Main>
+    <WrapContainer>
       <div className='flex flex-col justify-center items-center min-h-screen px-4 w-full'>
         <div className='w-full max-w-md'>
           <h2 className='text-2xl font-bold mb-4 text-center px-44'>
@@ -327,7 +328,7 @@ const Register = () => {
           </form>
         </div>
       </div>
-    </Main>
+    </WrapContainer>
   );
 };
 
