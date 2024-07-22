@@ -2,7 +2,7 @@ package com.ssafy.bookkoo.libraryservice.dto;
 
 public record RequestUpdateLibraryDto(
     String name,
-    String libraryOrder,
+    Integer libraryOrder,
     LibraryStyleDto libraryStyleDto
 ) {
 
