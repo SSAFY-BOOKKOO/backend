@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/members")
+@RequestMapping("/members/register")
 public class MemberController {
 
     private final MemberService memberService;
@@ -28,7 +28,7 @@ public class MemberController {
      * @param requestRegisterDto
      * @return
      */
-    @PostMapping("/register")
+    @PostMapping("/email")
     @Operation(description = "회원가입을 통해 새로운 유저를 등록합니다.", summary = "회원가입")
     public ResponseEntity<String> register(
         @Valid @RequestBody RequestRegisterDto requestRegisterDto
@@ -37,7 +37,7 @@ public class MemberController {
         return ResponseEntity.ok(memberId);
     }
 
-    @PostMapping("/register/validation")
+    @PostMapping("/validation")
     @Operation(description = "이메일을 통해 인증 번호를 발송합니다.", summary = "이메일 인증 번호 발송")
     public ResponseEntity<HttpStatus> sendEmailValidation(
         @RequestBody String email
@@ -48,7 +48,7 @@ public class MemberController {
                              .build();
     }
 
-    @GetMapping("/register/validation")
+    @GetMapping("/validation")
     @Operation(description = "이메일로 발송된 인증번호를 검증합니다.", summary = "인증번호 검증")
     public ResponseEntity<HttpStatus> checkEmailValidation(
         RequestCertificationDto requestCertificationDto
@@ -82,7 +82,7 @@ public class MemberController {
                              .build();
     }
 
-    @PostMapping("/register/info")
+    @PostMapping("/info")
     @Operation(description = "memberId, 닉네임, 카테고리, 출생년도, 소개글을 받아 추가정보를 저장합니다.", summary = "추가 정보 저장")
     public ResponseEntity<HttpStatus> registerAdditionalInfo(
         @RequestBody RequestAdditionalInfo requestAdditionalInfo
