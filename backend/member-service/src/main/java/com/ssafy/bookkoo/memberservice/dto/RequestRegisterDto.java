@@ -21,9 +21,6 @@ public record RequestRegisterDto(
     @Pattern(
         regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$",
         message = "Invalid password."
-    ) String password,
-    @NotNull(message = "nickName can not be null") String nickName,
-    Integer year,
-    String gender,
-    String[] categories) {
+    ) String password) {
+
 }
