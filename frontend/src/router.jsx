@@ -13,6 +13,7 @@ import CurationStore from './pages/CurationStore.jsx';
 import Login from './pages/Login.jsx';
 import CurationChatBot from './pages/CurationChatBot.jsx';
 import CurationLetterCreate from './pages/CurationLetterCreate.jsx';
+import CurationLetterDetail from './pages/CurationLetterDetail.jsx';
 
 const router = createBrowserRouter([
   {
@@ -61,7 +62,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'curation/letter-create',
-        element:<CurationLetterCreate/>,
+        element: <CurationLetterCreate />,
+      },
+      {
+        path: '/curation/letter/:id',
+        element: <CurationLetterDetail />,
       },
     ],
   },
