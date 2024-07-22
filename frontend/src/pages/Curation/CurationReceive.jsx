@@ -1,7 +1,7 @@
 // src/pages/CurationReceive.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Tab from '../components/Curation/Tab';
+import Tab from '@components/Curation/Tab';
 import { BsBookmarkStar, BsBookmarkStarFill } from 'react-icons/bs';
 
 // 임시 레터 데이터

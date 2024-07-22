@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import Input from '../components/@common/Input';
-import WrapContainer from '../components/Layout/WrapContainer';
-import Button from '../components/@common/Button';
-import useInput from '../hooks/useInput';
+import Input from '@components/@common/Input';
+import WrapContainer from '@components/Layout/WrapContainer';
+import Button from '@components/@common/Button';
+import useInput from '@hooks/useInput';
 import { useNavigate } from 'react-router-dom';
 import SocialLoginButton from '@components/Login/SocialLoginButton';
 

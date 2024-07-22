@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import DecoIcon from '@assets/icons/intro_deco.png';
-import WrapContainer from '../components/Layout/WrapContainer';
+import WrapContainer from '../../components/Layout/WrapContainer';
 
 const Intro = () => {
   return (
