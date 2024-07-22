@@ -70,11 +70,14 @@ const CurationReceive = () => {
   };
 
   return (
-    <div className='flex flex-col min-h-[calc(100vh-56px)]'>
+    <div className='flex flex-col'>
       <Tab />
       <div className='flex-1 overflow-y-auto px-4'>
         {letters.map(letter => (
-          <div key={letter.id} className='relative flex items-center my-8'>
+          <div
+            key={letter.id}
+            className='relative flex items-center my-8 cursor-pointer'
+          >
             <div
               className={`card flex items-center bg-gray-100 rounded-lg p-4 shadow w-full ${
                 slideId === letter.id ? 'slide' : ''
