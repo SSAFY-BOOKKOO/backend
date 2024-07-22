@@ -47,11 +47,13 @@ const LibraryMain = () => {
   const [libraries, setLibraries] = useState([
     {
       name: '서재 1',
-      books: initialBooks.slice(0, 5), // 첫 5권을 서재 1에 배치합니다
+      id: 1,
+      books: initialBooks.filter(book => book.library_id === 1),
     },
     {
       name: '서재 2',
-      books: initialBooks.slice(5, 10), // 나머지 5권을 서재 2에 배치합니다
+      id: 2,
+      books: initialBooks.filter(book => book.library_id === 2),
     },
   ]);
 

@@ -28,7 +28,7 @@ const BookCreateModal = ({ isCreateModalOpen, toggleCreateModal }) => {
       endDate: '',
       rating: 0,
       color: '',
-      library: 'library1',
+      library_id: 1,
     });
   };
 

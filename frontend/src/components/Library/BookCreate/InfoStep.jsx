@@ -46,7 +46,6 @@ const InfoStep = () => {
           </>
         )}
       </div>
-
       {bookData.status !== 'want' && (
         <>
           <h2 className='mb-3 text-lg'>별점</h2>
@@ -56,7 +55,6 @@ const InfoStep = () => {
           />
         </>
       )}
-
       <h2 className='mb-3 text-lg'>책 색상</h2>
       <ColorPicker
         presetColors={PRESET_COLORS}
