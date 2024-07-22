@@ -10,6 +10,7 @@ const books = [
       'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
     library_id: 1,
     color: 'bg-red-500',
+    slot_id: 0,
   },
   {
     book_id: 2,
@@ -22,6 +23,7 @@ const books = [
       'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
     library_id: 1,
     color: 'bg-green-500',
+    slot_id: 1,
   },
   {
     book_id: 3,
@@ -34,6 +36,7 @@ const books = [
       'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
     library_id: 1,
     color: 'bg-blue-500',
+    slot_id: 2,
   },
   {
     book_id: 4,
@@ -46,6 +49,7 @@ const books = [
       'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
     library_id: 1,
     color: 'bg-yellow-500',
+    slot_id: 3,
   },
   {
     book_id: 5,
@@ -58,6 +62,7 @@ const books = [
       'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
     library_id: 2,
     color: 'bg-purple-500',
+    slot_id: 0,
   },
   {
     book_id: 6,
@@ -70,6 +75,7 @@ const books = [
       'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
     library_id: 2,
     color: 'bg-pink-500',
+    slot_id: 1,
   },
   {
     book_id: 7,
@@ -82,6 +88,7 @@ const books = [
       'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
     library_id: 2,
     color: 'bg-orange-500',
+    slot_id: 2,
   },
   {
     book_id: 8,
@@ -94,6 +101,7 @@ const books = [
       'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
     library_id: 2,
     color: 'bg-gray-500',
+    slot_id: 3,
   },
   {
     book_id: 9,
@@ -106,6 +114,7 @@ const books = [
       'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
     library_id: 2,
     color: 'bg-blue-500',
+    slot_id: 4,
   },
   {
     book_id: 10,
@@ -118,6 +127,7 @@ const books = [
     cover_img_url:
       'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
     color: 'bg-green-500',
+    slot_id: 5,
   },
 ];
 
