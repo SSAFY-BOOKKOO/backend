@@ -13,6 +13,7 @@ const Input = forwardRef(
       isRequired,
       inputWidth = 'w-full',
       customClass,
+      inputClassName,
       ...props
     },
     ref
@@ -26,11 +27,11 @@ const Input = forwardRef(
     `;
 
     return (
-      <div>
+      <div className={inputClassName}>
         {labelText && (
           <label
             htmlFor={id}
-            className='block mb-2 text-sm font-medium text-gray-700'
+            className='block mb-2 text-base font-medium text-gray-700'
           >
             {labelText}
           </label>

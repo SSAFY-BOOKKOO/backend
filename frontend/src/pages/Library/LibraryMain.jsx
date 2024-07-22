@@ -4,12 +4,12 @@ import { MultiBackend, TouchTransition } from 'react-dnd-multi-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { useNavigate, useLocation } from 'react-router-dom';
-import MemberProfile from '../components/Library/Main/MemberProfile';
-import LibraryModal from '../components/Library/Main/LibraryModal';
-import CreateLibraryModal from '../components/Library/Main/CreateLibraryModal';
-import LibraryOptions from '../components/Library/Main/LibraryOptions';
-import BookShelf from '../components/Library/Main/BookShelf';
-import { books as initialBooks } from '../mocks/BookData'; // 데이터를 가져옵니다
+import MemberProfile from '@components/Library/Main/MemberProfile';
+import LibraryModal from '@components/Library/Main/LibraryModal';
+import CreateLibraryModal from '@components/Library/Main/CreateLibraryModal';
+import LibraryOptions from '@components/Library/Main/LibraryOptions';
+import BookShelf from '@components/Library/Main/BookShelf';
+import { books as initialBooks } from '@mocks/BookData'; // 데이터를 가져옵니다
 
 const HTML5toTouch = {
   backends: [

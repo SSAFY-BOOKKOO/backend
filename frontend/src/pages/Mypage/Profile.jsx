@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import ProfileUpdate from '../components/MyPage/Profile/ProfileUpdate.jsx';
-import ProfileView from '../components/MyPage/Profile/ProfileVIew';
+import ProfileUpdate from '@components/MyPage/Profile/ProfileUpdate.jsx';
+import ProfileView from '@components/MyPage/Profile/ProfileVIew';
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Following from '../components/MyPage/Friend/Following.jsx';
-import Follower from '../components/MyPage/Friend/Follower.jsx';
+import Following from '@components/MyPage/Friend/Following.jsx';
+import Follower from '@components/MyPage/Friend/Follower.jsx';
 
 // dummy data: 사용자 정보
 const detailedUserData = [

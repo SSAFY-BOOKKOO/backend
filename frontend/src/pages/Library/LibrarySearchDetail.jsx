@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import WrapContainer from '../components/Layout/WrapContainer';
-import Button from '../components/@common/Button';
-import BookCreateModal from '../components/Library/BookCreate/BookCreateModal';
-import useModal from '../hooks/useModal';
-import { book } from '../mocks/BookData';
+import WrapContainer from '@components/Layout/WrapContainer';
+import Button from '@components/@common/Button';
+import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
+import useModal from '@hooks/useModal';
+import { book } from '@mocks/BookData';
 
 const LibrarySearchDetail = () => {
   const { isOpen, toggleModal } = useModal();
