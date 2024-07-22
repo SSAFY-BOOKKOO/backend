@@ -16,11 +16,11 @@ const Intro = () => {
           <img
             src={DecoIcon}
             alt='deco'
-            className='absolute top-0 right-0 z-0 opacity-70'
+            className='absolute top-0 right-0 -z-0 opacity-65'
           />
           <Link
             to='/login'
-            className='inline-block text-black font-medium mt-2 mb-6'
+            className='inline-block text-black font-medium mt-3 mb-5'
           >
             꾸미러 가기 →
           </Link>

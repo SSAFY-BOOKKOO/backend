@@ -52,8 +52,8 @@ const Login = () => {
   return (
     <div className='h-screen flex items-center justify-center'>
       <WrapContainer className='flex justify-center items-center'>
-        <div className='flex justify-center  items-center '>
-          <div>
+        <div className='flex justify-center items-center w-11/12 max-w-md'>
+          <div className='w-full px-6'>
             <h2 className='text-center text-3xl font-bold mb-8'>북꾸북꾸</h2>
             <form>
               <Input

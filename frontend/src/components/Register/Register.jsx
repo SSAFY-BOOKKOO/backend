@@ -83,9 +83,7 @@ const Register = () => {
     <WrapContainer>
       <div className='flex flex-col justify-center items-center min-h-screen px-4 w-full'>
         <div className='w-full max-w-md'>
-          <h2 className='text-2xl font-bold mb-4 text-center px-44'>
-            회원가입
-          </h2>
+          <h2 className='text-2xl font-bold mb-4 text-center'>회원가입</h2>
           <form onSubmit={handleSubmit}>
             {step === 1 && (
               <>
