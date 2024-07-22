@@ -1,5 +1,6 @@
-package com.ssafy.bookkoo.memberservice.service;
+package com.ssafy.bookkoo.memberservice.service.Impl;
 
+import com.ssafy.bookkoo.memberservice.service.MailSendService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.util.List;
