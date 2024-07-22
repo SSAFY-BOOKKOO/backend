@@ -16,7 +16,7 @@ public class AladinAPIHandler {
 
     private static String apiKey;
 
-    @Value("${aladin.api.key}")
+    @Value("ttbwintiger981754003")
     public void setApiKey(String apiKey) {
         AladinAPIHandler.apiKey = apiKey;
     }
