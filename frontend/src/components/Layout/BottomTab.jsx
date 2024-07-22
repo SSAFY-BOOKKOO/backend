@@ -15,8 +15,7 @@ const navItems = [
 
 const BottomTab = () => {
   return (
-    <div className='flex justify-around items-center py-2 bg-white border-t fixed bottom-0 w-full max-w-[480px]'>
-      {' '}
+    <nav className='flex justify-around items-center py-2 bg-white border-t w-full shadow-md'>
       {navItems.map((item, index) => (
         <NavLink
           key={index}
@@ -28,7 +27,7 @@ const BottomTab = () => {
           <span className='text-xs'>{item.label}</span>
         </NavLink>
       ))}
-    </div>
+    </nav>
   );
 };
 

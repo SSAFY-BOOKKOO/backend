@@ -7,7 +7,9 @@ const App = () => {
   return (
     <Main>
       <Header />
-      <Outlet />
+      <div className='flex-1 overflow-y-auto'>
+        <Outlet />
+      </div>
       <BottomTab />
     </Main>
   );
