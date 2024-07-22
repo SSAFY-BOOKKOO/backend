@@ -17,7 +17,7 @@ const Intro = () => {
           className='absolute top-0 right-0 z-0 opacity-70'
         />
         <Link
-          to='/register'
+          to='/login'
           className='inline-block text-black font-medium mt-2 mb-6'
         >
           꾸미러 가기 →
