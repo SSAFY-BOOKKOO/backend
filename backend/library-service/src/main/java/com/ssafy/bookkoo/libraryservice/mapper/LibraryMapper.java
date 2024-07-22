@@ -8,19 +8,22 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface LibraryMapper {
+
     @Mapping(target = "id", ignore = true)
-    void updateLibraryFromDto(RequestUpdateLibraryDto dto, @MappingTarget Library entity);
+    void updateLibraryFromDto(
+        RequestUpdateLibraryDto dto,
+        @MappingTarget Library entity
+    );
 
     // DTO -> entity
     Library toEntity(RequestCreateLibraryDto dto);
 
     // entity -> DTO
     ResponseLibraryDto toResponseDto(Library library);
-    
+
     // list<entity> -> list<dto>
     List<ResponseLibraryDto> toResponseDtoList(List<Library> libraries);
 }
