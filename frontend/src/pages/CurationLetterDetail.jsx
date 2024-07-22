@@ -27,7 +27,7 @@ const CurationLetterDetail = () => {
   };
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-[calc(100vh-56px)] p-4 bg-gray-100 scrollbar-none'>
+    <div className='flex flex-col items-center justify-center min-h-[calc(100vh-121px)] p-4 bg-gray-100 scrollbar-none'>
       <div className='relative bg-white rounded-lg shadow-lg w-full max-w-md mx-auto mt-32 scrollbar-none'>
         <div className='absolute -top-28 w-full flex justify-center'>
           <img
