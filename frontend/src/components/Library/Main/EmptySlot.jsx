@@ -8,14 +8,14 @@ const EmptySlot = ({ index, moveBook }) => {
     accept: ItemType,
     drop: draggedItem => {
       moveBook(draggedItem.originalIndex, index);
-      draggedItem.originalIndex = index; // Update the dragged item's originalIndex
+      draggedItem.originalIndex = index;
     },
   });
 
   return (
     <div
       ref={dropRef}
-      className='bg-transparent m-1 p-1 w-20 h-48 sm:w-24 sm:h-64 text-center rounded-lg flex items-center justify-center border-dashed border-2 border-gray-300'
+      className='m-1 p-1 w-20 h-48 sm:w-24 sm:h-64 text-center rounded-lg flex items-center justify-center'
     />
   );
 };

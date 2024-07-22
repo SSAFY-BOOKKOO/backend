@@ -1,0 +1,11 @@
+.shelf-bg {
+  background-color: #a27045; /* 업로드된 이미지에서 추출한 색상 */
+  border-radius: 12px; /* 코너 라운딩 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+}
+
+.shelf-container {
+  background-color: #d2a679; /* 모서리와 책장 배경의 색상을 다르게 설정 */
+  border-radius: 20px; /* 모서리 라운딩 */
+  padding: 10px;
+}
