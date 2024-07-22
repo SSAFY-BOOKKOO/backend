@@ -1,8 +1,8 @@
+import React from 'react';
+
 const Main = ({ children }) => (
-  <div className='min-h-screen bg-white shadow-md max-w-[480px] mx-auto md:h-screen md:overflow-y-auto md:bg-gray-100'>
-    <div className='md:w-full md:h-full md:bg-white md:shadow-md'>
-      {children}
-    </div>
+  <div className='flex flex-col h-screen bg-white shadow-md max-w-md mx-auto'>
+    {children}
   </div>
 );
 

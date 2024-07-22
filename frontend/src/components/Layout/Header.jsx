@@ -1,12 +1,12 @@
 // Header.jsx
-import BackButton from "../@common/Back";
+import BackButton from '../@common/Back';
 
-const Header = ({ }) => {
+const Header = ({}) => {
   return (
-    <div className="flex items-center p-3">
+    <header className='flex items-center p-3 w-full'>
       <BackButton />
       {/* <h1 className="ml-4 text-xl font-medium">{title}</h1> */}
-    </div>
+    </header>
   );
 };
 

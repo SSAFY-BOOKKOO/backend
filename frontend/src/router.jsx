@@ -1,5 +1,5 @@
 import React from 'react';
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import App from './App.jsx';
 import LibraryHome from './pages/LibraryHome.jsx';
 import LibraryDetail from './pages/LibraryDetail.jsx';
@@ -14,66 +14,46 @@ import Login from './pages/Login.jsx';
 import CurationChatBot from './pages/CurationChatBot.jsx';
 import CurationLetterCreate from './pages/CurationLetterCreate.jsx';
 import CurationLetterDetail from './pages/CurationLetterDetail.jsx';
+import BookTalk from './pages/BookTalk.jsx';
+import Intro from './pages/Intro.jsx';
+import PrivateRoute from '@/components/@common/PrivateRoute';
+
+const isAuthenticated = true; // 로그인 상태를 확인하는 로직 추가 필요
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
     children: [
+      // 인증이 필요한 페이지
       {
-        path: '/',
-        element: <LibraryHome />,
-      },
-      {
-        path: '/detail/:id',
-        element: <LibraryDetail />,
-      },
-      {
-        path: 'library',
-        element: <LibraryMain />,
-      },
-      {
-        path: 'register',
-        element: <Register />,
-      },
-      {
-        path: 'library/search',
-        element: <LibrarySearch />,
-      },
-      {
-        path: 'library/search/:bookId',
-        element: <LibrarySearchDetail />,
-      },
-      {
-        path: 'curation/receive',
-        element: <CurationReceive />,
-      },
-      {
-        path: 'curation/send',
-        element: <CurationSend />,
-      },
-      {
-        path: 'curation/store',
-        element: <CurationStore />,
-      },
-      {
-        path: 'curation/chatbot',
-        element: <CurationChatBot />,
-      },
-      {
-        path: 'curation/letter-create',
-        element: <CurationLetterCreate />,
-      },
-      {
-        path: '/curation/letter/:id',
-        element: <CurationLetterDetail />,
+        element: (
+          <PrivateRoute
+            userAuthentication={true}
+            isAuthenticated={isAuthenticated}
+          />
+        ),
+        children: [
+          { path: '/', element: <LibraryHome /> },
+          { path: '/detail/:id', element: <LibraryDetail /> },
+          { path: 'library', element: <LibraryMain /> },
+          { path: 'library/search', element: <LibrarySearch /> },
+          { path: 'library/search/:bookId', element: <LibrarySearchDetail /> },
+          { path: 'curation/receive', element: <CurationReceive /> },
+          { path: 'curation/send', element: <CurationSend /> },
+          { path: 'curation/store', element: <CurationStore /> },
+          { path: 'curation/chatbot', element: <CurationChatBot /> },
+          { path: 'curation/letter-create', element: <CurationLetterCreate /> },
+          { path: '/curation/letter/:id', element: <CurationLetterDetail /> },
+          { path: '/booktalk', element: <BookTalk /> },
+        ],
       },
     ],
   },
-  {
-    path: '/login',
-    element: <Login />,
-  },
+  { path: 'register', element: <Register /> },
+  { path: 'login', element: <Login /> },
+  { path: 'intro', element: <Intro /> },
+  { path: '*', element: <Navigate to='/' /> },
 ]);
 
 export default router;
