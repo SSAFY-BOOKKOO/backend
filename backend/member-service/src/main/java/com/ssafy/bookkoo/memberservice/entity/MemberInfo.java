@@ -10,12 +10,11 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends BaseEntity {
+public class MemberInfo extends BaseEntity {
 
     @Id
     @Column(name = "id")
@@ -25,23 +24,27 @@ public class Member extends BaseEntity {
     @Column(name = "member_id")
     private String memberId;
 
-    @Column(name = "email")
-    private String email;
+    @Column(name = "nick_name")
+    private String nickName;
 
-    @Setter
-    @Column(name = "password")
-    private String password;
+    @Column(name = "year")
+    private Integer year;
 
-    @Column(name = "is_social")
-    private Boolean isSocial;
+    //TODO: 카테고리 목록 후에 추가
+    //@Column(name = "categories")
+    //private Long categories;
 
+    @Column(name = "introduction")
+    private String introduction;
 
     @Builder
-    public Member(Long id, String memberId, String email, String password, Boolean isSocial) {
+    public MemberInfo(Long id, String memberId, String nickName, Integer year, String categories,
+        String introduction) {
         this.id = id;
         this.memberId = memberId;
-        this.email = email;
-        this.password = password;
-        this.isSocial = isSocial;
+        this.nickName = nickName;
+        this.year = year;
+//        this.categories = categories;
+        this.introduction = introduction;
     }
 }
