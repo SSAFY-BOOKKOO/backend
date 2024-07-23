@@ -84,13 +84,14 @@ public class LibraryServiceImpl implements LibraryService {
     @Transactional
     public Object addBookToLibrary(
         Long libraryId,
-        RequestBookDto book
+        RequestBookDto bookDto,
+        Long memberId
     ) {
         Library library = findLibraryByIdWithException(libraryId);
 
-        // 1. 해당 책이 DB에 있는지 확인
+        // 1. 해당 책이 DB에 있는지 확인 후 없으면 생성하는 api 요청하기
 
-        // 없으면 생성하는 API 요청하기
+        // 2. 해당 책에 대한 id 값을 받아서 책-서재 매퍼에 추가해 책 등록하기
 
         return null;
     }

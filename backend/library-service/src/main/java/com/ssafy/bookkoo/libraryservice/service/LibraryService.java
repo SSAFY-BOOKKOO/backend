@@ -23,7 +23,8 @@ public interface LibraryService {
 
     Object addBookToLibrary(
         Long libraryId,
-        RequestBookDto book
+        RequestBookDto bookDto,
+        Long memberId
     );
 
     Integer countBooksInLibrary(Long memberId);
