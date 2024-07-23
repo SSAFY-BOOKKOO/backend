@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "book-service", url = "http://127.0.0.1:8002/books")
+@FeignClient(name = "book-service", url = "http://127.0.0.1:8082/books")
 public interface BookServiceClient {
 
     @PostMapping
@@ -21,6 +21,9 @@ public interface BookServiceClient {
 
     @GetMapping("/isbn/{isbn}")
     ResponseBookDto getBookByIsbn(@PathVariable("isbn") String isbn);
+
+    @PostMapping("/isbn")
+    ResponseBookDto getOrCreateBookByBookData(@RequestBody RequestBookDto requestBookDto);
 
     @PostMapping("/check-books")
     List<ResponseCheckBooksByIsbnDto> checkBooksByIsbn(@RequestBody String[] isbnList);
