@@ -33,4 +33,7 @@ public interface BookService {
 
     @Transactional
     List<ResponseCheckBooksByIsbnDto> checkBooksByIsbn(String[] isbnList);
+
+    @Transactional
+    ResponseBookDto getOrCreateBookByBookData(RequestCreateBookDto bookDto);
 }
