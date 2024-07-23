@@ -10,12 +10,12 @@ import lombok.RequiredArgsConstructor;
 public class MemberServiceWebClient {
 
     private final WebClient.Builder webClientBuilder;
+    private final String BASE_URL = "http://localhost:8081/members";
 
     public Mono<Long> getMemberId(String memberId) {
         return webClientBuilder.build()
                                .get()
-                               //TODO:member-service로 요청을 못보내는데 이를 해결할 방법을 알아봐야함.
-                               .uri("http://localhost:8081/members/info/{memberId}", memberId)
+                               .uri(BASE_URL + "/info/{memberId}", memberId)
                                .retrieve()
                                .bodyToMono(Long.class);
     }
