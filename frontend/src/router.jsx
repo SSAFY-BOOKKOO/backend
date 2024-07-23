@@ -23,6 +23,7 @@ import BookTalk from './pages/BookTalk/BookTalk.jsx';
 import Intro from './pages/Member/Intro.jsx';
 import PrivateRoute from '@/components/@common/PrivateRoute';
 import CurationLetterSend from './pages/Curation/CurationLetterSend.jsx';
+import Quote from './pages/Mypage/Quote.jsx';
 
 const isAuthenticated = true; // 로그인 상태를 확인하는 로직 추가 필요
 
@@ -69,6 +70,7 @@ const router = createBrowserRouter([
           { path: 'mypage/friend', element: <Friend /> },
           { path: 'mypage/statistics', element: <Statistics /> },
           { path: 'mypage/profile', element: <Profile /> },
+          { path: 'mypage/quote', element: <Quote /> },
           { path: 'mypage', element: <MyPage /> },
 
           { path: 'notification', element: <Notification /> },

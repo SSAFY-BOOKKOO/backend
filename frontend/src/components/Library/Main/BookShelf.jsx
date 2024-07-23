@@ -1,4 +1,3 @@
-// BookShelf.js
 import React from 'react';
 import Book from './Book';
 import EmptySlot from './EmptySlot';
