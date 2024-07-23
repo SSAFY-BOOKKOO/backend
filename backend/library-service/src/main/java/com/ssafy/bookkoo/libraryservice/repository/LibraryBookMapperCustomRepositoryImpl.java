@@ -4,6 +4,7 @@ package com.ssafy.bookkoo.libraryservice.repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.bookkoo.libraryservice.entity.QLibrary;
 import com.ssafy.bookkoo.libraryservice.entity.QLibraryBookMapper;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -25,5 +26,14 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
                                  .fetchOne();
         // null 처리
         return count != null ? count.intValue() : 0;
+    }
+
+    @Override
+    public List<Long> findBookIdsByLibraryId(Long libraryId) {
+        QLibraryBookMapper libraryBookMapper = QLibraryBookMapper.libraryBookMapper;
+        return queryFactory.select(libraryBookMapper.id.bookId)
+                           .from(libraryBookMapper)
+                           .where(libraryBookMapper.library.id.eq(libraryId))
+                           .fetch();
     }
 }

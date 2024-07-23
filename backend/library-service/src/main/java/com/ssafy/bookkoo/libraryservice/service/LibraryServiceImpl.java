@@ -3,6 +3,7 @@ package com.ssafy.bookkoo.libraryservice.service;
 import com.ssafy.bookkoo.libraryservice.client.BookServiceClient;
 import com.ssafy.bookkoo.libraryservice.dto.RequestCreateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestLibraryBookMapperCreateDto;
+import com.ssafy.bookkoo.libraryservice.dto.RequestSearchBooksFilterDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestUpdateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseLibraryDto;
@@ -19,6 +20,7 @@ import com.ssafy.bookkoo.libraryservice.repository.LibraryRepository;
 import com.ssafy.bookkoo.libraryservice.repository.LibraryStyleRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -67,9 +69,39 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     @Transactional
     public ResponseLibraryDto getLibrary(Long libraryId) {
+        // 라이브러리 ID로 라이브러리를 찾고 예외를 처리합니다.
         Library library = findLibraryByIdWithException(libraryId);
+        // 라이브러리 엔티티를 DTO로 변환합니다.
+        ResponseLibraryDto libraryDto = libraryMapper.toResponseDto(library);
 
-        return libraryMapper.toResponseDto(library);
+        // 라이브러리 ID로 연결된 책 ID 목록을 가져옵니다.
+        List<Long> bookIds = libraryBookMapperRepository.findBookIdsByLibraryId(libraryId);
+        // 책 ID 목록을 String 목록으로 변환합니다.
+        List<String> stringBookIds = bookIds.stream()
+                                            .map(String::valueOf)
+                                            .collect(
+                                                Collectors.toList());
+        // 필터 DTO를 생성합니다.
+        RequestSearchBooksFilterDto filterDto = RequestSearchBooksFilterDto.builder()
+                                                                           .field("id")
+                                                                           .value(stringBookIds)
+                                                                           .limit(9)
+                                                                           .offset(0)
+                                                                           .build();
+        // BookServiceClient를 통해 책 정보를 가져옵니다.
+        List<ResponseBookDto> books = bookServiceClient.getBooksByCondition(
+            filterDto.field(), filterDto.value(),
+            filterDto.limit(), filterDto.offset());
+
+        // 책 목록을 포함한 새로운 라이브러리 DTO를 생성합니다.
+        libraryDto = ResponseLibraryDto.builder().
+                                       name(libraryDto.name())
+                                       .libraryOrder(libraryDto.libraryOrder())
+                                       .libraryStyleDto(libraryDto.libraryStyleDto())
+                                       .books(books)
+                                       .build();
+
+        return libraryDto;
     }
 
     @Override
