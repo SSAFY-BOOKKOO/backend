@@ -1,4 +1,4 @@
-package com.ssafy.bookkoo.bookservice.service;
+package com.ssafy.bookkoo.bookservice.service.book;
 
 import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
 import com.ssafy.bookkoo.bookservice.dto.RequestSearchBooksFilterDto;
@@ -58,7 +58,12 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     @Transactional
-    public List<ResponseBookDto> getBooks(String type, String content, int offset, int limit) {
+    public List<ResponseBookDto> getBooks(
+        String type,
+        String content,
+        int offset,
+        int limit
+    ) {
         List<Book> books = bookRepository.findByConditions(type, content, offset, limit);
 
         return bookMapper.toResponseDtoList(books);
