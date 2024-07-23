@@ -2,6 +2,7 @@ package com.ssafy.bookkoo.bookservice.service;
 
 import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
+import com.ssafy.bookkoo.bookservice.dto.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
 import com.ssafy.bookkoo.bookservice.mapper.BookMapper;
@@ -12,9 +13,10 @@ import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinAPI;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -76,6 +78,19 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
+     * 책 단일 조회 API by isbn
+     *
+     * @param isbn : isbn
+     * @return 책 데이터
+     */
+    @Override
+    public ResponseBookDto getBookByIsbn(String isbn) {
+        Book book = bookRepository.findByIsbn(isbn);
+
+        return bookMapper.toResponseDto(book);
+    }
+
+    /**
      * 책 삭제 API
      *
      * @param bookId : 삭제할 책 ID
@@ -92,8 +107,25 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public ResponseAladinAPI searchBooksFromAladin(AladinAPISearchParams params)
-        throws IOException, InterruptedException, URISyntaxException, ParseException {
+        throws IOException, InterruptedException, URISyntaxException {
         return aladinAPIHandler.searchBooksFromAladin(params);
+    }
+
+    /**
+     * isbn 리스트를 받아서 각 isbn에 해당하는 book이 db에 있는지 확인 후 반환
+     *
+     * @param isbnList : isbn 리스트
+     * @return List<ResponseCheckBooksByIsbnDto>
+     */
+    @Override
+    public List<ResponseCheckBooksByIsbnDto> checkBooksByIsbn(String[] isbnList) {
+        return Arrays.stream(isbnList)
+                     .map(isbn -> ResponseCheckBooksByIsbnDto.builder()
+                                                             .isbn(isbn)
+                                                             .isInBook(
+                                                                 bookRepository.existsByIsbn(isbn))
+                                                             .build())
+                     .collect(Collectors.toList());
     }
 
     private Book findBookByIdWithException(Long bookId) {

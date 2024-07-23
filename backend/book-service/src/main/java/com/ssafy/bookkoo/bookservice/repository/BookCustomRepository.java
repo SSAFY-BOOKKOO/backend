@@ -6,4 +6,6 @@ import java.util.List;
 public interface BookCustomRepository {
 
     List<Book> findByConditions(String type, String content, int offset, int limit);
+
+    Book findByIsbn(String isbn);
 }
