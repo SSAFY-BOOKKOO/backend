@@ -18,7 +18,7 @@ import lombok.Setter;
 public class LibraryStyle {
 
     @Id
-    private Long libraryId;
+    private Long id; // 실제론 안 쓰인다네요
 
     @OneToOne
     @MapsId
@@ -35,7 +35,6 @@ public class LibraryStyle {
         String libraryColor
     ) {
         this.library = library;
-        this.libraryId = library.getId();
         this.libraryColor = libraryColor;
     }
 }
