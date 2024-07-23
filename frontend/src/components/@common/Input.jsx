@@ -21,7 +21,7 @@ const Input = forwardRef(
     const inputClasses = `
       ${inputWidth} px-3 py-2 bg-white border border-gray-300
       text-gray-700 text-sm placeholder-gray-400 
-      focus:outline-none focus:ring-1 focus:ring-blue-200 focus:border-transparent rounded-lg h-fit 
+      focus:outline-none focus:ring-1 focus:ring-green-200 focus:border-transparent rounded-lg h-fit 
       ${readOnly ? 'bg-gray-100' : ''}
       ${isValid === false ? 'border-red-500' : ''} ${customClass}
     `;
