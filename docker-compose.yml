@@ -1,0 +1,225 @@
+services:
+  book-db:
+    image: postgres:latest
+    container_name: book-postgres
+    environment:
+      POSTGRES_USER: magumagu
+      POSTGRES_PASSWORD: magumagu
+      POSTGRES_DB: bookkoo
+    ports:
+      - "5433:5432"
+    volumes:
+      - book_postgres_data:/var/lib/postgresql/data
+    networks:
+      - eureka-net
+
+  curation-db:
+    image: postgres:latest
+    container_name: curation-postgres
+    environment:
+      POSTGRES_USER: magumagu
+      POSTGRES_PASSWORD: magumagu
+      POSTGRES_DB: bookkoo
+    ports:
+      - "5435:5432"
+    volumes:
+      - curation_postgres_data:/var/lib/postgresql/data
+    networks:
+      - eureka-net
+
+  library-db:
+    image: postgres:latest
+    container_name: library-postgres
+    environment:
+      POSTGRES_USER: magumagu
+      POSTGRES_PASSWORD: magumagu
+      POSTGRES_DB: bookkoo
+    ports:
+      - "5434:5432"
+    volumes:
+      - library_postgres_data:/var/lib/postgresql/data
+    networks:
+      - eureka-net
+
+  member-db:
+    image: postgres:latest
+    container_name: member-postgres
+    environment:
+      POSTGRES_USER: magumagu
+      POSTGRES_PASSWORD: magumagu
+      POSTGRES_DB: bookkoo
+    ports:
+      - "5432:5432"
+    volumes:
+      - member_postgres_data:/var/lib/postgresql/data
+    networks:
+      - eureka-net
+
+  auth-db:
+    image: postgres:latest
+    container_name: auth-postgres
+    environment:
+      POSTGRES_USER: magumagu
+      POSTGRES_PASSWORD: magumagu
+      POSTGRES_DB: bookkoo
+    ports:
+      - "5436:5432"
+    volumes:
+      - auth_postgres_data:/var/lib/postgresql/data
+    networks:
+      - eureka-net
+
+  # 레디스 추가
+  member-redis:
+    image: redis:latest
+    container_name: member-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - member_redis_data:/data
+    networks:
+      - eureka-net
+
+  auth-redis:
+    image: redis:latest
+    container_name: auth-redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - auth_redis_data:/data
+    networks:
+      - eureka-net
+
+  eureka-server:
+    container_name: eureka-server
+    build:
+      context: ./backend/eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - eureka-net
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    restart: always
+    volumes:
+      - ./eureka-server:/app/
+
+  book-service:
+    container_name: book-service
+    build:
+      context: ./backend/book-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - eureka-net
+    restart: always
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://book-db:5432/bookkoo
+      - SPRING_DATASOURCE_USERNAME=magumagu
+      - SPRING_DATASOURCE_PASSWORD=magumagu
+    volumes:
+      - ./book-service:/app/
+
+  bookkoo-gateway:
+    container_name: bookkoo-gateway
+    build:
+      context: ./backend/bookkoo-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      book-service:
+        condition: service_started
+      curation-service:
+        condition: service_started
+      library-service:
+        condition: service_started
+      member-service:
+        condition: service_started
+    networks:
+      - eureka-net
+    restart: always
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    volumes:
+      - ./bookkoo-gateway:/app/
+
+  curation-service:
+    container_name: curation-service
+    build:
+      context: ./backend/curation-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - eureka-net
+    restart: always
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://curation-db:5432/bookkoo
+      - SPRING_DATASOURCE_USERNAME=magumagu
+      - SPRING_DATASOURCE_PASSWORD=magumagu
+    volumes:
+      - ./curation-service:/app/
+
+  library-service:
+    container_name: library-service
+    build:
+      context: ./backend/library-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - eureka-net
+    restart: always
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://library-db:5432/bookkoo
+      - SPRING_DATASOURCE_USERNAME=magumagu
+      - SPRING_DATASOURCE_PASSWORD=magumagu
+    volumes:
+      - ./library-service:/app/
+
+  member-service:
+    container_name: member-service
+    build:
+      context: ./backend/member-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - eureka-net
+    restart: always
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://member-db:5432/bookkoo
+      - SPRING_DATASOURCE_USERNAME=magumagu
+      - SPRING_DATASOURCE_PASSWORD=magumagu
+    volumes:
+      - ./member-service:/app/
+
+networks:
+  eureka-net:
+
+volumes:
+  book_postgres_data:
+  curation_postgres_data:
+  library_postgres_data:
+  member_postgres_data:
+  auth_postgres_data:
+  member_redis_data:
+  auth_redis_data:
