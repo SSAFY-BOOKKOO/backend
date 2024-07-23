@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import RegisterInput from './RegisterInput'; // 수정된 부분
+import RegisterInput from './RegisterInput';
 import Button from '../@common/Button';
 import Main from '../Layout/Main';
 

@@ -1,4 +1,3 @@
-// Book.js
 import React from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 

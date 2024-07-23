@@ -9,7 +9,7 @@ const QuoteDetailModal = ({
 }) => {
   return (
     <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-20'>
-      <div className='bg-white rounded-lg shadow-lg w-full max-w-3xl relative'>
+      <div className='bg-white rounded-lg shadow-lg w-full max-w-3xl relative mx-2'>
         <img
           src={backgroundImage}
           alt='Background'
