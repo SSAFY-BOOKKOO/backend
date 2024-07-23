@@ -26,7 +26,12 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
      * @return List<Book>
      */
     @Override
-    public List<Book> findByConditions(String type, String content, int offset, int limit) {
+    public List<Book> findByConditions(
+        String type,
+        String content,
+        int offset,
+        int limit
+    ) {
         QBook book = QBook.book;
         BooleanExpression predicate = book.isNotNull();
 
@@ -62,9 +67,11 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
 
         PathBuilder<Book> entityPath = new PathBuilder<>(Book.class, "book");
 
-        BooleanExpression inExpression = entityPath.getString(dto.field())
-                                                   .in(dto.value());
-        predicate = predicate.and(inExpression);
+        if (dto.field() != null && dto.value() != null) {
+            BooleanExpression inExpression = entityPath.getString(dto.field())
+                                                       .in(dto.value());
+            predicate = predicate.and(inExpression);
+        }
 
         return queryFactory.selectFrom(book)
                            .where(predicate)
