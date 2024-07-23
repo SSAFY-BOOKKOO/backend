@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.bookservice.service;
 
 import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
+import com.ssafy.bookkoo.bookservice.dto.RequestSearchBooksFilterDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPISearchParams;
@@ -36,4 +37,7 @@ public interface BookService {
 
     @Transactional
     ResponseBookDto getOrCreateBookByBookData(RequestCreateBookDto bookDto);
+
+    @Transactional
+    List<ResponseBookDto> getBooksByCondition(RequestSearchBooksFilterDto filterDto);
 }

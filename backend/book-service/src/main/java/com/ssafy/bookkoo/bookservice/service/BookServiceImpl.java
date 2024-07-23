@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.bookservice.service;
 
 import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
+import com.ssafy.bookkoo.bookservice.dto.RequestSearchBooksFilterDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
@@ -148,6 +149,19 @@ public class BookServiceImpl implements BookService {
 
         // 없으면 생성
         return createBook(bookDto);
+    }
+
+    /**
+     * 동적 쿼리 생성을 위한 메서드 확장성있게 다시 고칠 필요 있음
+     *
+     * @param filterDto : RequestSearchBooksFilterDto
+     * @return List ResponseBookDto
+     */
+    @Override
+    public List<ResponseBookDto> getBooksByCondition(RequestSearchBooksFilterDto filterDto) {
+        List<Book> books = bookRepository.findByConditions(filterDto);
+
+        return bookMapper.toResponseDtoList(books);
     }
 
     private Book findBookByIdWithException(Long bookId) {

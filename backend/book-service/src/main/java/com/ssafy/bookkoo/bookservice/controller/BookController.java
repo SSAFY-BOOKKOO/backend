@@ -1,7 +1,7 @@
 package com.ssafy.bookkoo.bookservice.controller;
 
 import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
-import com.ssafy.bookkoo.bookservice.dto.RequestSearchBookFilterDto;
+import com.ssafy.bookkoo.bookservice.dto.RequestSearchBooksFilterDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.service.BookService;
@@ -49,11 +49,10 @@ public class BookController {
 
     @GetMapping
     @Operation(summary = "책 목록 조회", description = "책 조회(필터링 포함)시 사용하는 API")
-    public ResponseEntity<List<ResponseBookDto>> getBooks(
-        @ModelAttribute RequestSearchBookFilterDto filterDto
+    public ResponseEntity<List<ResponseBookDto>> getBooksByCondition(
+        @ModelAttribute RequestSearchBooksFilterDto filterDto
     ) {
-        List<ResponseBookDto> books = bookService.getBooks(filterDto.type(), filterDto.content(),
-            filterDto.offset(), filterDto.limit());
+        List<ResponseBookDto> books = bookService.getBooksByCondition(filterDto);
         return ResponseEntity.ok()
                              .body(books);
     }
