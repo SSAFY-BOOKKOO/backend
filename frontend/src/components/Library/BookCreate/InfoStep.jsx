@@ -46,7 +46,7 @@ const InfoStep = () => {
           </>
         )}
       </div>
-      {bookData.status !== 'want' && (
+      {bookData.status === 'read' && (
         <>
           <h2 className='mb-3 text-lg'>별점</h2>
           <StarRating
