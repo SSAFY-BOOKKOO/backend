@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/curation")
+@RequestMapping("/curations")
 @RequiredArgsConstructor
 public class CurationController {
 
