@@ -29,7 +29,7 @@ public class MemberInfoController {
         return ResponseEntity.ok(memberInfo);
     }
 
-    @PostMapping("/update/password")
+    @PostMapping("/password")
     public ResponseEntity<HttpStatus> updatePassword(
         @Valid @RequestBody RequestUpdatePasswordDto requestUpdatePasswordDto
     ) {
