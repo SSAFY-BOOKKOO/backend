@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ChatBubble from '@components/Curation/ChatBubble';
+import ChatBubble from '@components/@common/ChatBubble';
 import Input from '@components/@common/Input';
 import Button from '@components/@common/Button';
 
@@ -47,7 +47,7 @@ const CurationChatBot = () => {
   };
 
   return (
-    <div className='flex flex-col h-[calc(100vh-60px)] bg-gray-100'>
+    <div className='flex flex-col min-h-[calc(100vh-121px)] bg-gray-100'>
       <div className='flex-1 overflow-y-auto p-4 scrollbar-none'>
         {messages.map((message, index) => (
           <ChatBubble
@@ -59,8 +59,11 @@ const CurationChatBot = () => {
         ))}
         <div ref={messagesEndRef} />
       </div>
-      <form onSubmit={handleSendMessage} className='bg-white p-4'>
-        <div className='mb-4 w-full flex flex-row items-center justify-center'>
+      <form
+        onSubmit={handleSendMessage}
+        className='bg-white p-4 sticky bottom-0'
+      >
+        <div className='max-w-md w-full flex flex-row items-center justify-center mx-auto'>
           <div className='flex-grow'>
             <Input
               type='text'
@@ -70,10 +73,7 @@ const CurationChatBot = () => {
               customClass='border rounded-l-lg focus:outline-none'
             />
           </div>
-          <Button
-            type='submit'
-            className='ml-2 bg-blue-500 text-white  focus:bg-blue-500'
-          >
+          <Button type='submit' className='ml-2'>
             등록
           </Button>
         </div>
