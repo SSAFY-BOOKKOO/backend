@@ -11,7 +11,7 @@ const CreateLibraryModal = ({
 
   return (
     <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-20'>
-      <div className='bg-blue-100 p-6 rounded-lg shadow-lg'>
+      <div className='bg-pink-100 p-6 rounded-lg shadow-lg'>
         <h2 className='text-xl font-bold mb-4'>새 서재 생성</h2>
         <input
           type='text'
@@ -23,7 +23,7 @@ const CreateLibraryModal = ({
         <div className='flex justify-end'>
           <button
             onClick={createLibrary}
-            className='bg-green-500 text-white p-2 rounded-lg mr-2'
+            className='bg-green-400 text-white p-2 rounded-lg mr-2'
           >
             확인
           </button>

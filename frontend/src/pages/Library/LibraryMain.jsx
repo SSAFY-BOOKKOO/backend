@@ -9,7 +9,7 @@ import LibraryModal from '@components/Library/Main/LibraryModal';
 import CreateLibraryModal from '@components/Library/Main/CreateLibraryModal';
 import LibraryOptions from '@components/Library/Main/LibraryOptions';
 import BookShelf from '@components/Library/Main/BookShelf';
-import { books as initialBooks } from '@mocks/BookData'; // 데이터를 가져옵니다
+import { books as initialBooks } from '@mocks/BookData';
 
 const HTML5toTouch = {
   backends: [
@@ -70,12 +70,32 @@ const LibraryMain = () => {
   }, [location.state]);
 
   const moveBook = (fromIndex, toIndex) => {
-    const newList = [...libraries[activeLibrary].books];
-    const [movedBook] = newList.splice(fromIndex, 1);
-    newList.splice(toIndex, 0, movedBook);
-    setLibraries(prev => {
-      const newLibraries = [...prev];
-      newLibraries[activeLibrary].books = newList;
+    setLibraries(prevLibraries => {
+      const newLibraries = prevLibraries.map(library => {
+        if (library.id === libraries[activeLibrary].id) {
+          const newBooks = [...library.books];
+          const movedBook = newBooks.find(book => book.slot_id === fromIndex);
+
+          if (movedBook) {
+            movedBook.slot_id = toIndex;
+          }
+
+          newBooks.forEach(book => {
+            if (
+              book.slot_id === toIndex &&
+              book.book_id !== movedBook.book_id
+            ) {
+              book.slot_id = fromIndex;
+            }
+          });
+
+          return {
+            ...library,
+            books: newBooks,
+          };
+        }
+        return library;
+      });
       return newLibraries;
     });
   };
