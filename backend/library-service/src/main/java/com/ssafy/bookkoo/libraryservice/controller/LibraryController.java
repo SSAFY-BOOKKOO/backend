@@ -67,12 +67,11 @@ public class LibraryController {
     @Operation(summary = "서재에 책 등록", description = "서재에 책 등록하는 API")
     public ResponseEntity<Object> addBookToLibrary(
         @PathVariable Long libraryId,
-        @RequestBody RequestBookDto book
+        @RequestBody RequestBookDto book,
+        @RequestParam Long memberId // 임시
     ) {
-        // 1. 해당 책이 DB에 있는지 확인 후 없으면 생성하는 api 요청하기
-        // 2. 해당 책에 대한 id 값을 받아서 책-서재 매퍼에 추가해 책 등록하기
         return ResponseEntity.ok()
-                             .body(libraryService.addBookToLibrary(libraryId, book));
+                             .body(libraryService.addBookToLibrary(libraryId, book, memberId));
     }
 
     @GetMapping("/books/count")
