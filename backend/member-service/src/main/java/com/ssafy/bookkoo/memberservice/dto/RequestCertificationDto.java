@@ -6,7 +6,6 @@ import lombok.Builder;
 @Builder
 public record RequestCertificationDto(
     String email,
-    String certNum
-) {
+    String certNum) {
 
 }

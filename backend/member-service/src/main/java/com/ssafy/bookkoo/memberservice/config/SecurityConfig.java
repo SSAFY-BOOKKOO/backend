@@ -11,7 +11,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
 
     /**
@@ -21,37 +20,5 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    /**
-     * 특정 경로 시큐리티 필터 사용 X
-     * Swagger, Register,
-     * 시큐리티 자체 로그인 폼 사용 X
-     * 로그아웃 사용 X
-     * csrf 필터 사용 X
-     * @param httpSecurity
-     * @return
-     * @throws Exception
-     */
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.authorizeHttpRequests(auth -> auth.requestMatchers(
-                                                                  new AntPathRequestMatcher("/member/register"),
-                                                                  new AntPathRequestMatcher("/member/**"),
-                                                                  new AntPathRequestMatcher("/swagger-ui/**"),
-                                                                  new AntPathRequestMatcher("/v3/api-docs/**"),
-                                                                  new AntPathRequestMatcher("/api-docs/**"),
-                                                                  new AntPathRequestMatcher("/swagger-ui.html"),
-                                                                  new AntPathRequestMatcher("/swagger-ui/**"),
-                                                                  new AntPathRequestMatcher("/swagger-resources/**"),
-                                                                  new AntPathRequestMatcher("/webjars/**")
-                                                              )
-                                                              .permitAll()
-                                                              .anyRequest()
-                                                              .authenticated())
-                           .formLogin(AbstractHttpConfigurer::disable)
-                           .logout(AbstractHttpConfigurer::disable)
-                           .csrf(AbstractHttpConfigurer::disable)
-                           .build();
     }
 }

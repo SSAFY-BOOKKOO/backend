@@ -1,8 +1,9 @@
-package com.ssafy.bookkoo.memberservice.service;
+package com.ssafy.bookkoo.memberservice.service.Impl;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.SendEmailResult;
 import com.ssafy.bookkoo.memberservice.dto.AwsSesDto;
+import com.ssafy.bookkoo.memberservice.service.MailSendService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,11 +12,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AwsSesService {
+public class AwsSesService implements MailSendService {
 
     private final AmazonSimpleEmailService amazonSimpleEmailService;
 
-    public void send(String subject, String content, List<String> receivers) {
+    public boolean sendMail(String subject, String content, List<String> receivers) {
         try {
             final AwsSesDto awsSesDto = AwsSesDto.builder()
                                                  .to(receivers)
@@ -33,6 +34,7 @@ public class AwsSesService {
             e.printStackTrace();
         }
 
+        return true;
     }
 
 }
