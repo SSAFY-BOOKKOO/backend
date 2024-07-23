@@ -1,7 +1,8 @@
+// BookShelf.js
 import React from 'react';
 import Book from './Book';
 import EmptySlot from './EmptySlot';
-import './BookShelf.css'; // CSS 파일을 import
+import './BookShelf.css';
 
 const BookShelf = ({ books, moveBook, onBookClick }) => {
   const totalSlots = 21; // 3층에 7개의 슬롯
@@ -31,7 +32,7 @@ const BookShelf = ({ books, moveBook, onBookClick }) => {
   return (
     <div className='p-4 min-h-screen flex flex-col items-center'>
       <div className='shelf-container rounded-xl shadow-lg w-full max-w-full overflow-x-auto'>
-        {books.length > 0 ? (
+        {books.length >= 0 ? (
           <>
             {renderShelf(0, 7)} {/* 1층 */}
             {renderShelf(7, 14)} {/* 2층 */}

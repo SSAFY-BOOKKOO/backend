@@ -76,18 +76,19 @@ const LibraryMain = () => {
           const newBooks = [...library.books];
           const movedBook = newBooks.find(book => book.slot_id === fromIndex);
 
-          // Check if the destination slot is already occupied
-          const destinationBook = newBooks.find(
-            book => book.slot_id === toIndex
-          );
-          if (destinationBook) {
-            // If the destination slot is occupied, swap the books
-            destinationBook.slot_id = fromIndex;
-          }
-
           if (movedBook) {
             movedBook.slot_id = toIndex;
           }
+
+          newBooks.forEach(book => {
+            if (
+              book.slot_id === toIndex &&
+              book.book_id !== movedBook.book_id
+            ) {
+              book.slot_id = fromIndex;
+            }
+          });
+
           return {
             ...library,
             books: newBooks,
