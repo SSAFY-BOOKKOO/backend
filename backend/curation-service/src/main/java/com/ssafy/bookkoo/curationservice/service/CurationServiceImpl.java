@@ -123,23 +123,7 @@ public class CurationServiceImpl implements CurationService {
                                                             .map(
                                                                 CurationSend::getCuration)
                                                             .toList();
-        List<ResponseCurationDto> responseCurationDtoList = new ArrayList<>();
-        for (Curation curation : curationList) {
-            //TODO MemberService 에게 member 정보 받아오기 (작성자 닉네임)
-            ResponseMemberInfoDto writerInfo = feignMemberService.getMemberInfo(
-                "1d5e49b7-e4f5-4953-910f-84376c53325c");
-            // BookService 에게 book 정보 받아오기 (책 커버 이미지, 작가)
-            ResponseBookDto book = feignBookService.getBook(curation
-                .getBook());
-            responseCurationDtoList.add(ResponseCurationDto.builder()
-                                                           .writer(writerInfo.nickName())
-                                                           .curationId(curation.getId())
-                                                           .title(curation.getTitle())
-                                                           .coverImgUrl(
-                                                               book.coverImgUrl())
-                                                           .build());
-        }
-        return responseCurationDtoList;
+        return curationToDto(curationList);
     }
 
     /**
@@ -194,9 +178,28 @@ public class CurationServiceImpl implements CurationService {
      */
     @Override
     public List<ResponseCurationDto> getSentCurations(Long writer) {
-        List<Curation> curations = curationRepository.findCurationsByWriter(writer);
-        //TODO curation 정보 가공
-//        curations.stream().map().toList();
-        return null;
+        List<Curation> curationList = curationRepository.findCurationsByWriter(writer);
+
+        return curationToDto(curationList);
+    }
+
+    private List<ResponseCurationDto> curationToDto(List<Curation> curationList) {
+        List<ResponseCurationDto> responseCurationDtoList = new ArrayList<>();
+        for (Curation curation : curationList) {
+            //TODO MemberService 에게 member 정보 받아오기 (작성자 닉네임)
+            ResponseMemberInfoDto writerInfo = feignMemberService.getMemberInfo(
+                "1d5e49b7-e4f5-4953-910f-84376c53325c");
+            // BookService 에게 book 정보 받아오기 (책 커버 이미지, 작가)
+            ResponseBookDto book = feignBookService.getBook(curation
+                .getBook());
+            responseCurationDtoList.add(ResponseCurationDto.builder()
+                                                           .writer(writerInfo.nickName())
+                                                           .curationId(curation.getId())
+                                                           .title(curation.getTitle())
+                                                           .coverImgUrl(
+                                                               book.coverImgUrl())
+                                                           .build());
+        }
+        return responseCurationDtoList;
     }
 }

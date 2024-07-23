@@ -26,11 +26,18 @@ public class CurationController {
     final CurationService curationService;
 
     @GetMapping
-    @Operation(summary = "큐레이션 리스트 가져오기", description = "수신한 큐레이션 레터 리스트 가져오기")
+    @Operation(summary = "내가 받은 큐레이션 리스트 가져오기", description = "수신한 큐레이션 레터 리스트 가져오기")
     public ResponseEntity<List<ResponseCurationDto>> getCurationList() {
         //TODO Passport 에서 receiver 가져오기
         return ResponseEntity.ok(curationService.getCurationList(2L));
 
+    }
+
+    @GetMapping("/mycuration")
+    @Operation(summary = "내가 보낸 큐레이션 리스트 가져오기", description = "발신한 큐레이션 레터 리스트 가져오기")
+    public ResponseEntity<List<ResponseCurationDto>> getMyCurationList() {
+        //TODO Passport 에서 receiver 가져오기
+        return ResponseEntity.ok(curationService.getSentCurations(1L));
     }
 
     @PostMapping
@@ -55,5 +62,6 @@ public class CurationController {
         @PathVariable Long curationId) {
         return ResponseEntity.ok(curationService.getCurationDetail(curationId));
     }
+
 
 }
