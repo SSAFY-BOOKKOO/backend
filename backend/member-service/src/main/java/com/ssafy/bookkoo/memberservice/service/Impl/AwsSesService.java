@@ -1,8 +1,9 @@
-package com.ssafy.bookkoo.memberservice.service;
+package com.ssafy.bookkoo.memberservice.service.Impl;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.SendEmailResult;
 import com.ssafy.bookkoo.memberservice.dto.AwsSesDto;
+import com.ssafy.bookkoo.memberservice.service.MailSendService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.ssafy.bookkoo.memberservice.service;
+package com.ssafy.bookkoo.memberservice.service.Impl;
 
 import com.ssafy.bookkoo.memberservice.dto.RequestAdditionalInfo;
 import com.ssafy.bookkoo.memberservice.dto.RequestCertificationDto;
@@ -12,6 +12,8 @@ import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.memberservice.repository.CertificationRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberInfoRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberRepository;
+import com.ssafy.bookkoo.memberservice.service.MailSendService;
+import com.ssafy.bookkoo.memberservice.service.MemberService;
 import java.util.Collections;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
