@@ -34,10 +34,20 @@ public class CurationController {
     }
 
     @GetMapping("/store")
-    @Operation(summary = "내가 저장한 큐레이션 리스트 가져오기", description = "저장한 큐레이션 레터 리스트 가져오기")
+    @Operation(summary = "내가 보관한 큐레이션 리스트 가져오기", description = "보관한 큐레이션 레터 리스트 가져오기")
     public ResponseEntity<List<ResponseCurationDto>> getStoredCurationList() {
         //TODO Passport 에서 receiver 가져오기
         return ResponseEntity.ok(curationService.getStoredCurationList(2L));
+
+    }
+
+    @PostMapping("/store/{curationId}")
+    @Operation(summary = "큐레이션 보관하기", description = "큐레이션 보관하기")
+    public ResponseEntity<List<ResponseCurationDto>> storeCuration(@PathVariable Long curationId) {
+        //TODO Passport 에서 receiver 가져오기
+        curationService.storeCuration(curationId, 2L);
+        return ResponseEntity.ok()
+                             .build();
 
     }
 

@@ -134,14 +134,13 @@ public class CurationServiceImpl implements CurationService {
      */
     @Transactional
     @Override
-    public void storeCuration(Long id) {
+    public void storeCuration(Long id, Long receiver) {
         Curation curation = curationRepository.findById(id)
                                               .orElseThrow(
                                                   () -> new CurationNotFoundException(
                                                       id));
-        //TODO Passport 에서 receiverID 가져오기
         CurationSend curationSend = curationSendRepository.findCurationSendsByCurationAndReceiver(
-                                                              curation, 2L)
+                                                              curation, receiver)
                                                           .orElseThrow(
                                                               //TODO 자신이 받은 큐레이션이 아닐경우 권한 Exception 던져야함
                                                               () -> new CurationNotFoundException(
