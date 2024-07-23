@@ -5,6 +5,7 @@ import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import java.util.List;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
@@ -16,6 +17,7 @@ public interface BookMapper {
     Book toEntity(RequestCreateBookDto dto);
 
     // 엔티티를 DTO로 변환
+    @Mapping(source = "category.id", target = "categoryId")
     ResponseBookDto toResponseDto(Book book);
 
     // 리스트 변환
