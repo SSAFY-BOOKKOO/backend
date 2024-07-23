@@ -2,6 +2,7 @@ package com.ssafy.bookkoo.bookservice.service;
 
 import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
+import com.ssafy.bookkoo.bookservice.dto.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPISearchParams;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinAPI;
 import jakarta.transaction.Transactional;
@@ -22,8 +23,14 @@ public interface BookService {
     ResponseBookDto getBook(Long bookId);
 
     @Transactional
+    ResponseBookDto getBookByIsbn(String isbn);
+
+    @Transactional
     ResponseBookDto deleteBook(Long bookId);
 
     ResponseAladinAPI searchBooksFromAladin(AladinAPISearchParams params)
         throws IOException, InterruptedException, URISyntaxException, ParseException;
+
+    @Transactional
+    List<ResponseCheckBooksByIsbnDto> checkBooksByIsbn(String[] isbnList);
 }
