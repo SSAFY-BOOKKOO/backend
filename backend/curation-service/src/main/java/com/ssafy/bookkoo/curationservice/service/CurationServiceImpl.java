@@ -1,5 +1,7 @@
 package com.ssafy.bookkoo.curationservice.service;
 
+import com.ssafy.bookkoo.curationservice.client.BookServiceClient;
+import com.ssafy.bookkoo.curationservice.client.MemberServiceClient;
 import com.ssafy.bookkoo.curationservice.dto.RequestCreateCurationDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDetailDto;
@@ -8,8 +10,6 @@ import com.ssafy.bookkoo.curationservice.dto.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.curationservice.entity.Curation;
 import com.ssafy.bookkoo.curationservice.entity.CurationSend;
 import com.ssafy.bookkoo.curationservice.exception.CurationNotFoundException;
-import com.ssafy.bookkoo.curationservice.feign.FeignBookService;
-import com.ssafy.bookkoo.curationservice.feign.FeignMemberService;
 import com.ssafy.bookkoo.curationservice.repository.CurationRepository;
 import com.ssafy.bookkoo.curationservice.repository.CurationSendRepository;
 import jakarta.transaction.Transactional;
@@ -29,8 +29,8 @@ public class CurationServiceImpl implements CurationService {
 
     final CurationRepository curationRepository;
     final CurationSendRepository curationSendRepository;
-    final FeignBookService feignBookService;
-    final FeignMemberService feignMemberService;
+    final BookServiceClient bookServiceClient;
+    final MemberServiceClient memberServiceClient;
 
     /**
      * Curation을 생성하고 전송하는 메서드 생성시 팔로워와 랜덤 멤버 3명에게 전송한다.
@@ -49,7 +49,7 @@ public class CurationServiceImpl implements CurationService {
                                     .build();
         curationRepository.save(curation);
         System.out.println(
-            feignMemberService.getMemberInfo("1d5e49b7-e4f5-4953-910f-84376c53325c"));
+            memberServiceClient.getMemberInfo("1d5e49b7-e4f5-4953-910f-84376c53325c"));
         //TODO 멤버 정보 받아오기 (돌면서 curation Send 생성)
         for (long i = 2L; i <= 4L; i++) {
             CurationSend curationSend =
@@ -87,10 +87,10 @@ public class CurationServiceImpl implements CurationService {
         //TODO MemberService 에게 member 정보 받아오기 (작성자 닉네임)
 //        feignMemberService.getMemberInfo(curationSend.getCuration()
 //                                                     .getWriter());
-        ResponseMemberInfoDto writerInfo = feignMemberService.getMemberInfo(
+        ResponseMemberInfoDto writerInfo = memberServiceClient.getMemberInfo(
             "1d5e49b7-e4f5-4953-910f-84376c53325c");
         // BookService 에게 book 정보 받아오기 (책 커버 이미지, 제목, 작가, 줄거리)
-        ResponseBookDto book = feignBookService.getBook(curation
+        ResponseBookDto book = bookServiceClient.getBook(curation
             .getBook());
 
         return ResponseCurationDetailDto.builder()
@@ -117,7 +117,8 @@ public class CurationServiceImpl implements CurationService {
      */
     @Override
     public List<ResponseCurationDto> getCurationList(Long receiver) {
-        List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByReceiver(
+        List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByIsStoredAndReceiver(
+            false,
             receiver);
         List<Curation> curationList = curationSendByReceiver.stream()
                                                             .map(
@@ -183,14 +184,26 @@ public class CurationServiceImpl implements CurationService {
         return curationToDto(curationList);
     }
 
+    @Override
+    public List<ResponseCurationDto> getStoredCurationList(Long receiver) {
+        List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByIsStoredAndReceiver(
+            true,
+            receiver);
+        List<Curation> curationList = curationSendByReceiver.stream()
+                                                            .map(
+                                                                CurationSend::getCuration)
+                                                            .toList();
+        return curationToDto(curationList);
+    }
+
     private List<ResponseCurationDto> curationToDto(List<Curation> curationList) {
         List<ResponseCurationDto> responseCurationDtoList = new ArrayList<>();
         for (Curation curation : curationList) {
             //TODO MemberService 에게 member 정보 받아오기 (작성자 닉네임)
-            ResponseMemberInfoDto writerInfo = feignMemberService.getMemberInfo(
+            ResponseMemberInfoDto writerInfo = memberServiceClient.getMemberInfo(
                 "1d5e49b7-e4f5-4953-910f-84376c53325c");
             // BookService 에게 book 정보 받아오기 (책 커버 이미지, 작가)
-            ResponseBookDto book = feignBookService.getBook(curation
+            ResponseBookDto book = bookServiceClient.getBook(curation
                 .getBook());
             responseCurationDtoList.add(ResponseCurationDto.builder()
                                                            .writer(writerInfo.nickName())

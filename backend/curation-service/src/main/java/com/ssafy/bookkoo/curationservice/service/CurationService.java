@@ -16,6 +16,10 @@ public interface CurationService {
     // 내가 받은 큐레이션 가져오기
     List<ResponseCurationDto> getCurationList(Long receiver);
 
+    // 내가 저장한 큐레이션 가져오기
+
+    List<ResponseCurationDto> getStoredCurationList(Long receiver);
+
     // 큐레이션 보관하기
     void storeCuration(Long id);
 
