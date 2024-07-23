@@ -10,8 +10,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import java.sql.Date;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -24,10 +26,11 @@ public class LibraryBookMapper {
     @ManyToOne
     @MapsId("libraryId")
     @JoinColumn(name = "library_id")
+    @Setter
     private Library library;
 
     @Column
-    Long bookOrder;
+    Integer bookOrder;
 
     @Column
     String bookColor;
@@ -41,4 +44,26 @@ public class LibraryBookMapper {
     @Column
     @Enumerated(EnumType.STRING)
     Status status;
+
+    @Column
+    Integer rating;
+
+    @Builder
+    public LibraryBookMapper(
+        MapperKey id,
+        Integer bookOrder,
+        String bookColor,
+        Date startAt,
+        Date endAt,
+        Status status,
+        Integer rating
+    ) {
+        this.id = id;
+        this.bookOrder = bookOrder;
+        this.bookColor = bookColor;
+        this.startAt = startAt;
+        this.endAt = endAt;
+        this.status = status;
+        this.rating = rating;
+    }
 }
