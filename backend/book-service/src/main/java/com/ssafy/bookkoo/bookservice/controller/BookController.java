@@ -80,6 +80,14 @@ public class BookController {
                              .body(bookDto);
     }
 
+    @PostMapping("/isbn")
+    @Operation(summary = "isbn으로 책 조회 또는 생성", description = "책을 isbn으로 조회하거나 존재하지 않으면 생성하는 API")
+    public ResponseEntity<ResponseBookDto> getOrCreateBookByIsbn(@RequestBody RequestCreateBookDto bookDto) {
+        ResponseBookDto bookResult = bookService.getOrCreateBookByBookData(bookDto);
+        return ResponseEntity.ok()
+                             .body(bookResult);
+    }
+
     @PostMapping("/check-books")
     @Operation(summary = "ISBN 리스트로 DB내 존재하는지 여부 조회", description = "ISBN 리스트로 DB내 존재하는지 여부를 확인하는 API")
     public ResponseEntity<List<ResponseCheckBooksByIsbnDto>> checkBooksByIsbn(@RequestBody String[] isbnList) {
