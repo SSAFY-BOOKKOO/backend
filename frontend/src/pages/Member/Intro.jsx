@@ -6,7 +6,7 @@ import WrapContainer from '../../components/Layout/WrapContainer';
 const Intro = () => {
   return (
     <WrapContainer>
-      <div className='h-screen flex flex-col items-center justify-center p-4 bg-white overflow-hidden'>
+      <div className='flex mt-3 flex-col items-center justify-center p-4 bg-white overflow-hidden'>
         <div className='text-left relative'>
           <h1 className='text-3xl font-bold mb-2 relative z-10'>
             지금 가입해서
