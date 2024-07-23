@@ -11,6 +11,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -79,6 +80,15 @@ public class CurationController {
     public ResponseEntity<ResponseCurationDetailDto> getCurationDetail(
         @PathVariable Long curationId) {
         return ResponseEntity.ok(curationService.getCurationDetail(curationId));
+    }
+
+    @DeleteMapping("/{curationId}")
+    @Operation(summary = "큐레이션 삭제", description = "큐레이션 레터를 삭제하기")
+    public ResponseEntity<Void> deleteCuration(@PathVariable Long curationId) {
+        //TODO Passport 에서 정보 가져오기
+        curationService.deleteCuration(curationId, 2L);
+        return ResponseEntity.ok()
+                             .build();
     }
 
 

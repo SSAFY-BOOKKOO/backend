@@ -151,18 +151,18 @@ public class CurationServiceImpl implements CurationService {
     /**
      * 큐레이션을 삭제한다.
      *
-     * @param id Curation ID
+     * @param id       Curation ID
+     * @param receiver 삭제할 요청자
      */
     @Override
     @Transactional
-    public void deleteCuration(Long id) {
+    public void deleteCuration(Long id, Long receiver) {
         Curation curation = curationRepository.findById(id)
                                               .orElseThrow(
                                                   () -> new CurationNotFoundException(
                                                       id));
-        //TODO Passport 에서 receiverID 가져오기
         CurationSend curationSend = curationSendRepository.findCurationSendsByCurationAndReceiver(
-                                                              curation, 2L)
+                                                              curation, receiver)
                                                           .orElseThrow(
                                                               //TODO 자신이 받은 큐레이션이 아닐경우 권한 Exception 던져야함
                                                               () -> new CurationNotFoundException(
@@ -183,6 +183,10 @@ public class CurationServiceImpl implements CurationService {
         return curationToDto(curationList);
     }
 
+    /**
+     * @param receiver : 수신한 사람 (Passport)
+     * @return 수신한 큐레이션 DTO (작성자 닉네임, 큐레이션 ID, 큐레이션 제목, 책 커버 이미지)
+     */
     @Override
     public List<ResponseCurationDto> getStoredCurationList(Long receiver) {
         List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByIsStoredAndReceiver(
@@ -195,6 +199,12 @@ public class CurationServiceImpl implements CurationService {
         return curationToDto(curationList);
     }
 
+    /**
+     * 큐레이션 리스트 -> DTO 변환 메서드 (private)
+     *
+     * @param curationList : 변환할 CurationList
+     * @return 변환된 CurationDTO List (작성자 닉네임, 큐레이션 ID, 큐레이션 제목, 책 커버 이미지)
+     */
     private List<ResponseCurationDto> curationToDto(List<Curation> curationList) {
         List<ResponseCurationDto> responseCurationDtoList = new ArrayList<>();
         for (Curation curation : curationList) {

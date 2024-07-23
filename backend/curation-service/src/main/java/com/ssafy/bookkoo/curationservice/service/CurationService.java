@@ -24,7 +24,7 @@ public interface CurationService {
     void storeCuration(Long id, Long receiver);
 
     // 큐레이션 삭제 (지정삭제)
-    void deleteCuration(Long id);
+    void deleteCuration(Long id, Long receiver);
 
     // 내가 보낸 큐레이션 정보 보기
     List<ResponseCurationDto> getSentCurations(Long writer);
