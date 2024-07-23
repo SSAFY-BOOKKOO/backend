@@ -21,7 +21,7 @@ const BookInfoTag = ({ selectedTag, setSelectedTag }) => {
           className={`
             px-3 py-1 rounded-lg text-white font-medium text-sm
             transition-colors duration-200 ease-in-out
-            ${selectedTag === tag.value ? 'bg-blue-500' : 'bg-gray-400'}
+            ${selectedTag === tag.value ? 'bg-pink-500' : 'bg-gray-400'}
             hover:opacity-90
           `}
         >

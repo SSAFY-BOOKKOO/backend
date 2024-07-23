@@ -65,7 +65,7 @@ const LibrarySearch = () => {
         <div className='flex-grow'>
           <Input
             id='searchText'
-            placeholder='검색어를 입력해주세요'
+            placeholder='책을 검색하세요'
             value={searchText}
             onChange={e => setSearchText(e.target.value)}
           />

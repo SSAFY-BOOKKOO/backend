@@ -15,13 +15,13 @@ const navItems = [
 
 const BottomTab = () => {
   return (
-    <nav className='flex justify-around items-center py-2 bg-white border-t w-full shadow-md'>
+    <nav className='flex justify-around items-center py-2 bg-white border-t w-full  shadow-md'>
       {navItems.map((item, index) => (
         <NavLink
           key={index}
           to={item.path}
           className='flex flex-col items-center cursor-pointer'
-          activeClassName='text-blue-500'
+          activeClassName='text-green-500'
         >
           <img src={item.icon} alt={item.label} className='w-6 h-6 mb-2' />
           <span className='text-xs'>{item.label}</span>

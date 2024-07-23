@@ -43,7 +43,7 @@ const BookCreateModal = ({ isCreateModalOpen, toggleCreateModal }) => {
 
   return (
     <div className='fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end justify-center'>
-      <div className='bg-white w-full rounded-t-3xl p-6 space-y-4 transform transition-transform duration-300 ease-out'>
+      <div className='bg-white w-full max-w-md rounded-t-3xl p-6 space-y-4 transform transition-transform duration-300 ease-out'>
         <div className='text-center font-semibold text-lg flex flex-row justify-between'>
           책 등록 ({step}/3)
           <div className='flex flex-end'>

@@ -26,10 +26,10 @@ const Button = ({
 
   const baseClasses = 'font-medium rounded-lg  ease-in-out text-center h-fit';
   const fullClass = full ? 'w-full' : '';
-  const colorClass = color || 'text-white bg-blue-500 ';
+  const colorClass = color || 'text-white bg-green-400 ';
   const disabledClass = disabled
     ? 'cursor-not-allowed opacity-50'
-    : 'active:bg-blue-600';
+    : 'active:bg-green-500';
 
   const buttonClasses = `
     ${baseClasses}
