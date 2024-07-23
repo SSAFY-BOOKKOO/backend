@@ -10,6 +10,10 @@ const ChatBubble = ({
   profileImage,
   customStyle = {},
 }) => {
+  const handleLike = () => {
+    // 좋아요 api 연동
+  };
+
   return (
     <div
       className={`flex ${role === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
@@ -43,7 +47,7 @@ const ChatBubble = ({
             <p className='text-sm whitespace-pre-wrap'>{message}</p>
           </div>
           {showLikes && (
-            <div className='mt-1 text-right'>
+            <div className='mt-1 text-right' onClick={handleLike}>
               <span className='text-sm text-gray-500'>❤️ {likes}</span>
             </div>
           )}
