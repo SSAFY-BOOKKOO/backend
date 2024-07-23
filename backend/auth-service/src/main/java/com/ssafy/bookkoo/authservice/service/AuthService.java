@@ -6,4 +6,6 @@ import com.ssafy.bookkoo.authservice.dto.ResponseLoginTokenDto;
 public interface AuthService {
 
     ResponseLoginTokenDto login(RequestLoginDto requestLoginDto);
+
+    ResponseLoginTokenDto getTokenDto(String refreshToken);
 }
