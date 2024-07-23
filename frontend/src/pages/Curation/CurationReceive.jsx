@@ -1,8 +1,12 @@
 // src/pages/CurationReceive.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 import Tab from '@components/Curation/Tab';
 import { BsBookmarkStar, BsBookmarkStarFill } from 'react-icons/bs';
+import { BsTrash3 } from 'react-icons/bs';
+import { AiFillAlert } from 'react-icons/ai';
 
 // 임시 레터 데이터
 const initialLetters = [
@@ -26,8 +30,7 @@ const initialLetters = [
   {
     id: 3,
     title: '레터2',
-    content:
-      '너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무 재밌당너무',
+    content: '너무 재밌당',
     from: '에이미',
     date: '2024-07-19',
     image: 'https://image.yes24.com/goods/123400303/L',
@@ -37,15 +40,13 @@ const initialLetters = [
 // 받은 편지들 보여주기
 const CurationReceive = () => {
   const navigate = useNavigate();
-  // 지울 때 현재 레터 확인용
   const [letters, setLetters] = useState(initialLetters);
-  // 보관할 레터
   const [storedLetters, setStoredLetters] = useState([]);
-  // 슬라이드(해서 삭제 할) 레터
   const [slideId, setSlideId] = useState(null);
 
-  // id로 구분해서 보관할 레터로 구분되면 store 링크로 보내기
-  const onStore = letter => {
+  const onStore = (event, letter) => {
+    // event 객체 추가
+    event.stopPropagation();
     if (storedLetters.includes(letter.id)) {
       setStoredLetters(storedLetters.filter(id => id !== letter.id));
     } else {
@@ -54,17 +55,14 @@ const CurationReceive = () => {
     }
   };
 
-  // 삭제위한 슬라이드
   const handleSlide = id => {
     setSlideId(slideId === id ? null : id);
   };
 
-  // fiter해서 안 보이게
   const handleDelete = id => {
     setLetters(letters.filter(letter => letter.id !== id));
   };
 
-  // 레터 상세보기
   const handleLetterClick = letter => {
     navigate(`/curation/letter/${letter.id}`, { state: { letter } });
   };
@@ -72,61 +70,62 @@ const CurationReceive = () => {
   return (
     <div className='flex flex-col'>
       <Tab />
+      <div className='flex justify-center items-center bg-gray-100 space-x-2 p-2 m-4 rounded'>
+        <AiFillAlert className='text-red-500 ' />
+        <p className='font-bold'>15일 후 자동 삭제됩니다!</p>
+      </div>
+
       <div className='flex-1 overflow-y-auto px-4'>
         {letters.map(letter => (
-          <div
+          <Swiper
             key={letter.id}
+            onSlideChange={() => handleSlide(letter.id)}
             className='relative flex items-center my-8 cursor-pointer'
+            slidesPerView={1}
           >
-            <div
-              className={`card flex items-center bg-gray-100 rounded-lg p-4 shadow w-full ${
-                slideId === letter.id ? 'slide' : ''
-              }`}
-              onClick={() => handleLetterClick(letter)}
-            >
-              <img
-                src={letter.image}
-                alt='Letter'
-                className='w-16 h-24 mr-4 rounded-lg'
-              />
-              <div className='flex-1 pb-12'>
-                <p className='text-sm text-gray-600'>FROM. {letter.from}</p>
-                <h2 className='text-lg font-bold'>{letter.title}</h2>
-              </div>
-              {storedLetters.includes(letter.id) ? (
-                <BsBookmarkStarFill
-                  className='mt-20 cursor-pointer'
-                  onClick={() => onStore(letter)}
-                />
-              ) : (
-                <BsBookmarkStar
-                  className='mt-20 cursor-pointer size-7'
-                  onClick={() => onStore(letter)}
-                />
-              )}
-            </div>
-            {slideId === letter.id && (
+            {/* 레터 */}
+            <SwiperSlide>
               <div
-                className='delete-button absolute right-0 top-0 bottom-0'
+                className={`flex items-center bg-gray-100 rounded-lg p-4 shadow w-full h-40 transition-transform duration-300 ease-in-out ${
+                  slideId === letter.id ? 'transform translate-x-2/3' : ''
+                }`}
+                onClick={() => handleLetterClick(letter)}
+              >
+                <img
+                  src={letter.image}
+                  alt='Letter'
+                  className='w-16 h-24 mr-4 rounded-lg'
+                />
+                <div className='flex-1 pb-12'>
+                  <p className='text-sm text-gray-600'>FROM. {letter.from}</p>
+                  <h2 className='text-lg font-bold'>{letter.title}</h2>
+                </div>
+                {storedLetters.includes(letter.id) ? (
+                  <BsBookmarkStarFill
+                    className='mt-20 cursor-pointer'
+                    onClick={event => onStore(event, letter)}
+                  />
+                ) : (
+                  <BsBookmarkStar
+                    className='mt-20 cursor-pointer size-7'
+                    onClick={event => onStore(event, letter)}
+                  />
+                )}
+              </div>
+            </SwiperSlide>
+
+            {/* 삭제 영역 */}
+            <SwiperSlide>
+              <div
+                className={`flex justify-center items-center w-1/3 h-40 bg-red-500 rounded-r-lg ml-44 transition-transform duration-300 ease-in-out ${
+                  slideId === letter.id ? 'transform translate-x-2/3' : ''
+                }`}
                 onClick={() => handleDelete(letter.id)}
               >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  className='h-6 w-6'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  stroke='currentColor'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    d='M19 7l-1 12H6L5 7m5 4v6m4-6v6m1-14H9m1-4h4m-4 4h4m2 2v2m0 4H7m1-14h4m-4 4h4'
-                  />
-                </svg>
+                <BsTrash3 className='text-black text-2xl' />
               </div>
-            )}
-          </div>
+            </SwiperSlide>
+          </Swiper>
         ))}
       </div>
     </div>

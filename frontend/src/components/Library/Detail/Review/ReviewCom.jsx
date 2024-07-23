@@ -108,6 +108,7 @@ const ReviewCom = ({ onBackClick, book }) => {
           </Button>
         </div>
         {/* 하드커버 선 */}
+
         <div className='absolute shadow-2xl	right-6 top-0 bottom-0 w-1 bg-gray-500'></div>
       </div>
     </div>
