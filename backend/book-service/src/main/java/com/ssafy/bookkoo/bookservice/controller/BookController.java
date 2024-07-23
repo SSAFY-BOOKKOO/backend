@@ -3,6 +3,7 @@ package com.ssafy.bookkoo.bookservice.controller;
 import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
 import com.ssafy.bookkoo.bookservice.dto.RequestSearchBookFilterDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
+import com.ssafy.bookkoo.bookservice.dto.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.service.BookService;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPISearchParams;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinAPI;
@@ -69,6 +70,23 @@ public class BookController {
         ResponseBookDto bookDto = bookService.getBook(bookId);
         return ResponseEntity.ok()
                              .body(bookDto);
+    }
+
+    @GetMapping("/isbn/{isbn}")
+    @Operation(summary = "isbn으로 책 조회", description = "책을 isbn으로 조회할 때 사용하는 API")
+    public ResponseEntity<ResponseBookDto> getBookByIsbn(@PathVariable("isbn") String isbn) {
+        ResponseBookDto bookDto = bookService.getBookByIsbn(isbn);
+        return ResponseEntity.ok()
+                             .body(bookDto);
+    }
+
+    @PostMapping("/check-books")
+    @Operation(summary = "ISBN 리스트로 DB내 존재하는지 여부 조회", description = "ISBN 리스트로 DB내 존재하는지 여부를 확인하는 API")
+    public ResponseEntity<List<ResponseCheckBooksByIsbnDto>> checkBooksByIsbn(@RequestBody String[] isbnList) {
+        List<ResponseCheckBooksByIsbnDto> booksStatus = bookService.checkBooksByIsbn(
+            isbnList);
+        return ResponseEntity.ok()
+                             .body(booksStatus);
     }
 
     /**

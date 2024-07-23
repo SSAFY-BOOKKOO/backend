@@ -52,4 +52,12 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
                            .limit(limit)
                            .fetch();
     }
+
+    @Override
+    public Book findByIsbn(String isbn) {
+        QBook book = QBook.book;
+        return queryFactory.selectFrom(book)
+                           .where(book.isbn.eq(isbn))
+                           .fetchFirst(); // 찾지 못하면 null 반환
+    }
 }
