@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import Input from '@components/@common/Input';
 import Button from '@components/@common/Button';
 import BookSearch from '@components/Curation/BookSearch';
+import { useNavigate } from 'react-router-dom';
 
 const CreateLetter = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleTitleChange = e => {
     setTitle(e.target.value);
@@ -22,6 +25,10 @@ const CreateLetter = () => {
 
   const handleSearchModalClose = () => {
     setIsSearchModalOpen(false);
+  };
+
+  const handleLetterCreate = () => {
+    navigate('send');
   };
 
   return (
@@ -57,6 +64,7 @@ const CreateLetter = () => {
         <Button
           text='레터 전송'
           className='w-full py-3 bg-blue-500 rounded-lg text-gray-950'
+          onClick={handleLetterCreate}
         />
       </div>
       <BookSearch
