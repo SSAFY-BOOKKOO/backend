@@ -1,10 +1,28 @@
 import React from 'react';
 
-const ChatBubble = ({ message, role, time }) => {
+const ChatBubble = ({
+  message,
+  role,
+  time,
+  showProfile = false,
+  showLikes = false,
+  likes = 0,
+  profileImage,
+  customStyle = {},
+}) => {
   return (
     <div
       className={`flex ${role === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
     >
+      {showProfile && role !== 'user' && (
+        <div className='mr-2'>
+          <img
+            src={profileImage}
+            alt='Profile'
+            className='w-8 h-8 rounded-full'
+          />
+        </div>
+      )}
       <div className={`max-w-[60%] ${role === 'user' ? 'order-1' : 'order-2'}`}>
         <div className='relative'>
           <div
@@ -12,22 +30,23 @@ const ChatBubble = ({ message, role, time }) => {
           >
             <div
               className={`w-4 h-4 ${role === 'user' ? 'bg-blue-500' : 'bg-gray-200'} rotate-45 transform origin-center ${role === 'user' ? 'mr-2' : 'ml-2'} rounded-sm`}
+              style={customStyle.arrow}
             ></div>
           </div>
           <div
             className={`
-              ${
-                role === 'user'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-gray-800'
-              } 
-              p-3 px-5 rounded-2xl
-              break-words overflow-hidden
-              mt-2 
+              ${role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'} 
+              p-3 px-5 rounded-2xl break-words overflow-hidden mt-2
             `}
+            style={customStyle.bubble}
           >
             <p className='text-sm whitespace-pre-wrap'>{message}</p>
           </div>
+          {showLikes && (
+            <div className='mt-1 text-right'>
+              <span className='text-sm text-gray-500'>❤️ {likes}</span>
+            </div>
+          )}
         </div>
       </div>
     </div>
