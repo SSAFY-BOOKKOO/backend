@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -23,23 +24,29 @@ public class Library {
     private Long id;
 
     @Column(nullable = false)
+    @Setter
     private String name;
 
     @Column(nullable = false)
+    @Setter
     private Long memberId;
 
     @Column(nullable = false)
+    @Setter
     private Integer libraryOrder;
 
     @OneToOne(mappedBy = "library", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Setter
     private LibraryStyle libraryStyle;
 
     @Builder
     public Library(
+        Long id,
         String name,
         Long memberId,
         Integer libraryOrder
     ) {
+        this.id = id;
         this.name = name;
         this.memberId = memberId;
         this.libraryOrder = libraryOrder;
