@@ -7,13 +7,16 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import lombok.RequiredArgsConstructor;
 import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class AladinAPIHandler {
 
+    final private AladinCategoryService aladinCategoryService;
     private static String apiKey;
 
     @Value("ttbwintiger981754003")
@@ -32,7 +35,7 @@ public class AladinAPIHandler {
      * @throws InterruptedException
      * @throws URISyntaxException
      */
-    public static ResponseAladinAPI searchBooksFromAladin(AladinAPISearchParams params)
+    public ResponseAladinAPI searchBooksFromAladin(AladinAPISearchParams params)
         throws IOException, InterruptedException, URISyntaxException {
         URI uri = new URIBuilder(BASE_URL + "itemSearch.aspx")
             .addParameter("ttbkey", apiKey)
@@ -51,10 +54,13 @@ public class AladinAPIHandler {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() == 200) {
-//            JSONParser parser = new JSONParser();
-//            return (JSONObject) parser.parse(response.body());
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(response.body(), ResponseAladinAPI.class);
+            ResponseAladinAPI apiResponse = objectMapper.readValue(response.body(),
+                ResponseAladinAPI.class);
+            // 카테고리 매핑 적용
+            aladinCategoryService.processApiResponse(apiResponse);
+
+            return apiResponse;
         } else {
             throw new IOException("Failed to fetch data from Aladin API: " + response.body());
         }
