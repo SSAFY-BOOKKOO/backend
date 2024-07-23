@@ -1,11 +1,12 @@
 package com.ssafy.bookkoo.libraryservice.controller;
 
-import com.ssafy.bookkoo.libraryservice.dto.RequestBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestCreateLibraryDto;
+import com.ssafy.bookkoo.libraryservice.dto.RequestLibraryBookMapperCreateDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestUpdateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseLibraryDto;
 import com.ssafy.bookkoo.libraryservice.service.LibraryService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +28,12 @@ public class LibraryController {
 
     @PostMapping
     @Operation(summary = "서재 생성", description = "서재 생성 API")
-    public ResponseEntity<ResponseLibraryDto> createLibrary(@RequestBody RequestCreateLibraryDto dto) {
+    public ResponseEntity<ResponseLibraryDto> createLibrary(
+        @RequestBody RequestCreateLibraryDto dto,
+        @RequestParam Long memberId // 임시
+    ) {
         return ResponseEntity.ok()
-                             .body(libraryService.addLibrary(dto));
+                             .body(libraryService.addLibrary(dto, memberId));
     }
 
     @GetMapping
@@ -47,12 +51,6 @@ public class LibraryController {
                              .body(libraryService.getLibrary(libraryId));
     }
 
-//    @GetMapping("/{libraryId}/books/{bookId}")
-//    @Operation(summary = "서재 내부 책 상세 조회", description = "서재 내부 책 상세 조회 API")
-//    public ResponseEntity<Book> getBook(@PathVariable Long libraryId, @PathVariable Long bookId) {
-//        return null;
-//    }
-
     @PatchMapping("/{libraryId}")
     @Operation(summary = "서재 수정", description = "서재 수정 API")
     public ResponseEntity<ResponseLibraryDto> updateLibrary(
@@ -65,13 +63,15 @@ public class LibraryController {
 
     @PostMapping("/{libraryId}/books")
     @Operation(summary = "서재에 책 등록", description = "서재에 책 등록하는 API")
-    public ResponseEntity<Object> addBookToLibrary(
+    public ResponseEntity<Boolean> addBookToLibrary(
         @PathVariable Long libraryId,
-        @RequestBody RequestBookDto book,
+        @Valid @RequestBody RequestLibraryBookMapperCreateDto libraryBookMapperDto,
         @RequestParam Long memberId // 임시
     ) {
+        libraryService.addBookToLibrary(libraryId,
+            libraryBookMapperDto, memberId);
         return ResponseEntity.ok()
-                             .body(libraryService.addBookToLibrary(libraryId, book, memberId));
+                             .body(true);
     }
 
     @GetMapping("/books/count")
