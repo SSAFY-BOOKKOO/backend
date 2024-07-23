@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface LibraryBookMapperRepository extends JpaRepository<LibraryBookMapper, MapperKey>,
     LibraryBookMapperCustomRepository {
 
+    boolean existsById(MapperKey id);
 }
