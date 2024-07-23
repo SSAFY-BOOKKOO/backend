@@ -41,17 +41,27 @@ const initialLetters = [
 const CurationReceive = () => {
   const navigate = useNavigate();
   const [letters, setLetters] = useState(initialLetters);
+  // 보관함 관리 위한 useState
   const [storedLetters, setStoredLetters] = useState([]);
   const [slideId, setSlideId] = useState(null);
 
+  const navigateToStore = () => {
+    navigate('/curation/store', { state: { storedLetters } });
+  };
+
+  // 보관함 등록 로직
   const onStore = (event, letter) => {
     // event 객체 추가
     event.stopPropagation();
+    // 등록되어 있으면 해제
     if (storedLetters.includes(letter.id)) {
       setStoredLetters(storedLetters.filter(id => id !== letter.id));
-    } else {
+    }
+    // 등록 안 되어 있으면 등록(추가)
+    else {
       setStoredLetters([...storedLetters, letter.id]);
-      navigate('/curation/store');
+      // navigateToStore();
+      // navigate('/curation/store');
     }
   };
 
@@ -73,6 +83,7 @@ const CurationReceive = () => {
       <div className='flex justify-center items-center bg-gray-100 space-x-2 p-2 m-4 rounded'>
         <AiFillAlert className='text-red-500 ' />
         <p className='font-bold'>15일 후 자동 삭제됩니다!</p>
+        console.log({storedLetters})
       </div>
 
       <div className='flex-1 overflow-y-auto px-4'>
@@ -100,13 +111,17 @@ const CurationReceive = () => {
                   <p className='text-sm text-gray-600'>FROM. {letter.from}</p>
                   <h2 className='text-lg font-bold'>{letter.title}</h2>
                 </div>
+
+                {/* 보관x: 빈 아이콘 보관o: 꽉찬 아이콘 */}
                 {storedLetters.includes(letter.id) ? (
                   <BsBookmarkStarFill
-                    className='mt-20 cursor-pointer'
+                    key={letter.id}
                     onClick={event => onStore(event, letter)}
+                    className='mt-20 cursor-pointer size-7'
                   />
                 ) : (
                   <BsBookmarkStar
+                    key={letter.id}
                     className='mt-20 cursor-pointer size-7'
                     onClick={event => onStore(event, letter)}
                   />
