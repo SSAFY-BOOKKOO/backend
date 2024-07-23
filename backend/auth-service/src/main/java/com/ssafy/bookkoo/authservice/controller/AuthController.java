@@ -20,7 +20,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/login")
+    @PostMapping("/login/email")
     @Operation(description = "이메일과 비밀번호를 통해 로그인 합니다.", summary = "로그인")
     public ResponseEntity<ResponseLoginTokenDto> login(
         @RequestBody RequestLoginDto requestLoginDto,
