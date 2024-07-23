@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -108,7 +107,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public ResponseAladinAPI searchBooksFromAladin(AladinAPISearchParams params)
-        throws IOException, InterruptedException, URISyntaxException, ParseException {
+        throws IOException, InterruptedException, URISyntaxException {
         return aladinAPIHandler.searchBooksFromAladin(params);
     }
 
