@@ -9,10 +9,17 @@ const BookTalkDetail = () => {
   const [book, setBook] = useState(talkbook);
   const [commentList, setCommentList] = useState(comments);
 
+  const handleInputChange = e => {
+    const message = e.target.value;
+    if (message.length <= 1000) {
+      setInputMessage(message);
+    }
+  };
+
   return (
     <div className='flex flex-col min-h-[calc(100vh-121px)]'>
       <div className='flex flex-col items-center'>
-        <div className='w-32 min-h-40 my-4 flex items-center'>
+        <div className='w-32 min-h-40 my-4 flex items-center '>
           <img
             src={book.cover_img_url}
             alt='Book Cover'
@@ -47,8 +54,8 @@ const BookTalkDetail = () => {
             <Input
               type='text'
               value={inputMessage}
-              onChange={e => setInputMessage(e.target.value)}
-              placeholder='내용을 입력해주세요'
+              onChange={handleInputChange}
+              placeholder='내용을 입력해주세요(1000자 이내)'
               customClass='border rounded-l-lg focus:outline-none'
             />
           </div>
