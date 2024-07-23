@@ -1,14 +1,14 @@
 package com.ssafy.bookkoo.libraryservice.service;
 
-import com.ssafy.bookkoo.libraryservice.dto.RequestBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestCreateLibraryDto;
+import com.ssafy.bookkoo.libraryservice.dto.RequestLibraryBookMapperCreateDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestUpdateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseLibraryDto;
 import java.util.List;
 
 public interface LibraryService {
 
-    ResponseLibraryDto addLibrary(RequestCreateLibraryDto library);
+    ResponseLibraryDto addLibrary(RequestCreateLibraryDto library, Long memberId);
 
     List<ResponseLibraryDto> getLibrariesOfMember(Long memberId);
 
@@ -21,9 +21,9 @@ public interface LibraryService {
 
 //    ResponseLibraryDto deleteLibrary(Long libraryId);
 
-    Object addBookToLibrary(
+    void addBookToLibrary(
         Long libraryId,
-        RequestBookDto bookDto,
+        RequestLibraryBookMapperCreateDto libraryBookMapperDto,
         Long memberId
     );
 
