@@ -84,6 +84,7 @@ public class BookServiceImpl implements BookService {
      * @return 책 데이터
      */
     @Override
+    @Transactional
     public ResponseBookDto getBookByIsbn(String isbn) {
         Book book = bookRepository.findByIsbn(isbn);
 
@@ -126,6 +127,27 @@ public class BookServiceImpl implements BookService {
                                                                  bookRepository.existsByIsbn(isbn))
                                                              .build())
                      .collect(Collectors.toList());
+    }
+
+    /**
+     * book 데이터를 받아서 isbn으로 조회 후 없으면 생성, 있으면 해당 데이터를 반환
+     *
+     * @param bookDto : RequestCreateBookDto
+     * @return ResponseBookDto
+     */
+    @Override
+    @Transactional
+    public ResponseBookDto getOrCreateBookByBookData(RequestCreateBookDto bookDto) {
+        // isbn으로 조회했을 때 결과
+        Book bookByIsbn = bookRepository.findByIsbn(bookDto.isbn());
+
+        // 만약 결과가 존재하면 그대로 반환
+        if (bookByIsbn != null) {
+            return bookMapper.toResponseDto(bookByIsbn);
+        }
+
+        // 없으면 생성
+        return createBook(bookDto);
     }
 
     private Book findBookByIdWithException(Long bookId) {
