@@ -5,9 +5,12 @@ import com.ssafy.bookkoo.bookservice.dto.RequestSearchBooksFilterDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
+import com.ssafy.bookkoo.bookservice.entity.Category;
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
+import com.ssafy.bookkoo.bookservice.exception.CategoryNotFoundException;
 import com.ssafy.bookkoo.bookservice.mapper.BookMapper;
 import com.ssafy.bookkoo.bookservice.repository.BookRepository;
+import com.ssafy.bookkoo.bookservice.repository.CategoryRepository;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPIHandler;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPISearchParams;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinAPI;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Service;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private final CategoryRepository categoryRepository;
     private final AladinAPIHandler aladinAPIHandler;
     private final BookMapper bookMapper = BookMapper.INSTANCE;
 
@@ -39,6 +43,14 @@ public class BookServiceImpl implements BookService {
     public ResponseBookDto createBook(RequestCreateBookDto bookDto) {
         // DTO를 엔티티로 변환
         Book book = bookMapper.toEntity(bookDto);
+
+        Category category = categoryRepository.findById(bookDto.categoryId())
+                                              .orElseThrow(
+                                                  () -> new CategoryNotFoundException(
+                                                      "category Not found")
+                                              );
+
+        book.setCategory(category);
 
         // 책 저장
         Book savedBook = bookRepository.save(book);
