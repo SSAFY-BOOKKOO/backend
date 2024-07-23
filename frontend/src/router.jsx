@@ -19,9 +19,10 @@ import Login from './pages/Member/Login.jsx';
 import CurationChatBot from './pages/Curation/CurationChatBot.jsx';
 import CurationLetterCreate from './pages/Curation/CurationLetterCreate.jsx';
 import CurationLetterDetail from './pages/Curation/CurationLetterDetail.jsx';
-import BookTalk from './pages/BookTalk/BookTalk.jsx';
+import BookTalkMain from './pages/BookTalk/BookTalkMain.jsx';
 import Intro from './pages/Member/Intro.jsx';
 import PrivateRoute from '@/components/@common/PrivateRoute';
+import CurationLetterSend from './pages/Curation/CurationLetterSend.jsx';
 
 const isAuthenticated = true; // 로그인 상태를 확인하는 로직 추가 필요
 
@@ -30,6 +31,11 @@ const router = createBrowserRouter([
     path: '/',
     element: <App />,
     children: [
+      { path: 'intro', element: <Intro /> },
+
+      // 커뮤니티 탭 (로그인 여부와 상관없이 접근 가능)
+      { path: 'booktalk', element: <BookTalkMain /> },
+
       // 인증이 필요한 페이지
       {
         element: (
@@ -54,8 +60,10 @@ const router = createBrowserRouter([
           { path: 'curation/chatbot', element: <CurationChatBot /> },
           { path: 'curation/letter-create', element: <CurationLetterCreate /> },
           { path: 'curation/letter/:id', element: <CurationLetterDetail /> },
-
-          { path: 'booktalk', element: <BookTalk /> },
+          {
+            path: 'curation/letter-create/send',
+            element: <CurationLetterSend />,
+          },
 
           // mypage
           { path: 'mypage/friend', element: <Friend /> },
@@ -75,10 +83,6 @@ const router = createBrowserRouter([
   {
     path: 'login',
     element: <Login />,
-  },
-  {
-    path: 'intro',
-    element: <Intro />,
   },
   {
     path: '*',
