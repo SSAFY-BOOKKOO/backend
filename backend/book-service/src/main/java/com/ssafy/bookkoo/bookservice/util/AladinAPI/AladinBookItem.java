@@ -14,7 +14,6 @@ public class AladinBookItem {
     private String description;
     private String title;
     private String pubDate;
-    private String categoryName;
     private String cover;
     private String publisher;
     private Integer categoryId;

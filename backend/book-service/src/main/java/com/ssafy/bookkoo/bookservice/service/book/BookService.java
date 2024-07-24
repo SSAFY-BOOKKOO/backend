@@ -1,4 +1,4 @@
-package com.ssafy.bookkoo.bookservice.service;
+package com.ssafy.bookkoo.bookservice.service.book;
 
 import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
 import com.ssafy.bookkoo.bookservice.dto.RequestSearchBooksFilterDto;
@@ -18,7 +18,12 @@ public interface BookService {
     ResponseBookDto createBook(RequestCreateBookDto bookDto);
 
     @Transactional
-    List<ResponseBookDto> getBooks(String type, String content, int offset, int limit);
+    List<ResponseBookDto> getBooks(
+        String type,
+        String content,
+        int offset,
+        int limit
+    );
 
     @Transactional
     ResponseBookDto getBook(Long bookId);

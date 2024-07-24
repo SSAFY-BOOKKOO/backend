@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.bookservice.handler;
 
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
+import com.ssafy.bookkoo.bookservice.exception.CategoryNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,6 +19,18 @@ public class BookExceptionHandler {
      */
     @ExceptionHandler(BookNotFoundException.class)
     public ResponseEntity<String> bookNotFoundException(BookNotFoundException e) {
+        return ResponseEntity.status(404)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * 없는 카테고리 조회 때 발생
+     *
+     * @param e : error
+     * @return error message + status
+     */
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<String> categoryNotFoundException(CategoryNotFoundException e) {
         return ResponseEntity.status(404)
                              .body(e.getMessage());
     }
