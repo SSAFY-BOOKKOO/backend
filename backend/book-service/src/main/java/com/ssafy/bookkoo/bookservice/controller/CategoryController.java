@@ -1,6 +1,6 @@
 package com.ssafy.bookkoo.bookservice.controller;
 
-import com.ssafy.bookkoo.bookservice.entity.Category;
+import com.ssafy.bookkoo.bookservice.dto.CategoryDto;
 import com.ssafy.bookkoo.bookservice.service.category.CategoryService;
 import com.ssafy.bookkoo.bookservice.util.CategoryDatabaseInitializer;
 import java.util.List;
@@ -23,25 +23,25 @@ public class CategoryController {
     private final CategoryDatabaseInitializer categoryDatabaseInitializer;
 
     @GetMapping
-    public ResponseEntity<List<Category>> getAllCategories() {
+    public ResponseEntity<List<CategoryDto>> getAllCategories() {
         return ResponseEntity.ok()
                              .body(categoryService.getAllCategories());
     }
 
     @PostMapping
-    public ResponseEntity<Category> createCategory(@RequestParam String name) {
+    public ResponseEntity<CategoryDto> createCategory(@RequestParam String name) {
         return ResponseEntity.ok()
                              .body(categoryService.addCategory(name));
     }
 
     @GetMapping("/{categoryId}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Integer categoryId) {
+    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Integer categoryId) {
         return ResponseEntity.ok()
                              .body(categoryService.getCategory(categoryId));
     }
 
     @PutMapping("/{categoryId}")
-    public ResponseEntity<Category> putCategory(
+    public ResponseEntity<CategoryDto> putCategory(
         @PathVariable Integer categoryId,
         @RequestParam String name
     ) {

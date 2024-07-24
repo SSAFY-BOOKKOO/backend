@@ -1,17 +1,17 @@
 package com.ssafy.bookkoo.bookservice.service.category;
 
-import com.ssafy.bookkoo.bookservice.entity.Category;
+import com.ssafy.bookkoo.bookservice.dto.CategoryDto;
 import java.util.List;
 
 public interface CategoryService {
 
-    public List<Category> getAllCategories();
+    public List<CategoryDto> getAllCategories();
 
-    public Category getCategory(Integer categoryId);
+    public CategoryDto getCategory(Integer categoryId);
 
-    public Category addCategory(String name);
+    public CategoryDto addCategory(String name);
 
-    public Category updateCategory(
+    public CategoryDto updateCategory(
         Integer categoryId,
         String name
     );

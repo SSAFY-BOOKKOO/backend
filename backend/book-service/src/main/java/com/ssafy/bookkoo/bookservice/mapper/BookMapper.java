@@ -6,12 +6,9 @@ import com.ssafy.bookkoo.bookservice.entity.Book;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface BookMapper {
-
-    BookMapper INSTANCE = Mappers.getMapper(BookMapper.class);
 
     // DTO를 엔티티로 변환
     Book toEntity(RequestCreateBookDto dto);
