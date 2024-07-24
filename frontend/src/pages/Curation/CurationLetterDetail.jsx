@@ -39,7 +39,9 @@ const CurationLetterDetail = () => {
         <div className='relative flex flex-col items-center p-6 pt-32'>
           <div className='absolute top-2 right-2'>
             <button className='p-2' onClick={handleMenuToggle}>
-              <CiMenuKebab />
+              <div className='absolute top-1 right-3 z-10 cursor-pointer text-4xl'>
+                &#x22EE;
+              </div>
             </button>
             {menuOpen && (
               <div className='absolute right-0 mt-1 w-24 bg-white border rounded-lg shadow-lg'>

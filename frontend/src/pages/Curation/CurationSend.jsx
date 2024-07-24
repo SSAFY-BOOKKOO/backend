@@ -1,8 +1,8 @@
 import React from 'react';
-import Tab from '@components/Curation/Tab';
+import CurationTab from '@components/Curation/CurationTab';
 
 const CurationSend = () => {
-  return <Tab />;
+  return <CurationTab />;
 };
 
 export default CurationSend;
