@@ -71,4 +71,18 @@ public class MemberExceptionHandler {
                              .body(e.getMessage());
     }
 
+    /**
+     * 팔로우 관계가 존재하지 않을 때 발생하는 예외입니다.
+     *
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(FollowShipNotFoundException.class)
+    public ResponseEntity<String> handleFollowShipNotFoundException(FollowShipNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                             .body(e.getMessage());
+    }
+
+
+
 }
