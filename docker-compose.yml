@@ -146,6 +146,8 @@ services:
         condition: service_healthy
     networks:
       - bookkoo-net
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
     restart: always
     volumes:
       - ./auth-service:/app/
