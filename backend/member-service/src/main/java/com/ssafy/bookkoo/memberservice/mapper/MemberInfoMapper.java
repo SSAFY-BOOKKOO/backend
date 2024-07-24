@@ -1,8 +1,7 @@
 package com.ssafy.bookkoo.memberservice.mapper;
 
-import com.ssafy.bookkoo.memberservice.dto.ResponseMemberInfoDto;
+import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
-import com.ssafy.bookkoo.memberservice.service.MemberInfoService;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

@@ -1,7 +1,8 @@
 package com.ssafy.bookkoo.memberservice.service.Impl;
 
-import com.ssafy.bookkoo.memberservice.dto.RequestUpdatePasswordDto;
-import com.ssafy.bookkoo.memberservice.dto.ResponseMemberInfoDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
+import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
+import com.ssafy.bookkoo.memberservice.dto.response.ResponseRecipientDto;
 import com.ssafy.bookkoo.memberservice.entity.Member;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -59,5 +62,11 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         return memberRepository.findByMemberId(memberId)
                                    .orElseThrow(MemberNotFoundException::new)
                                    .getId();
+    }
+
+    //TODO: 팔로우 구현 후 팔로워 목록 + 랜덤 3명 ID반환 로직 구현
+    @Override
+    public List<ResponseRecipientDto> getLetterRecipients(Long memberId) {
+        return null;
     }
 }
