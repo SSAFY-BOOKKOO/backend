@@ -6,6 +6,7 @@ import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPISearchParams;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinAPI;
+import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinSearchDetail;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -45,4 +46,7 @@ public interface BookService {
 
     @Transactional
     List<ResponseBookDto> getBooksByCondition(RequestSearchBooksFilterDto filterDto);
+
+    ResponseAladinSearchDetail searchBookDetailFromAladin(String isbn)
+        throws IOException, InterruptedException, URISyntaxException, ParseException;
 }
