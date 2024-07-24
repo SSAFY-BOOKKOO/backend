@@ -127,7 +127,7 @@ services:
         condition: service_healthy
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://book-db:5432/bookkoo
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://member-db:5432/bookkoo
       - SPRING_DATASOURCE_USERNAME=magumagu
       - SPRING_DATASOURCE_PASSWORD=magumagu
     networks:
