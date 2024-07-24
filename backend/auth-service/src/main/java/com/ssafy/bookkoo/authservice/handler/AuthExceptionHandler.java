@@ -20,7 +20,7 @@ public class AuthExceptionHandler {
      * @return
      */
     @ExceptionHandler(MemberNotFoundException.class)
-    public ResponseEntity<String> memberNotFoundException(MemberNotFoundException e) {
+    public ResponseEntity<String> handleMemberNotFoundException(MemberNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                              .body(e.getMessage());
     }
@@ -32,7 +32,7 @@ public class AuthExceptionHandler {
      * @return
      */
     @ExceptionHandler(TokenExpiredException.class)
-    public ResponseEntity<String> tokenExpiredException(TokenExpiredException e) {
+    public ResponseEntity<String> handleTokenExpiredException(TokenExpiredException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                              .body(e.getMessage());
     }
@@ -44,7 +44,7 @@ public class AuthExceptionHandler {
      * @return
      */
     @ExceptionHandler(LoginFailException.class)
-    public ResponseEntity<String> loginFailException(LoginFailException e) {
+    public ResponseEntity<String> handleLoginFailException(LoginFailException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                              .body(e.getMessage());
     }
