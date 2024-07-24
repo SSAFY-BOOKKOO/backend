@@ -35,6 +35,16 @@ public class MemberInfoController {
         return ResponseEntity.ok(memberInfo);
     }
 
+
+    @GetMapping("/id/{memberId}")
+    @Operation(summary = "멤버 PK를 통해 멤버 정보를 반환하는 API",
+        description = "서비스 내부에서 사용하기 위해 게이트웨이에서 사용하는 API입니다.")
+    public ResponseEntity<ResponseMemberInfoDto> getMemberInfoById(
+        @PathVariable("memberId") Long memberId
+    ) {
+        ResponseMemberInfoDto memberInfo = memberInfoService.getMemberInfo(memberId);
+        return ResponseEntity.ok(memberInfo);
+    }
     @PostMapping("/password")
     @Operation(summary = "비밀번호 변경 API", description = "비밀번호를 변경합니다.")
     public ResponseEntity<HttpStatus> updatePassword(

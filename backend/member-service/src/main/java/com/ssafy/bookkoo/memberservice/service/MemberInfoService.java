@@ -15,6 +15,8 @@ public interface MemberInfoService {
 
     ResponseMemberInfoDto getMemberInfo(String memberId);
 
+    ResponseMemberInfoDto getMemberInfo(Long memberId);
+
     Long getMemberPk(String memberId);
 
     List<ResponseRecipientDto> getLetterRecipients(Long memberId);
