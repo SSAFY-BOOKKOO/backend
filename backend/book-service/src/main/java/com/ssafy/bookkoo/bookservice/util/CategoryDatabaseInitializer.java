@@ -5,11 +5,13 @@ import com.ssafy.bookkoo.bookservice.entity.AladinCategoryMapper;
 import com.ssafy.bookkoo.bookservice.entity.Category;
 import com.ssafy.bookkoo.bookservice.repository.AladinCategoryMapperRepository;
 import com.ssafy.bookkoo.bookservice.repository.CategoryRepository;
+import jakarta.transaction.Transactional;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -24,80 +26,54 @@ public class CategoryDatabaseInitializer {
     private final ResourceLoader resourceLoader;
     private Map<String, String> genreMappingRules;
 
+    @Transactional
     public void init() {
-        List<String> categoryNames = new ArrayList<>();
-        categoryNames.add("추리/스릴러");
-        categoryNames.add("판타지");
-        categoryNames.add("로맨스");
-        categoryNames.add("인문학");
-        categoryNames.add("철학");
-        categoryNames.add("경제/경영");
-        categoryNames.add("역사");
-        categoryNames.add("시");
-        categoryNames.add("소설");
-        categoryNames.add("사회");
-        categoryNames.add("과학/기술");
-        categoryNames.add("교육");
-        categoryNames.add("자기계발");
-        categoryNames.add("에세이");
-        categoryNames.add("기타");
+        List<String> categoryNames = List.of("추리/스릴러", "판타지", "로맨스", "인문학", "철학", "경제/경영",
+            "역사", "시", "소설", "사회", "과학/기술", "교육", "자기계발", "에세이", "기타");
+
         // Define genre mapping rules
         genreMappingRules = new TreeMap<>();
         genreMappingRules.put("추리", "추리/스릴러");
         genreMappingRules.put("스릴러", "추리/스릴러");
         genreMappingRules.put("미스터리", "추리/스릴러");
-
         genreMappingRules.put("판타지", "판타지");
-
         genreMappingRules.put("로맨스", "로맨스");
-
         genreMappingRules.put("경제/경영", "경제/경영");
         genreMappingRules.put("경제", "경제/경영");
         genreMappingRules.put("경영", "경제/경영");
-
         genreMappingRules.put("철학", "철학");
-
         genreMappingRules.put("참고서", "교육");
         genreMappingRules.put("교재", "교육");
         genreMappingRules.put("청소년", "교육");
         genreMappingRules.put("자격증", "교육");
-
         genreMappingRules.put("인문학", "인문학");
         genreMappingRules.put("인문", "인문학");
         genreMappingRules.put("문학", "인문학");
-
         genreMappingRules.put("역사", "역사");
-
         genreMappingRules.put("사회", "사회");
-
         genreMappingRules.put("시", "시");
-
         genreMappingRules.put("소설", "소설");
-
         genreMappingRules.put("과학", "과학/기술");
         genreMappingRules.put("기술", "과학/기술");
         genreMappingRules.put("공학", "과학/기술");
         genreMappingRules.put("컴퓨터", "과학/기술");
-
         genreMappingRules.put("자기계발", "자기계발");
-
         genreMappingRules.put("에세이", "에세이");
-
         genreMappingRules.put("기타", "기타");
 
-        // category 초기화
-        for (String genre : categoryNames) {
-            Category category = Category.builder()
-                                        .name(genre)
-                                        .build();
-            categoryRepository.save(category);
-        }
+        // Batch insert categories
+        List<Category> categories = categoryNames.stream()
+                                                 .map(name -> Category.builder()
+                                                                      .name(name)
+                                                                      .build())
+                                                 .collect(Collectors.toList());
+        categoryRepository.saveAll(categories);
 
         // Load the CSV file and parse the data
-        List<String[]> categoryMappings = parseCsv(
-            "classpath:aladin_category.csv");
+        List<String[]> categoryMappings = parseCsv("classpath:aladin_category.csv");
 
         // Initialize category mappings
+        List<AladinCategoryMapper> aladinCategoryMappings = new ArrayList<>();
         for (String[] mapping : categoryMappings) {
             try {
                 Integer aladinCategoryId = Integer.valueOf(mapping[0]);
@@ -114,8 +90,7 @@ public class CategoryDatabaseInitializer {
                     }
                 }
 
-                Category serviceCategory = categoryRepository.findByName(
-                    internalCategory);
+                Category serviceCategory = categoryRepository.findByName(internalCategory);
                 if (serviceCategory != null) {
                     AladinCategoryMapper aladinCategoryMapping = AladinCategoryMapper.builder()
                                                                                      .aladinCategoryId(
@@ -125,13 +100,16 @@ public class CategoryDatabaseInitializer {
                                                                                      .name(
                                                                                          categoryName)
                                                                                      .build();
-                    aladinCategoryMapperRepository.save(aladinCategoryMapping);
+                    aladinCategoryMappings.add(aladinCategoryMapping);
                 }
             } catch (Exception e) {
                 // 에러나면 컨티뉴
+                continue;
             }
-
         }
+
+        // Batch insert AladinCategoryMappings
+        aladinCategoryMapperRepository.saveAll(aladinCategoryMappings);
     }
 
     private List<String[]> parseCsv(String resourcePath) {
