@@ -7,7 +7,7 @@ public record RequestBookDto(
     String publisher,
     String summary,
     String isbn,
-    String category
+    Integer categoryId
 ) {
 
 }
