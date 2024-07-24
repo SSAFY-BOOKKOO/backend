@@ -11,4 +11,6 @@ public interface MemberInfoService {
     void updateProfileImg(String memberId, MultipartFile profileImg);
 
     ResponseMemberInfoDto getMemberInfo(String memberId);
+
+    Long getMemberPk(String memberId);
 }

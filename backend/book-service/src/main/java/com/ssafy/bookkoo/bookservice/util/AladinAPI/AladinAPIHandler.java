@@ -7,13 +7,16 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import lombok.RequiredArgsConstructor;
 import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class AladinAPIHandler {
 
+    final private AladinCategoryService aladinCategoryService;
     private static String apiKey;
 
     @Value("ttbwintiger981754003")
@@ -32,7 +35,7 @@ public class AladinAPIHandler {
      * @throws InterruptedException
      * @throws URISyntaxException
      */
-    public static ResponseAladinAPI searchBooksFromAladin(AladinAPISearchParams params)
+    public ResponseAladinAPI searchBooks(AladinAPISearchParams params)
         throws IOException, InterruptedException, URISyntaxException {
         URI uri = new URIBuilder(BASE_URL + "itemSearch.aspx")
             .addParameter("ttbkey", apiKey)
@@ -51,10 +54,50 @@ public class AladinAPIHandler {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() == 200) {
-//            JSONParser parser = new JSONParser();
-//            return (JSONObject) parser.parse(response.body());
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(response.body(), ResponseAladinAPI.class);
+            ResponseAladinAPI apiResponse = objectMapper.readValue(response.body(),
+                ResponseAladinAPI.class);
+            // 카테고리 매핑 적용
+            aladinCategoryService.processApiResponse(apiResponse);
+
+            return apiResponse;
+        } else {
+            throw new IOException("Failed to fetch data from Aladin API: " + response.body());
+        }
+    }
+
+    public ResponseAladinSearchDetail searchBookDetail(String isbn)
+        throws IOException, InterruptedException, URISyntaxException {
+        URI uri = new URIBuilder(BASE_URL + "itemLookUp.aspx")
+            .addParameter("ttbkey", apiKey)
+            .addParameter("itemIdType", "ISBN")
+            .addParameter("itemId", isbn)
+            .addParameter("output", "JS")
+            .addParameter("OptResult", "packing")
+            .addParameter("Version", "20131101")
+            .build();
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                                         .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            // response의 item 부분만 빼ㅐ네서 그거의 첫번쨰 아이템을 ResponseAladinSearchDetial로 변환
+            ResponseAladinDetail apiResponse = objectMapper.readValue(response.body(),
+                ResponseAladinDetail.class);
+
+            if (!apiResponse.getItem()
+                            .isEmpty()) {
+                // 카테고리 매핑 적용
+                ResponseAladinSearchDetail searchDetail = apiResponse.getItem()
+                                                                     .get(0);
+                aladinCategoryService.processApiResponse(searchDetail);
+                return searchDetail; // 첫 번째 아이템 반환
+            } else {
+                throw new IOException("No book found with the given ISBN: " + isbn);
+            }
         } else {
             throw new IOException("Failed to fetch data from Aladin API: " + response.body());
         }

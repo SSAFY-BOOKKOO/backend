@@ -41,7 +41,9 @@ public class SecurityConfig {
             String path = request.getURI()
                                  .getPath();
             //인증 or 멤버 등록에 관련된 요청이면 매칭
-            if (path.startsWith("/auth") || path.startsWith("/members/register")) {
+            if (path.startsWith("/auth") || path.startsWith("/members/register")
+                || path.startsWith("/api-docs") || path.startsWith("/swagger-ui")
+                || path.startsWith("/docs") || path.startsWith("/webjars")) {
                 return MatchResult.match();
             }
             //나머지는 매칭 X

@@ -1,13 +1,22 @@
 package com.ssafy.bookkoo.curationservice.repository;
 
 
+import com.ssafy.bookkoo.curationservice.entity.Curation;
 import com.ssafy.bookkoo.curationservice.entity.CurationSend;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CurationSendRepository extends JpaRepository<CurationSend, Long> {
 
-    List<CurationSend> getCurationSendByReceiver(Long receiverId);
+    List<CurationSend> findCurationSendsByReceiver(Long receiverId);
 
-    List<CurationSend> getCurationSendByCurationWriter(Long writerId);
+    Optional<CurationSend> findCurationSendsByCurationAndReceiver(Curation curation,
+        Long receiver);
+
+    List<CurationSend> findCurationSendsByIsStoredAndReceiver(Boolean isStored, Long receiver);
+
+    List<CurationSend> findByCuration(Curation curation);
+
+    Optional<CurationSend> findCurationSendById(Long id);
 }

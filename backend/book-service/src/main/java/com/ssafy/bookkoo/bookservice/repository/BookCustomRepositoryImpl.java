@@ -1,7 +1,9 @@
 package com.ssafy.bookkoo.bookservice.repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.bookkoo.bookservice.dto.RequestSearchBooksFilterDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import com.ssafy.bookkoo.bookservice.entity.QBook;
 import java.util.List;
@@ -24,7 +26,12 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
      * @return List<Book>
      */
     @Override
-    public List<Book> findByConditions(String type, String content, int offset, int limit) {
+    public List<Book> findByConditions(
+        String type,
+        String content,
+        int offset,
+        int limit
+    ) {
         QBook book = QBook.book;
         BooleanExpression predicate = book.isNotNull();
 
@@ -50,6 +57,26 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
                            .where(predicate)
                            .offset(offset)
                            .limit(limit)
+                           .fetch();
+    }
+
+    @Override
+    public List<Book> findByConditions(RequestSearchBooksFilterDto dto) {
+        QBook book = QBook.book;
+        BooleanExpression predicate = book.isNotNull();
+
+        PathBuilder<Book> entityPath = new PathBuilder<>(Book.class, "book");
+
+        if (dto.field() != null && dto.value() != null) {
+            BooleanExpression inExpression = entityPath.getString(dto.field())
+                                                       .in(dto.value());
+            predicate = predicate.and(inExpression);
+        }
+
+        return queryFactory.selectFrom(book)
+                           .where(predicate)
+                           .offset(dto.offset())
+                           .limit(dto.limit())
                            .fetch();
     }
 

@@ -1,12 +1,13 @@
 package com.ssafy.bookkoo.bookservice.controller;
 
 import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
-import com.ssafy.bookkoo.bookservice.dto.RequestSearchBookFilterDto;
+import com.ssafy.bookkoo.bookservice.dto.RequestSearchBooksFilterDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseCheckBooksByIsbnDto;
-import com.ssafy.bookkoo.bookservice.service.BookService;
+import com.ssafy.bookkoo.bookservice.service.book.BookService;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPISearchParams;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinAPI;
+import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinSearchDetail;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -49,11 +50,10 @@ public class BookController {
 
     @GetMapping
     @Operation(summary = "책 목록 조회", description = "책 조회(필터링 포함)시 사용하는 API")
-    public ResponseEntity<List<ResponseBookDto>> getBooks(
-        @ModelAttribute RequestSearchBookFilterDto filterDto
+    public ResponseEntity<List<ResponseBookDto>> getBooksByCondition(
+        @ModelAttribute RequestSearchBooksFilterDto filterDto
     ) {
-        List<ResponseBookDto> books = bookService.getBooks(filterDto.type(), filterDto.content(),
-            filterDto.offset(), filterDto.limit());
+        List<ResponseBookDto> books = bookService.getBooksByCondition(filterDto);
         return ResponseEntity.ok()
                              .body(books);
     }
@@ -117,10 +117,25 @@ public class BookController {
      * @param params : AladinAPISearchParams
      * @return 검색 결과 반환
      */
-    @GetMapping("/api/search")
+    @GetMapping("/aladin/books")
     @Operation(summary = "알라딘 API 검색", description = "알라딘 API를 사용하여 책 검색")
-    public ResponseAladinAPI aladinSearchBooks(@Valid @ModelAttribute AladinAPISearchParams params)
+    public ResponseEntity<ResponseAladinAPI> aladinSearchBooks(@Valid @ModelAttribute AladinAPISearchParams params)
         throws IOException, URISyntaxException, InterruptedException, ParseException {
-        return bookService.searchBooksFromAladin(params);
+        return ResponseEntity.ok()
+                             .body(bookService.searchBooksFromAladin(params));
+    }
+
+    /**
+     * 알라딘 API를 이용한 상세 검색
+     *
+     * @param isbn : isbn string
+     * @return 상세 검색 반환
+     */
+    @GetMapping("/aladin/books/{isbn}")
+    @Operation(summary = "알라딘 API 상세 검색", description = "알라딘 API를 사용하여 책 상세 검색")
+    public ResponseEntity<ResponseAladinSearchDetail> aladinSearchBooks(@PathVariable String isbn)
+        throws IOException, URISyntaxException, InterruptedException, ParseException {
+        return ResponseEntity.ok()
+                             .body(bookService.searchBookDetailFromAladin(isbn));
     }
 }

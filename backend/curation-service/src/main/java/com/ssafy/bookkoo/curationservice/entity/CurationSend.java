@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -41,4 +42,13 @@ public class CurationSend extends BaseEntity {
     public void store() {
         isStored = true;
     }
+
+    @Builder
+    public CurationSend(Long receiver, Curation curation) {
+        this.receiver = receiver;
+        this.curation = curation;
+        this.isRead = false;
+        this.isStored = false;
+    }
+
 }

@@ -2,6 +2,7 @@ package com.ssafy.bookkoo.authservice.service.Impl;
 
 import com.ssafy.bookkoo.authservice.entity.Member;
 import com.ssafy.bookkoo.authservice.entity.RefreshToken;
+import com.ssafy.bookkoo.authservice.exception.TokenExpiredException;
 import com.ssafy.bookkoo.authservice.repository.RefreshTokenRepository;
 import com.ssafy.bookkoo.authservice.service.TokenService;
 import com.ssafy.bookkoo.authservice.util.TokenGenerator;
@@ -73,5 +74,19 @@ public class TokenServiceImpl implements TokenService {
 
         //새로운 토큰 생성
         return createRefreshToken(member);
+    }
+
+    /**
+     * 토큰을 통해 Redis에서 토큰에 대한 MemberId 반환
+     * 이때, 토큰 만료도 함께 확인
+     *
+     * @param refreshToken
+     * @return
+     */
+    @Override
+    public String getMemberIdByRefreshToken(String refreshToken) {
+        return refreshTokenRepository.findByRefreshToken(refreshToken)
+                                     .orElseThrow(TokenExpiredException::new)
+                                     .getMemberId();
     }
 }
