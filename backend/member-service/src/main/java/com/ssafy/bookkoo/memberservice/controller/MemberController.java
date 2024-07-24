@@ -85,7 +85,7 @@ public class MemberController {
     @PostMapping("/info")
     @Operation(description = "memberId, 닉네임, 카테고리, 출생년도, 소개글을 받아 추가정보를 저장합니다.", summary = "추가 정보 저장")
     public ResponseEntity<HttpStatus> registerAdditionalInfo(
-        @RequestBody RequestAdditionalInfo requestAdditionalInfo
+        @Valid @RequestBody RequestAdditionalInfo requestAdditionalInfo
     ) {
         memberService.registerAdditionalInfo(requestAdditionalInfo);
         return ResponseEntity.ok()
