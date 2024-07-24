@@ -47,11 +47,7 @@ const ReviewCom = ({ onBackClick, book }) => {
         <div className='flex justify-between items-center w-72 pb-4'>
           <h3 className='text-lg font-bold'>추천사</h3>
           <button onClick={handleReviewRefresh}>
-            <img
-              src={refreshIcon}
-              alt='새로고침'
-              style={{ width: '24px', height: '24px' }}
-            />
+            <img src={refreshIcon} alt='새로고침' className='h-6 w-6' />
           </button>
         </div>
 

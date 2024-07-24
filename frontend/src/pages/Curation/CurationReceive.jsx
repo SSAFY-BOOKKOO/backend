@@ -83,7 +83,7 @@ const CurationReceive = () => {
       <div className='flex justify-center items-center bg-gray-100 space-x-2 p-2 m-4 rounded'>
         <AiFillAlert className='text-red-500 ' />
         <p className='font-bold'>15일 후 자동 삭제됩니다!</p>
-        console.log({storedLetters})
+        {/* console.log({storedLetters}) */}
       </div>
 
       <div className='flex-1 overflow-y-auto px-4'>
