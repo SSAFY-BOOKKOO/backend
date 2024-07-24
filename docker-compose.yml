@@ -12,7 +12,7 @@ services:
     ports:
       - '80:80'
       - '443:443'
-      - '81:81'
+      - '3001:81'
     environment:
       DB_MYSQL_HOST: "nginx-proxy-manager-db"
       DB_MYSQL_PORT: 3306
