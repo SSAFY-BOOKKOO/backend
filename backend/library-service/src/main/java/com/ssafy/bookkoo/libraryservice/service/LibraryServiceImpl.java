@@ -13,16 +13,17 @@ import com.ssafy.bookkoo.libraryservice.entity.LibraryStyle;
 import com.ssafy.bookkoo.libraryservice.entity.MapperKey;
 import com.ssafy.bookkoo.libraryservice.exception.BookAlreadyMappedException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryNotFoundException;
+import com.ssafy.bookkoo.libraryservice.exception.LibraryStyleNotFoundException;
 import com.ssafy.bookkoo.libraryservice.mapper.LibraryBookMapperMapper;
 import com.ssafy.bookkoo.libraryservice.mapper.LibraryMapper;
 import com.ssafy.bookkoo.libraryservice.repository.LibraryBookMapperRepository;
 import com.ssafy.bookkoo.libraryservice.repository.LibraryRepository;
 import com.ssafy.bookkoo.libraryservice.repository.LibraryStyleRepository;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -60,14 +61,14 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ResponseLibraryDto> getLibrariesOfMember(Long memberId) {
         List<Library> libraries = libraryRepository.findByMemberId(memberId);
         return libraryMapper.toResponseDtoList(libraries);
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseLibraryDto getLibrary(Long libraryId) {
         // 라이브러리 ID로 라이브러리를 찾고 예외를 처리합니다.
         Library library = findLibraryByIdWithException(libraryId);
@@ -117,10 +118,10 @@ public class LibraryServiceImpl implements LibraryService {
         libraryMapper.updateLibraryFromDto(libraryDto, libraryToUpdate);
 
         // 서재 스타일 업데이트 로직
-        LibraryStyle libraryStyleToUpdate = libraryStyleRepository.findById(libraryToUpdate.getId())
+        LibraryStyle libraryStyleToUpdate = libraryStyleRepository.findById(libraryId)
                                                                   .orElseThrow(
-                                                                      () -> new LibraryNotFoundException(
-                                                                          "LibraryStyle not found"));
+                                                                      () -> new LibraryStyleNotFoundException(
+                                                                          libraryId));
         // 있으면 업데이트
         libraryStyleToUpdate.setLibraryColor(libraryDto.libraryStyleDto()
                                                        .libraryColor());
@@ -134,7 +135,6 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
-    @Transactional
     public void addBookToLibrary(
         Long libraryId,
         RequestLibraryBookMapperCreateDto mapperDto,
@@ -155,7 +155,7 @@ public class LibraryServiceImpl implements LibraryService {
 
         // 2.1.1 이미 존재하는 매퍼가 있는지 확인
         if (libraryBookMapperRepository.existsById(mapperKey)) {
-            throw new BookAlreadyMappedException("This book is already mapped to the library.");
+            throw new BookAlreadyMappedException();
         }
 
         // 2.2 엔티티 생성
@@ -174,15 +174,14 @@ public class LibraryServiceImpl implements LibraryService {
      * @return 권수
      */
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Integer countBooksInLibrary(Long memberId) {
         return libraryBookMapperRepository.countLibrariesByMemberId(memberId);
     }
 
-
     private Library findLibraryByIdWithException(Long libraryId) {
         return libraryRepository.findById(libraryId)
                                 .orElseThrow(() -> new LibraryNotFoundException(
-                                    "Library not found with id : " + libraryId));
+                                    libraryId));
     }
 }
