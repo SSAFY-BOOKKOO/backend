@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import Tab from '@components/Curation/Tab';
+import CurationTab from '@components/Curation/CurationTab';
 import { BsBookmarkStar, BsBookmarkStarFill } from 'react-icons/bs';
 import { BsTrash3 } from 'react-icons/bs';
 import { AiFillAlert } from 'react-icons/ai';
@@ -79,7 +79,7 @@ const CurationReceive = () => {
 
   return (
     <div className='flex flex-col'>
-      <Tab />
+      <CurationTab />
       <div className='flex justify-center items-center bg-gray-100 space-x-2 p-2 m-4 rounded'>
         <AiFillAlert className='text-red-500 ' />
         <p className='font-bold'>15일 후 자동 삭제됩니다!</p>

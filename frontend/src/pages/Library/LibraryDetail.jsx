@@ -24,7 +24,7 @@ const LibraryDetail = () => {
 
   return (
     // 큰 틀
-    <div className='flex flex-col items-center min-h-screen overflow-hidden'>
+    <div className='flex flex-col items-center min-h-screen overflow-hidden scrollbar-none'>
       <SwitchTransition>
         <CSSTransition
           key={showReview ? 'review' : 'details'}
