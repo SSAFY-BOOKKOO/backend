@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,14 +42,47 @@ public class Book {
     @Column(name = "isbn", nullable = false)
     private String isbn;
 
+    @Column
+    private Integer itemPage;
+
+    @Column
+    private Integer sizeDepth;
+
+    @Column
+    private Integer sizeHeight;
+
+    @Column
+    private Integer sizeWidth;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    @Setter
+    private Category category;
+
     @Builder
-    public Book(String coverImgUrl, String author, String publisher, String summary, String title,
-        String isbn) {
+    public Book(
+        String coverImgUrl,
+        String author,
+        String publisher,
+        String summary,
+        String title,
+        String isbn,
+        Integer itemPage,
+        Integer sizeDepth,
+        Integer sizeHeight,
+        Integer sizeWidth,
+        Category category
+    ) {
         this.coverImgUrl = coverImgUrl;
         this.author = author;
         this.publisher = publisher;
         this.summary = summary;
         this.title = title;
         this.isbn = isbn;
+        this.itemPage = itemPage;
+        this.sizeDepth = sizeDepth;
+        this.sizeHeight = sizeHeight;
+        this.sizeWidth = sizeWidth;
+        this.category = category;
     }
 }

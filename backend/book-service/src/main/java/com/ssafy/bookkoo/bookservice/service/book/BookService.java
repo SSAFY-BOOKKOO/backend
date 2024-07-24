@@ -1,10 +1,12 @@
-package com.ssafy.bookkoo.bookservice.service;
+package com.ssafy.bookkoo.bookservice.service.book;
 
 import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
+import com.ssafy.bookkoo.bookservice.dto.RequestSearchBooksFilterDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPISearchParams;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinAPI;
+import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinSearchDetail;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -17,7 +19,12 @@ public interface BookService {
     ResponseBookDto createBook(RequestCreateBookDto bookDto);
 
     @Transactional
-    List<ResponseBookDto> getBooks(String type, String content, int offset, int limit);
+    List<ResponseBookDto> getBooks(
+        String type,
+        String content,
+        int offset,
+        int limit
+    );
 
     @Transactional
     ResponseBookDto getBook(Long bookId);
@@ -36,4 +43,10 @@ public interface BookService {
 
     @Transactional
     ResponseBookDto getOrCreateBookByBookData(RequestCreateBookDto bookDto);
+
+    @Transactional
+    List<ResponseBookDto> getBooksByCondition(RequestSearchBooksFilterDto filterDto);
+
+    ResponseAladinSearchDetail searchBookDetailFromAladin(String isbn)
+        throws IOException, InterruptedException, URISyntaxException, ParseException;
 }
