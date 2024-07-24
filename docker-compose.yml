@@ -130,6 +130,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://member-db:5432/bookkoo
       - SPRING_DATASOURCE_USERNAME=magumagu
       - SPRING_DATASOURCE_PASSWORD=magumagu
+      - REDIS_HOST=auth-redis
+      - REDIS_PORT=6379
     networks:
       - bookkoo-net
     restart: always
