@@ -46,9 +46,11 @@ public class MemberInfo extends BaseEntity {
     @Column(name = "profile_img_url")
     private String profileImgUrl;
 
+    //해당 멤버를 팔로우하는 팔로우 관계
     @OneToMany(mappedBy = "follower")
     private List<FollowShip> followers = new ArrayList<>();
 
+    //해당 멤버가 팔로잉하는 팔로우 관계
     @OneToMany(mappedBy = "followee")
     private List<FollowShip> followees = new ArrayList<>();
 
@@ -65,4 +67,46 @@ public class MemberInfo extends BaseEntity {
         this.profileImgUrl = profileImgUrl;
     }
 
+
+    /**
+     * 연관관계 편의 메서드
+     */
+    /**
+     * 해당 멤버를 팔로우하는 목록에 추가
+     * @param followShip
+     */
+    public void addFollowers(FollowShip followShip, MemberInfo followeeInfo) {
+        if (!followers.contains(followShip)) {
+            followers.add(followShip);
+        }
+        followShip.setFollowee(followeeInfo);
+    }
+
+    /**
+     * 해당 멤버가 팔로우하는 목록에 추가
+     * @param followShip
+     */
+    public void addFollowees(FollowShip followShip, MemberInfo followerInfo) {
+        if (!followees.contains(followShip)) {
+            followees.add(followShip);
+        }
+        followShip.setFollower(followerInfo);
+    }
+
+    /**
+     * 해당 멤버를 언팔로우
+     *
+     * @param followShip
+     */
+    public void removeFollower(FollowShip followShip) {
+        followers.remove(followShip);
+    }
+
+    /**
+     * 해당 멤버가 언팔로우
+     * @param followShip
+     */
+    public void removeFollowee(FollowShip followShip) {
+        followees.remove(followShip);
+    }
 }
