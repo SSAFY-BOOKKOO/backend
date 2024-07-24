@@ -161,6 +161,7 @@ public class MemberServiceImpl implements MemberService {
 
         String fileKey = commonServiceClient.saveProfileImg(profileImg, null);
         MemberInfo memberInfo = MemberInfo.builder()
+                                          .id(member.getId())
                                           .memberId(member.getMemberId())
                                           .nickName(requestAdditionalInfo.nickName())
                                           .year(requestAdditionalInfo.year())
