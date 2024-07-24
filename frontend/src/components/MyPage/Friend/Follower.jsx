@@ -18,7 +18,7 @@ const Follower = ({ followers, handleRemoveFollower }) => (
           </div>
           <button
             onClick={() => handleRemoveFollower(user)}
-            className='bg-gray-300 hover:bg-gray-400 text-gray-700 py-1 px-3 rounded'
+            className='bg-pink-400 hover:bg-gray-400 text-gray-700 py-1 px-3 rounded'
           >
             팔로워 삭제
           </button>

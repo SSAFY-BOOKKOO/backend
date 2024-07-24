@@ -6,7 +6,7 @@ import 'chart.js/auto';
 Chart.register(ArcElement, Tooltip, Legend);
 
 const Statistics = ({ books }) => {
-  // 더미 데이터 예제
+  // 더미 데이터
   const dummyData = [
     { genre: 'Fantasy', count: 10 },
     { genre: 'Science Fiction', count: 5 },

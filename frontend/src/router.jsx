@@ -24,6 +24,7 @@ import BookTalkDetail from './pages/BookTalk/BookTalkDetail.jsx';
 import Intro from './pages/Member/Intro.jsx';
 import PrivateRoute from '@/components/@common/PrivateRoute';
 import CurationLetterSend from './pages/Curation/CurationLetterSend.jsx';
+import Quote from './pages/Mypage/Quote.jsx';
 
 const isAuthenticated = true; // 로그인 상태를 확인하는 로직 추가 필요
 
@@ -35,6 +36,7 @@ const router = createBrowserRouter([
       { path: 'intro', element: <Intro /> },
 
       // 커뮤니티 탭 (로그인 여부와 상관없이 접근 가능)
+
       { path: 'booktalk', element: <BookTalkMain /> },
       { path: 'booktalk/detail/:bookId', element: <BookTalkDetail /> },
 
@@ -71,6 +73,7 @@ const router = createBrowserRouter([
           { path: 'mypage/friend', element: <Friend /> },
           { path: 'mypage/statistics', element: <Statistics /> },
           { path: 'mypage/profile', element: <Profile /> },
+          { path: 'mypage/quote', element: <Quote /> },
           { path: 'mypage', element: <MyPage /> },
 
           { path: 'notification', element: <Notification /> },

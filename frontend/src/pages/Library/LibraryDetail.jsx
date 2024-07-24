@@ -1,4 +1,3 @@
-// src/components/Library/Detail/LibraryDetail.jsx
 import React, { useState } from 'react';
 import { AiFillStar } from 'react-icons/ai';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';

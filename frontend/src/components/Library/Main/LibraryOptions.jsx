@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '../../@common/Button';
+import DeleteLibraryModal from './DeleteLibraryModal';
 
 const LibraryOptions = ({
   activeLibrary,
@@ -11,12 +12,13 @@ const LibraryOptions = ({
   setShowCreateModal,
   deleteLibrary,
 }) => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const handleDeleteLibrary = () => {
     if (libraries.length <= 1) {
       alert('서재가 하나만 남아 있어 삭제할 수 없습니다.');
     } else {
-      setShowMenu(false);
-      deleteLibrary();
+      setShowDeleteModal(true);
     }
   };
 
@@ -36,7 +38,7 @@ const LibraryOptions = ({
       </select>
       <Button
         text='+'
-        color='text-white bg-pink-500 active:bg-pink-600'
+        color='text-white bg-green-400 active:bg-pink-400'
         size='medium'
         onClick={() => setShowMenu(true)}
       />
@@ -64,12 +66,12 @@ const LibraryOptions = ({
               text='서재 삭제'
               color='text-white bg-red-500 active:bg-red-600'
               size='medium'
-              onClick={() => handleDeleteLibrary()}
+              onClick={handleDeleteLibrary}
               className='w-full'
             />
             <Button
               text='서재 생성'
-              color='text-white bg-green-500 active:bg-green-600'
+              color='text-white bg-green-400 active:bg-green-600'
               size='medium'
               onClick={() => {
                 setShowMenu(false);
@@ -80,6 +82,11 @@ const LibraryOptions = ({
           </div>
         </div>
       )}
+      <DeleteLibraryModal
+        showDeleteModal={showDeleteModal}
+        deleteLibrary={deleteLibrary}
+        setShowDeleteModal={setShowDeleteModal}
+      />
     </div>
   );
 };

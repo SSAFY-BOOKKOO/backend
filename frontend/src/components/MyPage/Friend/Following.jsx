@@ -18,7 +18,7 @@ const Following = ({ following, handleUnfollow }) => (
           </div>
           <button
             onClick={() => handleUnfollow(user)}
-            className='bg-gray-300 hover:bg-gray-400 text-gray-700 py-1 px-3 rounded'
+            className='bg-pink-400 hover:bg-gray-400 text-gray-700 py-1 px-3 rounded'
           >
             팔로잉 취소
           </button>

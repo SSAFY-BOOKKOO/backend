@@ -6,7 +6,7 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [userInfo, setUserInfo] = useState({
     nickname: '유제3',
-    profileImage: 'https://via.placeholder.com/150', // Placeholder image URL
+    profileImage: 'https://via.placeholder.com/150',
     email: 'user@example.com',
     password: 'password123',
     receiveLetters: true,

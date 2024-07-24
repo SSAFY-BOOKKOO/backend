@@ -1,10 +1,8 @@
-// src/components/Register/Register.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Input from '../@common/Input';
+import RegisterInput from './RegisterInput';
 import Button from '../@common/Button';
 import Main from '../Layout/Main';
-import WrapContainer from '../Layout/WrapContainer';
 
 const Register = () => {
   const [step, setStep] = useState(1);
@@ -21,6 +19,7 @@ const Register = () => {
     is_receive_letter_email: false,
   });
 
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const handleChange = e => {
@@ -28,6 +27,10 @@ const Register = () => {
     setFormData(prevFormData => ({
       ...prevFormData,
       [name]: type === 'checkbox' ? checked : value,
+    }));
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: '',
     }));
   };
 
@@ -37,6 +40,10 @@ const Register = () => {
       setFormData(prevFormData => ({
         ...prevFormData,
         profile_img_url: URL.createObjectURL(file),
+      }));
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        profile_img_url: '',
       }));
     }
   };
@@ -55,39 +62,87 @@ const Register = () => {
     });
   };
 
+  const validateEmail = email => {
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return re.test(email);
+  };
+
+  const validatePassword = password => {
+    const re = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$/;
+    return re.test(password);
+  };
+
   const handleNextStep = () => {
-    if (step === 1 && formData.password !== formData.confirmPassword) {
-      alert('비밀번호가 일치하지 않습니다.');
-      return;
+    const newErrors = {};
+    if (!validateEmail(formData.email)) {
+      newErrors.email = '올바른 이메일 형식을 입력하세요.';
     }
-    setStep(step + 1);
+    if (!validatePassword(formData.password)) {
+      newErrors.password =
+        '비밀번호는 영문, 숫자, 특수문자 조합으로 이루어진 8~16자여야 합니다.';
+    }
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = '비밀번호가 일치하지 않습니다.';
+    }
+    if (formData.nickname.length > 10) {
+      newErrors.nickname = '닉네임은 10자 이내로 설정해야 합니다.';
+    }
+    if (!formData.introduction) {
+      newErrors.introduction = '소개글을 입력하세요.';
+    }
+
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length === 0) {
+      setStep(step + 1);
+    }
   };
 
   const handlePrevStep = () => {
     setStep(step - 1);
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.email) newErrors.email = '이메일을 입력하세요.';
+    if (!validateEmail(formData.email))
+      newErrors.email = '올바른 이메일 형식을 입력하세요.';
+    if (!formData.nickname) newErrors.nickname = '닉네임을 입력하세요.';
+    if (!formData.password) newErrors.password = '비밀번호를 입력하세요.';
+    if (!validatePassword(formData.password))
+      newErrors.password =
+        '비밀번호는 영문, 숫자, 특수문자 조합으로 이루어진 8~16자여야 합니다.';
+    if (formData.password !== formData.confirmPassword)
+      newErrors.confirmPassword = '비밀번호가 일치하지 않습니다.';
+    if (!formData.introduction) newErrors.introduction = '소개글을 입력하세요.';
+    if (formData.nickname.length > 10)
+      newErrors.nickname = '닉네임은 10자 이내로 설정해야 합니다.';
+    if (!formData.age) newErrors.age = '연령을 입력하세요.';
+    if (!formData.gender) newErrors.gender = '성별을 선택하세요.';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = e => {
     e.preventDefault();
 
-    if (formData.nickname.length > 10) {
-      alert('닉네임은 10자 이내로 설정해야 합니다.');
-      return;
+    if (validateForm()) {
+      alert('회원가입이 완료되었습니다.');
+      setStep(3);
     }
-
-    alert('회원가입이 완료되었습니다.');
-    setStep(3);
   };
 
   return (
-    <WrapContainer>
+    <Main>
       <div className='flex flex-col justify-center items-center min-h-screen px-4 w-full'>
         <div className='w-full max-w-md'>
-          <h2 className='text-2xl font-bold mb-4 text-center'>회원가입</h2>
+          <h2 className='text-2xl font-bold mb-4 text-center px-44'>
+            회원가입
+          </h2>
           <form onSubmit={handleSubmit}>
             {step === 1 && (
               <>
-                <Input
+                <RegisterInput
                   labelText='이메일'
                   type='email'
                   id='email'
@@ -95,8 +150,9 @@ const Register = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
+                  error={errors.email}
                 />
-                <Input
+                <RegisterInput
                   labelText='닉네임'
                   type='text'
                   id='nickname'
@@ -104,8 +160,9 @@ const Register = () => {
                   value={formData.nickname}
                   onChange={handleChange}
                   required
+                  error={errors.nickname}
                 />
-                <Input
+                <RegisterInput
                   labelText='비밀번호'
                   type='password'
                   id='password'
@@ -113,8 +170,9 @@ const Register = () => {
                   value={formData.password}
                   onChange={handleChange}
                   required
+                  error={errors.password}
                 />
-                <Input
+                <RegisterInput
                   labelText='비밀번호 확인'
                   type='password'
                   id='confirmPassword'
@@ -122,8 +180,9 @@ const Register = () => {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
+                  error={errors.confirmPassword}
                 />
-                <Input
+                <RegisterInput
                   labelText='소개글'
                   type='text'
                   id='introduction'
@@ -131,6 +190,7 @@ const Register = () => {
                   value={formData.introduction}
                   onChange={handleChange}
                   required
+                  error={errors.introduction}
                 />
                 <label className='block mb-2 text-sm font-medium text-gray-700'>
                   프로필 이미지
@@ -178,7 +238,7 @@ const Register = () => {
                 <h3 className='text-xl font-bold mb-4 text-center'>
                   추가 정보를 알려주세요.
                 </h3>
-                <Input
+                <RegisterInput
                   labelText='연령'
                   type='number'
                   id='age'
@@ -186,6 +246,7 @@ const Register = () => {
                   value={formData.age}
                   onChange={handleChange}
                   required
+                  error={errors.age}
                 />
                 <label className='block mb-2 text-sm font-medium text-gray-700'>
                   성별
@@ -212,7 +273,21 @@ const Register = () => {
                       />
                       <span className='ml-2'>여성</span>
                     </label>
+                    <label className='flex items-center'>
+                      <input
+                        type='radio'
+                        id='gender-none'
+                        name='gender'
+                        value='none'
+                        checked={formData.gender === 'none'}
+                        onChange={handleChange}
+                      />
+                      <span className='ml-2'>선택 안함</span>
+                    </label>
                   </div>
+                  {errors.gender && (
+                    <p className='text-red-500 text-sm'>{errors.gender}</p>
+                  )}
                 </label>
                 <label className='block mb-2 text-sm font-medium text-gray-700'>
                   선호 카테고리
@@ -227,8 +302,10 @@ const Register = () => {
                       '시',
                       '에세이',
                       '소설',
-                      '과학/사회과학',
+                      '과학',
+                      '사회과학',
                       '자기계발',
+                      '기타',
                     ].map(category => (
                       <div key={category} className='mr-2 mb-2'>
                         <label className='flex items-center border px-2 py-1 rounded-lg cursor-pointer'>
@@ -326,7 +403,7 @@ const Register = () => {
           </form>
         </div>
       </div>
-    </WrapContainer>
+    </Main>
   );
 };
 
