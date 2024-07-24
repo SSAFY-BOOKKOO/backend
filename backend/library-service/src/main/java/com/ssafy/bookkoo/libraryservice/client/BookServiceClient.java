@@ -1,6 +1,6 @@
 package com.ssafy.bookkoo.libraryservice.client;
 
-import com.ssafy.bookkoo.libraryservice.dto.RequestBookDto;
+import com.ssafy.bookkoo.libraryservice.dto.RequestCreateBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseCheckBooksByIsbnDto;
 import java.util.List;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface BookServiceClient {
 
     @PostMapping
-    ResponseBookDto addBook(@RequestBody RequestBookDto requestBookDto);
+    ResponseBookDto addBook(@RequestBody RequestCreateBookDto requestBookDto);
 
     @GetMapping
     List<ResponseBookDto> getBooksByCondition(
@@ -32,7 +32,7 @@ public interface BookServiceClient {
     ResponseBookDto getBookByIsbn(@PathVariable("isbn") String isbn);
 
     @PostMapping("/isbn")
-    ResponseBookDto getOrCreateBookByBookData(@RequestBody RequestBookDto requestBookDto);
+    ResponseBookDto getOrCreateBookByBookData(@RequestBody RequestCreateBookDto requestBookDto);
 
     @PostMapping("/check-books")
     List<ResponseCheckBooksByIsbnDto> checkBooksByIsbn(@RequestBody String[] isbnList);

@@ -14,6 +14,7 @@ import com.ssafy.bookkoo.bookservice.repository.CategoryRepository;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPIHandler;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPISearchParams;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinAPI;
+import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinSearchDetail;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -127,7 +128,14 @@ public class BookServiceImpl implements BookService {
     @Override
     public ResponseAladinAPI searchBooksFromAladin(AladinAPISearchParams params)
         throws IOException, InterruptedException, URISyntaxException {
-        return aladinAPIHandler.searchBooksFromAladin(params);
+        return aladinAPIHandler.searchBooks(params);
+    }
+
+
+    @Override
+    public ResponseAladinSearchDetail searchBookDetailFromAladin(String isbn)
+        throws IOException, InterruptedException, URISyntaxException {
+        return aladinAPIHandler.searchBookDetail(isbn);
     }
 
     /**

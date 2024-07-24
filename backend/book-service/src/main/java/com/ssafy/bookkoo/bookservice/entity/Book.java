@@ -42,6 +42,18 @@ public class Book {
     @Column(name = "isbn", nullable = false)
     private String isbn;
 
+    @Column
+    private Integer itemPage;
+
+    @Column
+    private Integer sizeDepth;
+
+    @Column
+    private Integer sizeHeight;
+
+    @Column
+    private Integer sizeWidth;
+
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     @Setter
@@ -55,6 +67,10 @@ public class Book {
         String summary,
         String title,
         String isbn,
+        Integer itemPage,
+        Integer sizeDepth,
+        Integer sizeHeight,
+        Integer sizeWidth,
         Category category
     ) {
         this.coverImgUrl = coverImgUrl;
@@ -63,6 +79,10 @@ public class Book {
         this.summary = summary;
         this.title = title;
         this.isbn = isbn;
+        this.itemPage = itemPage;
+        this.sizeDepth = sizeDepth;
+        this.sizeHeight = sizeHeight;
+        this.sizeWidth = sizeWidth;
         this.category = category;
     }
 }

@@ -35,7 +35,7 @@ public class AladinAPIHandler {
      * @throws InterruptedException
      * @throws URISyntaxException
      */
-    public ResponseAladinAPI searchBooksFromAladin(AladinAPISearchParams params)
+    public ResponseAladinAPI searchBooks(AladinAPISearchParams params)
         throws IOException, InterruptedException, URISyntaxException {
         URI uri = new URIBuilder(BASE_URL + "itemSearch.aspx")
             .addParameter("ttbkey", apiKey)
@@ -61,6 +61,43 @@ public class AladinAPIHandler {
             aladinCategoryService.processApiResponse(apiResponse);
 
             return apiResponse;
+        } else {
+            throw new IOException("Failed to fetch data from Aladin API: " + response.body());
+        }
+    }
+
+    public ResponseAladinSearchDetail searchBookDetail(String isbn)
+        throws IOException, InterruptedException, URISyntaxException {
+        URI uri = new URIBuilder(BASE_URL + "itemLookUp.aspx")
+            .addParameter("ttbkey", apiKey)
+            .addParameter("itemIdType", "ISBN")
+            .addParameter("itemId", isbn)
+            .addParameter("output", "JS")
+            .addParameter("OptResult", "packing")
+            .addParameter("Version", "20131101")
+            .build();
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                                         .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            // response의 item 부분만 빼ㅐ네서 그거의 첫번쨰 아이템을 ResponseAladinSearchDetial로 변환
+            ResponseAladinDetail apiResponse = objectMapper.readValue(response.body(),
+                ResponseAladinDetail.class);
+
+            if (!apiResponse.getItem()
+                            .isEmpty()) {
+                // 카테고리 매핑 적용
+                ResponseAladinSearchDetail searchDetail = apiResponse.getItem()
+                                                                     .get(0);
+                aladinCategoryService.processApiResponse(searchDetail);
+                return searchDetail; // 첫 번째 아이템 반환
+            } else {
+                throw new IOException("No book found with the given ISBN: " + isbn);
+            }
         } else {
             throw new IOException("Failed to fetch data from Aladin API: " + response.body());
         }

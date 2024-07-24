@@ -1,10 +1,9 @@
-package com.ssafy.bookkoo.bookservice.dto;
+package com.ssafy.bookkoo.libraryservice.dto;
 
 import lombok.Builder;
 
 @Builder
-public record ResponseBookDto(
-    Long id,
+public record RequestCreateBookDto(
     String coverImgUrl,
     String author,
     String publisher,
@@ -15,7 +14,7 @@ public record ResponseBookDto(
     Integer sizeDepth,
     Integer sizeHeight,
     Integer sizeWidth,
-    CategoryDto category
+    Integer categoryId
 ) {
 
 }

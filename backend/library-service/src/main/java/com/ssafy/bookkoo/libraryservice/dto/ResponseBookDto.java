@@ -1,13 +1,20 @@
 package com.ssafy.bookkoo.libraryservice.dto;
 
+import lombok.Builder;
+
+@Builder
 public record ResponseBookDto(
     Long id,
-    String title,
     String coverImgUrl,
     String author,
     String publisher,
     String summary,
+    String title,
     String isbn,
+    Integer itemPage,
+    Integer sizeDepth,
+    Integer sizeHeight,
+    Integer sizeWidth,
     CategoryDto category
 ) {
 
