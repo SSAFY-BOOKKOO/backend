@@ -10,6 +10,10 @@ public record RequestCreateBookDto(
     String summary,
     String title,
     String isbn,
+    Integer itemPage,
+    Integer sizeDepth,
+    Integer sizeHeight,
+    Integer sizeWidth,
     Integer categoryId
 ) {
 
