@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Backend 디렉토리로 이동
-cd backend
-
 # 변경사항 빌드
 docker compose build
 

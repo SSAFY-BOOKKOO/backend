@@ -8,14 +8,14 @@
 FROM openjdk:17-jdk-buster AS builder
 
 # 필요한 패키지 설치
-RUN apt-get update && apt-get install -y findutils
+RUN apt-get update && apt-get install -y findutils && apt-get install dos2unix
 
 COPY gradlew .
 COPY gradle gradle
 COPY build.gradle .
 COPY settings.gradle .
 COPY src src
-
+RUN dos2unix ./gradlew
 RUN chmod +x ./gradlew
 RUN ./gradlew bootJar
 
