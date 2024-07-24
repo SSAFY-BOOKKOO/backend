@@ -34,7 +34,7 @@ const Book = ({ item, index, moveBook, onBookClick }) => {
   return (
     <div
       ref={node => dragRef(dropRef(node))}
-      className={`${heightClass} text-center rounded-lg cursor-pointer shadow-md flex items-center justify-center ${item.color}`}
+      className={`p-1 ${heightClass} text-center rounded-lg cursor-pointer shadow-md flex items-center justify-center ${item.color}`}
       style={{ ...thicknessStyle, opacity: isDragging ? 0.5 : 1 }}
       onClick={() => onBookClick(item)}
     >
