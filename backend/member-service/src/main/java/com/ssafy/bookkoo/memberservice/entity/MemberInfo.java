@@ -1,18 +1,15 @@
 package com.ssafy.bookkoo.memberservice.entity;
 
 import com.ssafy.bookkoo.memberservice.global.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -49,6 +46,13 @@ public class MemberInfo extends BaseEntity {
     @Setter
     @Column(name = "profile_img_url")
     private String profileImgUrl;
+
+    @OneToMany(mappedBy = "follower")
+    private List<FollowShip> followers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "followee")
+    private List<FollowShip> followees = new ArrayList<>();
+
 
     @Builder
     public MemberInfo(Long id, String memberId, String nickName, Integer year, Gender gender,
