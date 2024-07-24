@@ -5,6 +5,8 @@ services:
       context: ./frontend
     ports:
       - "3000:80"
+    networks:
+      - bookkoo-net
   nginx-proxy-manager:
     image: 'jc21/nginx-proxy-manager:latest'
     container_name: nginx-proxy-manager
@@ -22,6 +24,9 @@ services:
     volumes:
       - ./data/nginx:/data
       - ./letsencrypt:/etc/letsencrypt
+    networks:
+      - bookkoo-net
+    
   nginx-proxy-manager-db:
     image: 'jc21/mariadb-aria:latest'
     container_name: nginx-proxy-manager-db
@@ -32,6 +37,8 @@ services:
       MYSQL_PASSWORD: 'npm'
     volumes:
       - ./data/mysql:/var/lib/mysql
+    networks:
+      - bookkoo-net
   book-db:
     image: postgres:latest
     container_name: book-postgres
@@ -44,7 +51,7 @@ services:
     volumes:
       - book_postgres_data:/var/lib/postgresql/data
     networks:
-      - eureka-net
+      - bookkoo-net
 
   curation-db:
     image: postgres:latest
@@ -58,7 +65,7 @@ services:
     volumes:
       - curation_postgres_data:/var/lib/postgresql/data
     networks:
-      - eureka-net
+      - bookkoo-net
 
   library-db:
     image: postgres:latest
@@ -72,7 +79,7 @@ services:
     volumes:
       - library_postgres_data:/var/lib/postgresql/data
     networks:
-      - eureka-net
+      - bookkoo-net
 
   member-db:
     image: postgres:latest
@@ -86,7 +93,7 @@ services:
     volumes:
       - member_postgres_data:/var/lib/postgresql/data
     networks:
-      - eureka-net
+      - bookkoo-net
 
   auth-db:
     image: postgres:latest
@@ -100,7 +107,7 @@ services:
     volumes:
       - auth_postgres_data:/var/lib/postgresql/data
     networks:
-      - eureka-net
+      - bookkoo-net
 
   # 레디스 추가
   member-redis:
@@ -111,7 +118,7 @@ services:
     volumes:
       - member_redis_data:/data
     networks:
-      - eureka-net
+      - bookkoo-net
 
   auth-redis:
     image: redis:latest
@@ -121,7 +128,7 @@ services:
     volumes:
       - auth_redis_data:/data
     networks:
-      - eureka-net
+      - bookkoo-net
 
   eureka-server:
     container_name: eureka-server
@@ -130,7 +137,7 @@ services:
     ports:
       - "8761:8761"
     networks:
-      - eureka-net
+      - bookkoo-net
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1" ]
       interval: 10s
@@ -150,7 +157,7 @@ services:
       eureka-server:
         condition: service_healthy
     networks:
-      - eureka-net
+      - bookkoo-net
     restart: always
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
@@ -178,7 +185,7 @@ services:
       member-service:
         condition: service_started
     networks:
-      - eureka-net
+      - bookkoo-net
     restart: always
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
@@ -195,7 +202,7 @@ services:
       eureka-server:
         condition: service_healthy
     networks:
-      - eureka-net
+      - bookkoo-net
     restart: always
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
@@ -215,7 +222,7 @@ services:
       eureka-server:
         condition: service_healthy
     networks:
-      - eureka-net
+      - bookkoo-net
     restart: always
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
@@ -235,7 +242,7 @@ services:
       eureka-server:
         condition: service_healthy
     networks:
-      - eureka-net
+      - bookkoo-net
     restart: always
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
@@ -246,7 +253,7 @@ services:
       - ./member-service:/app/
 
 networks:
-  eureka-net:
+  bookkoo-net:
 
 volumes:
   book_postgres_data:
