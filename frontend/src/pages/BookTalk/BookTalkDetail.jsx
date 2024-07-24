@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ChatBubble from '@components/@common/ChatBubble';
 import Button from '@components/@common/Button';
-import Input from '@components/@common/Input';
+import Textarea from '@components/@common/Textarea';
 import { comments, talkbook } from '@mocks/BookTalkData';
 
 const BookTalkDetail = () => {
@@ -63,8 +63,7 @@ const BookTalkDetail = () => {
       <div className='bg-white p-4 sticky bottom-0'>
         <div className='max-w-md w-full flex flex-row items-center justify-center mx-auto'>
           <div className='flex-grow'>
-            <Input
-              type='text'
+            <Textarea
               value={inputMessage}
               onChange={handleInputChange}
               placeholder='내용을 입력해주세요(1000자 이내)'
