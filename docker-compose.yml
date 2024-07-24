@@ -254,6 +254,7 @@ services:
 
 networks:
   bookkoo-net:
+    driver: bridge
 
 volumes:
   book_postgres_data:
