@@ -9,7 +9,7 @@ public record RequestAdditionalInfo(
     @NotNull(message = "nickName can not be null") String nickName,
     Integer year,
     String gender,
-    String[] categories,
+    Long[] categories,
     String introduction) {
 
 }
