@@ -159,15 +159,20 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByMemberId(requestAdditionalInfo.memberId())
                                         .orElseThrow(MemberNotFoundException::new);
 
-        String fileKey = commonServiceClient.saveProfileImg(profileImg, null);
+
+        String fileKey = null;
         MemberInfo memberInfo = MemberInfo.builder()
                                           .id(member.getId())
                                           .memberId(member.getMemberId())
                                           .nickName(requestAdditionalInfo.nickName())
                                           .year(requestAdditionalInfo.year())
                                           .introduction(requestAdditionalInfo.introduction())
-                                          .profileImgUrl(fileKey)
                                           .build();
+        //TODO: 없으면 기본 이미지를 등록하도록
+        if (profileImg != null) {
+            fileKey = commonServiceClient.saveProfileImg(profileImg, null);
+            memberInfo.setProfileImgUrl(fileKey);
+        }
 
         memberInfoRepository.save(memberInfo);
         return fileKey;
