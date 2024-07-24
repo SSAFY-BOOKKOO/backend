@@ -58,7 +58,7 @@ const BookTalkMain = () => {
               />
             ))}
           </div>
-          <div className='absolute top-0 right-0 bottom-0 w-8 bg-gradient-to-l from-white pointer-events-none'></div>
+          <div className='absolute top-0 right-0 bottom-0 w-8 from-white pointer-events-none'></div>
         </div>
       </div>
     </WrapContainer>
