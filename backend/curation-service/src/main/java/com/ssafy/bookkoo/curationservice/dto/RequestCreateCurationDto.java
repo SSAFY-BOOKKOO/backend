@@ -11,8 +11,10 @@ import lombok.Builder;
  */
 
 @Builder
-public record RequestCreateCurationDto(@NotNull(message = "bookId can not be null") Long bookId,
-                                       @Size(min = 2, max = 20, message = "제목의 길이는 2 ~ 20자 입니다.") String title,
-                                       @Size(min = 1, max = 500, message = "내용의 길이는 1~ 500 자 입니다.") String content) {
+public record RequestCreateCurationDto(
+    @NotNull(message = "bookId can not be null") Long bookId,
+    @Size(min = 2, max = 20, message = "제목의 길이는 2 ~ 20자 입니다.") String title,
+    @Size(min = 1, max = 500, message = "내용의 길이는 1~ 500 자 입니다.") String content
+) {
 
 }
