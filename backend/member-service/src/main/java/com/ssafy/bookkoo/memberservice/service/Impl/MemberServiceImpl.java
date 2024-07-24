@@ -1,5 +1,6 @@
 package com.ssafy.bookkoo.memberservice.service.Impl;
 
+import com.ssafy.bookkoo.memberservice.client.CommonServiceClient;
 import com.ssafy.bookkoo.memberservice.dto.RequestAdditionalInfo;
 import com.ssafy.bookkoo.memberservice.dto.RequestCertificationDto;
 import com.ssafy.bookkoo.memberservice.dto.RequestRegisterDto;
@@ -21,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -33,6 +35,9 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MailSendService mailSendService;
     private final Long EXPIRED_TIME = 1800L; //30분 만료 시간
+
+    //S3 common 서비스
+    private final CommonServiceClient commonServiceClient;
 
     /**
      * RequestRegisterDto를 통해 새로운 멤버를 생성
@@ -144,22 +149,27 @@ public class MemberServiceImpl implements MemberService {
      * 이메일을 통해 추가정보 등록
      *
      * @param requestAdditionalInfo
+     * @param profileImg
      */
     @Override
     @Transactional
-    public void registerAdditionalInfo(RequestAdditionalInfo requestAdditionalInfo) {
+    public String registerAdditionalInfo(RequestAdditionalInfo requestAdditionalInfo,
+        MultipartFile profileImg) {
         log.info(requestAdditionalInfo.memberId());
         Member member = memberRepository.findByMemberId(requestAdditionalInfo.memberId())
                                         .orElseThrow(MemberNotFoundException::new);
 
+        String fileKey = commonServiceClient.saveProfileImg(profileImg, null);
         MemberInfo memberInfo = MemberInfo.builder()
                                           .memberId(member.getMemberId())
                                           .nickName(requestAdditionalInfo.nickName())
                                           .year(requestAdditionalInfo.year())
                                           .introduction(requestAdditionalInfo.introduction())
+                                          .profileImgUrl(fileKey)
                                           .build();
 
         memberInfoRepository.save(memberInfo);
+        return fileKey;
     }
 
 }
