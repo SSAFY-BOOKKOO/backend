@@ -20,9 +20,9 @@ const Book = ({ item, index, moveBook, onBookClick }) => {
   });
 
   const heightClass = {
-    short: 'h-40 mt-8',
-    medium: 'h-44 mt-4',
-    tall: 'h-48 mt-0',
+    short: 'h-40 mt-10',
+    medium: 'h-44 mt-6',
+    tall: 'h-48 mt-2',
   }[item.height];
 
   const thicknessStyle = {
