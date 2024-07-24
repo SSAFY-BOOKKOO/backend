@@ -1,9 +1,9 @@
 package com.ssafy.bookkoo.memberservice.service.Impl;
 
 import com.ssafy.bookkoo.memberservice.client.CommonServiceClient;
-import com.ssafy.bookkoo.memberservice.dto.RequestAdditionalInfo;
-import com.ssafy.bookkoo.memberservice.dto.RequestCertificationDto;
-import com.ssafy.bookkoo.memberservice.dto.RequestRegisterDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestAdditionalInfo;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestCertificationDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterDto;
 import com.ssafy.bookkoo.memberservice.entity.CertificationNumber;
 import com.ssafy.bookkoo.memberservice.entity.Member;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
