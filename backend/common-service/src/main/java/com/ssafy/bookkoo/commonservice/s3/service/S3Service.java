@@ -6,5 +6,5 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public interface S3Service {
 
-    void saveToBucket(MultipartFile file, String bucket);
+    String saveToBucket(MultipartFile file, String bucket);
 }

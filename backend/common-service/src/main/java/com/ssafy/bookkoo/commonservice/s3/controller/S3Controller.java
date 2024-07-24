@@ -22,17 +22,16 @@ public class S3Controller {
     private final S3Service s3Service;
 
     @PostMapping
-    public ResponseEntity<HttpStatus> uploadFile(
+    public ResponseEntity<String> uploadFile(
         @RequestHeader HttpHeaders headers,
         @RequestPart("file") MultipartFile file,
         @RequestPart(value = "bucket", required = false) String bucket
     ) {
         for (String s : headers.keySet()) {
             log.info("headers[{}] : {}", s, headers.get(s));
-
         }
-        s3Service.saveToBucket(file, bucket);
-        return ResponseEntity.ok()
-                             .build();
+
+        String fileKey = s3Service.saveToBucket(file, bucket);
+        return ResponseEntity.ok(fileKey);
     }
 }
