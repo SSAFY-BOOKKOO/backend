@@ -34,6 +34,17 @@ public class TokenAuthenticationFilter implements WebFilter {
         //Authorization에서 Bearer를 통해 액세스 토큰 뽑기
         String accessToken = getAccessToken(authorizationHeader);
 
+        String path = exchange.getRequest()
+                              .getURI()
+                              .getPath();
+
+        if (path.startsWith("/auth") || path.startsWith("/members/register")
+            || path.startsWith("/api-docs") || path.startsWith("/swagger-ui")
+            || path.startsWith("/docs") || path.startsWith("/webjars")
+        ) {
+            return chain.filter(exchange);
+        }
+
         if(accessToken == null || !tokenUtils.validToken(accessToken)) {
             log.info("토큰이 만료되었습니다.");
             throw new TokenExpirationException();
@@ -42,6 +53,7 @@ public class TokenAuthenticationFilter implements WebFilter {
         Authentication authentication = tokenUtils.getAuthentication(accessToken);
         String subject = tokenUtils.getSubject(accessToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
 
         return memberServiceWebClient.getMemberId(subject)
                                      .flatMap(id -> {
