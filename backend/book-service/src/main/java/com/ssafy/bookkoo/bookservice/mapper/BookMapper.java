@@ -7,14 +7,14 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {CategoryMapper.class})
 public interface BookMapper {
 
     // DTO를 엔티티로 변환
     Book toEntity(RequestCreateBookDto dto);
 
     // 엔티티를 DTO로 변환
-    @Mapping(source = "category.id", target = "categoryId")
+    @Mapping(source = "category", target = "category")
     ResponseBookDto toResponseDto(Book book);
 
     // 리스트 변환
