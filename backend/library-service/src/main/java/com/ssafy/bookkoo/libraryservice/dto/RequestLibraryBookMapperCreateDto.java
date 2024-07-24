@@ -12,7 +12,7 @@ public record RequestLibraryBookMapperCreateDto(
     Date endAt,
     Status status,
     Integer rating,
-    RequestBookDto bookDto
+    RequestCreateBookDto bookDto
 ) {
 
 }
