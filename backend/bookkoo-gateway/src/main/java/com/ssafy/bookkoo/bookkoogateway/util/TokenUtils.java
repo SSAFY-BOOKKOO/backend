@@ -61,4 +61,18 @@ public class TokenUtils {
                    .getPayload();
     }
 
+    /**
+     * 토큰에서 MemberId를 뽑아내기 위한 메서드
+     * @param token
+     * @return
+     */
+    public String getSubject(String token) {
+        return Jwts.parser()
+                   .verifyWith(jwtConfig.getSecretKey())
+                   .build()
+                   .parseSignedClaims(token)
+                   .getPayload()
+                   .getSubject();
+    }
+
 }

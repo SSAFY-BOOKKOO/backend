@@ -47,4 +47,17 @@ public class MemberInfoServiceImpl implements MemberInfoService {
 
         return memberInfoMapper.toResponseDto(memberInfo);
     }
+
+    /**
+     * 내부적으로 사용하기 위한 서비스
+     * 멤버 ID를 통해  PK(Long)을 반환하는 서비스
+     * @param memberId
+     * @return
+     */
+    @Override
+    public Long getMemberPk(String memberId) {
+        return memberRepository.findByMemberId(memberId)
+                                   .orElseThrow(MemberNotFoundException::new)
+                                   .getId();
+    }
 }
