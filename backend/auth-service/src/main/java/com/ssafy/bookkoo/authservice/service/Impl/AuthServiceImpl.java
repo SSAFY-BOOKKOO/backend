@@ -39,6 +39,30 @@ public class AuthServiceImpl implements AuthService {
         if (!matches) {
             throw new LoginFailException();
         }
+        return getResponseLoginTokenDto(member);
+    }
+
+
+    /**
+     * 토큰으로 멤버ID를 찾고 이를 통해
+     * 새로운 토큰 발급
+     * 리프레시 토큰 검증 X
+     * Redis TTL과 동일한 시간으로 설정했기 때문에
+     * Redis에 존재하지 않으면 만료된 것
+     *
+     * @param refreshToken
+     * @return
+     */
+    @Override
+    public ResponseLoginTokenDto getTokenDto(String refreshToken) {
+        String memberId = tokenService.getMemberIdByRefreshToken(refreshToken);
+        Member member = memberRepository.findByMemberId(memberId)
+                                        .orElseThrow(MemberNotFoundException::new);
+        return getResponseLoginTokenDto(member);
+    }
+
+
+    private ResponseLoginTokenDto getResponseLoginTokenDto(Member member) {
         String refreshToken = tokenService.updateRefreshToken(member);
         String accessToken = tokenService.createAccessToken(member);
         return ResponseLoginTokenDto.builder()

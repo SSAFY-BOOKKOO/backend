@@ -11,4 +11,6 @@ public interface TokenService {
     String createAccessToken(Member member);
 
     String updateRefreshToken(Member member);
+
+    String getMemberIdByRefreshToken(String refreshToken);
 }
