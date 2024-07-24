@@ -16,10 +16,23 @@ const BookTalkDetail = () => {
     }
   };
 
+  const handleSendMessage = () => {
+    if (inputMessage.trim() !== '') {
+      const newComment = {
+        message: inputMessage,
+        role: 'user',
+        likes: 0,
+        profileImage: '',
+      };
+      setCommentList([...commentList, newComment]);
+      setInputMessage('');
+    }
+  };
+
   return (
     <div className='flex flex-col min-h-[calc(100vh-121px)]'>
       <div className='flex flex-col items-center'>
-        <div className='w-32 min-h-40 my-4 flex items-center '>
+        <div className='w-32 min-h-40 my-4 flex items-center'>
           <img
             src={book.cover_img_url}
             alt='Book Cover'
@@ -31,7 +44,6 @@ const BookTalkDetail = () => {
           <h2 className='text-xl font-semibold'>{book.title}</h2>
           <p className='text-gray-500'>{book.author}</p>
         </div>
-        {/* <h3 className='text-lg font-semibold my-4'>{book.content}</h3> */}
       </div>
       <div className='flex-1 overflow-y-auto p-4 scrollbar-none'>
         <div className='space-y-4'>
@@ -39,8 +51,8 @@ const BookTalkDetail = () => {
             <ChatBubble
               key={index}
               message={comment.message}
-              role='other'
-              showProfile={true}
+              role={comment.role}
+              showProfile={comment.role !== 'user'}
               showLikes={true}
               likes={comment.likes}
               profileImage={comment.profileImage}
@@ -56,10 +68,11 @@ const BookTalkDetail = () => {
               value={inputMessage}
               onChange={handleInputChange}
               placeholder='내용을 입력해주세요(1000자 이내)'
+              maxLength={1000}
               customClass='border rounded-l-lg focus:outline-none'
             />
           </div>
-          <Button type='submit' className='ml-2'>
+          <Button type='button' className='ml-2' onClick={handleSendMessage}>
             등록
           </Button>
         </div>
