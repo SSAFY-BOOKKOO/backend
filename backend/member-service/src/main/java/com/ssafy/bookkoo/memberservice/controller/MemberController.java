@@ -1,8 +1,8 @@
 package com.ssafy.bookkoo.memberservice.controller;
 
-import com.ssafy.bookkoo.memberservice.dto.RequestAdditionalInfo;
-import com.ssafy.bookkoo.memberservice.dto.RequestCertificationDto;
-import com.ssafy.bookkoo.memberservice.dto.RequestRegisterDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestAdditionalInfo;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestCertificationDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterDto;
 import com.ssafy.bookkoo.memberservice.exception.EmailDuplicateException;
 import com.ssafy.bookkoo.memberservice.exception.NickNameDuplicateException;
 import com.ssafy.bookkoo.memberservice.service.MemberService;
