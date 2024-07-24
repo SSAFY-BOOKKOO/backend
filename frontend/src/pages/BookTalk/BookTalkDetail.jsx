@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ChatBubble from '@components/@common/ChatBubble';
 import Button from '@components/@common/Button';
 import Textarea from '@components/@common/Textarea';
@@ -8,6 +8,13 @@ const BookTalkDetail = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [book, setBook] = useState(talkbook);
   const [commentList, setCommentList] = useState(comments);
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(scrollToBottom, [commentList]);
 
   const handleInputChange = e => {
     const message = e.target.value;
@@ -60,6 +67,7 @@ const BookTalkDetail = () => {
           ))}
         </div>
       </div>
+      <div ref={messagesEndRef} />
       <div className='bg-white p-4 sticky bottom-0'>
         <div className='max-w-md w-full flex flex-row items-center justify-center mx-auto'>
           <div className='flex-grow'>
