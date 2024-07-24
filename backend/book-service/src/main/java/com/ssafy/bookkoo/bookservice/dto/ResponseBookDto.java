@@ -11,7 +11,7 @@ public record ResponseBookDto(
     String summary,
     String title,
     String isbn,
-    Integer categoryId
+    CategoryDto category
 ) {
 
 }
