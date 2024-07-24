@@ -35,4 +35,10 @@ public class AladinCategoryService {
             item.setCategoryId(serviceCategoryId);
         }
     }
+
+    public void processApiResponse(ResponseAladinSearchDetail item) {
+        Integer aladinCategoryId = item.getCategoryId();
+        Integer serviceCategoryId = convertToServiceCategoryId(aladinCategoryId);
+        item.setCategoryId(serviceCategoryId);
+    }
 }
