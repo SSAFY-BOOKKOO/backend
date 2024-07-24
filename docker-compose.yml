@@ -129,6 +129,35 @@ services:
       - auth_redis_data:/data
     networks:
       - bookkoo-net
+  
+  auth-service:
+    container_name: auth-service
+    build:
+      context: ./backend/auth-service
+    ports:
+      - "8085:8085"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bookkoo-net
+    restart: always
+    volumes:
+      - ./auth-service:/app/
+  common-service:
+    container_name: common-service
+    build:
+      context: ./backend/common-service
+    ports:
+      - "8086:8086"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bookkoo-net
+    restart: always
+    volumes:
+      - ./auth-service:/app/
 
   eureka-server:
     container_name: eureka-server
