@@ -161,12 +161,6 @@ const LibraryMain = () => {
           setShowCreateModal={setShowCreateModal}
         />
 
-        <div className='text-center p-4'>
-          <h2 className='text-xl sm:text-2xl font-bold text-gray-700'>
-            {libraries[activeLibrary]?.name || '서재가 없습니다'}
-          </h2>
-        </div>
-
         <LibraryOptions
           activeLibrary={activeLibrary}
           setActiveLibrary={setActiveLibrary}

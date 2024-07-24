@@ -19,14 +19,12 @@ const Book = ({ item, index, moveBook, onBookClick }) => {
     },
   });
 
-  // 높이 값에 따른 클래스 추가
   const heightClass = {
-    short: 'h-56 mt-8',
-    medium: 'h-60 mt-4',
-    tall: 'h-64 mt-0',
+    short: 'h-40 mt-8',
+    medium: 'h-44 mt-4',
+    tall: 'h-48 mt-0',
   }[item.height];
 
-  // 두께 값에 따른 인라인 스타일 추가
   const thicknessStyle = {
     1: { width: '100px' },
     2: { width: '150px' },
@@ -36,7 +34,7 @@ const Book = ({ item, index, moveBook, onBookClick }) => {
   return (
     <div
       ref={node => dragRef(dropRef(node))}
-      className={`m-1 p-1 ${heightClass} text-center rounded-lg cursor-pointer shadow-md flex items-center justify-center ${item.color}`}
+      className={`${heightClass} text-center rounded-lg cursor-pointer shadow-md flex items-center justify-center ${item.color}`}
       style={{ ...thicknessStyle, opacity: isDragging ? 0.5 : 1 }}
       onClick={() => onBookClick(item)}
     >

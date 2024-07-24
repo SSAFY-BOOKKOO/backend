@@ -18,7 +18,7 @@ const DeleteLibraryModal = ({
               deleteLibrary();
               setShowDeleteModal(false);
             }}
-            className='bg-red-500 text-white p-2 rounded-lg mr-2'
+            className='bg-pink-400 text-white p-2 rounded-lg mr-2'
           >
             삭제
           </button>

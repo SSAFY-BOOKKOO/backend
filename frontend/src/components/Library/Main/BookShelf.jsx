@@ -21,15 +21,16 @@ const BookShelf = ({ books, moveBook, onBookClick }) => {
   });
 
   const renderShelf = (start, end) => (
-    <div className='flex justify-center mb-4'>
-      <div className='flex flex-nowrap justify-center w-full p-2 rounded-xl shadow-lg shelf-bg'>
+    <div className='flex justify-center mb-2'>
+      {' '}
+      <div className='flex flex-nowrap px-1 justify-center w-full rounded-xl shadow-lg shelf-bg'>
         {allSlots.slice(start, end)}
       </div>
     </div>
   );
 
   return (
-    <div className='p-4 min-h-screen flex flex-col items-center'>
+    <div className='p-4 flex flex-col items-center'>
       <div className='shelf-container rounded-xl shadow-lg w-full max-w-full overflow-x-auto'>
         {books.length >= 0 ? (
           <>
