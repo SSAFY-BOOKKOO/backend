@@ -95,20 +95,6 @@ services:
     networks:
       - bookkoo-net
 
-  auth-db:
-    image: postgres:latest
-    container_name: auth-postgres
-    environment:
-      POSTGRES_USER: magumagu
-      POSTGRES_PASSWORD: magumagu
-      POSTGRES_DB: bookkoo
-    ports:
-      - "5436:5432"
-    volumes:
-      - auth_postgres_data:/var/lib/postgresql/data
-    networks:
-      - bookkoo-net
-
   # 레디스 추가
   member-redis:
     image: redis:latest
@@ -139,6 +125,11 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://book-db:5432/bookkoo
+      - SPRING_DATASOURCE_USERNAME=magumagu
+      - SPRING_DATASOURCE_PASSWORD=magumagu
     networks:
       - bookkoo-net
     restart: always
