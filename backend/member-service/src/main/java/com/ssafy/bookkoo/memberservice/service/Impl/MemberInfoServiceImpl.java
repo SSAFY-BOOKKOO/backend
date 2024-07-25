@@ -24,7 +24,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     private final MemberInfoRepository memberInfoRepository;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final MemberInfoMapper memberInfoMapper = MemberInfoMapper.INSTANCE;
+    private final MemberInfoMapper memberInfoMapper;
 
     @Override
     public void updatePassword(RequestUpdatePasswordDto requestUpdatePasswordDto) {
