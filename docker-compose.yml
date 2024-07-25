@@ -47,12 +47,10 @@ services:
     command: -config.file=/etc/loki/local-config.yaml
 
   promtail:
-    image: grafana/promtail:latest
+    build: ./promtail
     volumes:
       - ./logs:/logs
-      - ./promtail-config.yml:/etc/promtail/config.yml
-    command: -config.file=/etc/promtail/config.yml
-
+      - ./promtail:/etc/promtail
     
   nginx-proxy-manager-db:
     image: 'jc21/mariadb-aria:latest'
