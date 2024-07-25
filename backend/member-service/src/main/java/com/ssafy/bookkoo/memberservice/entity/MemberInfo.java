@@ -34,9 +34,8 @@ public class MemberInfo extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    //TODO: 카테고리 목록 후에 추가
-    //@Column(name = "categories")
-    //private Long categories;
+    @OneToMany(mappedBy = "memberInfo")
+    private List<MemberCategoryMapper> categories = new ArrayList<>();
 
     @Setter
     @Column(name = "introduction")
