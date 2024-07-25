@@ -1,7 +1,7 @@
 package com.ssafy.bookkoo.memberservice.service.Impl;
 
-import com.ssafy.bookkoo.memberservice.dto.RequestUpdatePasswordDto;
-import com.ssafy.bookkoo.memberservice.dto.ResponseMemberInfoDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
+import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.entity.Member;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class MemberInfoServiceImpl implements MemberInfoService {
@@ -21,7 +23,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     private final MemberInfoRepository memberInfoRepository;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final MemberInfoMapper memberInfoMapper = MemberInfoMapper.INSTANCE;
+    private final MemberInfoMapper memberInfoMapper;
 
     @Override
     public void updatePassword(RequestUpdatePasswordDto requestUpdatePasswordDto) {
@@ -48,6 +50,14 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         return memberInfoMapper.toResponseDto(memberInfo);
     }
 
+    @Override
+    public ResponseMemberInfoDto getMemberInfo(Long memberId) {
+        MemberInfo memberInfo = memberInfoRepository.findById(memberId)
+                                                    .orElseThrow(MemberNotFoundException::new);
+
+        return memberInfoMapper.toResponseDto(memberInfo);
+    }
+
     /**
      * 내부적으로 사용하기 위한 서비스
      * 멤버 ID를 통해  PK(Long)을 반환하는 서비스
@@ -59,5 +69,14 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         return memberRepository.findByMemberId(memberId)
                                    .orElseThrow(MemberNotFoundException::new)
                                    .getId();
+    }
+
+    /**
+     * @param followers
+     * @return
+     */
+    @Override
+    public List<Long> getRandomMemberInfo(List<Long> followers) {
+        return memberInfoRepository.findRandomMemberInfoIdByFollowers(followers);
     }
 }
