@@ -11,7 +11,7 @@ public class SwaggerConfig {
     public GroupedOpenApi bookServiceApi() {
         return GroupedOpenApi.builder()
                              .group("book-service")
-                             .pathsToMatch("/book-service/**")
+                             .pathsToMatch("/books/**")
                              .build();
     }
 
@@ -19,7 +19,7 @@ public class SwaggerConfig {
     public GroupedOpenApi curationServiceApi() {
         return GroupedOpenApi.builder()
                              .group("curation-service")
-                             .pathsToMatch("/curation-service/**")
+                             .pathsToMatch("/curations/**")
                              .build();
     }
 
@@ -27,7 +27,7 @@ public class SwaggerConfig {
     public GroupedOpenApi libraryServiceApi() {
         return GroupedOpenApi.builder()
                              .group("library-service")
-                             .pathsToMatch("/library-service/**")
+                             .pathsToMatch("/libraries/**")
                              .build();
     }
 
@@ -35,7 +35,7 @@ public class SwaggerConfig {
     public GroupedOpenApi memberServiceApi() {
         return GroupedOpenApi.builder()
                              .group("member-service")
-                             .pathsToMatch("/member-service/**")
+                             .pathsToMatch("/members/**")
                              .build();
     }
 }
