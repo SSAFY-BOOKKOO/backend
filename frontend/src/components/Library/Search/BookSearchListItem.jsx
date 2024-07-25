@@ -9,7 +9,10 @@ const BookSearchListItem = ({ book, onClick, onCreateClick }) => {
   };
 
   return (
-    <div className='flex items-start space-x-4 p-4 bg-white' onClick={onClick}>
+    <div
+      className='flex items-start space-x-4 p-3 mb-2 bg-white cursor-pointer'
+      onClick={onClick}
+    >
       <div className='w-36 h-36 flex'>
         <img className='object-contain' src={book.cover_img_url} />
       </div>
