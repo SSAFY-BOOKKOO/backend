@@ -4,6 +4,8 @@ import { format, isValid, parse } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import 'react-day-picker/dist/style.css';
 import Input from '../../@common/Input';
+import IconButton from '@components/@common/IconButton';
+import { IoCloseSharp } from 'react-icons/io5';
 
 const DatePicker = forwardRef(({ onChange, ...props }, ref) => {
   const dialogRef = useRef(null);
@@ -66,6 +68,11 @@ const DatePicker = forwardRef(({ onChange, ...props }, ref) => {
     }
   };
 
+  const handleClose = () => {
+    setIsDialogOpen(false);
+    dialogRef.current?.close();
+  };
+
   return (
     <div className='relative'>
       <div className='flex items-center'>
@@ -97,6 +104,9 @@ const DatePicker = forwardRef(({ onChange, ...props }, ref) => {
         onClose={() => setIsDialogOpen(false)}
         className='p-4 bg-white rounded-lg shadow-xl'
       >
+        <div className='flex justify-end'>
+          <IconButton onClick={handleClose} icon={IoCloseSharp} />
+        </div>
         <DayPicker
           locale={ko}
           month={month}
