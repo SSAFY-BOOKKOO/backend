@@ -66,20 +66,20 @@ const ReviewCom = ({ onBackClick, book }) => {
       </div>
 
       {/* 한줄평 쓰기 - 띠지 영역(핑크) */}
-      <div className='mt-12 p-4 pl-14 bg-pink-500 rounded-b-md opacity-70 w-full  h-[215px]'>
+      <div className='mt-12 pl-8 pt-5 bg-pink-500 rounded-b-md opacity-70 w-full  h-[215px]'>
         <div
-          className='relative bg-white w-5/6 h-40 rounded-lg opacity-70 cursor-pointer'
+          className='relative bg-white w-72 h-44 rounded-lg opacity-70 cursor-pointer'
           onClick={handleContainerClick}
         >
           {editReview ? (
             <textarea
-              className='w-full h-full p-2 bg-white border border-gray-400 rounded resize-none'
+              className='w-72 h-44 p-2 bg-white border border-gray-400 rounded resize-none'
               value={reviewText}
               onChange={e => setReviewText(e.target.value)}
               onClick={e => e.stopPropagation()} // textarea 클릭 시 이벤트 전파 막기
             ></textarea>
           ) : (
-            <p className='w-full h-40 p-2 border border-gray-400 rounded resize-none'>
+            <p className='w-72 h-44 p-2 border border-gray-400 rounded resize-none'>
               {reviewText || '한줄평을 작성해 보세요!'}
             </p>
           )}

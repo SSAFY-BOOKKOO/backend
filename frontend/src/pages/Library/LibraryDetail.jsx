@@ -56,6 +56,7 @@ const LibraryDetail = () => {
                   className='w-72 h-96 cursor-pointer rounded-lg shadow-xl'
                   onClick={() => setShowReview(true)}
                 />
+                {/* <button>전환</button> */}
               </div>
               {/* 띠지 부분 */}
               <div className='mt-6 p-4 pl-14 bg-pink-500 rounded-b-md opacity-70 w-full  h-[215px]'>
