@@ -56,6 +56,10 @@ dependencies {
 
     // opencsv for category db initialize
     implementation 'com.opencsv:opencsv:5.9'
+
+    //actuator,  prometheus
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
 dependencyManagement {

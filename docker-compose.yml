@@ -164,6 +164,8 @@ services:
     restart: always
     volumes:
       - ./auth-service:/app/
+      - ./logs/auth-service:/app/logs
+
   common-service:
     container_name: common-service
     build:
@@ -180,6 +182,7 @@ services:
     restart: always
     volumes:
       - ./auth-service:/app/
+      - ./logs/common-service:/app/logs
 
   eureka-server:
     container_name: eureka-server
@@ -217,6 +220,8 @@ services:
       - SPRING_DATASOURCE_PASSWORD=magumagu
     volumes:
       - ./book-service:/app/
+      - ./logs/book-service:/app/logs
+
 
   bookkoo-gateway:
     container_name: bookkoo-gateway
@@ -242,6 +247,8 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
     volumes:
       - ./bookkoo-gateway:/app/
+      - ./logs/gateway-service:/app/logs
+
 
   curation-service:
     container_name: curation-service
@@ -283,6 +290,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=magumagu
     volumes:
       - ./library-service:/app/
+      - ./logs/library-service:/app/logs
 
   member-service:
     container_name: member-service
@@ -303,6 +311,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=magumagu
     volumes:
       - ./member-service:/app/
+      - ./logs/member-service:/app/logs
 
 networks:
   bookkoo-net:
