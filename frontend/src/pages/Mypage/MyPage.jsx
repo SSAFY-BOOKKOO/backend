@@ -5,13 +5,14 @@ import statisticsIcon from '@assets/icons/statistics.png';
 import friendsIcon from '@assets/icons/friends.png';
 import quoteIcon from '@assets/icons/quote.png';
 import myWritingIcon from '@assets/icons/my_writing.png';
+import profile_img_sample from '@assets/images/profile_img_sample.png';
 
 const MyPage = () => {
   const member = {
     nickname: '닉네임',
     introduction: '소개문',
     category: '카테고리',
-    profilePicture: 'https://via.placeholder.com/200',
+    profile_img_url: profile_img_sample,
   };
 
   return (
@@ -19,7 +20,7 @@ const MyPage = () => {
       <div className='flex items-center justify-between'>
         <div className='flex items-center space-x-8'>
           <img
-            src={member.profilePicture}
+            src={member.profile_img_url}
             alt='profile'
             className='w-32 h-32 rounded-full'
           />

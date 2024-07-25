@@ -11,7 +11,7 @@ const ProfileView = ({ userInfo, onEdit }) => {
       <div className='mb-4'>
         <label className='block text-gray-700'>프로필 이미지</label>
         <img
-          src={userInfo.profileImage}
+          src={userInfo.profile_img_url}
           alt='Profile'
           className='w-16 h-16 rounded-full'
         />
