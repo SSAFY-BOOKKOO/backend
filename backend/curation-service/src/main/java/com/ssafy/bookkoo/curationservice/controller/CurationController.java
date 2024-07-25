@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/curations")
+@Slf4j
 @RequiredArgsConstructor
 public class CurationController {
 
@@ -29,6 +31,7 @@ public class CurationController {
     @GetMapping
     @Operation(summary = "내가 받은 큐레이션 리스트 가져오기", description = "수신한 큐레이션 레터 리스트 가져오기")
     public ResponseEntity<List<ResponseCurationDto>> getCurationList() {
+        log.info("getCurationList!!!");
         //TODO Passport 에서 receiver 가져오기
         return ResponseEntity.ok(curationService.getCurationList(2L));
 
