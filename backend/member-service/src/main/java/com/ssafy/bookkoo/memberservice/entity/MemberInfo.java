@@ -1,16 +1,22 @@
 package com.ssafy.bookkoo.memberservice.entity;
 
 import com.ssafy.bookkoo.memberservice.global.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@Slf4j
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -46,11 +52,11 @@ public class MemberInfo extends BaseEntity {
     private String profileImgUrl;
 
     //해당 멤버를 팔로우하는 팔로우 관계
-    @OneToMany(mappedBy = "follower")
+    @OneToMany(mappedBy = "followee")
     private List<FollowShip> followers = new ArrayList<>();
 
     //해당 멤버가 팔로잉하는 팔로우 관계
-    @OneToMany(mappedBy = "followee")
+    @OneToMany(mappedBy = "follower")
     private List<FollowShip> followees = new ArrayList<>();
 
 
@@ -66,30 +72,35 @@ public class MemberInfo extends BaseEntity {
         this.profileImgUrl = profileImgUrl;
     }
 
-
     /**
      * 연관관계 편의 메서드
      */
     /**
-     * 해당 멤버를 팔로우하는 목록에 추가
+     * 해당 멤버가 팔로우하는 목록에 추가
+     *
      * @param followShip
      */
-    public void addFollowers(FollowShip followShip, MemberInfo followeeInfo) {
-        if (!followers.contains(followShip)) {
-            followers.add(followShip);
+    public void addFollowees(FollowShip followShip, MemberInfo followeeInfo) {
+        if (!this.followees.contains(followShip)) {
+            this.followees.add(followShip);
+            this.followers.add(followShip);
         }
         followShip.setFollowee(followeeInfo);
+        followShip.setFollower(this);
     }
 
     /**
-     * 해당 멤버가 팔로우하는 목록에 추가
+     * 해당 멤버를 팔로우하는 목록에 추가
+     *
      * @param followShip
      */
-    public void addFollowees(FollowShip followShip, MemberInfo followerInfo) {
-        if (!followees.contains(followShip)) {
-            followees.add(followShip);
+    public void addFollowers(FollowShip followShip, MemberInfo followerInfo) {
+        if (!followers.contains(followShip)) {
+            this.followees.add(followShip);
+            this.followers.add(followShip);
         }
         followShip.setFollower(followerInfo);
+        followShip.setFollowee(this);
     }
 
     /**
@@ -103,6 +114,7 @@ public class MemberInfo extends BaseEntity {
 
     /**
      * 해당 멤버가 언팔로우
+     *
      * @param followShip
      */
     public void removeFollowee(FollowShip followShip) {

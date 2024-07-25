@@ -9,6 +9,8 @@ import com.ssafy.bookkoo.memberservice.repository.FollowShipRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberInfoRepository;
 import com.ssafy.bookkoo.memberservice.service.FollowShipService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FollowShipServiceImpl implements FollowShipService {
 
+    private static final Logger log = LoggerFactory.getLogger(FollowShipServiceImpl.class);
     private final FollowShipRepository followShipRepository;
     private final MemberInfoRepository memberInfoRepository;
 
@@ -42,9 +45,20 @@ public class FollowShipServiceImpl implements FollowShipService {
         followShipRepository.save(followShip);
         //팔로우 요청
         //1.요청자는 팔로워 대상의 팔로워에 들어간다.
+        log.info("follower : {}", followerInfo.getId());
+        log.info("follower add Followed: {}", followeeInfo.getId());
         followerInfo.addFollowees(followShip, followeeInfo);
+        for (FollowShip followee : followerInfo.getFollowees()) {
+            log.info("follower's followee List : {}", followee.getId());
+        }
+
         //2.팔로워 대상은 요청자를 팔로워에 추가한다.
+        log.info("followee : {}", followeeInfo.getId());
+        log.info("followee add Follower: {}", followerInfo.getId());
         followeeInfo.addFollowers(followShip, followerInfo);
+        for (FollowShip follower : followeeInfo.getFollowers()) {
+            log.info("followee's follower List : {}", follower.getId());
+        }
     }
 
 
@@ -55,9 +69,11 @@ public class FollowShipServiceImpl implements FollowShipService {
      */
     @Override
     @Transactional
-    public void unFollow(Long followeeId, Long followerId) {
+    public void unFollow(Long followerId, Long followeeId) {
         MemberInfo followeeInfo = getMemberInfo(followeeId);
         MemberInfo followerInfo = getMemberInfo(followerId);
+        log.info("follower : {}", followerInfo.getId());
+        log.info("followee : {}", followeeInfo.getId());
         FollowShip followShip = followShipRepository.findByFollowerAndFollowee(followerInfo, followeeInfo);
         if (followShip == null) {
             throw new FollowShipNotFoundException();
@@ -80,10 +96,11 @@ public class FollowShipServiceImpl implements FollowShipService {
     @Transactional(readOnly = true)
     public List<ResponseFollowShipDto> getFollowers(Long memberId) {
         MemberInfo memberInfo = getMemberInfo(memberId);
+
         return memberInfo.getFollowers()
                          .stream()
                          .map((followShip) -> ResponseFollowShipDto.builder()
-                                                                   .memberId(followShip.getFollowee()
+                                                                   .memberId(followShip.getFollower()
                                                                                        .getId())
                                                                    .build())
                          .collect(Collectors.toList());
@@ -93,10 +110,11 @@ public class FollowShipServiceImpl implements FollowShipService {
     @Transactional(readOnly = true)
     public List<ResponseFollowShipDto> getFollowees(Long memberId) {
         MemberInfo memberInfo = getMemberInfo(memberId);
+
         return memberInfo.getFollowees()
                          .stream()
                          .map((followShip) -> ResponseFollowShipDto.builder()
-                                                                   .memberId(followShip.getFollower()
+                                                                   .memberId(followShip.getFollowee()
                                                                                        .getId())
                                                                    .build())
                          .collect(Collectors.toList());

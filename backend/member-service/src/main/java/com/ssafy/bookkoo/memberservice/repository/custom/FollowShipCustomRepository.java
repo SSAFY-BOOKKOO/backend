@@ -1,9 +1,7 @@
-package com.ssafy.bookkoo.memberservice.repository;
+package com.ssafy.bookkoo.memberservice.repository.custom;
 
 import com.ssafy.bookkoo.memberservice.entity.FollowShip;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
-
-import java.util.Optional;
 
 public interface FollowShipCustomRepository {
 

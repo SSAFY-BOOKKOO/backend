@@ -1,4 +1,4 @@
-package com.ssafy.bookkoo.memberservice.repository;
+package com.ssafy.bookkoo.memberservice.repository.custom;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.bookkoo.memberservice.entity.FollowShip;
