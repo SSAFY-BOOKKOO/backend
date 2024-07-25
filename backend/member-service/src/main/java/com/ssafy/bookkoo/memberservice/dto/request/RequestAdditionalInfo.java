@@ -1,5 +1,7 @@
-package com.ssafy.bookkoo.memberservice.dto;
+package com.ssafy.bookkoo.memberservice.dto.request;
 
+import com.ssafy.bookkoo.memberservice.annotation.MaxArray;
+import com.ssafy.bookkoo.memberservice.entity.Gender;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
@@ -8,8 +10,8 @@ public record RequestAdditionalInfo(
     @NotNull(message = "memberId can not be null") String memberId,
     @NotNull(message = "nickName can not be null") String nickName,
     Integer year,
-    String gender,
-    Long[] categories,
+    Gender gender,
+    @MaxArray(value = 15) Integer[] categories,
     String introduction) {
 
 }

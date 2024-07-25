@@ -1,20 +1,24 @@
 package com.ssafy.bookkoo.memberservice.service.Impl;
 
 import com.ssafy.bookkoo.memberservice.client.CommonServiceClient;
-import com.ssafy.bookkoo.memberservice.dto.RequestAdditionalInfo;
-import com.ssafy.bookkoo.memberservice.dto.RequestCertificationDto;
-import com.ssafy.bookkoo.memberservice.dto.RequestRegisterDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestAdditionalInfo;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestCertificationDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterDto;
 import com.ssafy.bookkoo.memberservice.entity.CertificationNumber;
 import com.ssafy.bookkoo.memberservice.entity.Member;
+import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapper;
+import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapperKey;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import com.ssafy.bookkoo.memberservice.exception.EmailNotValidException;
 import com.ssafy.bookkoo.memberservice.exception.EmailSendFailException;
 import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.memberservice.repository.CertificationRepository;
+import com.ssafy.bookkoo.memberservice.repository.MemberCategoryMapperRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberInfoRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberRepository;
 import com.ssafy.bookkoo.memberservice.service.MailSendService;
 import com.ssafy.bookkoo.memberservice.service.MemberService;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +33,15 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
+    private final Long EXPIRED_TIME = 1800L; //30분 만료 시간
+
     private final MemberRepository memberRepository;
     private final MemberInfoRepository memberInfoRepository;
     private final CertificationRepository certificationRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailSendService mailSendService;
-    private final Long EXPIRED_TIME = 1800L; //30분 만료 시간
+    private final MemberCategoryMapperRepository memberCategoryMapperRepository;
+
 
     //S3 common 서비스
     private final CommonServiceClient commonServiceClient;
@@ -159,16 +166,39 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByMemberId(requestAdditionalInfo.memberId())
                                         .orElseThrow(MemberNotFoundException::new);
 
-        String fileKey = commonServiceClient.saveProfileImg(profileImg, null);
+
+        String fileKey = null;
         MemberInfo memberInfo = MemberInfo.builder()
+                                          .id(member.getId())
                                           .memberId(member.getMemberId())
                                           .nickName(requestAdditionalInfo.nickName())
                                           .year(requestAdditionalInfo.year())
                                           .introduction(requestAdditionalInfo.introduction())
-                                          .profileImgUrl(fileKey)
                                           .build();
-
-        memberInfoRepository.save(memberInfo);
+        //TODO: 없으면 기본 이미지를 등록하도록
+        if (profileImg != null) {
+            fileKey = commonServiceClient.saveProfileImg(profileImg, null);
+            memberInfo.setProfileImgUrl(fileKey);
+        }
+        MemberInfo info = memberInfoRepository.save(memberInfo);
+        Arrays.stream(requestAdditionalInfo.categories())
+              .forEach((categoryId) -> {
+                  //멤버 매퍼 키를 생성
+                  MemberCategoryMapperKey memberCategoryMapperKey
+                      = MemberCategoryMapperKey.builder()
+                                               .categoryId(categoryId)
+                                               .memberInfoId(info.getId())
+                                               .build();
+                  //매퍼키를 통해 매퍼 엔티티 생성
+                  MemberCategoryMapper memberCategoryMapper
+                      = MemberCategoryMapper.builder()
+                                            .memberCategoryMapperKey(
+                                                memberCategoryMapperKey)
+                                            .memberInfo(info)
+                                            .build();
+                  //매퍼 테이블에 매퍼 정보 저장
+                  memberCategoryMapperRepository.save(memberCategoryMapper);
+              });
         return fileKey;
     }
 

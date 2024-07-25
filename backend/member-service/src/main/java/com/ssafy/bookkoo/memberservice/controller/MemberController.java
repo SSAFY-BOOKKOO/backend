@@ -1,8 +1,8 @@
 package com.ssafy.bookkoo.memberservice.controller;
 
-import com.ssafy.bookkoo.memberservice.dto.RequestAdditionalInfo;
-import com.ssafy.bookkoo.memberservice.dto.RequestCertificationDto;
-import com.ssafy.bookkoo.memberservice.dto.RequestRegisterDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestAdditionalInfo;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestCertificationDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterDto;
 import com.ssafy.bookkoo.memberservice.exception.EmailDuplicateException;
 import com.ssafy.bookkoo.memberservice.exception.NickNameDuplicateException;
 import com.ssafy.bookkoo.memberservice.service.MemberService;
@@ -87,7 +87,7 @@ public class MemberController {
     @Operation(description = "memberId, 닉네임, 카테고리, 출생년도, 소개글을 받아 추가정보를 저장합니다.", summary = "추가 정보 저장")
     public ResponseEntity<String> registerAdditionalInfo(
         @Valid @RequestPart RequestAdditionalInfo requestAdditionalInfo,
-        @RequestPart("profileImg") MultipartFile profileImg
+        @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
     ) {
         String filekey = memberService.registerAdditionalInfo(requestAdditionalInfo, profileImg);
         return ResponseEntity.ok(filekey);
