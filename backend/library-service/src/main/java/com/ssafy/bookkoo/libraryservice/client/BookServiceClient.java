@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "book-service")
 public interface BookServiceClient {
 
-    final String prefix = "/books";
+    String prefix = "/books";
 
     @PostMapping(prefix)
     ResponseBookDto addBook(@RequestBody RequestCreateBookDto requestBookDto);
