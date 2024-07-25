@@ -93,20 +93,30 @@ public class SecurityConfig {
     private final TokenUtils tokenUtils;
     private final MemberServiceWebClient memberServiceWebClient;
 
-    @Bean
-    public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity httpSecurity) {
-        return httpSecurity.csrf(ServerHttpSecurity.CsrfSpec::disable)
-                           .authorizeExchange(exchanges -> exchanges
+    //    @Bean
+//    public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity httpSecurity) {
+//        return httpSecurity.csrf(ServerHttpSecurity.CsrfSpec::disable)
+//                           .authorizeExchange(exchanges -> exchanges
 //                               .pathMatchers("/auth-service/**", "/book-service/**",
 //                                   "/common-service/**", "/curation-service/**",
 //                                   "/library-service/**", "/member-service/**", "/api-docs/**",
 //                                   "/swagger-ui.html",
 //                                   "/swagger-ui/**",
 //                                   "/docs/**", "/webjars/**", "/v3/**")
-.pathMatchers("**")
-.permitAll() // 해당 경로는 필터링하지 않음
-.anyExchange()
-.authenticated()
+//                               .permitAll() // 해당 경로는 필터링하지 않음
+//                               .anyExchange()
+//                               .authenticated()
+//                           )
+//                           .addFilterBefore(tokenAuthenticationFilter(),
+//                               SecurityWebFiltersOrder.AUTHENTICATION)
+//                           .build();
+//    }
+    @Bean
+    public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity httpSecurity) {
+        return httpSecurity.csrf(ServerHttpSecurity.CsrfSpec::disable)
+                           .authorizeExchange(exchanges -> exchanges
+                               .anyExchange()
+                               .permitAll() // 모든 경로를 허용
                            )
                            .addFilterBefore(tokenAuthenticationFilter(),
                                SecurityWebFiltersOrder.AUTHENTICATION)
