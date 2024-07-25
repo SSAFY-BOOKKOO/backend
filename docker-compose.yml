@@ -1,4 +1,21 @@
 services:
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+    ports:
+      - "3002:9090"
+    networks:
+      - bookkoo-net
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - bookkoo-net
+    depends_on:
+      - prometheus
   react-app:
     container_name: react-container
     build:
