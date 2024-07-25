@@ -1,6 +1,6 @@
 services:
   prometheus:
-    image: ./prometheus
+    build: ./prometheus
     ports:
       - "3002:9090"
     networks:
