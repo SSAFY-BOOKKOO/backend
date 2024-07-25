@@ -11,13 +11,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "book-service", url = "http://127.0.0.1:8082/books")
+@FeignClient(name = "book-service")
 public interface BookServiceClient {
 
-    @PostMapping
+    final String prefix = "/books";
+
+    @PostMapping(prefix)
     ResponseBookDto addBook(@RequestBody RequestCreateBookDto requestBookDto);
 
-    @GetMapping
+    @GetMapping(prefix)
     List<ResponseBookDto> getBooksByCondition(
         @RequestParam("field") String field,
         @RequestParam("value") List<String> value,
@@ -25,15 +27,15 @@ public interface BookServiceClient {
         @RequestParam("offset") Integer offset
     );
 
-    @GetMapping("/{bookId}")
+    @GetMapping(prefix + "/{bookId}")
     ResponseBookDto getBookById(@PathVariable("bookId") String bookId);
 
-    @GetMapping("/isbn/{isbn}")
+    @GetMapping(prefix + "/isbn/{isbn}")
     ResponseBookDto getBookByIsbn(@PathVariable("isbn") String isbn);
 
-    @PostMapping("/isbn")
+    @PostMapping(prefix + "/isbn")
     ResponseBookDto getOrCreateBookByBookData(@RequestBody RequestCreateBookDto requestBookDto);
 
-    @PostMapping("/check-books")
+    @PostMapping(prefix + "/check-books")
     List<ResponseCheckBooksByIsbnDto> checkBooksByIsbn(@RequestBody String[] isbnList);
 }
