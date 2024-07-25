@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { AiFillStar } from 'react-icons/ai';
 import pencilIcon from '@assets/icons/pencil.png';
 import Button from '../../../@common/Button';
-import refreshIcon from '@assets/icons/refresh.png'; // 새로고침 아이콘 추가
+import { MdOutlineRefresh } from 'react-icons/md';
 
 const ReviewCom = ({ onBackClick, book }) => {
   const { title, author, publisher, summary, cover_img_url } = book;
@@ -50,7 +50,7 @@ const ReviewCom = ({ onBackClick, book }) => {
         <div className='flex justify-between items-center w-72 pb-4'>
           <h3 className='text-lg font-bold'>추천사</h3>
           <button onClick={handleReviewRefresh}>
-            <img src={refreshIcon} alt='새로고침' className='h-6 w-6' />
+            <MdOutlineRefresh className='text-2xl mr-2' />
           </button>
         </div>
 
