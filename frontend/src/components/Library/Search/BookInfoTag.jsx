@@ -7,6 +7,12 @@ const BookInfoTag = ({ selectedTag, setSelectedTag }) => {
     { id: 3, name: '출판사', value: 'publisher' },
   ];
 
+  useEffect(() => {
+    if (!selectedTag) {
+      setSelectedTag('title');
+    }
+  }, [selectedTag, setSelectedTag]);
+
   const handleTagClick = value => {
     setSelectedTag(value === selectedTag ? '' : value);
   };
