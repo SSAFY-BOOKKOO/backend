@@ -248,6 +248,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=magumagu
     volumes:
       - ./curation-service:/app/
+      - ./logs/curation-service:/app/logs
 
   library-service:
     container_name: library-service
