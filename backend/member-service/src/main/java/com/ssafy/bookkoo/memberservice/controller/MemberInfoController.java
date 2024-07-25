@@ -1,11 +1,13 @@
 package com.ssafy.bookkoo.memberservice.controller;
 
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
+import com.ssafy.bookkoo.memberservice.dto.response.ResponseFollowShipDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
-import com.ssafy.bookkoo.memberservice.dto.response.ResponseRecipientDto;
+import com.ssafy.bookkoo.memberservice.service.FollowShipService;
 import com.ssafy.bookkoo.memberservice.service.MemberInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +19,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/members/info")
 public class MemberInfoController {
 
     private final MemberInfoService memberInfoService;
+    private final FollowShipService followShipService;
 
     @GetMapping
     @Operation(summary = "멤버 정보 반환 API", description = "멤버 ID(UUID)를 통해 멤버 정보를 반환합니다.")
@@ -67,9 +68,17 @@ public class MemberInfoController {
 
     @GetMapping("/recipients")
     @Operation(summary = "큐레이션 레터의 수신자들 반환 API",
-        description = "큐레이션 레터의 수신자들을 반환하는 API입니다.")
-    public ResponseEntity<List<ResponseRecipientDto>> getLetterRecipients() {
-        //TODO: 팔로우 구현 후 팔로워 목록 + 랜덤 3명 ID반환 로직 구현
-        return ResponseEntity.ok().build();
+        description = "큐레이션 레터의 수신자들을 반환하는 API입니다. (팔로워 + 랜덤 3명)")
+    public ResponseEntity<List<Long>> getLetterRecipients(
+        @RequestParam("memberId") Long memberId
+    ) {
+        List<ResponseFollowShipDto> followers = followShipService.getFollowers(memberId);
+        List<Long> followerIds = followers.stream()
+                                          .map(ResponseFollowShipDto::memberId)
+                                          .toList();
+        List<Long> recipientIds = memberInfoService.getRandomMemberInfo(followerIds);
+        recipientIds.addAll(followerIds);
+        return ResponseEntity.ok()
+                             .body(recipientIds);
     }
 }
