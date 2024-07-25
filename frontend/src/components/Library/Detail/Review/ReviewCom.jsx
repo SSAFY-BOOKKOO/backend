@@ -41,9 +41,12 @@ const ReviewCom = ({ onBackClick, book }) => {
   return (
     // 전체 담는 틀
     <div className='relative bg-zinc-300 rounded-lg w-10/12 max-w-md h-full min-h-[600px] overflow-auto'>
+      {/* 하드커버 선 */}
+      <div className='absolute right-6 top-0 bottom-0 shadow-2xl w-1 bg-gray-500 shadow-2xl z-10'></div>
+
       <div className='flex flex-col items-center p-4 pr-4 '>
         <h1 className='text-3xl font-bold m-4 pb-4'>{title}</h1>
-
+        {/* 회색 영역 */}
         <div className='flex justify-between items-center w-72 pb-4'>
           <h3 className='text-lg font-bold'>추천사</h3>
           <button onClick={handleReviewRefresh}>
@@ -105,7 +108,7 @@ const ReviewCom = ({ onBackClick, book }) => {
         </div>
         {/* 하드커버 선 */}
 
-        <div className='absolute shadow-2xl	right-6 top-0 bottom-0 w-1 bg-gray-500'></div>
+        {/* <div className='absolute shadow-2xl	right-6 top-0 bottom-0 w-1 bg-gray-500'></div> */}
       </div>
     </div>
   );
