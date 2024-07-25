@@ -79,12 +79,12 @@ const ReviewCom = ({ onBackClick, book }) => {
               onClick={e => e.stopPropagation()} // textarea 클릭 시 이벤트 전파 막기
             ></textarea>
           ) : (
-            <p className='w-72 h-44 p-2 border border-gray-400 rounded resize-none'>
+            <p className='w-72 h-44 p-2 pb-4 border border-gray-400 rounded resize-none'>
               {reviewText || '한줄평을 작성해 보세요!'}
             </p>
           )}
           <Button
-            text={editReview ? '저장' : ''}
+            text={editReview ? '저장' : '작성'}
             size='small'
             color='text-black bg-rose-300'
             onClick={e => {
@@ -95,16 +95,8 @@ const ReviewCom = ({ onBackClick, book }) => {
                 setEditingReview(true);
               }
             }}
-            className='absolute top-2 right-2'
-          >
-            {!editReview && (
-              <img
-                src={pencilIcon}
-                alt='작성'
-                style={{ width: '20px', height: '20px' }}
-              />
-            )}
-          </Button>
+            className='absolute top-36 right-2'
+          ></Button>
         </div>
         {/* 하드커버 선 */}
 
