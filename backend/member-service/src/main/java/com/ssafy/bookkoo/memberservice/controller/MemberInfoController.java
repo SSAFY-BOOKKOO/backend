@@ -46,6 +46,7 @@ public class MemberInfoController {
         ResponseMemberInfoDto memberInfo = memberInfoService.getMemberInfo(memberId);
         return ResponseEntity.ok(memberInfo);
     }
+
     @PostMapping("/password")
     @Operation(summary = "비밀번호 변경 API", description = "비밀번호를 변경합니다.")
     public ResponseEntity<HttpStatus> updatePassword(
@@ -80,5 +81,13 @@ public class MemberInfoController {
         recipientIds.addAll(followerIds);
         return ResponseEntity.ok()
                              .body(recipientIds);
+    }
+
+    @GetMapping("/name")
+    public ResponseEntity<Long> getMemberIdByNickName(
+        @RequestParam("nickName") String nickName
+    ) {
+        Long memberId = memberInfoService.getMemberIdByNickName(nickName);
+        return ResponseEntity.ok(memberId);
     }
 }

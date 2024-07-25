@@ -79,4 +79,11 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     public List<Long> getRandomMemberInfo(List<Long> followers) {
         return memberInfoRepository.findRandomMemberInfoIdByFollowers(followers);
     }
+
+    @Override
+    public Long getMemberIdByNickName(String nickName) {
+        return memberInfoRepository.findByNickName(nickName)
+                                   .orElseThrow(MemberNotFoundException::new)
+                                   .getId();
+    }
 }
