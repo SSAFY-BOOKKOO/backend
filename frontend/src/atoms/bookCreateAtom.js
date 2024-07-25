@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
 
 export const bookDataAtom = atom({
-  status: 'reading',
+  status: 'read',
   startDate: '',
   endDate: '',
   rating: 0,
