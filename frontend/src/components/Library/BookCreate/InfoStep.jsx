@@ -35,27 +35,27 @@ const InfoStep = () => {
       <div className='flex flex-col'>
         {bookData.status !== 'want' && (
           <>
-            <label>시작 날짜</label>
+            <h2 className='mb-3 text-lg'>시작 날짜</h2>
             <DatePicker onChange={handleStartDateChange} />
           </>
         )}
         {bookData.status === 'read' && (
           <>
-            <h2 className='mb-3 text-lg'>종료 날짜</h2>
+            <h2 className='my-3 text-lg'>종료 날짜</h2>
             <DatePicker onChange={handleEndDateChange} />
           </>
         )}
       </div>
       {bookData.status === 'read' && (
         <>
-          <h2 className='mb-3 text-lg'>별점</h2>
+          <h2 className='my-3 text-lg'>별점</h2>
           <StarRating
             selected={bookData.rating}
             onChange={handleRatingChange}
           />
         </>
       )}
-      <h2 className='mb-3 text-lg'>책 색상</h2>
+      <h2 className='my-3 text-lg'>책 색상</h2>
       <ColorPicker
         presetColors={PRESET_COLORS}
         selected={bookData.color}
