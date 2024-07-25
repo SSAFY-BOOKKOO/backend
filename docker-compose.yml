@@ -3,8 +3,6 @@ services:
     container_name: react-container
     build:
       context: ./frontend
-    ports:
-      - "3000:80"
     networks:
       - bookkoo-net
   nginx-proxy-manager:
