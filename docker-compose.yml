@@ -50,7 +50,6 @@ services:
     build: ./promtail
     volumes:
       - ./logs:/logs
-      - ./promtail:/etc/promtail
     
   nginx-proxy-manager-db:
     image: 'jc21/mariadb-aria:latest'
