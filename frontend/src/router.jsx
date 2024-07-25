@@ -54,8 +54,8 @@ const router = createBrowserRouter([
           // library
           { path: 'library', element: <LibraryMain /> },
           { path: 'library/detail/:id', element: <LibraryDetail /> },
-          { path: 'library/search', element: <LibrarySearch /> },
-          { path: 'library/search/:bookId', element: <LibrarySearchDetail /> },
+          { path: 'search', element: <LibrarySearch /> },
+          { path: '/search/:bookId', element: <LibrarySearchDetail /> },
 
           // curation
           { path: 'curation/receive', element: <CurationReceive /> },

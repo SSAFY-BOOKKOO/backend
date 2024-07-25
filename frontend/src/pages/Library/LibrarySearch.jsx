@@ -6,9 +6,10 @@ import Button from '@components/@common/Button';
 import BookSearchListItem from '@components/Library/Search/BookSearchListItem';
 import BookInfoTag from '@components/Library/Search/BookInfoTag';
 import { books } from '@mocks/BookData';
-import { IoSearchSharp, IoArrowBack } from 'react-icons/io5';
+import { IoSearchSharp } from 'react-icons/io5';
 import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
 import useModal from '@hooks/useModal';
+import IconButton from '@components/@common/IconButton';
 
 const LibrarySearch = () => {
   const navigate = useNavigate();
@@ -55,13 +56,6 @@ const LibrarySearch = () => {
         className='mb-4 w-full flex flex-row items-center justify-center'
         onSubmit={onSearchButtonClick}
       >
-        <button
-          type='button'
-          className='p-2'
-          onClick={() => navigate(`/library`)}
-        >
-          <IoArrowBack />
-        </button>
         <div className='flex-grow'>
           <Input
             id='searchText'
@@ -70,10 +64,7 @@ const LibrarySearch = () => {
             onChange={e => setSearchText(e.target.value)}
           />
         </div>
-
-        <button type='submit' onClick={handleSearch} className='p-2'>
-          <IoSearchSharp className='w-5 h-5' />
-        </button>
+        <IconButton type='submit' onClick={handleSearch} icon={IoSearchSharp} />
       </form>
       <BookInfoTag selectedTag={selectedTag} setSelectedTag={setSelectedTag} />
       {isSearched && (
@@ -83,7 +74,7 @@ const LibrarySearch = () => {
           ) : (
             <p className='mt-2 mb-4'>검색 결과가 없습니다.</p>
           )}
-          <div>
+          <div className='overflow-y-auto scrollbar-none'>
             {searchBooks.map(book => (
               <BookSearchListItem
                 key={book.book_id}
