@@ -6,6 +6,8 @@ import com.ssafy.bookkoo.memberservice.service.FollowShipService;
 import com.ssafy.bookkoo.memberservice.service.MemberInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import java.util.List;
 @RequestMapping("/members/follow")
 public class FollowController {
 
+    private static final Logger log = LoggerFactory.getLogger(FollowController.class);
     private final String PASSPORT_PREFIX = "member-passport";
     private final FollowShipService followShipService;
     private final MemberInfoService memberInfoService;
@@ -28,8 +31,9 @@ public class FollowController {
         @RequestHeader HttpHeaders headers,
         @RequestBody RequestFollowShipDto requestFollowShipDto
     ) {
-        Long followeeId = Long.valueOf(headers.getFirst(PASSPORT_PREFIX));
-        Long followerId = memberInfoService.getMemberPk(requestFollowShipDto.memberId());
+        Long followerId = Long.valueOf(headers.getFirst(PASSPORT_PREFIX));
+        Long followeeId = memberInfoService.getMemberPk(requestFollowShipDto.memberId());
+        log.info("{} followed {}", followerId, followeeId);
         followShipService.follow(followerId, followeeId);
         return ResponseEntity.ok()
                              .build();
@@ -56,8 +60,8 @@ public class FollowController {
         @RequestParam(required = false) RequestFollowShipDto requestFollowShipDto
     ) {
         Long memberId = Long.valueOf(headers.getFirst(PASSPORT_PREFIX));
-        List<ResponseFollowShipDto> followers = followShipService.getFollowees(memberId);
-        return ResponseEntity.ok(followers);
+        List<ResponseFollowShipDto> followees = followShipService.getFollowees(memberId);
+        return ResponseEntity.ok(followees);
     }
 
     @GetMapping("/followers")
