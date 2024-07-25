@@ -1,5 +1,6 @@
 package com.ssafy.bookkoo.memberservice.dto.request;
 
+import com.ssafy.bookkoo.memberservice.entity.Gender;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
@@ -8,8 +9,8 @@ public record RequestAdditionalInfo(
     @NotNull(message = "memberId can not be null") String memberId,
     @NotNull(message = "nickName can not be null") String nickName,
     Integer year,
-    String gender,
-    Long[] categories,
+    Gender gender,
+    Integer[] categories,
     String introduction) {
 
 }
