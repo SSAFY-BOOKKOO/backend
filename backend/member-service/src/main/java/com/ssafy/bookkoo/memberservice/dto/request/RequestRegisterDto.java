@@ -1,6 +1,5 @@
-package com.ssafy.bookkoo.memberservice.dto;
+package com.ssafy.bookkoo.memberservice.dto.request;
 
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 

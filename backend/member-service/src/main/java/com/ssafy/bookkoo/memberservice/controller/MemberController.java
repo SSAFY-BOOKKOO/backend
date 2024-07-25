@@ -1,8 +1,8 @@
 package com.ssafy.bookkoo.memberservice.controller;
 
-import com.ssafy.bookkoo.memberservice.dto.RequestAdditionalInfo;
-import com.ssafy.bookkoo.memberservice.dto.RequestCertificationDto;
-import com.ssafy.bookkoo.memberservice.dto.RequestRegisterDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestAdditionalInfo;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestCertificationDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterDto;
 import com.ssafy.bookkoo.memberservice.exception.EmailDuplicateException;
 import com.ssafy.bookkoo.memberservice.exception.NickNameDuplicateException;
 import com.ssafy.bookkoo.memberservice.service.MemberService;
@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
@@ -84,12 +85,12 @@ public class MemberController {
 
     @PostMapping("/info")
     @Operation(description = "memberId, 닉네임, 카테고리, 출생년도, 소개글을 받아 추가정보를 저장합니다.", summary = "추가 정보 저장")
-    public ResponseEntity<HttpStatus> registerAdditionalInfo(
-        @Valid @RequestBody RequestAdditionalInfo requestAdditionalInfo
+    public ResponseEntity<String> registerAdditionalInfo(
+        @Valid @RequestPart RequestAdditionalInfo requestAdditionalInfo,
+        @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
     ) {
-        memberService.registerAdditionalInfo(requestAdditionalInfo);
-        return ResponseEntity.ok()
-                             .build();
+        String filekey = memberService.registerAdditionalInfo(requestAdditionalInfo, profileImg);
+        return ResponseEntity.ok(filekey);
     }
 
     @PostMapping("/password/reset")
