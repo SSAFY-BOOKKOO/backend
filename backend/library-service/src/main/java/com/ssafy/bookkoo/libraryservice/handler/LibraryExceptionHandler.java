@@ -17,13 +17,13 @@ public class LibraryExceptionHandler {
      */
     @ExceptionHandler(LibraryNotFoundException.class)
     public ResponseEntity<String> bookNotFoundException(LibraryNotFoundException e) {
-        return ResponseEntity.status(404)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                              .body(e.getMessage());
     }
 
     @ExceptionHandler(BookAlreadyMappedException.class)
     public ResponseEntity<String> illegalStateException(BookAlreadyMappedException e) {
-        return ResponseEntity.status(400)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body(e.getMessage());
     }
 }
