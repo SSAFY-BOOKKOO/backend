@@ -97,11 +97,12 @@ public class LibraryServiceImpl implements LibraryService {
      * 서재 ID로 서재 상세 조회 + 딸린 책 정보까지 조회
      *
      * @param libraryId 서재 ID
+     * @param filter    filter(Type)
      * @return RespnoseLibraryDto
      */
     @Override
     @Transactional(readOnly = true)
-    public ResponseLibraryDto getLibrary(Long libraryId) {
+    public ResponseLibraryDto getLibrary(Long libraryId, String filter) {
         // 라이브러리 ID로 라이브러리를 찾고 예외를 처리합니다.
         Library library = findLibraryByIdWithException(libraryId);
         // 라이브러리 엔티티를 DTO로 변환합니다.
