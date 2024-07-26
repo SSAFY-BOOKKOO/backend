@@ -4,7 +4,7 @@ import App from './App.jsx';
 import LibraryHome from './pages/Library/LibraryHome.jsx';
 import LibraryDetail from './pages/Library/LibraryDetail.jsx';
 import LibrarySearch from './pages/Library/LibrarySearch.jsx';
-import LibrarySearchDetail from './pages/Library/LibrarySearchDetail.jsx';
+import SearchBookDetail from './pages/Library/SearchBookDetail.jsx';
 import LibraryMain from './pages/Library/LibraryMain.jsx';
 import Register from './pages/Member/Register.jsx';
 import MyPage from './pages/Mypage/MyPage.jsx';
@@ -25,6 +25,7 @@ import Intro from './pages/Member/Intro.jsx';
 import PrivateRoute from '@/components/@common/PrivateRoute';
 import CurationLetterSend from './pages/Curation/CurationLetterSend.jsx';
 import Quote from './pages/Mypage/Quote.jsx';
+import SearchMoreDetail from './pages/Library/SearchMoreDetail.jsx';
 
 const isAuthenticated = true; // 로그인 상태를 확인하는 로직 추가 필요
 
@@ -53,9 +54,17 @@ const router = createBrowserRouter([
 
           // library
           { path: 'library', element: <LibraryMain /> },
-          { path: 'library/detail/:id', element: <LibraryDetail /> },
+          // book in library detail
+          { path: 'library/detail/:bookId', element: <LibraryDetail /> },
+
+          // search
           { path: 'search', element: <LibrarySearch /> },
-          { path: '/search/:bookId', element: <LibrarySearchDetail /> },
+
+          // search more
+          { path: 'search/:type/more', element: <SearchMoreDetail /> }, // 'library'와 'book' 타입을 처리
+
+          // book detail
+          { path: 'book/detail/:bookId', element: <SearchBookDetail /> },
 
           // curation
           { path: 'curation/receive', element: <CurationReceive /> },
