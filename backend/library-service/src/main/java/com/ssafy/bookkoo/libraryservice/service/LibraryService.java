@@ -12,7 +12,7 @@ public interface LibraryService {
 
     List<ResponseLibraryDto> getLibrariesOfMember(String nickname);
 
-    ResponseLibraryDto getLibrary(Long libraryId);
+    ResponseLibraryDto getLibrary(Long libraryId, String filter);
 
     ResponseLibraryDto updateLibrary(
         Long libraryId,
