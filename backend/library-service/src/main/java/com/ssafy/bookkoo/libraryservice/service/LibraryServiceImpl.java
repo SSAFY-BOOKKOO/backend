@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.libraryservice.service;
 
 import com.ssafy.bookkoo.libraryservice.client.BookServiceClient;
+import com.ssafy.bookkoo.libraryservice.client.MemberServiceClient;
 import com.ssafy.bookkoo.libraryservice.dto.RequestCreateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestLibraryBookMapperCreateDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestSearchBooksFilterDto;
@@ -14,6 +15,7 @@ import com.ssafy.bookkoo.libraryservice.entity.MapperKey;
 import com.ssafy.bookkoo.libraryservice.exception.BookAlreadyMappedException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryStyleNotFoundException;
+import com.ssafy.bookkoo.libraryservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.libraryservice.mapper.LibraryBookMapperMapper;
 import com.ssafy.bookkoo.libraryservice.mapper.LibraryMapper;
 import com.ssafy.bookkoo.libraryservice.repository.LibraryBookMapperRepository;
@@ -32,10 +34,20 @@ public class LibraryServiceImpl implements LibraryService {
     private final LibraryRepository libraryRepository;
     private final LibraryStyleRepository libraryStyleRepository;
     private final LibraryBookMapperRepository libraryBookMapperRepository;
+
     private final LibraryMapper libraryMapper;
     private final LibraryBookMapperMapper libraryBookMapperMapper;
-    private final BookServiceClient bookServiceClient;
 
+    private final BookServiceClient bookServiceClient;
+    private final MemberServiceClient memberServiceClient;
+
+    /**
+     * 서재 추가
+     *
+     * @param libraryDto 서재 정보
+     * @param memberId   사용자 ID
+     * @return ResopnseLibraryDto
+     */
     @Override
     @Transactional
     public ResponseLibraryDto addLibrary(RequestCreateLibraryDto libraryDto, Long memberId) {
@@ -60,6 +72,12 @@ public class LibraryServiceImpl implements LibraryService {
         return libraryMapper.toResponseDto(library);
     }
 
+    /**
+     * 사용자의 닉네임으로 해당 사용자의 서재 목록 불러오기
+     *
+     * @param nickname 사용자 닉네임
+     * @return List<ResponseLibraryDto>
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ResponseLibraryDto> getLibrariesOfMember(String nickname) {
@@ -75,6 +93,12 @@ public class LibraryServiceImpl implements LibraryService {
         return libraryMapper.toResponseDtoList(libraries);
     }
 
+    /**
+     * 서재 ID로 서재 상세 조회 + 딸린 책 정보까지 조회
+     *
+     * @param libraryId 서재 ID
+     * @return RespnoseLibraryDto
+     */
     @Override
     @Transactional(readOnly = true)
     public ResponseLibraryDto getLibrary(Long libraryId) {
@@ -113,6 +137,13 @@ public class LibraryServiceImpl implements LibraryService {
         return libraryDto;
     }
 
+    /**
+     * 서재 수정
+     *
+     * @param libraryId  수정할 서재 ID
+     * @param libraryDto 수정할 서재 데이터
+     * @return ResponseLibraryDto
+     */
     @Override
     @Transactional
     public ResponseLibraryDto updateLibrary(
@@ -142,6 +173,13 @@ public class LibraryServiceImpl implements LibraryService {
         return libraryMapper.toResponseDto(updatedLibrary);
     }
 
+    /**
+     * 서재에 책 넣기
+     *
+     * @param libraryId 서재 ID
+     * @param mapperDto 서재-책-매퍼 dto(서재에 책 넣은 정보)
+     * @param memberId  사용자 ID
+     */
     @Override
     public void addBookToLibrary(
         Long libraryId,
@@ -187,6 +225,12 @@ public class LibraryServiceImpl implements LibraryService {
         return libraryBookMapperRepository.countLibrariesByMemberId(memberId);
     }
 
+    /**
+     * 서재 ID로 서재 찾기 with Exception
+     *
+     * @param libraryId 서재 ID
+     * @return Library 엔티티
+     */
     private Library findLibraryByIdWithException(Long libraryId) {
         return libraryRepository.findById(libraryId)
                                 .orElseThrow(() -> new LibraryNotFoundException(
