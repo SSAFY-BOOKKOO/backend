@@ -49,7 +49,7 @@ const books = [
     publisher: '비즈니스북스',
     summary: '성공의 새로운 정의를 제시하는 책',
     cover_img_url:
-      'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
+      'https://image.aladin.co.kr/product/30657/56/cover500/k272830938_1.jpg',
     library_id: 1,
     color: 'bg-yellow-500',
     time: '30분 전',
@@ -63,7 +63,7 @@ const books = [
     publisher: '비채',
     summary: '감동적인 이야기가 담긴 소설',
     cover_img_url:
-      'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
+      'https://image.aladin.co.kr/product/30768/99/cover500/k252830652_2.jpg',
     library_id: 2,
     color: 'bg-purple-500',
     time: '30분 전',
@@ -77,7 +77,7 @@ const books = [
     publisher: '창비',
     summary: '감정을 느끼지 못하는 소년의 이야기',
     cover_img_url:
-      'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
+      'https://image.aladin.co.kr/product/31893/32/cover200/k212833749_2.jpg',
     library_id: 2,
     color: 'bg-pink-500',
     time: '30분 전',
@@ -91,7 +91,7 @@ const books = [
     publisher: '은행나무',
     summary: '살인자의 심리를 탐구한 소설',
     cover_img_url:
-      'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
+      'https://image.aladin.co.kr/product/7492/9/cover200/8956609950_2.jpg',
     library_id: 2,
     color: 'bg-orange-500',
     time: '30분 전',
@@ -105,7 +105,7 @@ const books = [
     publisher: '현대문학',
     summary: '디스토피아적 미래 사회를 그린 소설',
     cover_img_url:
-      'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
+      'https://image.aladin.co.kr/product/6083/61/cover200/8973814729_2.jpg',
     library_id: 2,
     color: 'bg-gray-500',
     time: '30분 전',
@@ -119,7 +119,7 @@ const books = [
     publisher: '재미주의',
     summary: '소소한 일상의 이야기를 담은 소설',
     cover_img_url:
-      'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
+      'https://image.aladin.co.kr/product/29045/74/cover200/k192836746_2.jpg',
     library_id: 2,
     color: 'bg-blue-500',
     time: '30분 전',
@@ -133,7 +133,7 @@ const books = [
     publisher: '문학동네',
     summary: '여행을 통해 삶을 돌아보게 하는 책',
     cover_img_url:
-      'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
+      'https://image.aladin.co.kr/product/33763/31/cover200/k312930064_3.jpg',
     library_id: 2,
     color: 'bg-green-500',
     slot_id: 19,
@@ -149,7 +149,7 @@ const books = [
     summary:
       '전작의 인기에 힘입어 나온 후속작. 다시 한번 편의점에서 일어나는 소소한 일상을 담았다.',
     cover_img_url:
-      'https://image.aladin.co.kr/product/28961/15/cover500/8934996165_1.jpg',
+      'https://image.aladin.co.kr/product/30370/64/cover200/s122834213_1.jpg',
     library_id: 2,
     color: 'bg-red-500',
     time: '1시간 전',
@@ -166,7 +166,7 @@ const books = [
     publisher: '열린책들',
     summary: '삶의 태도에 대한 철학적 고찰을 담은 책.',
     cover_img_url:
-      'https://image.aladin.co.kr/product/26861/84/cover500/8994856038_1.jpg',
+      'https://image.aladin.co.kr/product/33141/28/cover200/k422937227_1.jpg',
     library_id: 2,
     color: 'bg-green-500',
     time: '2시간 전',
@@ -183,7 +183,7 @@ const books = [
     publisher: '블랙피쉬',
     summary: '미술 작품들을 방구석에서 쉽게 즐길 수 있도록 해설한 책.',
     cover_img_url:
-      'https://image.aladin.co.kr/product/16254/93/cover500/8925594249_1.jpg',
+      'https://image.aladin.co.kr/product/33927/98/cover200/k082930037_2.jpg',
     library_id: 2,
     color: 'bg-blue-500',
     time: '3시간 전',
@@ -200,7 +200,7 @@ const books = [
     publisher: '스몰빅라이프',
     summary: '심리학의 다양한 지식을 실생활에 활용할 수 있도록 안내하는 책.',
     cover_img_url:
-      'https://image.aladin.co.kr/product/21541/18/cover500/8965709521_1.jpg',
+      'https://image.aladin.co.kr/product/16754/75/cover500/k342534660_1.jpg',
     library_id: 2,
     color: 'bg-yellow-500',
     time: '4시간 전',
@@ -218,7 +218,7 @@ const books = [
     summary:
       '전작의 성공에 힘입어 출간된 후속작. 우울증을 극복한 자전적 에세이의 두 번째 이야기.',
     cover_img_url:
-      'https://image.aladin.co.kr/product/19256/31/cover500/8965743197_1.jpg',
+      'https://image.aladin.co.kr/product/19054/22/cover200/k082635297_1.jpg',
     library_id: 2,
     color: 'bg-purple-500',
     time: '5시간 전',
@@ -236,7 +236,7 @@ const books = [
     summary:
       '해리 포터 시리즈의 후속작. 해리 포터와 그의 아들 알버스의 이야기.',
     cover_img_url:
-      'https://image.aladin.co.kr/product/14735/50/cover500/8983927254_1.jpg',
+      'https://image.aladin.co.kr/product/33209/46/cover200/k542937957_1.jpg',
     library_id: 2,
     color: 'bg-pink-500',
     time: '6시간 전',
@@ -253,7 +253,7 @@ const books = [
     publisher: '알에이치코리아(RHK)',
     summary: '히가시노 게이고의 대표적인 추리 소설.',
     cover_img_url:
-      'https://image.aladin.co.kr/product/4624/91/cover500/8925550409_1.jpg',
+      'https://image.aladin.co.kr/product/4745/51/cover200/899098257x_2.jpg',
     library_id: 2,
     color: 'bg-orange-500',
     time: '7시간 전',
@@ -270,7 +270,7 @@ const books = [
     publisher: '웨일북',
     summary: '지식의 폭을 넓히기 위한 필독서.',
     cover_img_url:
-      'https://image.aladin.co.kr/product/21563/56/cover500/k302636679_1.jpg',
+      'https://image.aladin.co.kr/product/22872/79/cover200/k992636841_2.jpg',
     library_id: 2,
     color: 'bg-blue-500',
     time: '8시간 전',
@@ -287,7 +287,7 @@ const books = [
     publisher: '열린책들',
     summary: '어린 왕자의 여행과 사랑 이야기.',
     cover_img_url:
-      'https://image.aladin.co.kr/product/32974/50/cover500/k722836785_1.jpg',
+      'https://image.aladin.co.kr/product/6853/49/cover200/8932917248_2.jpg',
     library_id: 2,
     color: 'bg-yellow-500',
     time: '9시간 전',
@@ -304,7 +304,7 @@ const books = [
     publisher: '민음사',
     summary: '자아를 찾는 한 소년의 성장 이야기.',
     cover_img_url:
-      'https://image.aladin.co.kr/product/32974/50/cover500/k722836785_2.jpg',
+      'https://image.aladin.co.kr/product/26/0/cover200/s742633278_1.jpg',
     library_id: 2,
     color: 'bg-green-500',
     time: '10시간 전',
@@ -321,7 +321,7 @@ const books = [
     publisher: '열린책들',
     summary: '전체주의의 위험성을 경고한 소설.',
     cover_img_url:
-      'https://image.aladin.co.kr/product/32974/50/cover500/k722836785_3.jpg',
+      'https://image.aladin.co.kr/product/41/89/cover200/s122531356_1.jpg',
     library_id: 2,
     color: 'bg-gray-500',
     time: '11시간 전',
@@ -341,7 +341,7 @@ const book = {
   summary:
     '집에서 나오지 않는 집주인과 커뮤니케이션을 하는 조건으로 동경하던 일본 가옥에서 한 달간 살게 된 노아. 어떤 사람일까 걱정하던 노아의 앞에 나타난 것은 사람의 손을 타지 않은 고양이처럼 말 없고 무표정한 청년, 케이였다.',
   cover_img_url:
-    'https://image.aladin.co.kr/product/32974/50/cover500/k422936456_1.jpg',
+    'https://image.aladin.co.kr/product/30768/99/cover500/k252830652_2.jpg',
   library_id: 2,
   color: 'bg-blue-500',
   height: 'medium',
