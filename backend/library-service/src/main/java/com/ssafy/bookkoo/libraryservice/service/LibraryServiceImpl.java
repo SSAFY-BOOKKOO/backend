@@ -62,7 +62,15 @@ public class LibraryServiceImpl implements LibraryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ResponseLibraryDto> getLibrariesOfMember(Long memberId) {
+    public List<ResponseLibraryDto> getLibrariesOfMember(String nickname) {
+        Long memberId;
+        try {
+            // 사용자의 nickname으로 memberId 찾는 통신하기
+            memberId = memberServiceClient.getMemberIdByNickName(nickname);
+        } catch (Exception e) { // 못찾으면 에러 처리
+            throw new MemberNotFoundException();
+        }
+        // 찾은 memberId로 서재 목록 가져오기
         List<Library> libraries = libraryRepository.findByMemberId(memberId);
         return libraryMapper.toResponseDtoList(libraries);
     }
