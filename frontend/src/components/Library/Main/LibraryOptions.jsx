@@ -24,18 +24,20 @@ const LibraryOptions = ({
 
   return (
     <div className='flex items-center justify-between w-full px-4 relative'>
-      <select
-        className='p-2 border rounded-lg bg-white text-black text-center'
-        style={{ width: '250px' }}
-        value={activeLibrary}
-        onChange={e => setActiveLibrary(Number(e.target.value))}
-      >
-        {libraries.map((library, index) => (
-          <option key={index} value={index}>
-            {library.name}
-          </option>
-        ))}
-      </select>
+      <div className='relative w-64'>
+        <select
+          className='block w-full p-2 border rounded-lg bg-white text-black text-center appearance-none'
+          style={{ textAlignLast: 'center' }}
+          value={activeLibrary}
+          onChange={e => setActiveLibrary(Number(e.target.value))}
+        >
+          {libraries.map((library, index) => (
+            <option key={index} value={index} className='text-center'>
+              {library.name}
+            </option>
+          ))}
+        </select>
+      </div>
       <Button
         text='+'
         color='text-white bg-green-400 active:bg-pink-400'
