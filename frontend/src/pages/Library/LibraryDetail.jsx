@@ -29,7 +29,7 @@ const LibraryDetail = () => {
       : summary;
 
   return (
-    <div className='flex flex-col items-center h-[43rem] mt-16 overflow-hidden scrollbar-none'>
+    <div className='flex flex-col items-center h-[43rem] mt-4 overflow-hidden scrollbar-none'>
       <SwitchTransition>
         <CSSTransition
           key={showReview ? 'review' : 'details'}
