@@ -10,7 +10,7 @@ public interface LibraryService {
 
     ResponseLibraryDto addLibrary(RequestCreateLibraryDto library, Long memberId);
 
-    List<ResponseLibraryDto> getLibrariesOfMember(Long memberId);
+    List<ResponseLibraryDto> getLibrariesOfMember(String nickname);
 
     ResponseLibraryDto getLibrary(Long libraryId);
 
