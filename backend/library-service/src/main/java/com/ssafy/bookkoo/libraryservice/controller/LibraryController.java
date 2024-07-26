@@ -37,11 +37,10 @@ public class LibraryController {
     }
 
     @GetMapping
-    @Operation(summary = "서재 목록 조회", description = "해당 사용자의 서재 목록 조회 API")
-    // 임시로 memberId 받는걸로
-    public ResponseEntity<List<ResponseLibraryDto>> getLibraries(@RequestParam Long memberId) {
+    @Operation(summary = "해당 사용자의 서재 목록 조회", description = "사용자의 닉네임을 받아 해당 사용자의 서재 목록 조회 API")
+    public ResponseEntity<List<ResponseLibraryDto>> getLibraries(@RequestParam String nickname) {
         return ResponseEntity.ok()
-                             .body(libraryService.getLibrariesOfMember(memberId));
+                             .body(libraryService.getLibrariesOfMember(nickname));
     }
 
     @GetMapping("/{libraryId}")
