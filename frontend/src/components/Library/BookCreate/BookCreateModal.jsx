@@ -6,10 +6,15 @@ import InfoStep from './InfoStep';
 import ShelfSelectStep from './ShelfSelectStep';
 import Button from '../../@common/Button';
 import { useEffect, useState } from 'react';
+import { showAlertAtom } from '@atoms/alertAtom';
+import IconButton from '@components/@common/IconButton';
+import { IoCloseSharp } from 'react-icons/io5';
+import Alert from '../../@common/Alert';
 
 const BookCreateModal = ({ isCreateModalOpen, toggleCreateModal }) => {
   const [step, setStep] = useState(1);
   const [bookData, setBookData] = useAtom(bookDataAtom);
+  const [, showAlert] = useAtom(showAlertAtom);
 
   const handleNext = () => {
     if (step < 3) setStep(step + 1);
@@ -23,7 +28,7 @@ const BookCreateModal = ({ isCreateModalOpen, toggleCreateModal }) => {
     toggleCreateModal();
     setStep(1);
     setBookData({
-      status: 'reading',
+      status: 'read',
       startDate: '',
       endDate: '',
       rating: 0,
@@ -33,21 +38,43 @@ const BookCreateModal = ({ isCreateModalOpen, toggleCreateModal }) => {
     });
   };
 
+  const handleShowAlert = () => {
+    showAlert(
+      '빈칸을 입력해주세요.',
+      false,
+      () => {
+        console.log('확인');
+        reset();
+      },
+      () => {
+        console.log('취소');
+        reset();
+      }
+    );
+  };
+
   const handleComplete = () => {
-    reset();
+    // 유효성 검사
+    if (bookData.color === '') {
+      handleShowAlert();
+    } else {
+      reset();
+    }
 
     // 등록 서버 연동
+    reset();
   };
 
   if (!isCreateModalOpen) return null;
 
   return (
     <div className='fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end justify-center'>
+      <Alert />
       <div className='bg-white w-full max-w-md rounded-t-3xl p-6 space-y-4 transform transition-transform duration-300 ease-out'>
-        <div className='text-center font-semibold text-lg flex flex-row justify-between'>
+        <div className='text-center font-semibold text-lg flex flex-row justify-between items-center'>
           책 등록 ({step}/3)
           <div className='flex flex-end'>
-            <Button onClick={reset}>닫기</Button>
+            <IconButton onClick={reset} icon={IoCloseSharp} />
           </div>
         </div>
 
