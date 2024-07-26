@@ -25,9 +25,6 @@ const BookTalkMain = () => {
     <WrapContainer>
       <div className='flex justify-between items-center mb-6'>
         <Button>독서록 생성</Button>
-        <button type='submit' onClick={handleSearchPage} className='p-2'>
-          <IoSearchSharp className='w-5 h-5' />
-        </button>
       </div>
       <div>
         <h2 className='text-green-400 text-lg font-bold mb-4'>
