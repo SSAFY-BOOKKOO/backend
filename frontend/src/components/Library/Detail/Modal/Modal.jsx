@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useAtom } from 'jotai';
 import { bookDataAtom } from '@atoms/bookCreateAtom';
 
-const Modal = ({ bookId, onDelete, onColorChangeClick }) => {
+const Modal = ({ bookId, onDelete, onColorChange, onShelfChange }) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [bookData, setBookData] = useAtom(bookDataAtom);
 
@@ -18,9 +18,10 @@ const Modal = ({ bookId, onDelete, onColorChangeClick }) => {
       handleDelete();
     } else if (option === '색 변경') {
       setMenuVisible(false);
-      onColorChangeClick();
+      onColorChange();
     } else if (option === '서재 이동') {
-      // 필요한 로직을 여기에 추가하세요
+      setMenuVisible(false);
+      onShelfChange();
     }
 
     setMenuVisible(false);
