@@ -45,9 +45,12 @@ public class LibraryController {
 
     @GetMapping("/{libraryId}")
     @Operation(summary = "서재 단일 조회", description = "서재 단일 조회 API")
-    public ResponseEntity<ResponseLibraryDto> getLibrary(@PathVariable Long libraryId) {
+    public ResponseEntity<ResponseLibraryDto> getLibrary(
+        @PathVariable Long libraryId,
+        @RequestParam String filter
+    ) {
         return ResponseEntity.ok()
-                             .body(libraryService.getLibrary(libraryId));
+                             .body(libraryService.getLibrary(libraryId, filter));
     }
 
     @PatchMapping("/{libraryId}")
