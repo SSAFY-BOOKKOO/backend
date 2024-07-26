@@ -1,5 +1,6 @@
 package com.ssafy.bookkoo.bookkoogateway.handler;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.annotation.Order;
@@ -9,14 +10,20 @@ import reactor.core.publisher.Mono;
 
 @Component
 @Order(-1)
+@Slf4j
 public class GlobalServiceExceptionHandler implements GlobalFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         System.out.println(exchange.getRequest()
                                    .getURI() + "this is filter");
+        log.info("{} this is filter", exchange.getRequest()
+                                              .getURI());
+
         System.out.println(exchange.getResponse()
                                    .getStatusCode());
+        log.info("status code : {}", exchange.getResponse()
+                                             .getStatusCode());
         return chain.filter(exchange)
                     .doFinally((e) -> {
                         System.out.println("filter 후처리");
