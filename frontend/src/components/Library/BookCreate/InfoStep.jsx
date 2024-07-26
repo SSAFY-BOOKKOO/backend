@@ -13,11 +13,12 @@ const InfoStep = () => {
   const [bookData, setBookData] = useAtom(bookDataAtom);
 
   const handleStartDateChange = date => {
-    setBookData(prev => ({ ...prev, startDate: date }));
+    setBookData(prev => ({ ...prev, startDate: date.target.value }));
+    console.log(bookData);
   };
 
   const handleEndDateChange = date => {
-    setBookData(prev => ({ ...prev, endDate: date }));
+    setBookData(prev => ({ ...prev, endDate: date.target.value }));
   };
 
   const handleRatingChange = rating => {
@@ -36,13 +37,19 @@ const InfoStep = () => {
         {bookData.status !== 'want' && (
           <>
             <h2 className='mb-3 text-lg'>시작 날짜</h2>
-            <DatePicker onChange={handleStartDateChange} />
+            <DatePicker
+              onChange={handleStartDateChange}
+              endDate={bookData.endDate}
+            />
           </>
         )}
         {bookData.status === 'read' && (
           <>
             <h2 className='my-3 text-lg'>종료 날짜</h2>
-            <DatePicker onChange={handleEndDateChange} />
+            <DatePicker
+              onChange={handleEndDateChange}
+              startDate={bookData.startDate}
+            />
           </>
         )}
       </div>
