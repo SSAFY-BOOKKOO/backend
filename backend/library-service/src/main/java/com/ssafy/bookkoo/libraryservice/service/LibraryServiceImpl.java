@@ -12,9 +12,9 @@ import com.ssafy.bookkoo.libraryservice.entity.Library;
 import com.ssafy.bookkoo.libraryservice.entity.LibraryBookMapper;
 import com.ssafy.bookkoo.libraryservice.entity.LibraryStyle;
 import com.ssafy.bookkoo.libraryservice.entity.MapperKey;
+import com.ssafy.bookkoo.libraryservice.entity.Status;
 import com.ssafy.bookkoo.libraryservice.exception.BookAlreadyMappedException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryNotFoundException;
-import com.ssafy.bookkoo.libraryservice.exception.LibraryStyleNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.libraryservice.mapper.LibraryBookMapperMapper;
 import com.ssafy.bookkoo.libraryservice.mapper.LibraryMapper;
@@ -50,7 +50,10 @@ public class LibraryServiceImpl implements LibraryService {
      */
     @Override
     @Transactional
-    public ResponseLibraryDto addLibrary(RequestCreateLibraryDto libraryDto, Long memberId) {
+    public ResponseLibraryDto addLibrary(
+        RequestCreateLibraryDto libraryDto,
+        Long memberId
+    ) {
         // library 엔티티 만들기
         Library library = libraryMapper.toEntity(libraryDto, memberId);
 
@@ -97,19 +100,23 @@ public class LibraryServiceImpl implements LibraryService {
      * 서재 ID로 서재 상세 조회 + 딸린 책 정보까지 조회
      *
      * @param libraryId 서재 ID
-     * @param filter    filter(Type)
+     * @param filter    Status (생략 시 전체 조회)
      * @return RespnoseLibraryDto
      */
     @Override
     @Transactional(readOnly = true)
-    public ResponseLibraryDto getLibrary(Long libraryId, String filter) {
+    public ResponseLibraryDto getLibrary(
+        Long libraryId,
+        Status filter
+    ) {
         // 라이브러리 ID로 라이브러리를 찾고 예외를 처리합니다.
         Library library = findLibraryByIdWithException(libraryId);
         // 라이브러리 엔티티를 DTO로 변환합니다.
         ResponseLibraryDto libraryDto = libraryMapper.toResponseDto(library);
 
         // 라이브러리 ID로 연결된 책 ID 목록을 가져옵니다.
-        List<Long> bookIds = libraryBookMapperRepository.findBookIdsByLibraryId(libraryId);
+        List<Long> bookIds = libraryBookMapperRepository.findBookIdsByLibraryIdWithFilter(libraryId,
+            filter);
         // 책 ID 목록을 String 목록으로 변환합니다.
         List<String> stringBookIds = bookIds.stream()
                                             .map(String::valueOf)
@@ -157,17 +164,6 @@ public class LibraryServiceImpl implements LibraryService {
         // 서재 업데이트
         libraryMapper.updateLibraryFromDto(libraryDto, libraryToUpdate);
 
-        // 서재 스타일 업데이트 로직
-        LibraryStyle libraryStyleToUpdate = libraryStyleRepository.findById(libraryId)
-                                                                  .orElseThrow(
-                                                                      () -> new LibraryStyleNotFoundException(
-                                                                          libraryId));
-        // 있으면 업데이트
-        libraryStyleToUpdate.setLibraryColor(libraryDto.libraryStyleDto()
-                                                       .libraryColor());
-
-        // 서재 스타일 저장
-        libraryStyleRepository.save(libraryStyleToUpdate);
         // 서재 저장
         Library updatedLibrary = libraryRepository.save(libraryToUpdate);
 
