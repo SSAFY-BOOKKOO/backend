@@ -43,4 +43,28 @@ public interface LibraryMapper {
 
     // list<entity> -> list<dto>
     List<ResponseLibraryDto> toResponseDtoList(List<Library> libraries);
+
+    /**
+     * RequestUpdateLibraryDto로부터 Library의 LibraryStyle 엔티티를 업데이트합니다. LibraryStyle 엔티티가 null인 경우 새로운
+     * LibraryStyle 엔티티를 생성합니다. libraryColor 필드가 null이 아닌 경우에만 업데이트합니다.
+     *
+     * @param dto    업데이트 데이터가 포함된 DTO
+     * @param entity 업데이트할 Library 엔티티
+     */
+    @AfterMapping
+    default void updateLibraryStyleFromDto(
+        RequestUpdateLibraryDto dto,
+        @MappingTarget Library entity
+    ) {
+        if (dto.libraryStyleDto() != null && dto.libraryStyleDto()
+                                                .libraryColor() != null) {
+            if (entity.getLibraryStyle() == null) {
+                entity.setLibraryStyle(LibraryStyle.builder()
+                                                   .build());
+            }
+            entity.getLibraryStyle()
+                  .setLibraryColor(dto.libraryStyleDto()
+                                      .libraryColor());
+        }
+    }
 }
