@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class LibraryExceptionHandler {
@@ -33,5 +34,13 @@ public class LibraryExceptionHandler {
     public ResponseEntity<String> memberNotFoundException(MemberNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                              .body(e.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<String> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        String message = String.format("잘못된 값 : '%s' 을 입력하였습니다 (for parameter '%s')", ex.getValue(),
+            ex.getName());
+        return ResponseEntity.badRequest()
+                             .body(message);
     }
 }
