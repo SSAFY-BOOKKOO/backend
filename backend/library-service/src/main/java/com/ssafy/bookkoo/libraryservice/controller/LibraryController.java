@@ -4,6 +4,7 @@ import com.ssafy.bookkoo.libraryservice.dto.RequestCreateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestLibraryBookMapperCreateDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestUpdateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseLibraryDto;
+import com.ssafy.bookkoo.libraryservice.entity.Status;
 import com.ssafy.bookkoo.libraryservice.service.LibraryService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -30,7 +31,8 @@ public class LibraryController {
     @Operation(summary = "서재 생성", description = "서재 생성 API")
     public ResponseEntity<ResponseLibraryDto> createLibrary(
         @RequestBody RequestCreateLibraryDto dto,
-        @RequestParam Long memberId // 임시
+        @RequestParam Long memberId
+        // 임시
     ) {
         return ResponseEntity.ok()
                              .body(libraryService.addLibrary(dto, memberId));
@@ -47,7 +49,7 @@ public class LibraryController {
     @Operation(summary = "서재 단일 조회", description = "서재 단일 조회 API")
     public ResponseEntity<ResponseLibraryDto> getLibrary(
         @PathVariable Long libraryId,
-        @RequestParam String filter
+        @RequestParam(required = false) Status filter
     ) {
         return ResponseEntity.ok()
                              .body(libraryService.getLibrary(libraryId, filter));
@@ -68,7 +70,8 @@ public class LibraryController {
     public ResponseEntity<Boolean> addBookToLibrary(
         @PathVariable Long libraryId,
         @Valid @RequestBody RequestLibraryBookMapperCreateDto libraryBookMapperDto,
-        @RequestParam Long memberId // 임시
+        @RequestParam Long memberId
+        // 임시
     ) {
         libraryService.addBookToLibrary(libraryId,
             libraryBookMapperDto, memberId);
