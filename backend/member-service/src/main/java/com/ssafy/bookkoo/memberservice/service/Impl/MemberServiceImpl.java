@@ -67,6 +67,19 @@ public class MemberServiceImpl implements MemberService {
         return save.getMemberId();
     }
 
+    @Override
+    public String register(String email) {
+        Member member = Member.builder()
+                              .memberId(UUID.randomUUID()
+                                            .toString())
+                              .email(email)
+                              .isSocial(Boolean.TRUE)
+                              .build();
+        Member save = memberRepository.save(member);
+        return save.getMemberId();
+    }
+
+
     /**
      * 이메일을 입력받아 중복체크
      *

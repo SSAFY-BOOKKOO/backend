@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +38,16 @@ public class MemberController {
         String memberId = memberService.register(requestRegisterDto);
         return ResponseEntity.ok(memberId);
     }
+
+    @PostMapping("/social")
+    @Operation(description = "소셜 정보를 통해 회원가입 합니다.", summary = "회원가입")
+    public ResponseEntity<String> register(
+        @Valid @RequestBody String email
+    ) {
+        String memberId = memberService.register(email);
+        return ResponseEntity.ok(memberId);
+    }
+
 
     @PostMapping("/validation")
     @Operation(description = "이메일을 통해 인증 번호를 발송합니다.", summary = "이메일 인증 번호 발송")
@@ -83,7 +94,7 @@ public class MemberController {
                              .build();
     }
 
-    @PostMapping("/info")
+    @PostMapping(value = "/info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(description = "memberId, 닉네임, 카테고리, 출생년도, 소개글을 받아 추가정보를 저장합니다.", summary = "추가 정보 저장")
     public ResponseEntity<String> registerAdditionalInfo(
         @Valid @RequestPart RequestAdditionalInfo requestAdditionalInfo,
@@ -102,4 +113,5 @@ public class MemberController {
         return ResponseEntity.ok()
                              .build();
     }
+
 }
