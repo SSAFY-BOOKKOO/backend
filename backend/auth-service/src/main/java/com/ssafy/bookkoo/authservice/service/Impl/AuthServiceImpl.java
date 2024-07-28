@@ -8,6 +8,7 @@ import com.ssafy.bookkoo.authservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.authservice.repository.MemberRepository;
 import com.ssafy.bookkoo.authservice.service.AuthService;
 import com.ssafy.bookkoo.authservice.service.TokenService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -61,8 +62,14 @@ public class AuthServiceImpl implements AuthService {
         return getResponseLoginTokenDto(member);
     }
 
+    @Override
+    public Optional<Member> getMemberByEmail(String email) {
+        return memberRepository.findByEmail(email);
+    }
 
-    private ResponseLoginTokenDto getResponseLoginTokenDto(Member member) {
+
+    @Override
+    public ResponseLoginTokenDto getResponseLoginTokenDto(Member member) {
         String refreshToken = tokenService.updateRefreshToken(member);
         String accessToken = tokenService.createAccessToken(member);
         return ResponseLoginTokenDto.builder()
