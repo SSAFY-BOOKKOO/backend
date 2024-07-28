@@ -15,7 +15,7 @@ const LibrarySearch = () => {
   const [libraryBooks, setLibraryBooks] = useState([]); // 내 서재
   const [bookStoreBooks, setBookStoreBooks] = useState([]); // 도서
   const [bookTalkBooks, setBookTalkBooks] = useState([]); // 북톡
-  const [selectedTag, setSelectedTag] = useState(''); // 검색 카테고리
+  const [selectedTag, setSelectedTag] = useState('title'); // 검색 카테고리
 
   const tags = [
     { id: 1, name: '제목', value: 'title' },

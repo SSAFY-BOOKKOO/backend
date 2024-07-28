@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import WrapContainer from '@components/Layout/WrapContainer';
 import BookTalkItem from '@components/@common/Book/BookTalkItem';
@@ -15,22 +15,22 @@ const BookTalkMore = () => {
   const navigate = useNavigate();
   const [books, setBooks] = useState(bookData);
   const [selectedOption, setSelectedOption] = useState('chat');
-  const [page, setPage] = useState(1); // 페이지네이션
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true); // 더 있는지?
+  const [hasMore, setHasMore] = useState(true);
+
+  const loadBooks = useCallback(sort => {
+    // API 연동
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const sort = params.get('sort');
-    if (sort) {
-      setSelectedOption(sort);
-    }
+    const sort = params.get('sort') || 'chat';
+    setSelectedOption(sort);
+    setBooks(books);
+    setPage(1);
     loadBooks(sort);
-  }, [location.search]);
-
-  const loadBooks = sort => {
-    // API 연동 /api/books?sort=chat
-  };
+  }, [location.search, loadBooks]);
 
   const handleSortChange = value => {
     navigate(`?sort=${value}`);
@@ -39,16 +39,15 @@ const BookTalkMore = () => {
   const handleBookClick = book => {
     navigate(`/booktalk/detail/${book.book_id}`, { state: { book } });
   };
-
   return (
     <WrapContainer className='mt-4'>
       <h1 className='text-2xl font-bold mb-3'>내가 참여한 도서</h1>
 
-      <div className='mb-3 flex '>
+      <div className='mb-3 flex'>
         <RadioButton
           tags={sortOptions}
           selectedTag={selectedOption}
-          setSelectedTag={setSelectedOption}
+          setSelectedTag={handleSortChange}
         />
       </div>
       {books.map(book => (
