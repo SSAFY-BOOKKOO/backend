@@ -118,13 +118,13 @@ public class SecurityConfig {
                                .anyExchange()
                                .permitAll() // 모든 경로를 허용
                            )
-                           .addFilterBefore(tokenAuthenticationFilter(),
-                               SecurityWebFiltersOrder.AUTHENTICATION)
+//                           .addFilterBefore(tokenAuthenticationFilter(),
+//                               SecurityWebFiltersOrder.AUTHENTICATION)
                            .build();
     }
-
-    @Bean
-    public TokenAuthenticationFilter tokenAuthenticationFilter() {
-        return new TokenAuthenticationFilter(tokenUtils, memberServiceWebClient);
-    }
+//
+//    @Bean
+//    public TokenAuthenticationFilter tokenAuthenticationFilter() {
+//        return new TokenAuthenticationFilter(tokenUtils, memberServiceWebClient);
+//    }
 }
