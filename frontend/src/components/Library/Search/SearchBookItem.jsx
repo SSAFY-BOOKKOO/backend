@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from '@components/@common/Button';
 
-const BookSearchListItem = ({ book, onClick, onCreateClick }) => {
+const SearchBookItem = ({ book, onClick, onCreateClick }) => {
   const handleButtonClick = e => {
     e.stopPropagation();
     onCreateClick();
@@ -36,4 +36,4 @@ const BookSearchListItem = ({ book, onClick, onCreateClick }) => {
   );
 };
 
-export default BookSearchListItem;
+export default SearchBookItem;
