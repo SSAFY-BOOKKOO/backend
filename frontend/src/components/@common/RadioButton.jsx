@@ -1,15 +1,9 @@
 import { useEffect } from 'react';
 
-const BookTagButton = ({ selectedTag, setSelectedTag }) => {
-  const tags = [
-    { id: 1, name: '제목', value: 'title' },
-    { id: 2, name: '지은이', value: 'author' },
-    { id: 3, name: '출판사', value: 'publisher' },
-  ];
-
+const RadioButton = ({ tags, selectedTag, setSelectedTag }) => {
   useEffect(() => {
     if (!selectedTag) {
-      setSelectedTag('title');
+      setSelectedTag(tags[0].value);
     }
   }, [selectedTag, setSelectedTag]);
 
@@ -38,4 +32,4 @@ const BookTagButton = ({ selectedTag, setSelectedTag }) => {
   );
 };
 
-export default BookTagButton;
+export default RadioButton;
