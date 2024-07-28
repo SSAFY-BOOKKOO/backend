@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import WrapContainer from '@components/Layout/WrapContainer';
-import BookInfoTag from '@components/Library/Search/BookInfoTag';
+import BookTagButton from '@components/Library/Search/BookTagButton';
 import { books } from '@mocks/BookData';
 import SearchForm from '@components/Library/Search/SearchForm';
 import SearchResultSection from '@components/Library/Search/SearchResultSection';
-import BookTalkResultItem from '@components/Library/Search/BookTalkResultItem';
 
 const LibrarySearch = () => {
   const navigate = useNavigate();
@@ -61,7 +60,10 @@ const LibrarySearch = () => {
         setSearchText={setSearchText}
         onSubmit={handleSearchSubmit}
       />
-      <BookInfoTag selectedTag={selectedTag} setSelectedTag={setSelectedTag} />
+      <BookTagButton
+        selectedTag={selectedTag}
+        setSelectedTag={setSelectedTag}
+      />
       {isSearched && (
         <>
           <SearchResultSection
@@ -69,31 +71,22 @@ const LibrarySearch = () => {
             books={libraryBooks}
             onItemClick={book => showDetailPage('library', book)}
             onSeeMore={() => handleSeeMore('library')}
+            type='library'
           />
           <SearchResultSection
             title='도서 검색'
             books={bookStoreBooks}
             onItemClick={book => showDetailPage('book', book)}
             onSeeMore={() => handleSeeMore('book')}
+            type='book'
           />
-          <div className='mb-6'>
-            <h2 className='text-lg font-bold mb-2'>북톡 검색</h2>
-            {bookTalkBooks.slice(0, 3).map(book => (
-              <BookTalkResultItem
-                key={book.book_id}
-                book={book}
-                onClick={() => showDetailPage('booktalk', book)}
-              />
-            ))}
-            <div className='flex justify-end text-sm cursor-pointer'>
-              <button
-                className='text-gray-500'
-                onClick={() => handleSeeMore('booktalk')}
-              >
-                더보기
-              </button>
-            </div>
-          </div>
+          <SearchResultSection
+            title='북톡 검색'
+            books={bookTalkBooks}
+            onItemClick={book => showDetailPage('booktalk', book)}
+            onSeeMore={() => handleSeeMore('booktalk')}
+            type='booktalk'
+          />
         </>
       )}
     </WrapContainer>
