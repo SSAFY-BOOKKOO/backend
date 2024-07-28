@@ -8,7 +8,7 @@ import { books as bookData } from '@mocks/BookData';
 import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
 import useModal from '@hooks/useModal';
 
-const SearchMoreDetail = () => {
+const SearchMore = () => {
   const { type } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -84,4 +84,4 @@ const SearchMoreDetail = () => {
   );
 };
 
-export default SearchMoreDetail;
+export default SearchMore;
