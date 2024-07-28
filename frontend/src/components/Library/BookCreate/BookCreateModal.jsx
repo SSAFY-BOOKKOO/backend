@@ -39,26 +39,38 @@ const BookCreateModal = ({ isCreateModalOpen, toggleCreateModal }) => {
   };
 
   const handleShowAlert = () => {
-    showAlert(
-      '빈칸을 입력해주세요.',
-      false,
-      () => {
-        console.log('확인');
-        reset();
-      },
-      () => {
-        console.log('취소');
-        reset();
+    showAlert('빈칸을 입력해주세요.', true, () => {
+      console.log('확인');
+    });
+  };
+
+  const validateBookData = bookData => {
+    if (bookData.status === 'read') {
+      if (
+        !bookData.startDate ||
+        !bookData.endDate ||
+        !bookData.rating ||
+        !bookData.color
+      ) {
+        return false;
       }
-    );
+    } else if (bookData.status === 'reading') {
+      if (!bookData.startDate || !bookData.color) {
+        return false;
+      }
+    } else if (bookData.status === 'want') {
+      if (!bookData.color) {
+        return false;
+      }
+    }
+    return true;
   };
 
   const handleComplete = () => {
     // 유효성 검사
-    if (bookData.color === '') {
+    if (!validateBookData(bookData)) {
       handleShowAlert();
-    } else {
-      reset();
+      return;
     }
 
     // 등록 서버 연동

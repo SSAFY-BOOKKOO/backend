@@ -34,7 +34,8 @@ const Alert = () => {
           {!alert.confirmOnly && (
             <Button
               onClick={handleCancel}
-              className='px-3 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200'
+              color='bg-gray-100 text-gray-700 hover:bg-gray-200'
+              className='px-3 py-2 rounded-lg '
             >
               취소
             </Button>
