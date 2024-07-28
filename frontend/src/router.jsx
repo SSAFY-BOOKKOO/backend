@@ -36,8 +36,6 @@ const router = createBrowserRouter([
     children: [
       { path: 'intro', element: <Intro /> },
 
-      // 커뮤니티 탭 (로그인 여부와 상관없이 접근 가능)
-
       { path: 'booktalk', element: <BookTalkMain /> },
       { path: 'booktalk/detail/:bookId', element: <BookTalkDetail /> },
 
@@ -54,6 +52,7 @@ const router = createBrowserRouter([
 
           // library
           { path: 'library', element: <LibraryMain /> },
+
           // book in library detail
           { path: 'library/detail/:bookId', element: <LibraryDetail /> },
 
@@ -61,7 +60,7 @@ const router = createBrowserRouter([
           { path: 'search', element: <LibrarySearch /> },
 
           // search more
-          { path: 'search/:type/more', element: <SearchMoreDetail /> }, // 'library'와 'book' 타입을 처리
+          { path: 'search/:type/more', element: <SearchMoreDetail /> },
 
           // book detail
           { path: 'book/detail/:bookId', element: <SearchBookDetail /> },

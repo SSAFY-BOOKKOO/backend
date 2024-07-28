@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SearchResultSectionItem = ({ book, onClick }) => {
+const BookItem = ({ book, onClick }) => {
   return (
     <div
       className='text-center flex flex-col items-center w-28 cursor-pointer mr-4'
@@ -17,4 +17,4 @@ const SearchResultSectionItem = ({ book, onClick }) => {
   );
 };
 
-export default SearchResultSectionItem;
+export default BookItem;

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const BookInfoTag = ({ selectedTag, setSelectedTag }) => {
+const BookTagButton = ({ selectedTag, setSelectedTag }) => {
   const tags = [
     { id: 1, name: '제목', value: 'title' },
     { id: 2, name: '지은이', value: 'author' },
@@ -38,4 +38,4 @@ const BookInfoTag = ({ selectedTag, setSelectedTag }) => {
   );
 };
 
-export default BookInfoTag;
+export default BookTagButton;

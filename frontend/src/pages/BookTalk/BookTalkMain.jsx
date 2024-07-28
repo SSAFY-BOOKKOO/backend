@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ParticipatedBook from '@components/BookTalk/ParticipatedBook';
+import BookTalkItem from '@components/@common/Book/BookTalkItem';
 import PopularBook from '@components/BookTalk/PopularBook';
 import WrapContainer from '@components/Layout/WrapContainer';
 import Button from '@components/@common/Button';
@@ -31,7 +31,7 @@ const BookTalkMain = () => {
           ✅ 내가 참여한 도서
         </h2>
         {participatedBooks?.slice(0, 3)?.map((book, index) => (
-          <ParticipatedBook
+          <BookTalkItem
             key={index}
             book={book}
             onClick={() => handleDetailPage(book.book_id)}
