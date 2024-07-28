@@ -25,7 +25,8 @@ import Intro from './pages/Member/Intro.jsx';
 import PrivateRoute from '@/components/@common/PrivateRoute';
 import CurationLetterSend from './pages/Curation/CurationLetterSend.jsx';
 import Quote from './pages/Mypage/Quote.jsx';
-import SearchMoreDetail from './pages/Library/SearchMoreDetail.jsx';
+import SearchMore from './pages/Library/SearchMore.jsx';
+import BookTalkMore from './pages/BookTalk/BookTalkMore.jsx';
 
 const isAuthenticated = true; // 로그인 상태를 확인하는 로직 추가 필요
 
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
 
       { path: 'booktalk', element: <BookTalkMain /> },
       { path: 'booktalk/detail/:bookId', element: <BookTalkDetail /> },
+      { path: 'booktalk/more', element: <BookTalkMore /> },
 
       // 인증이 필요한 페이지
       {
@@ -60,7 +62,7 @@ const router = createBrowserRouter([
           { path: 'search', element: <LibrarySearch /> },
 
           // search more
-          { path: 'search/:type/more', element: <SearchMoreDetail /> },
+          { path: 'search/:type/more', element: <SearchMore /> },
 
           // book detail
           { path: 'book/detail/:bookId', element: <SearchBookDetail /> },

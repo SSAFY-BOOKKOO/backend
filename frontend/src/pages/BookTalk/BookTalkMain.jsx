@@ -13,8 +13,8 @@ const BookTalkMain = () => {
   const [participatedBooks, setParticipatedBooks] = useState(books);
   const [popularBooks, setPopularBooks] = useState(books);
 
-  const handleSearchPage = () => {
-    // 검색 페이지 이동?
+  const handleMorePage = () => {
+    navigate(`/booktalk/more`);
   };
 
   const handleDetailPage = id => {
@@ -37,8 +37,10 @@ const BookTalkMain = () => {
             onClick={() => handleDetailPage(book.book_id)}
           />
         ))}
-        <div className='flex justify-end text-sm'>
-          <button className='text-gray-500'>더보기</button>
+        <div className='flex justify-end text-sm cursor-pointer'>
+          <button className='text-gray-500' onClick={handleMorePage}>
+            더보기
+          </button>
         </div>
       </div>
       <div className='mt-6'>
