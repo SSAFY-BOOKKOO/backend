@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import WrapContainer from '@components/Layout/WrapContainer';
-import BookTagButton from '@components/Library/Search/BookTagButton';
+import RadioButton from '@components/@common/RadioButton';
 import { books } from '@mocks/BookData';
 import SearchForm from '@components/Library/Search/SearchForm';
 import SearchResultSection from '@components/Library/Search/SearchResultSection';
@@ -16,6 +16,12 @@ const LibrarySearch = () => {
   const [bookStoreBooks, setBookStoreBooks] = useState([]); // 도서
   const [bookTalkBooks, setBookTalkBooks] = useState([]); // 북톡
   const [selectedTag, setSelectedTag] = useState(''); // 검색 카테고리
+
+  const tags = [
+    { id: 1, name: '제목', value: 'title' },
+    { id: 2, name: '지은이', value: 'author' },
+    { id: 3, name: '출판사', value: 'publisher' },
+  ];
 
   useEffect(() => {
     const queryText = searchParams.get('text');
@@ -60,7 +66,8 @@ const LibrarySearch = () => {
         setSearchText={setSearchText}
         onSubmit={handleSearchSubmit}
       />
-      <BookTagButton
+      <RadioButton
+        tags={tags}
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
       />
