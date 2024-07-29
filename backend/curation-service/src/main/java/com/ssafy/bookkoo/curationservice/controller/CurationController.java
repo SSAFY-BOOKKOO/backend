@@ -1,12 +1,15 @@
 package com.ssafy.bookkoo.curationservice.controller;
 
+import com.ssafy.bookkoo.curationservice.dto.RequestChatbotDto;
 import com.ssafy.bookkoo.curationservice.dto.RequestCreateCurationDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDetailDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDto;
 import com.ssafy.bookkoo.curationservice.exception.DtoValidationException;
 import com.ssafy.bookkoo.curationservice.service.CurationService;
+import com.ssafy.bookkoo.curationservice.service.OpenAiService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CurationController {
 
     final CurationService curationService;
+    final OpenAiService openAiService;
 
     @GetMapping
     @Operation(summary = "내가 받은 큐레이션 리스트 가져오기", description = "수신한 큐레이션 레터 리스트 가져오기")
@@ -94,5 +98,11 @@ public class CurationController {
                              .build();
     }
 
+    @PostMapping("/chat")
+    public ResponseEntity<String> chatbot(
+        @RequestBody @Valid ArrayList<RequestChatbotDto> requestChatbotDtoList
+    ) {
+        return ResponseEntity.ok(openAiService.getCompletion(requestChatbotDtoList));
+    }
 
 }
