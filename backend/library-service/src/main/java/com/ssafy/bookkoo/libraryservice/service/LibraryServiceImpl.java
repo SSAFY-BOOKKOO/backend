@@ -26,11 +26,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LibraryServiceImpl implements LibraryService {
 
     private final LibraryRepository libraryRepository;
@@ -124,7 +126,16 @@ public class LibraryServiceImpl implements LibraryService {
                                             .map(String::valueOf)
                                             .collect(
                                                 Collectors.toList());
-
+        // 책이 없으면 바로 반환
+        if (stringBookIds.isEmpty()) {
+            libraryDto = ResponseLibraryDto.builder().
+                                           name(libraryDto.name())
+                                           .libraryOrder(libraryDto.libraryOrder())
+                                           .libraryStyleDto(libraryDto.libraryStyleDto())
+                                           .books(List.of())
+                                           .build();
+            return libraryDto;
+        }
         SearchBookConditionDto condition = SearchBookConditionDto.builder()
                                                                  .field("id")
                                                                  .values(stringBookIds)
@@ -139,6 +150,7 @@ public class LibraryServiceImpl implements LibraryService {
                                                                                      9) // 이건 바꿔야할듯
                                                                                  .offset(0)
                                                                                  .build();
+
         // BookServiceClient를 통해 책 정보를 가져옵니다.
         List<ResponseBookDto> books = bookServiceClient.getBooksByCondition(
             filterDto);
