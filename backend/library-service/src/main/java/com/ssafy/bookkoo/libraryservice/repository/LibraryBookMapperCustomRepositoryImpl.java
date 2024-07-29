@@ -60,4 +60,22 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
                            .where(predicate)
                            .fetch();
     }
+
+    @Override
+    public List<Long> findBookIdsByMemberId(
+        Long memberId
+    ) {
+        QLibraryBookMapper libraryBookMapper = QLibraryBookMapper.libraryBookMapper;
+        QLibrary library = QLibrary.library;
+
+        BooleanBuilder predicate = new BooleanBuilder();
+        // memberId가 일치하는지 확인
+        predicate.and(library.memberId.eq(memberId));
+
+        return queryFactory.select(libraryBookMapper.id.bookId)
+                           .from(libraryBookMapper)
+                           .join(libraryBookMapper.library, library)
+                           .where(predicate)
+                           .fetch();
+    }
 }

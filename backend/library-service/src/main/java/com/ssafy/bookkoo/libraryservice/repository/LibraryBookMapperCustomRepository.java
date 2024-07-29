@@ -13,4 +13,8 @@ public interface LibraryBookMapperCustomRepository {
         Long libraryId,
         Status filter
     );
+
+    List<Long> findBookIdsByMemberId(
+        Long memberId
+    );
 }
