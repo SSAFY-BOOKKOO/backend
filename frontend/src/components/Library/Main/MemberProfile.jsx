@@ -1,10 +1,10 @@
 import React from 'react';
 
 const MemberProfile = ({ member }) => (
-  <div className='text-center p-4 relative'>
+  <div className='text-center pb-4 relative'>
     <div className='flex items-center justify-center flex-row space-x-8'>
       <img
-        src={member.profilePicture}
+        src={member.profile_img_url}
         alt={member.nickname}
         className='rounded-full w-24 h-24 sm:w-32 sm:h-32'
       />
@@ -14,10 +14,10 @@ const MemberProfile = ({ member }) => (
         </h1>
         <div className='flex justify-start space-x-4 mt-2'>
           <div>
-            <span className='font-bold'>{member.followers.length}</span> 팔로워
+            팔로워 <span className='font-bold'>{member.followers.length}</span>
           </div>
           <div>
-            <span className='font-bold'>{member.following.length}</span> 팔로잉
+            팔로잉 <span className='font-bold'>{member.following.length}</span>
           </div>
         </div>
       </div>

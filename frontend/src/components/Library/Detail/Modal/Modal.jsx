@@ -26,14 +26,14 @@ const Modal = ({ bookId, onDelete }) => {
   return (
     <div className='relative'>
       <div
-        className='absolute top-1 right-3 z-10 cursor-pointer text-4xl'
+        className='absolute top-0 right-0 z-10 cursor-pointer'
         onClick={toggleMenu}
       >
         &#x22EE;
       </div>
 
       {menuVisible && (
-        <div className='absolute top-10 right-2 bg-white border border-gray-300 rounded-lg z-0'>
+        <div className='absolute top-5 right-0 bg-white border border-gray-300 rounded-lg z-0'>
           <div
             className='px-4 py-2 cursor-pointer hover:bg-gray-100'
             onClick={() => handleOptionClick('삭제')}
