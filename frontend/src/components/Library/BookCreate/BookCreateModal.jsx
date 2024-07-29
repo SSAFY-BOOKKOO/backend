@@ -40,7 +40,7 @@ const BookCreateModal = ({ isCreateModalOpen, toggleCreateModal }) => {
 
   const handleShowAlert = () => {
     showAlert('빈칸을 입력해주세요.', true, () => {
-      console.log('확인');
+      // 확인
     });
   };
 

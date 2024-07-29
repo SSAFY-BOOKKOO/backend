@@ -14,7 +14,6 @@ const InfoStep = () => {
 
   const handleStartDateChange = date => {
     setBookData(prev => ({ ...prev, startDate: date.target.value }));
-    console.log(bookData);
   };
 
   const handleEndDateChange = date => {

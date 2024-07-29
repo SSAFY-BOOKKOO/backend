@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 const CreateSelectButton = ({ options, selected, setSelected }) => {
   const handleClick = value => {
     setSelected(value);
-
-    console.log(selected);
   };
 
   return (
