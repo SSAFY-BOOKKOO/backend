@@ -79,7 +79,7 @@ public class LibraryController {
                              .body(true);
     }
 
-    @GetMapping("/books/count")
+    @GetMapping("/me/books/count")
     @Operation(summary = "사용자가 등록한 모든 책 개수", description = "사용자가 본인 서재에 등록한 모든 책 개수")
     // 임시로 memberId 받는걸로
     public ResponseEntity<Integer> countBooks(@RequestParam Long memberId) {
