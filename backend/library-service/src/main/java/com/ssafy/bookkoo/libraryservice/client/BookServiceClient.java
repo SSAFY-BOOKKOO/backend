@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.libraryservice.client;
 
 import com.ssafy.bookkoo.libraryservice.dto.RequestCreateBookDto;
+import com.ssafy.bookkoo.libraryservice.dto.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseCheckBooksByIsbnDto;
 import java.util.List;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "book-service")
 public interface BookServiceClient {
@@ -19,12 +19,9 @@ public interface BookServiceClient {
     @PostMapping(prefix)
     ResponseBookDto addBook(@RequestBody RequestCreateBookDto requestBookDto);
 
-    @GetMapping(prefix)
+    @PostMapping(prefix + "/search")
     List<ResponseBookDto> getBooksByCondition(
-        @RequestParam("field") String field,
-        @RequestParam("value") List<String> value,
-        @RequestParam("limit") Integer limit,
-        @RequestParam("offset") Integer offset
+        @RequestBody RequestSearchBookMultiFieldDto filter
     );
 
     @GetMapping(prefix + "/{bookId}")
