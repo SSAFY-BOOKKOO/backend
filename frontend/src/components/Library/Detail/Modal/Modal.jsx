@@ -1,8 +1,11 @@
 // src/components/Library/Detail/Modal/Modal.jsx
 import React, { useState } from 'react';
+import { useAtom } from 'jotai';
+import { bookDataAtom } from '@atoms/bookCreateAtom';
 
-const Modal = ({ bookId, onDelete }) => {
+const Modal = ({ bookId, onDelete, onColorChange, onShelfChange }) => {
   const [menuVisible, setMenuVisible] = useState(false);
+  const [bookData, setBookData] = useAtom(bookDataAtom);
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
@@ -12,8 +15,13 @@ const Modal = ({ bookId, onDelete }) => {
     console.log(option);
 
     if (option === '삭제') {
-      // BookDelete 컴포넌트의 handleDelete 호출
       handleDelete();
+    } else if (option === '색 변경') {
+      setMenuVisible(false);
+      onColorChange();
+    } else if (option === '서재 이동') {
+      setMenuVisible(false);
+      onShelfChange();
     }
 
     setMenuVisible(false);
