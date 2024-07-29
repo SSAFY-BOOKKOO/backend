@@ -67,17 +67,18 @@ public class MemberInfoController {
         return ResponseEntity.ok(id);
     }
 
-    @GetMapping("/recipients")
+    @GetMapping("/curation/recipients")
     @Operation(summary = "큐레이션 레터의 수신자들 반환 API",
         description = "큐레이션 레터의 수신자들을 반환하는 API입니다. (팔로워 + 랜덤 3명)")
     public ResponseEntity<List<Long>> getLetterRecipients(
         @RequestParam("memberId") Long memberId
     ) {
-        //TODO: 자기 자신은 제외하도록 로직 추가
         List<ResponseFollowShipDto> followers = followShipService.getFollowers(memberId);
         List<Long> followerIds = followers.stream()
                                           .map(ResponseFollowShipDto::memberId)
                                           .toList();
+        //멤버 자신의 ID추가 (목록에서 제외하기 위함)
+        followerIds.add(memberId);
         List<Long> recipientIds = memberInfoService.getRandomMemberInfo(followerIds);
         recipientIds.addAll(followerIds);
         return ResponseEntity.ok()
