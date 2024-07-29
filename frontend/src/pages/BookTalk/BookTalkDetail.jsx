@@ -3,6 +3,7 @@ import ChatBubble from '@components/@common/ChatBubble';
 import Button from '@components/@common/Button';
 import Textarea from '@components/@common/Textarea';
 import { comments, talkbook } from '@mocks/BookTalkData';
+import TopDownButton from '@components/@common/TopDownButton';
 
 const BookTalkDetail = () => {
   const [inputMessage, setInputMessage] = useState('');
@@ -84,6 +85,7 @@ const BookTalkDetail = () => {
           </Button>
         </div>
       </div>
+      <TopDownButton />
     </div>
   );
 };

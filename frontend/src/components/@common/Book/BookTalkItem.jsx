@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ParticipatedBook = ({ book, onClick }) => {
+const BookTalkItem = ({ book, onClick }) => {
   return (
     <div className='flex items-center mb-4 cursor-pointer' onClick={onClick}>
       <img
@@ -8,7 +8,7 @@ const ParticipatedBook = ({ book, onClick }) => {
         alt='Book'
         className='w-12 h-16 mr-4 rounded-lg'
       />
-      <div>
+      <div className='flex-grow'>
         <h3 className='text-black text-sm'>{book.title}</h3>
         <p className='text-gray-500 text-sm'>{book.author}</p>
         <div className='flex space-x-2 mt-1'>
@@ -30,4 +30,4 @@ const ParticipatedBook = ({ book, onClick }) => {
   );
 };
 
-export default ParticipatedBook;
+export default BookTalkItem;

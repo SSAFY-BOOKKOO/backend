@@ -2,14 +2,22 @@ import React, { useState } from 'react';
 import { AiFillStar } from 'react-icons/ai';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
+import { useAtom } from 'jotai';
 import Modal from '@components/Library/Detail/Modal/Modal';
 import ReviewCom from '@components/Library/Detail/Review/ReviewCom';
+import ColorPicker from '@components/Library/BookCreate/ColorPicker';
+import ShelfSelectStep from '@components/Library/BookCreate/ShelfSelectStep';
+import { PRESET_COLORS } from '@constants/ColorData';
+import { bookDataAtom } from '@atoms/bookCreateAtom';
 import './LibraryDetail.css'; // CSS 파일 추가
 
 const LibraryDetail = () => {
   const { state } = useLocation();
   const { id } = useParams();
   const [showReview, setShowReview] = useState(false);
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showShelfSelect, setShowShelfSelect] = useState(false);
+  const [bookData, setBookData] = useAtom(bookDataAtom);
   const navigate = useNavigate();
   const maxLength = 100;
 
@@ -22,6 +30,29 @@ const LibraryDetail = () => {
     navigate('/library', { state: { deleteBookId: bookId } });
   };
 
+  // 서가 색 변경 로직
+  const handleColorChangeClick = () => {
+    setShowColorPicker(true);
+  };
+
+  const handleColorChange = color => {
+    setBookData(prev => ({ ...prev, color }));
+    setShowColorPicker(false);
+  };
+
+  const handleCloseColorPicker = () => {
+    setShowColorPicker(false);
+  };
+
+  // 서가 변경 로직
+  const handleShelfChangeClick = () => {
+    setShowShelfSelect(true);
+  };
+
+  const handleCloseShelfSelect = () => {
+    setShowShelfSelect(false);
+  };
+
   // 요약 텍스트 길이 조정
   const displaySummary =
     summary.length > maxLength
@@ -29,8 +60,9 @@ const LibraryDetail = () => {
       : summary;
 
   return (
-    <div className='flex flex-col items-center h-[43rem] mt-16 overflow-hidden scrollbar-none'>
+    <div className='flex flex-col items-center h-[43rem] mt-4 overflow-hidden scrollbar-none'>
       <SwitchTransition>
+        {/* 뒷면 넘어가는 애니메이션 */}
         <CSSTransition
           key={showReview ? 'review' : 'details'}
           addEndListener={(node, done) => {
@@ -74,6 +106,40 @@ const LibraryDetail = () => {
           )}
         </CSSTransition>
       </SwitchTransition>
+
+      {/* 색 변경 */}
+      {showColorPicker && (
+        <div className='fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50'>
+          <div className='relative bg-white p-4 rounded-lg'>
+            <button
+              className='absolute top-2 right-2 text-xl font-bold'
+              onClick={handleCloseColorPicker}
+            >
+              &times;
+            </button>
+            <ColorPicker
+              presetColors={PRESET_COLORS}
+              selected={bookData.color}
+              onChange={handleColorChange}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* 서가 선택 */}
+      {showShelfSelect && (
+        <div className='fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50'>
+          <div className='relative bg-white p-4 rounded-lg'>
+            <button
+              className='absolute top-2 right-2 text-xl font-bold'
+              onClick={handleCloseShelfSelect}
+            >
+              &times;
+            </button>
+            <ShelfSelectStep onClose={handleCloseShelfSelect} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

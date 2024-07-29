@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 const CreateSelectButton = ({ options, selected, setSelected }) => {
   const handleClick = value => {
     setSelected(value);
-
-    console.log(selected);
   };
 
   return (
@@ -15,7 +13,7 @@ const CreateSelectButton = ({ options, selected, setSelected }) => {
           onClick={() => handleClick(option.value)}
           className={`w-full py-3 px-4 mb-2 text-left rounded-lg transition-colors duration-200 ease-in-out ${
             option.value === selected
-              ? 'bg-green-400 text-white'
+              ? 'bg-pink-500 text-white'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >

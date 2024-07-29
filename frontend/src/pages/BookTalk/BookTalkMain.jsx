@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
-import ParticipatedBook from '@components/BookTalk/ParticipatedBook';
+import BookTalkItem from '@components/@common/Book/BookTalkItem';
 import PopularBook from '@components/BookTalk/PopularBook';
 import WrapContainer from '@components/Layout/WrapContainer';
 import Button from '@components/@common/Button';
-import { IoSearchSharp } from 'react-icons/io5';
 import { books } from '@mocks/BookData';
 import { useNavigate } from 'react-router-dom';
+import useModal from '@hooks/useModal';
+import BookSearch from '@components/Curation/BookSearch';
 
 const BookTalkMain = () => {
   const navigate = useNavigate();
+  const { isOpen, toggleModal } = useModal();
 
   const [participatedBooks, setParticipatedBooks] = useState(books);
   const [popularBooks, setPopularBooks] = useState(books);
 
-  const handleSearchPage = () => {
-    // 검색 페이지 이동?
+  const handleMorePage = () => {
+    navigate(`/booktalk/more`);
   };
 
   const handleDetailPage = id => {
@@ -24,24 +26,23 @@ const BookTalkMain = () => {
   return (
     <WrapContainer>
       <div className='flex justify-between items-center mb-6'>
-        <Button>독서록 생성</Button>
-        <button type='submit' onClick={handleSearchPage} className='p-2'>
-          <IoSearchSharp className='w-5 h-5' />
-        </button>
+        <Button onClick={toggleModal}>채팅방 생성</Button>
       </div>
       <div>
         <h2 className='text-green-400 text-lg font-bold mb-4'>
           ✅ 내가 참여한 도서
         </h2>
         {participatedBooks?.slice(0, 3)?.map((book, index) => (
-          <ParticipatedBook
+          <BookTalkItem
             key={index}
             book={book}
             onClick={() => handleDetailPage(book.book_id)}
           />
         ))}
-        <div className='flex justify-end text-sm'>
-          <button className='text-gray-500'>더보기</button>
+        <div className='flex justify-end text-sm cursor-pointer'>
+          <button className='text-gray-500' onClick={handleMorePage}>
+            더보기
+          </button>
         </div>
       </div>
       <div className='mt-6'>
@@ -61,6 +62,7 @@ const BookTalkMain = () => {
           <div className='absolute top-0 right-0 bottom-0 w-8 from-white pointer-events-none'></div>
         </div>
       </div>
+      <BookSearch isOpen={isOpen} onRequestClose={toggleModal} />
     </WrapContainer>
   );
 };

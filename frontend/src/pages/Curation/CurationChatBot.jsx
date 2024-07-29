@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import ChatBubble from '@components/@common/ChatBubble';
 import Input from '@components/@common/Input';
 import Button from '@components/@common/Button';
+import botImg from '@assets/icons/naver_login_icon.png';
 
 const CurationChatBot = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
+
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -14,6 +16,21 @@ const CurationChatBot = () => {
   };
 
   useEffect(scrollToBottom, [messages]);
+
+  // 자동 안내 문구
+  useEffect(() => {
+    scrollToBottom();
+
+    setMessages([
+      {
+        text: '안녕하세요! 저는 책을 추천해주는 북꾸입니다!',
+        role: 'bot',
+        time: new Date().toLocaleTimeString(),
+        profileImage: botImg,
+        showProfile: true,
+      },
+    ]);
+  }, []);
 
   const handleSendMessage = e => {
     e.preventDefault();
@@ -40,6 +57,8 @@ const CurationChatBot = () => {
             text: '챗봇입니당',
             role: 'bot',
             time: new Date().toLocaleTimeString(),
+            profileImage: botImg,
+            showProfile: true,
           },
         ]);
       }, 1000);
@@ -55,6 +74,8 @@ const CurationChatBot = () => {
             message={message.text}
             role={message.role}
             time={message.time}
+            showProfile={message.showProfile}
+            profileImage={message.profileImage}
           />
         ))}
         <div ref={messagesEndRef} />

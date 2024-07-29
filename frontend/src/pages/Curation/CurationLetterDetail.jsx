@@ -27,7 +27,7 @@ const CurationLetterDetail = () => {
   };
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-[calc(100vh-121px)] p-4 bg-gray-100 scrollbar-none'>
+    <div className='flex flex-col items-center justify-start p-4  scrollbar-none'>
       <div className='relative bg-white rounded-lg shadow-lg w-full max-w-md mx-auto mt-32 scrollbar-none'>
         <div className='absolute -top-28 w-full flex justify-center'>
           <img
@@ -36,6 +36,7 @@ const CurationLetterDetail = () => {
             className='w-48 h-64 rounded-md shadow-lg'
           />
         </div>
+        {/* 설정 모달 */}
         <div className='relative flex flex-col items-center p-6 pt-32'>
           <div className='absolute top-2 right-2'>
             <button className='p-2' onClick={handleMenuToggle}>
@@ -61,13 +62,13 @@ const CurationLetterDetail = () => {
             )}
           </div>
         </div>
-        <div className='px-6 py-8 text-center scrollbar-none'>
+        <div className='min-h-44 px-6 py-8 text-center scrollbar-none'>
           <h2 className='text-xl font-bold mb-2'>{letter.title}</h2>
           <div className='text-gray-600 mb-4 scrollbar-none'>
             {letter.content}
           </div>
         </div>
-        <div className='bg-gray-200 px-6 py-3 rounded-b-lg flex justify-between text-sm text-gray-700'>
+        <div className='bg-green-400 px-6 py-3 rounded-b-lg flex justify-between text-sm text-gray-700'>
           <span>{letter.date}</span>
           <span>FROM: {letter.from}</span>
         </div>

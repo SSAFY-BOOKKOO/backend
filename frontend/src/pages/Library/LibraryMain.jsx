@@ -10,6 +10,7 @@ import CreateLibraryModal from '@components/Library/Main/CreateLibraryModal';
 import LibraryOptions from '@components/Library/Main/LibraryOptions';
 import BookShelf from '@components/Library/Main/BookShelf';
 import { books as initialBooks } from '@mocks/BookData';
+import profile_img_sample from '@assets/images/profile_img_sample.png';
 
 const HTML5toTouch = {
   backends: [
@@ -31,7 +32,7 @@ const member = {
   nickname: 'user1',
   followers: ['user2', 'user3'],
   following: ['user4', 'user5', 'user6'],
-  profilePicture: 'https://via.placeholder.com/100',
+  profile_img_url: profile_img_sample,
 };
 
 const LibraryMain = () => {

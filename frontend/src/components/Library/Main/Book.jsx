@@ -19,10 +19,20 @@ const Book = ({ item, index, moveBook, onBookClick }) => {
     },
   });
 
+  const getTitle = (title, length) => {
+    return title.length > length ? `${title.substring(0, length)}` : title;
+  };
+
   const heightClass = {
-    short: 'h-40 mt-8',
-    medium: 'h-44 mt-4',
-    tall: 'h-48 mt-0',
+    short: 'h-40 mt-10',
+    medium: 'h-44 mt-6',
+    tall: 'h-48 mt-2',
+  }[item.height];
+
+  const titleLength = {
+    short: 7,
+    medium: 8,
+    tall: 9,
   }[item.height];
 
   const thicknessStyle = {
@@ -39,7 +49,7 @@ const Book = ({ item, index, moveBook, onBookClick }) => {
       onClick={() => onBookClick(item)}
     >
       <span className='writing-vertical text-xs sm:text-base'>
-        {item.title.length > 10 ? `${item.title.substring(0, 10)}` : item.title}
+        {getTitle(item.title, titleLength)}
       </span>
     </div>
   );
