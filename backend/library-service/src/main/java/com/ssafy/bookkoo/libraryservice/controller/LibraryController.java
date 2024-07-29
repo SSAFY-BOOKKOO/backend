@@ -2,7 +2,9 @@ package com.ssafy.bookkoo.libraryservice.controller;
 
 import com.ssafy.bookkoo.libraryservice.dto.RequestCreateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestLibraryBookMapperCreateDto;
+import com.ssafy.bookkoo.libraryservice.dto.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestUpdateLibraryDto;
+import com.ssafy.bookkoo.libraryservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseLibraryDto;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import com.ssafy.bookkoo.libraryservice.service.LibraryService;
@@ -86,5 +88,15 @@ public class LibraryController {
         // 그런것들
         return ResponseEntity.ok()
                              .body(libraryService.countBooksInLibrary(memberId));
+    }
+
+    @PostMapping("/me/books/search")
+    @Operation(summary = "사용자가 등록한 책 반환", description = "사용자가 본인 서재에 등록한 책 대상 ")
+    public ResponseEntity<List<ResponseBookDto>> getMyBooks(
+        @RequestParam Long memberId, @RequestBody
+    RequestSearchBookMultiFieldDto searchDto
+    ) {
+        return ResponseEntity.ok()
+                             .body(libraryService.getMyBooks(memberId, searchDto));
     }
 }
