@@ -3,6 +3,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import letterPlus from '../../assets/icons/letterPlus.png';
 import ChatbotFloatingButton from './ChatbotFloatingButton';
+import { LuMailPlus } from 'react-icons/lu';
 
 const Tab = () => {
   return (
@@ -33,8 +34,8 @@ const Tab = () => {
           보관 레터
         </NavLink>
       </div>
-      <NavLink to='/curation/letter-create' className='px-2 py-2 rounded'>
-        <img src={letterPlus} alt='Create Letter' className='w-6 h-6' />
+      <NavLink to='/curation/letter-create'>
+        <LuMailPlus className='text-2xl ml-8' />
       </NavLink>
       <ChatbotFloatingButton />
     </div>
