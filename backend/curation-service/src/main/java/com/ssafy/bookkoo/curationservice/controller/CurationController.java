@@ -33,7 +33,7 @@ public class CurationController {
     public ResponseEntity<List<ResponseCurationDto>> getCurationList() {
         log.info("getCurationList!!!");
         //TODO Passport 에서 receiver 가져오기
-        return ResponseEntity.ok(curationService.getCurationList(2L));
+        return ResponseEntity.ok(curationService.getCurationList(1L));
 
     }
 
@@ -41,7 +41,7 @@ public class CurationController {
     @Operation(summary = "내가 보관한 큐레이션 리스트 가져오기", description = "보관한 큐레이션 레터 리스트 가져오기")
     public ResponseEntity<List<ResponseCurationDto>> getStoredCurationList() {
         //TODO Passport 에서 receiver 가져오기
-        return ResponseEntity.ok(curationService.getStoredCurationList(2L));
+        return ResponseEntity.ok(curationService.getStoredCurationList(1L));
 
     }
 
@@ -49,7 +49,7 @@ public class CurationController {
     @Operation(summary = "큐레이션 보관하기", description = "큐레이션 보관하기")
     public ResponseEntity<List<ResponseCurationDto>> storeCuration(@PathVariable Long curationId) {
         //TODO Passport 에서 receiver 가져오기
-        curationService.storeCuration(curationId, 2L);
+        curationService.storeCuration(curationId, 1L);
         return ResponseEntity.ok()
                              .build();
 
@@ -89,7 +89,7 @@ public class CurationController {
     @Operation(summary = "큐레이션 삭제", description = "큐레이션 레터를 삭제하기")
     public ResponseEntity<Void> deleteCuration(@PathVariable Long curationId) {
         //TODO Passport 에서 정보 가져오기
-        curationService.deleteCuration(curationId, 2L);
+        curationService.deleteCuration(curationId, 1L);
         return ResponseEntity.ok()
                              .build();
     }
