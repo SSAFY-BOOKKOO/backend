@@ -45,6 +45,9 @@ dependencies {
     //actuator,  prometheus
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus'
+    // spring configuration processor
+    implementation 'org.springframework.boot:spring-boot-configuration-processor:3.3.2'
+
 }
 
 dependencyManagement {
