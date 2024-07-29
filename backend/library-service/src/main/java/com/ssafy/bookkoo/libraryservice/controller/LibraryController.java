@@ -2,6 +2,7 @@ package com.ssafy.bookkoo.libraryservice.controller;
 
 import com.ssafy.bookkoo.libraryservice.dto.RequestCreateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestLibraryBookMapperCreateDto;
+import com.ssafy.bookkoo.libraryservice.dto.RequestLibraryBookMapperUpdateDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestUpdateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseBookDto;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -79,6 +81,17 @@ public class LibraryController {
             libraryBookMapperDto, memberId);
         return ResponseEntity.ok()
                              .body(true);
+    }
+
+    @PutMapping("/{libraryId}/books")
+    @Operation(summary = "서재 내 책 수정(순서 등)", description = "서재 내 책들을 수정하는 API")
+    public ResponseEntity<Boolean> updateBookToLibrary(
+        @PathVariable Long libraryId, @RequestBody
+    List<RequestLibraryBookMapperUpdateDto> lbmDto, @RequestParam Long memberId
+    ) {
+        return ResponseEntity.ok()
+                             .body(libraryService.updateLibraryBookMappers(libraryId, lbmDto,
+                                 memberId));
     }
 
     @GetMapping("/me/books/count")
