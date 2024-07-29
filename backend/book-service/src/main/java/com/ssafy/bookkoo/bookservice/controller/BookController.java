@@ -1,7 +1,7 @@
 package com.ssafy.bookkoo.bookservice.controller;
 
 import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
-import com.ssafy.bookkoo.bookservice.dto.RequestSearchBooksFilterDto;
+import com.ssafy.bookkoo.bookservice.dto.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.service.book.BookService;
@@ -48,10 +48,26 @@ public class BookController {
                              .body(createdBook);
     }
 
-    @GetMapping
+//    @GetMapping
+//    @Operation(summary = "책 목록 조회", description = "책 조회(필터링 포함)시 사용하는 API")
+//    public ResponseEntity<List<ResponseBookDto>> getBooksByCondition(
+//        @ModelAttribute RequestSearchBooksFilterDto filterDto
+//    ) {
+//        List<ResponseBookDto> books = bookService.getBooksByCondition(filterDto);
+//        return ResponseEntity.ok()
+//                             .body(books);
+//    }
+
+    /**
+     * 복잡한 쿼리로 인한 Body 사용을 위해 PostMapping으로 바꾼 책 목록 조회 api
+     *
+     * @param filterDto : RequestSearchBookMultiFieldDto
+     * @return List<ResponseBookDto>
+     */
+    @PostMapping("/search")
     @Operation(summary = "책 목록 조회", description = "책 조회(필터링 포함)시 사용하는 API")
-    public ResponseEntity<List<ResponseBookDto>> getBooksByCondition(
-        @ModelAttribute RequestSearchBooksFilterDto filterDto
+    public ResponseEntity<List<ResponseBookDto>> searchBooksByCondition(
+        @RequestBody RequestSearchBookMultiFieldDto filterDto
     ) {
         List<ResponseBookDto> books = bookService.getBooksByCondition(filterDto);
         return ResponseEntity.ok()
