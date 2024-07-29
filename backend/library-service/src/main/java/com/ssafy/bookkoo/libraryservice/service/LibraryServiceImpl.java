@@ -4,10 +4,11 @@ import com.ssafy.bookkoo.libraryservice.client.BookServiceClient;
 import com.ssafy.bookkoo.libraryservice.client.MemberServiceClient;
 import com.ssafy.bookkoo.libraryservice.dto.RequestCreateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestLibraryBookMapperCreateDto;
-import com.ssafy.bookkoo.libraryservice.dto.RequestSearchBooksFilterDto;
+import com.ssafy.bookkoo.libraryservice.dto.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestUpdateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseLibraryDto;
+import com.ssafy.bookkoo.libraryservice.dto.SearchBookConditionDto;
 import com.ssafy.bookkoo.libraryservice.entity.Library;
 import com.ssafy.bookkoo.libraryservice.entity.LibraryBookMapper;
 import com.ssafy.bookkoo.libraryservice.entity.LibraryStyle;
@@ -21,6 +22,7 @@ import com.ssafy.bookkoo.libraryservice.mapper.LibraryMapper;
 import com.ssafy.bookkoo.libraryservice.repository.LibraryBookMapperRepository;
 import com.ssafy.bookkoo.libraryservice.repository.LibraryRepository;
 import com.ssafy.bookkoo.libraryservice.repository.LibraryStyleRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -122,6 +124,12 @@ public class LibraryServiceImpl implements LibraryService {
                                             .map(String::valueOf)
                                             .collect(
                                                 Collectors.toList());
+
+        SearchBookConditionDto condition = SearchBookConditionDto.builder()
+                                                                 .field("id")
+                                                                 .values(stringBookIds)
+                                                                 .build();
+
         // 필터 DTO를 생성합니다.
         RequestSearchBookMultiFieldDto filterDto = RequestSearchBookMultiFieldDto.builder()
                                                                                  .conditions(
@@ -221,6 +229,48 @@ public class LibraryServiceImpl implements LibraryService {
     @Transactional(readOnly = true)
     public Integer countBooksInLibrary(Long memberId) {
         return libraryBookMapperRepository.countLibrariesByMemberId(memberId);
+    }
+
+    @Override
+    public List<ResponseBookDto> getMyBooks(
+        Long memberId,
+        RequestSearchBookMultiFieldDto searchDto
+    ) {
+        // 라이브러리 ID로 연결된 책 ID 목록을 가져옵니다.
+        List<Long> bookIds = libraryBookMapperRepository.findBookIdsByMemberId(memberId);
+        // 없을 경우
+        if (bookIds.isEmpty()) {
+            return List.of();
+        }
+        // 책 ID 목록을 String 목록으로 변환합니다.
+        List<String> stringBookIds = bookIds.stream()
+                                            .map(String::valueOf)
+                                            .toList();
+
+        List<SearchBookConditionDto> conditions = new ArrayList<>();
+        // BookServiceClient를 통해 책 정보를 가져옵니다.
+        // 1. bookId로 condition 생성
+        conditions.add(SearchBookConditionDto.builder()
+                                             .field("id")
+                                             .values(stringBookIds)
+                                             .build());
+        // 2. 제목/출판사/저자로 필터링하는 condition 생성
+        conditions.addAll(searchDto.conditions());
+
+        // 필터 DTO를 생성합니다.
+        RequestSearchBookMultiFieldDto filterDto = RequestSearchBookMultiFieldDto.builder()
+                                                                                 .conditions(
+                                                                                     conditions)
+                                                                                 .limit(
+                                                                                     searchDto.limit()) // 이건 바꿔야할듯
+                                                                                 .offset(
+                                                                                     searchDto.offset())
+                                                                                 .build();
+
+        // 책 정보 가져오기
+        List<ResponseBookDto> books = bookServiceClient.getBooksByCondition(filterDto);
+
+        return books;
     }
 
     /**
