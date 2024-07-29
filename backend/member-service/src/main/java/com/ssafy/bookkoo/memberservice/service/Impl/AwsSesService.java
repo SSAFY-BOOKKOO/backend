@@ -16,6 +16,13 @@ public class AwsSesService implements MailSendService {
 
     private final AmazonSimpleEmailService amazonSimpleEmailService;
 
+    /**
+     * 메일 발송 서비스 메서드
+     * @param subject
+     * @param content
+     * @param receivers
+     * @return
+     */
     public boolean sendMail(String subject, String content, List<String> receivers) {
         try {
             final AwsSesDto awsSesDto = AwsSesDto.builder()

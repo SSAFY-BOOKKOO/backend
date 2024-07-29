@@ -16,6 +16,16 @@ import org.springframework.stereotype.Service;
 public class GmailSendService implements MailSendService {
 
     private final JavaMailSender emailSender;
+
+    /**
+     * JavaMailSender를 통해 메일을 전송합니다.
+     *
+     * @param subject
+     * @param content
+     * @param receivers
+     * @return
+     * @throws MessagingException
+     */
     @Override
     public boolean sendMail(String subject, String content, List<String> receivers)
         throws MessagingException {

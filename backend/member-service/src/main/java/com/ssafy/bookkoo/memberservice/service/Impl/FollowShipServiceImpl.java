@@ -88,7 +88,7 @@ public class FollowShipServiceImpl implements FollowShipService {
     }
 
     /**
-     * 멤버를 팔로우하는 멤버들의 ID를 반환한다.
+     * 멤버를 팔로우하는 멤버들의 ID를 반환합니다.
      * @param memberId
      * @return
      */
@@ -106,6 +106,11 @@ public class FollowShipServiceImpl implements FollowShipService {
                          .collect(Collectors.toList());
     }
 
+    /**
+     * 멤버가 팔로우 하는 멤버들의 ID를 반환합니다.
+     * @param memberId
+     * @return
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ResponseFollowShipDto> getFollowees(Long memberId) {
@@ -120,6 +125,12 @@ public class FollowShipServiceImpl implements FollowShipService {
                          .collect(Collectors.toList());
     }
 
+    /**
+     * memberId(Long)을 통해 멤버 정보를 반환합니다.
+     *
+     * @param memberId
+     * @return
+     */
     private MemberInfo getMemberInfo(Long memberId) {
         return memberInfoRepository.findById(memberId)
                                    .orElseThrow(MemberNotFoundException::new);

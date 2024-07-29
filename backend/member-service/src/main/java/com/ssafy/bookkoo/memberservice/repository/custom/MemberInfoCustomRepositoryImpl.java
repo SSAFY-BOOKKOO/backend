@@ -14,6 +14,12 @@ public class MemberInfoCustomRepositoryImpl implements MemberInfoCustomRepositor
 
     private final JPAQueryFactory queryFactory;
 
+    /**
+     * follwers에 속한 Member를 제외하고
+     * 랜덤으로 3명의 Member ID(Long)을 반환합니다.
+     * @param followers
+     * @return
+     */
     @Override
     public List<Long> findRandomMemberInfoIdByFollowers(List<Long> followers) {
         return queryFactory.select(memberInfo.id)
