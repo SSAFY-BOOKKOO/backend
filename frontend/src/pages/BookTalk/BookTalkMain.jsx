@@ -3,12 +3,14 @@ import BookTalkItem from '@components/@common/Book/BookTalkItem';
 import PopularBook from '@components/BookTalk/PopularBook';
 import WrapContainer from '@components/Layout/WrapContainer';
 import Button from '@components/@common/Button';
-import { IoSearchSharp } from 'react-icons/io5';
 import { books } from '@mocks/BookData';
 import { useNavigate } from 'react-router-dom';
+import useModal from '@hooks/useModal';
+import BookSearch from '@components/Curation/BookSearch';
 
 const BookTalkMain = () => {
   const navigate = useNavigate();
+  const { isOpen, toggleModal } = useModal();
 
   const [participatedBooks, setParticipatedBooks] = useState(books);
   const [popularBooks, setPopularBooks] = useState(books);
@@ -24,7 +26,7 @@ const BookTalkMain = () => {
   return (
     <WrapContainer>
       <div className='flex justify-between items-center mb-6'>
-        <Button>독서록 생성</Button>
+        <Button onClick={toggleModal}>채팅방 생성</Button>
       </div>
       <div>
         <h2 className='text-green-400 text-lg font-bold mb-4'>
@@ -60,6 +62,7 @@ const BookTalkMain = () => {
           <div className='absolute top-0 right-0 bottom-0 w-8 from-white pointer-events-none'></div>
         </div>
       </div>
+      <BookSearch isOpen={isOpen} onRequestClose={toggleModal} />
     </WrapContainer>
   );
 };
