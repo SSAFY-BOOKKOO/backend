@@ -35,14 +35,18 @@ public class SecurityConfig {
             .logout(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
             .oauth2Login((oauth2) -> oauth2.authorizationEndpoint(
+                                               //인증 요청 설정 엔드포인트 (소셜 로그인 페이지 요청 URL)
                                                endPoint -> endPoint.authorizationRequestRepository(
                                                                        oAuth2AuthorizationRequestBasedOnCookieRepository)
+                                                                   //해당 URL로 요청 시 로그인 페이지로 이동 (.../authorization/provider(google,kakao))
                                                                    .baseUri("/auth/login/oauth2/authorization"))
                                            .redirectionEndpoint(redirection -> redirection
+                                               //해당 URL로 리다이렉션
                                                .baseUri("/auth/login/oauth2/code/*"))
                                            .userInfoEndpoint(
                                                userInfoEndPoint -> userInfoEndPoint.userService(
                                                    oAuth2MemberService))
+                                           //성공 시 핸들링
                                            .successHandler(oAuth2SuccessHandler)
                                            .failureUrl("/login?error=true"))
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
