@@ -1,5 +1,6 @@
 package com.ssafy.bookkoo.bookservice.repository;
 
+import com.ssafy.bookkoo.bookservice.dto.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.bookservice.dto.RequestSearchBooksFilterDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import java.util.List;
@@ -11,4 +12,6 @@ public interface BookCustomRepository {
     List<Book> findByConditions(RequestSearchBooksFilterDto dto);
 
     Book findByIsbn(String isbn);
+
+    List<Book> findByConditions(RequestSearchBookMultiFieldDto filterDto);
 }
