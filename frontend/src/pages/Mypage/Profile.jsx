@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import ProfileUpdate from '@components/MyPage/Profile/ProfileUpdate.jsx';
 import ProfileView from '@components/MyPage/Profile/ProfileVIew';
+import profile_img_sample from '@assets/images/profile_img_sample.png';
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [userInfo, setUserInfo] = useState({
     nickname: '유제3',
-    profileImage: 'https://via.placeholder.com/150',
+    profile_img_url: profile_img_sample,
     email: 'user@example.com',
     password: 'password123',
     receiveLetters: true,

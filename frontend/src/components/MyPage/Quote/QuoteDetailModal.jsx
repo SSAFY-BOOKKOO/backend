@@ -1,5 +1,5 @@
 import React from 'react';
-import backgroundImage from '@assets/quote_background.png'; // 배경 이미지를 가져옵니다.
+import backgroundImage from '@assets/images/quote_background.png'; // 배경 이미지를 가져옵니다.
 
 const QuoteDetailModal = ({
   quoteObj,

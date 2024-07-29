@@ -23,7 +23,7 @@ const BookShelf = ({ books, moveBook, onBookClick }) => {
   const renderShelf = (start, end) => (
     <div className='flex justify-center mb-2'>
       {' '}
-      <div className='flex flex-nowrap px-1 justify-center w-full rounded-xl shadow-lg shelf-bg'>
+      <div className='flex flex-nowrap justify-center w-full rounded-xl shadow-lg shelf-bg'>
         {allSlots.slice(start, end)}
       </div>
     </div>
