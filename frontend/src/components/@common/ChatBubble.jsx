@@ -10,6 +10,10 @@ const ChatBubble = ({
   profileImage,
   customStyle = {},
 }) => {
+  const handleLike = () => {
+    // 좋아요 api 연동
+  };
+
   return (
     <div
       className={`flex ${role === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
@@ -23,28 +27,28 @@ const ChatBubble = ({
           />
         </div>
       )}
-      <div className={`max-w-[60%] ${role === 'user' ? 'order-1' : 'order-2'}`}>
+      <div className={`max-w-[80%] ${role === 'user' ? 'order-1' : 'order-2'}`}>
         <div className='relative'>
           <div
             className={`absolute ${role === 'user' ? 'right-0' : 'left-0'} top-5 transform ${role === 'user' ? 'translate-x-1/2' : '-translate-x-1/2'} -translate-y-1/2`}
           >
             <div
-              className={`w-4 h-4 ${role === 'user' ? 'bg-pink-500' : 'bg-gray-200'} rotate-45 transform origin-center ${role === 'user' ? 'mr-2' : 'ml-2'} rounded-sm`}
+              className={`w-4 h-4 ${role === 'user' ? 'bg-green-400' : 'bg-gray-200'} rotate-45 transform origin-center ${role === 'user' ? 'mr-2' : 'ml-2'} rounded-sm`}
               style={customStyle.arrow}
             ></div>
           </div>
           <div
             className={`
-              ${role === 'user' ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-800'} 
+              ${role === 'user' ? 'bg-green-400 text-white' : 'bg-gray-200 text-gray-800'} 
               p-3 px-5 rounded-2xl break-words overflow-hidden mt-2
             `}
             style={customStyle.bubble}
           >
-            <p className='text-sm whitespace-pre-wrap'>{message}</p>
+            <p className='text-sm whitespace-pre-wrap leading-6'>{message}</p>
           </div>
           {showLikes && (
-            <div className='mt-1 text-right'>
-              <span className='text-sm text-gray-500'>❤️ {likes}</span>
+            <div className='text-right' onClick={handleLike}>
+              <span className='text-xs text-gray-500'>❤️ {likes}</span>
             </div>
           )}
         </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import Tab from '@components/Curation/Tab';
+import CurationTab from '@components/Curation/CurationTab';
 import { useLocation } from 'react-router-dom';
 
 const CurationStore = () => {
@@ -8,7 +8,7 @@ const CurationStore = () => {
 
   return (
     <div className='flex flex-col'>
-      <Tab />
+      <CurationTab />
       <div className='flex flex-col items-center bg-gray-100 space-y-4 p-4 m-4 rounded'>
         <h1 className='text-2xl font-bold'>보관함</h1>
         {storedLetters.length > 0 ? (

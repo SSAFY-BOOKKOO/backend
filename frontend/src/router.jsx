@@ -19,7 +19,8 @@ import Login from './pages/Member/Login.jsx';
 import CurationChatBot from './pages/Curation/CurationChatBot.jsx';
 import CurationLetterCreate from './pages/Curation/CurationLetterCreate.jsx';
 import CurationLetterDetail from './pages/Curation/CurationLetterDetail.jsx';
-import BookTalk from './pages/BookTalk/BookTalk.jsx';
+import BookTalkMain from './pages/BookTalk/BookTalkMain.jsx';
+import BookTalkDetail from './pages/BookTalk/BookTalkDetail.jsx';
 import Intro from './pages/Member/Intro.jsx';
 import PrivateRoute from '@/components/@common/PrivateRoute';
 import CurationLetterSend from './pages/Curation/CurationLetterSend.jsx';
@@ -36,7 +37,9 @@ const router = createBrowserRouter([
       { path: 'intro', element: <Intro /> },
 
       // 커뮤니티 탭 (로그인 여부와 상관없이 접근 가능)
-      { path: 'booktalk', element: <BookTalk /> },
+
+      { path: 'booktalk', element: <BookTalkMain /> },
+      { path: 'booktalk/detail/:bookId', element: <BookTalkDetail /> },
 
       // 인증이 필요한 페이지
       {
