@@ -78,23 +78,26 @@ const LibraryDetail = () => {
             />
           ) : (
             // 책 큰 틀
-
-            <div className='relative  bg-zinc-300 rounded-lg w-10/12 max-w-md h-full overflow-auto '>
-              <Modal bookId={id} onDelete={handleDelete} />
+            <div className='relative bg-zinc-300 rounded-lg w-10/12 max-w-md h-full overflow-auto'>
+              <Modal
+                bookId={id}
+                onDelete={handleDelete}
+                onColorChange={handleColorChangeClick}
+                onShelfChange={handleShelfChangeClick}
+              />
               <div className='flex flex-col items-center p-8 pl-12'>
+                <div className='absolute left-6 top-0 bottom-0 shadow-2xl w-1 bg-gray-500 shadow-2xl z-10'></div>
                 <img
                   src={cover_img_url}
                   alt={title}
-                  className='w-72 h-96 cursor-pointer rounded-lg shadow-xl mr-4'
+                  className='w-72 h-96 cursor-pointer rounded-lg shadow-xl'
                   onClick={() => setShowReview(true)}
                 />
                 {/* <button>전환</button> */}
               </div>
-              <div className='absolute left-4 top-0 bottom-0 shadow-2xl w-1 bg-gray-500 shadow-2xl z-20'></div>
-
               {/* 띠지 부분 */}
-              <div className='mt-6 p-4 pl-14 bg-pink-500 rounded-b-md opacity-70 w-full  h-[216px]'>
-                <h2 className=' text-2xl text-black font-bold'>{title}</h2>
+              <div className='mt-6 p-4 pl-14 bg-pink-500 rounded-b-md opacity-70 w-full h-[215px]'>
+                <h2 className='text-2xl text-black font-bold'>{title}</h2>
                 <div className='flex space-x-1'>
                   {Array(5).fill(<AiFillStar className='text-amber-300' />)}
                 </div>
@@ -112,7 +115,7 @@ const LibraryDetail = () => {
         <div className='fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50'>
           <div className='relative bg-white p-4 rounded-lg'>
             <button
-              className='absolute top-2 right-2 text-xl font-bold'
+              className='absolute top-0 right-2 text-xl font-bold'
               onClick={handleCloseColorPicker}
             >
               &times;
