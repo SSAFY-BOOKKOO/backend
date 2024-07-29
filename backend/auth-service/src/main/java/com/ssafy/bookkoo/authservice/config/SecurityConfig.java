@@ -1,8 +1,8 @@
 package com.ssafy.bookkoo.authservice.config;
 
 import com.ssafy.bookkoo.authservice.handler.OAuth2SuccessHandler;
-import com.ssafy.bookkoo.authservice.repository.OAuth2AuthorizationRequestBasedOnRepository;
-import com.ssafy.bookkoo.authservice.service.CustomOAuth2UserService;
+import com.ssafy.bookkoo.authservice.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import com.ssafy.bookkoo.authservice.service.CustomOAuth2MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,8 +19,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
-    private final OAuth2AuthorizationRequestBasedOnRepository oAuth2AuthorizationRequestBasedOnRepository;
-    private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomOAuth2MemberService oAuth2MemberService;
+    private final OAuth2AuthorizationRequestBasedOnCookieRepository oAuth2AuthorizationRequestBasedOnCookieRepository;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -32,6 +32,19 @@ public class SecurityConfig {
         return httpSecurity
             .csrf(AbstractHttpConfigurer::disable)
             .headers(AbstractHttpConfigurer::disable)
+            .logout(AbstractHttpConfigurer::disable)
+            .formLogin(AbstractHttpConfigurer::disable)
+            .oauth2Login((oauth2) -> oauth2.authorizationEndpoint(
+                                               endPoint -> endPoint.authorizationRequestRepository(
+                                                                       oAuth2AuthorizationRequestBasedOnCookieRepository)
+                                                                   .baseUri("/auth/login/oauth2/authorization"))
+                                           .redirectionEndpoint(redirection -> redirection
+                                               .baseUri("/auth/login/oauth2/code/*"))
+                                           .userInfoEndpoint(
+                                               userInfoEndPoint -> userInfoEndPoint.userService(
+                                                   oAuth2MemberService))
+                                           .successHandler(oAuth2SuccessHandler)
+                                           .failureUrl("/login?error=true"))
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                 .requestMatchers(
                     "/auth-service/**",
@@ -47,15 +60,12 @@ public class SecurityConfig {
                     "/webjars/**",
                     "/v3/api-docs/**",
                     "/swagger-resources/**"
-                ).permitAll()
-                .anyRequest().authenticated()
+                )
+                .permitAll()
+                .anyRequest()
+                .authenticated()
             )
-            .oauth2Login(oauth2 -> oauth2
-                .authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint
-                    .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnRepository))
-                .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
-                    .userService(customOAuth2UserService))
-                .successHandler(oAuth2SuccessHandler))
             .build();
     }
+
 }

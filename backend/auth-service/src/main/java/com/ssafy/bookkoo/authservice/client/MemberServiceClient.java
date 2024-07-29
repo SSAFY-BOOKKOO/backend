@@ -13,5 +13,5 @@ public interface MemberServiceClient {
     String register(@RequestBody String email);
 
     @GetMapping(value = "/members/info/{memberId}")
-    Long getMemberPK(@PathVariable String memberId);
+    Long getMemberPK(@PathVariable("memberId") String memberId);
 }
