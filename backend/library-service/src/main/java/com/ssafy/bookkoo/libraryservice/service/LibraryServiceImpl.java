@@ -123,16 +123,17 @@ public class LibraryServiceImpl implements LibraryService {
                                             .collect(
                                                 Collectors.toList());
         // 필터 DTO를 생성합니다.
-        RequestSearchBooksFilterDto filterDto = RequestSearchBooksFilterDto.builder()
-                                                                           .field("id")
-                                                                           .value(stringBookIds)
-                                                                           .limit(9)
-                                                                           .offset(0)
-                                                                           .build();
+        RequestSearchBookMultiFieldDto filterDto = RequestSearchBookMultiFieldDto.builder()
+                                                                                 .conditions(
+                                                                                     List.of(
+                                                                                         condition))
+                                                                                 .limit(
+                                                                                     9) // 이건 바꿔야할듯
+                                                                                 .offset(0)
+                                                                                 .build();
         // BookServiceClient를 통해 책 정보를 가져옵니다.
         List<ResponseBookDto> books = bookServiceClient.getBooksByCondition(
-            filterDto.field(), filterDto.value(),
-            filterDto.limit(), filterDto.offset());
+            filterDto);
 
         // 책 목록을 포함한 새로운 라이브러리 DTO를 생성합니다.
         libraryDto = ResponseLibraryDto.builder().
