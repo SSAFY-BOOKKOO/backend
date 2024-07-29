@@ -4,6 +4,7 @@ import com.ssafy.bookkoo.libraryservice.client.BookServiceClient;
 import com.ssafy.bookkoo.libraryservice.client.MemberServiceClient;
 import com.ssafy.bookkoo.libraryservice.dto.RequestCreateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestLibraryBookMapperCreateDto;
+import com.ssafy.bookkoo.libraryservice.dto.RequestLibraryBookMapperUpdateDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestUpdateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseBookDto;
@@ -160,7 +161,7 @@ public class LibraryServiceImpl implements LibraryService {
                                        name(libraryDto.name())
                                        .libraryOrder(libraryDto.libraryOrder())
                                        .libraryStyleDto(libraryDto.libraryStyleDto())
-                                       .books(books)
+                                       .books(null) // Todo
                                        .build();
 
         return libraryDto;
@@ -283,6 +284,29 @@ public class LibraryServiceImpl implements LibraryService {
         List<ResponseBookDto> books = bookServiceClient.getBooksByCondition(filterDto);
 
         return books;
+    }
+
+    @Override
+    @Transactional
+    public Boolean updateLibraryBookMappers(
+        Long libraryId,
+        List<RequestLibraryBookMapperUpdateDto> dtos,
+        Long memberId
+    ) {
+        for (RequestLibraryBookMapperUpdateDto dto : dtos) {
+            MapperKey id = new MapperKey();
+            id.setLibraryId(libraryId);
+            id.setBookId(dto.bookId());
+
+            LibraryBookMapper lbMapper = libraryBookMapperRepository.findById(id)
+                                                                    .orElseThrow(
+                                                                        () -> new IllegalArgumentException(
+                                                                            "Invalid book ID or library ID"));
+
+            libraryBookMapperMapper.updateLibraryBookMapperFromDto(dto, lbMapper);
+            libraryBookMapperRepository.save(lbMapper);
+        }
+        return null;
     }
 
     /**

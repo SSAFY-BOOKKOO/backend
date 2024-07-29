@@ -2,6 +2,7 @@ package com.ssafy.bookkoo.libraryservice.service;
 
 import com.ssafy.bookkoo.libraryservice.dto.RequestCreateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestLibraryBookMapperCreateDto;
+import com.ssafy.bookkoo.libraryservice.dto.RequestLibraryBookMapperUpdateDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestUpdateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseBookDto;
@@ -39,4 +40,10 @@ public interface LibraryService {
     Integer countBooksInLibrary(Long memberId);
 
     List<ResponseBookDto> getMyBooks(Long memberId, RequestSearchBookMultiFieldDto searchDto);
+
+    Boolean updateLibraryBookMappers(
+        Long libraryId,
+        List<RequestLibraryBookMapperUpdateDto> lbmDto,
+        Long memberId
+    );
 }
