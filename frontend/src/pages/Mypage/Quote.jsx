@@ -2,12 +2,17 @@ import React, { useState } from 'react';
 import QuoteList from '@components/MyPage/Quote/QuoteList.jsx';
 import QuoteInput from '@components/MyPage/Quote/QuoteInput.jsx';
 import QuoteDetailModal from '@components/MyPage/Quote/QuoteDetailModal.jsx';
+import QuoteCreateModal from '@components/MyPage/Quote/QuoteCreateModal.jsx';
 import quotesData from '@mocks/QuoteData';
+import useModal from '@hooks/useModal';
+import Button from '@components/@common/Button';
+import WrapContainer from '@components/Layout/WrapContainer';
 
 const Quote = () => {
   const [quotes, setQuotes] = useState(quotesData);
   const [showInput, setShowInput] = useState(false);
   const [selectedQuoteIndex, setSelectedQuoteIndex] = useState(null);
+  const { isOpen, toggleModal } = useModal();
 
   const addQuote = quoteObj => {
     setQuotes([...quotes, quoteObj]);
@@ -30,17 +35,21 @@ const Quote = () => {
   };
 
   return (
-    <div className='min-h-screen p-4 bg-gray-100'>
-      <h1 className='text-2xl font-bold mb-4'>문장 목록</h1>
-      <QuoteList quotes={quotes} onQuoteClick={handleQuoteClick} />
-      <div className='mt-8 flex justify-center'>
-        <button
-          onClick={() => setShowInput(true)}
-          className='bg-green-500 text-white p-2 rounded-lg mr-2'
-        >
-          입력으로 텍스트 등록
-        </button>
+    <WrapContainer>
+      <div className='flex justify-between items-center mb-4'>
+        <h1 className='text-2xl font-bold'>나의 글귀함</h1>
+        <div className='flex items-center'>
+          <Button onClick={toggleModal}>글귀 만들기</Button>
+        </div>
       </div>
+      <p className='mb-3'>총 {quotes?.length}개</p>
+      <QuoteList quotes={quotes} onQuoteClick={handleQuoteClick} />
+      {isOpen && (
+        <QuoteCreateModal
+          toggleModal={toggleModal}
+          setShowInput={setShowInput}
+        />
+      )}
       {showInput && (
         <QuoteInput addQuote={addQuote} setShowInput={setShowInput} />
       )}
@@ -52,7 +61,7 @@ const Quote = () => {
           onPrevQuote={handlePrevQuote}
         />
       )}
-    </div>
+    </WrapContainer>
   );
 };
 

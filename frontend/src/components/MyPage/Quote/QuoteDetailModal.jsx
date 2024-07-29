@@ -3,6 +3,7 @@ import backgroundImage from '@assets/images/quote_background.png'; // 배경 이
 import IconButton from '@components/@common/IconButton';
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
 import { IoCloseSharp } from 'react-icons/io5';
+import { BiSolidQuoteAltLeft } from 'react-icons/bi';
 
 const QuoteDetailModal = ({
   quoteObj,
@@ -19,7 +20,7 @@ const QuoteDetailModal = ({
           className='w-full h-full object-cover rounded-lg'
         />
         <div className='absolute inset-0 flex flex-col justify-center text-white p-8'>
-          <p>"</p>
+          <BiSolidQuoteAltLeft className='mb-1' />
           <p className='text-lg font-semibold mb-4'>{quoteObj.quote}</p>
           <p className='text-sm'>{quoteObj.info}</p>
         </div>
