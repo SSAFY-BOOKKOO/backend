@@ -1,5 +1,8 @@
 import React from 'react';
 import backgroundImage from '@assets/images/quote_background.png'; // 배경 이미지를 가져옵니다.
+import IconButton from '@components/@common/IconButton';
+import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
+import { IoCloseSharp } from 'react-icons/io5';
 
 const QuoteDetailModal = ({
   quoteObj,
@@ -21,28 +24,25 @@ const QuoteDetailModal = ({
           <p className='text-sm'>{quoteObj.info}</p>
         </div>
         <div className='absolute top-0 right-0 mt-4 mr-4'>
-          <button
+          <IconButton
             onClick={() => setSelectedQuote(null)}
+            icon={IoCloseSharp}
             className='bg-transparent text-white p-2 rounded-full text-2xl'
-          >
-            &times;
-          </button>
+          />
         </div>
         <div className='absolute bottom-0 right-0 mb-4 mr-4'>
-          <button
+          <IconButton
             onClick={onNextQuote}
+            icon={FaAngleRight}
             className='bg-transparent text-white p-2 rounded-full text-2xl'
-          >
-            &gt;
-          </button>
+          />
         </div>
         <div className='absolute bottom-0 left-0 mb-4 ml-4'>
-          <button
+          <IconButton
             onClick={onPrevQuote}
+            icon={FaAngleLeft}
             className='bg-transparent text-white p-2 rounded-full text-2xl'
-          >
-            &lt;
-          </button>
+          />
         </div>
       </div>
     </div>
