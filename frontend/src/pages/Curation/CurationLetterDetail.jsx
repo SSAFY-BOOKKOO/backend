@@ -1,30 +1,28 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { CiMenuKebab } from 'react-icons/ci';
+import useModal from '@hooks/useModal';
+import SettingsModal from '@components/@common/SettingsModal';
 
 const CurationLetterDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { letter } = location.state;
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const handleMenuToggle = () => {
-    setMenuOpen(!menuOpen);
-  };
+  const { isOpen, closeModal, toggleModal } = useModal();
 
   // 레터 보관
   const handleLetterStore = () => {
-    // 연동
-
-    setMenuOpen(!menuOpen);
+    // 연동c
   };
 
   // 레터 삭제
   const handleLetterDelete = () => {
     // 연동
-
-    setMenuOpen(!menuOpen);
   };
+
+  const actions = [
+    { label: '레터 보관', onClick: handleLetterStore },
+    { label: '레터 삭제', onClick: handleLetterDelete },
+  ];
 
   return (
     <div className='flex flex-col items-center justify-start p-4  scrollbar-none'>
@@ -38,29 +36,12 @@ const CurationLetterDetail = () => {
         </div>
         {/* 설정 모달 */}
         <div className='relative flex flex-col items-center p-6 pt-32'>
-          <div className='absolute top-2 right-2'>
-            <button className='p-2' onClick={handleMenuToggle}>
-              <div className='absolute top-1 right-3 z-10 cursor-pointer text-4xl'>
-                &#x22EE;
-              </div>
-            </button>
-            {menuOpen && (
-              <div className='absolute right-0 mt-1 w-24 bg-white border rounded-lg shadow-lg'>
-                <button
-                  className='block px-4 py-2 text-gray-800 hover:bg-gray-200 w-full text-center'
-                  onClick={handleLetterStore}
-                >
-                  레터 보관
-                </button>
-                <button
-                  className='block px-4 py-2 text-gray-800 hover:bg-gray-200 w-full text-center'
-                  onClick={handleLetterDelete}
-                >
-                  레터 삭제
-                </button>
-              </div>
-            )}
-          </div>
+          <SettingsModal
+            isOpen={isOpen}
+            onClose={closeModal}
+            onToggle={toggleModal}
+            actions={actions}
+          />
         </div>
         <div className='min-h-44 px-6 py-8 text-center scrollbar-none'>
           <h2 className='text-xl font-bold mb-2'>{letter.title}</h2>
