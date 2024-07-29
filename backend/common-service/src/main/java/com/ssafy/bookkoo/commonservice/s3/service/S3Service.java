@@ -7,4 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface S3Service {
 
     String saveToBucket(MultipartFile file, String bucket);
+
+    void deleteToBucket(String file, String bucket);
+
 }
