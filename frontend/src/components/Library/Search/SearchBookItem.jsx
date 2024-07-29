@@ -1,17 +1,23 @@
-import Button from '../../@common/Button';
+import React from 'react';
+import Button from '@components/@common/Button';
 
-const BookSearchListItem = ({ book, onClick, onCreateClick }) => {
+const SearchBookItem = ({ book, onClick, onCreateClick }) => {
   const handleButtonClick = e => {
     e.stopPropagation();
-
-    // 등록 페이지로 이동
     onCreateClick();
   };
 
   return (
-    <div className='flex items-start space-x-4 p-4 bg-white' onClick={onClick}>
+    <div
+      className='flex items-start space-x-4 p-3 mb-2 bg-white cursor-pointer'
+      onClick={onClick}
+    >
       <div className='w-36 h-36 flex'>
-        <img className='object-contain' src={book.cover_img_url} />
+        <img
+          className='object-contain'
+          src={book.cover_img_url}
+          alt={book.title}
+        />
       </div>
 
       <div className='flex flex-col justify-between h-36 w-full'>
@@ -30,4 +36,4 @@ const BookSearchListItem = ({ book, onClick, onCreateClick }) => {
   );
 };
 
-export default BookSearchListItem;
+export default SearchBookItem;
