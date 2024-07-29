@@ -8,7 +8,7 @@ public record ResponseLibraryDto(
     String name,
     String libraryOrder,
     LibraryStyleDto libraryStyleDto,
-    List<ResponseBookDto> books
+    List<ResponseLibraryBookMapperDto> books
 ) {
 
 }
