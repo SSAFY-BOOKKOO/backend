@@ -36,6 +36,7 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
         return queryFactory.select(libraryBookMapper.id.bookId)
                            .from(libraryBookMapper)
                            .where(libraryBookMapper.library.id.eq(libraryId))
+                           .orderBy(libraryBookMapper.bookOrder.asc())
                            .fetch();
     }
 
@@ -49,7 +50,7 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
 
         // 해당 서재와 연결된 책 쿼리
         predicate.and(libraryBookMapper.id.libraryId.eq(libraryId));
-        
+
         // 필터가 null이 아닐 시 status로 필터
         if (filter != null) {
             predicate.and(libraryBookMapper.status.eq(filter));
@@ -58,6 +59,7 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
         return queryFactory.select(libraryBookMapper.id.bookId)
                            .from(libraryBookMapper)
                            .where(predicate)
+                           .orderBy(libraryBookMapper.bookOrder.asc())
                            .fetch();
     }
 
@@ -76,6 +78,7 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
                            .from(libraryBookMapper)
                            .join(libraryBookMapper.library, library)
                            .where(predicate)
+                           .orderBy(libraryBookMapper.bookOrder.asc())
                            .fetch();
     }
 }
