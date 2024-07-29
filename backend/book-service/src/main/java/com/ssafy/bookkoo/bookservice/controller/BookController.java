@@ -67,7 +67,7 @@ public class BookController {
     @PostMapping("/search")
     @Operation(summary = "책 목록 조회", description = "책 조회(필터링 포함)시 사용하는 API")
     public ResponseEntity<List<ResponseBookDto>> searchBooksByCondition(
-        @RequestBody RequestSearchBookMultiFieldDto filterDto
+        @Valid @RequestBody RequestSearchBookMultiFieldDto filterDto
     ) {
         List<ResponseBookDto> books = bookService.getBooksByCondition(filterDto);
         return ResponseEntity.ok()
