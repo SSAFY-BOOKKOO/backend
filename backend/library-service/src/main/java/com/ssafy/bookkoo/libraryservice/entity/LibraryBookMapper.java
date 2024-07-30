@@ -30,22 +30,28 @@ public class LibraryBookMapper {
     private Library library;
 
     @Column
+    @Setter
     Integer bookOrder;
 
     @Column
+    @Setter
     String bookColor;
 
     @Column
+    @Setter
     Date startAt;
 
     @Column
+    @Setter
     Date endAt;
 
     @Column
     @Enumerated(EnumType.STRING)
+    @Setter
     Status status;
 
     @Column
+    @Setter
     Integer rating;
 
     @Builder

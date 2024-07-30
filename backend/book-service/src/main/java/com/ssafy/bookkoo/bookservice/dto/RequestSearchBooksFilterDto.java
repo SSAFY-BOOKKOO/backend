@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 
+// 곧 사라질 예정
 public record RequestSearchBooksFilterDto(
     // 검색 컬럼 이름
     @NotNull String field,

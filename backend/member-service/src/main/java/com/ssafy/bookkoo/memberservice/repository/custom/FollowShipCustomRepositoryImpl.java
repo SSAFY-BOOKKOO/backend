@@ -14,6 +14,12 @@ public class FollowShipCustomRepositoryImpl implements FollowShipCustomRepositor
 
     private final JPAQueryFactory queryFactory;
 
+    /**
+     * 팔로우, 팔로워를 통해 하나의 팔로우쉽을 반환합니다.
+     * @param follower
+     * @param followee
+     * @return
+     */
     @Override
     public FollowShip findByFollowerAndFollowee(MemberInfo follower, MemberInfo followee) {
         return queryFactory.selectFrom(followShip)

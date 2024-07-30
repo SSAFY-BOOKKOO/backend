@@ -84,5 +84,15 @@ public class MemberExceptionHandler {
     }
 
 
+    /**
+     * 멤버가 아직 추가 정보를 입력하지 않았을 때 발생하는 예외입니다.
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(MemberInfoNotExistException.class)
+    public ResponseEntity<String> handleMemberInfoNotExistException(MemberInfoNotExistException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                             .body(e.getMessage());
+    }
 
 }
