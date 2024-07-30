@@ -8,6 +8,7 @@ import com.ssafy.bookkoo.libraryservice.dto.RequestLibraryBookMapperUpdateDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.libraryservice.dto.RequestUpdateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseBookDto;
+import com.ssafy.bookkoo.libraryservice.dto.ResponseLibraryBookMapperDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.SearchBookConditionDto;
 import com.ssafy.bookkoo.libraryservice.entity.Library;
@@ -119,9 +120,15 @@ public class LibraryServiceImpl implements LibraryService {
         // 라이브러리 엔티티를 DTO로 변환합니다.
         ResponseLibraryDto libraryDto = libraryMapper.toResponseDto(library);
 
+        // 라이브러리 ID로 연결된 책 매퍼 목록을 가져옵니다.
+        List<LibraryBookMapper> libraryBookMappers = libraryBookMapperRepository.findByLibraryIdWithFilter(
+            libraryId, filter);
+
         // 라이브러리 ID로 연결된 책 ID 목록을 가져옵니다.
-        List<Long> bookIds = libraryBookMapperRepository.findBookIdsByLibraryIdWithFilter(libraryId,
-            filter);
+        List<Long> bookIds = libraryBookMappers.stream()
+                                               .map(l -> l.getId()
+                                                          .getBookId())
+                                               .toList();
         // 책 ID 목록을 String 목록으로 변환합니다.
         List<String> stringBookIds = bookIds.stream()
                                             .map(String::valueOf)
@@ -156,15 +163,44 @@ public class LibraryServiceImpl implements LibraryService {
         List<ResponseBookDto> books = bookServiceClient.getBooksByCondition(
             filterDto);
 
-        // 책 목록을 포함한 새로운 라이브러리 DTO를 생성합니다.
-        libraryDto = ResponseLibraryDto.builder().
-                                       name(libraryDto.name())
-                                       .libraryOrder(libraryDto.libraryOrder())
-                                       .libraryStyleDto(libraryDto.libraryStyleDto())
-                                       .books(null) // Todo
-                                       .build();
+        // 책 정보를 매퍼 정보와 매핑합니다.
+        List<ResponseLibraryBookMapperDto> libraryBooks = libraryBookMappers.stream()
+                                                                            .map(mapper -> {
+                                                                                ResponseBookDto bookDto = books.stream()
+                                                                                                               .filter(
+                                                                                                                   book -> book.id()
+                                                                                                                               .equals(
+                                                                                                                                   mapper.getId()
+                                                                                                                                         .getBookId()))
+                                                                                                               .findFirst()
+                                                                                                               .orElse(
+                                                                                                                   null);
+                                                                                return ResponseLibraryBookMapperDto.builder()
+                                                                                                                   .book(
+                                                                                                                       bookDto)
+                                                                                                                   .bookOrder(
+                                                                                                                       mapper.getBookOrder())
+                                                                                                                   .bookColor(
+                                                                                                                       mapper.getBookColor())
+                                                                                                                   .startAt(
+                                                                                                                       mapper.getStartAt())
+                                                                                                                   .endAt(
+                                                                                                                       mapper.getEndAt())
+                                                                                                                   .status(
+                                                                                                                       mapper.getStatus())
+                                                                                                                   .rating(
+                                                                                                                       mapper.getRating())
+                                                                                                                   .build();
+                                                                            })
+                                                                            .collect(
+                                                                                Collectors.toList());
 
-        return libraryDto;
+        return ResponseLibraryDto.builder()
+                                 .libraryOrder(libraryDto.libraryOrder())
+                                 .libraryStyleDto(libraryDto.libraryStyleDto())
+                                 .name(libraryDto.name())
+                                 .books(libraryBooks)
+                                 .build();
     }
 
     /**
