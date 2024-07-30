@@ -2,40 +2,28 @@ package com.ssafy.bookkoo.memberservice.service.Impl;
 
 import com.ssafy.bookkoo.memberservice.client.AuthServiceClient;
 import com.ssafy.bookkoo.memberservice.client.CommonServiceClient;
-import com.ssafy.bookkoo.memberservice.dto.request.RequestAdditionalInfo;
-import com.ssafy.bookkoo.memberservice.dto.request.RequestCertificationDto;
-import com.ssafy.bookkoo.memberservice.dto.request.RequestLoginDto;
-import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterDto;
+import com.ssafy.bookkoo.memberservice.dto.request.*;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterDto.RequestRegisterDtoBuilder;
-import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterMemberDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseLoginTokenDto;
-import com.ssafy.bookkoo.memberservice.entity.CertificationNumber;
-import com.ssafy.bookkoo.memberservice.entity.Member;
+import com.ssafy.bookkoo.memberservice.entity.*;
 import com.ssafy.bookkoo.memberservice.entity.Member.MemberBuilder;
-import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapper;
-import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapperKey;
-import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
-import com.ssafy.bookkoo.memberservice.entity.SocialType;
-import com.ssafy.bookkoo.memberservice.exception.EmailDuplicateException;
-import com.ssafy.bookkoo.memberservice.exception.EmailNotValidException;
-import com.ssafy.bookkoo.memberservice.exception.EmailSendFailException;
-import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
-import com.ssafy.bookkoo.memberservice.exception.NickNameDuplicateException;
+import com.ssafy.bookkoo.memberservice.exception.*;
 import com.ssafy.bookkoo.memberservice.repository.CertificationRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberCategoryMapperRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberInfoRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberRepository;
 import com.ssafy.bookkoo.memberservice.service.MailSendService;
 import com.ssafy.bookkoo.memberservice.service.MemberService;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -50,11 +38,11 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MailSendService mailSendService;
     private final MemberCategoryMapperRepository memberCategoryMapperRepository;
-
+    private final AuthServiceClient authServiceClient;
 
     //S3 common 서비스
     private final CommonServiceClient commonServiceClient;
-    private final AuthServiceClient authServiceClient;
+    private final String passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$";
 
     /**
      * 회원가입에 필요한 모든 정보를 받아 회원가입하는 서비스
@@ -63,7 +51,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     @Transactional
-    public ResponseLoginTokenDto register(RequestRegisterMemberDto requestRegisterMemberDto, MultipartFile profileImg) {
+    public void register(RequestRegisterMemberDto requestRegisterMemberDto, MultipartFile profileImg) {
         //회원 정보 저장을 위한 DTO
         RequestRegisterDtoBuilder registerDtoBuilder
             = RequestRegisterDto.builder()
@@ -76,7 +64,13 @@ public class MemberServiceImpl implements MemberService {
         checkDuplNickName(requestRegisterMemberDto.nickName());
         //비밀번호 유효성 검증 (bookkoo 도메인인 경우 : 이메일 가입)
         if (requestRegisterMemberDto.socialType() == SocialType.bookkoo) {
-            registerDtoBuilder.password(requestRegisterMemberDto.password());
+            if (requestRegisterMemberDto.password()
+                                        .matches(passwordRegex)) {
+                registerDtoBuilder.password(requestRegisterMemberDto.password());
+
+            } else {
+                throw new PasswordNotValidException();
+            }
         }
 
         //회원정보 등록
@@ -94,12 +88,11 @@ public class MemberServiceImpl implements MemberService {
                                    .build();
         //추가정보 등록
         registerAdditionalInfo(additionalInfo, profileImg);
-        //TODO 토큰 받아서 반환 근데 auth로 요청하면 쿠키에 토큰이 들어갈까?
+        //회원가입시 사용한 정보를 통해 로그인 요청
         RequestLoginDto loginDto = RequestLoginDto.builder()
                                                   .email(requestRegisterMemberDto.email())
                                                   .password(requestRegisterMemberDto.password())
                                                   .build();
-        return authServiceClient.login(loginDto);
     }
 
     /**
@@ -138,8 +131,6 @@ public class MemberServiceImpl implements MemberService {
     public void registerAdditionalInfo(RequestAdditionalInfo requestAdditionalInfo,
         MultipartFile profileImg) {
         log.info(requestAdditionalInfo.memberId());
-        Member member = memberRepository.findByMemberId(requestAdditionalInfo.memberId())
-                                        .orElseThrow(MemberNotFoundException::new);
 
 
         //기본 프로필 이미지
@@ -148,8 +139,8 @@ public class MemberServiceImpl implements MemberService {
             fileKey = commonServiceClient.saveProfileImg(profileImg, null);
         }
         MemberInfo memberInfo = MemberInfo.builder()
-                                          .id(member.getId())
-                                          .memberId(member.getMemberId())
+                                          .id(requestAdditionalInfo.id())
+                                          .memberId(requestAdditionalInfo.memberId())
                                           .gender(requestAdditionalInfo.gender())
                                           .nickName(requestAdditionalInfo.nickName())
                                           .year(requestAdditionalInfo.year())
@@ -159,6 +150,7 @@ public class MemberServiceImpl implements MemberService {
 
         //추가 정보 저장
         MemberInfo info = memberInfoRepository.save(memberInfo);
+        log.info("memberInfo : {}", info);
         //선호 카테고리 추가
         saveCategories(requestAdditionalInfo, info);
     }
@@ -287,5 +279,10 @@ public class MemberServiceImpl implements MemberService {
         } catch (Exception e) {
             throw new EmailSendFailException();
         }
+    }
+
+    @Override
+    public ResponseLoginTokenDto registerLogin(RequestLoginDto requestLoginDto) {
+        return authServiceClient.login(requestLoginDto);
     }
 }
