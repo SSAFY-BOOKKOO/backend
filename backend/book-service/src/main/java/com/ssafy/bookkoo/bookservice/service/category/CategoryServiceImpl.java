@@ -60,4 +60,9 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.save(category);
         return categoryMapper.toDto(category);
     }
+
+    @Override
+    public List<CategoryDto> getCategoriesById(List<Integer> ids) {
+        return categoryMapper.toResponseDtoList(categoryRepository.findByIdIn(ids));
+    }
 }

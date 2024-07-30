@@ -15,4 +15,6 @@ public interface CategoryService {
         Integer categoryId,
         String name
     );
+
+    List<CategoryDto> getCategoriesById(List<Integer> ids);
 }
