@@ -4,7 +4,7 @@ import com.ssafy.bookkoo.authservice.dto.RequestLoginDto;
 import com.ssafy.bookkoo.authservice.dto.ResponseLoginTokenDto;
 import com.ssafy.bookkoo.authservice.exception.TokenExpiredException;
 import com.ssafy.bookkoo.authservice.service.AuthService;
-import com.ssafy.bookkoo.authservice.util.CookieGenerator;
+import com.ssafy.bookkoo.authservice.util.CookieUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +25,6 @@ import java.util.Optional;
 public class AuthController {
 
     private final AuthService authService;
-    private final CookieGenerator cookieGenerator;
     private static final String REFRESH_TOKEN_NAME = "refresh_token";
 
     @PostMapping("/login/email")
@@ -36,8 +35,8 @@ public class AuthController {
     ) {
         ResponseLoginTokenDto responseLoginTokenDto = authService.login(requestLoginDto);
 
-        Cookie secureCookie = cookieGenerator.secureCookieGenerate(REFRESH_TOKEN_NAME, responseLoginTokenDto.refreshToken(),
-            CookieGenerator.REFRESH_TOKEN_EXPIRATION);
+        Cookie secureCookie = CookieUtils.secureCookieGenerate(REFRESH_TOKEN_NAME, responseLoginTokenDto.refreshToken(),
+            CookieUtils.REFRESH_TOKEN_EXPIRATION);
 
         response.addCookie(secureCookie);
 
@@ -58,8 +57,8 @@ public class AuthController {
 
         ResponseLoginTokenDto responseLoginTokenDto = authService.getTokenDto(cookie.getValue());
 
-        Cookie secureCookie = cookieGenerator.secureCookieGenerate(REFRESH_TOKEN_NAME, responseLoginTokenDto.refreshToken(),
-            CookieGenerator.REFRESH_TOKEN_EXPIRATION);
+        Cookie secureCookie = CookieUtils.secureCookieGenerate(REFRESH_TOKEN_NAME, responseLoginTokenDto.refreshToken(),
+            CookieUtils.REFRESH_TOKEN_EXPIRATION);
 
         response.addCookie(secureCookie);
         return ResponseEntity.ok(responseLoginTokenDto);

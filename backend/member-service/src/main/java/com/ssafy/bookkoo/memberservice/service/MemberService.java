@@ -9,6 +9,8 @@ public interface MemberService {
 
     String register(RequestRegisterDto requestRegisterDto);
 
+    String register(String email);
+
     boolean checkDuplEmail(String email);
 
     void sendCertiNumToEmail(String email);
