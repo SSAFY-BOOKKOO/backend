@@ -3,6 +3,7 @@ package com.ssafy.bookkoo.libraryservice.repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.bookkoo.libraryservice.entity.LibraryBookMapper;
 import com.ssafy.bookkoo.libraryservice.entity.QLibrary;
 import com.ssafy.bookkoo.libraryservice.entity.QLibraryBookMapper;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
@@ -41,7 +42,7 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
     }
 
     @Override
-    public List<Long> findBookIdsByLibraryIdWithFilter(
+    public List<LibraryBookMapper> findByLibraryIdWithFilter(
         Long libraryId,
         Status filter
     ) {
@@ -56,7 +57,7 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
             predicate.and(libraryBookMapper.status.eq(filter));
         }
 
-        return queryFactory.select(libraryBookMapper.id.bookId)
+        return queryFactory.select(libraryBookMapper)
                            .from(libraryBookMapper)
                            .where(predicate)
                            .orderBy(libraryBookMapper.bookOrder.asc())
