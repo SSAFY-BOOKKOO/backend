@@ -28,6 +28,12 @@ public class CategoryController {
                              .body(categoryService.getAllCategories());
     }
 
+    @GetMapping("/by-ids")
+    public ResponseEntity<List<CategoryDto>> getCategoriesById(@RequestParam List<Integer> ids) {
+        return ResponseEntity.ok()
+                             .body(categoryService.getCategoriesById(ids));
+    }
+
     @PostMapping
     public ResponseEntity<CategoryDto> createCategory(@RequestParam String name) {
         return ResponseEntity.ok()
