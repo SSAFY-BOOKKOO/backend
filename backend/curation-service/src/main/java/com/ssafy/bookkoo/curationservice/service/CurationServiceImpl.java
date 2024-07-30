@@ -16,7 +16,6 @@ import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 /**
@@ -72,23 +71,24 @@ public class CurationServiceImpl implements CurationService {
      */
     @Transactional
     @Override
-    public ResponseCurationDetailDto getCurationDetail(Long id) {
-        Curation curation = curationRepository.findById(id)
+    public ResponseCurationDetailDto getCurationDetail(Long curationId, Long memberId) {
+        Curation curation = curationRepository.findById(curationId)
                                               .orElseThrow(
                                                   () -> new CurationNotFoundException(
-                                                      id));
+                                                      curationId));
         //TODO PassPort 에서 읽은사람 가져오기
         CurationSend curationSend = curationSendRepository.findCurationSendsByCurationAndReceiver(
-                                                              curation, 1L)
+                                                              curation, memberId)
                                                           .orElseThrow(
                                                               //TODO 자신이 받은 큐레이션이 아닐경우 권한 Exception 던져야함
                                                               () -> new CurationNotFoundException(
-                                                                  id));
+                                                                  curationId));
         //읽기 처리
         curationSend.read();
         // 작성자 정보 가져오기
-        ResponseMemberInfoDto writerInfo = memberServiceClient.getMemberInfoById(curationSend.getCuration()
-                                                                                             .getWriter());
+        ResponseMemberInfoDto writerInfo = memberServiceClient.getMemberInfoById(
+            curationSend.getCuration()
+                        .getWriter());
         // BookService 에게 book 정보 받아오기 (책 커버 이미지, 제목, 작가, 줄거리)
         ResponseBookDto book = bookServiceClient.getBook(curation
             .getBook());
