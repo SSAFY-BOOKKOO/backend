@@ -46,6 +46,7 @@ public class MemberInfoController {
         ResponseMemberInfoDto memberInfo = memberInfoService.getMemberInfo(memberId);
         return ResponseEntity.ok(memberInfo);
     }
+
     @PostMapping("/password")
     @Operation(summary = "비밀번호 변경 API", description = "비밀번호를 변경합니다.")
     public ResponseEntity<HttpStatus> updatePassword(
@@ -72,6 +73,7 @@ public class MemberInfoController {
     public ResponseEntity<List<Long>> getLetterRecipients(
         @RequestParam("memberId") Long memberId
     ) {
+        //TODO: 자기 자신은 제외하도록 로직 추가
         List<ResponseFollowShipDto> followers = followShipService.getFollowers(memberId);
         List<Long> followerIds = followers.stream()
                                           .map(ResponseFollowShipDto::memberId)
@@ -80,5 +82,13 @@ public class MemberInfoController {
         recipientIds.addAll(followerIds);
         return ResponseEntity.ok()
                              .body(recipientIds);
+    }
+
+    @GetMapping("/name")
+    public ResponseEntity<Long> getMemberIdByNickName(
+        @RequestParam("nickName") String nickName
+    ) {
+        Long memberId = memberInfoService.getMemberIdByNickName(nickName);
+        return ResponseEntity.ok(memberId);
     }
 }

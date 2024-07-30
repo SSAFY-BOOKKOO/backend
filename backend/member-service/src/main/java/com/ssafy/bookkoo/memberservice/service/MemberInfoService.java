@@ -19,4 +19,6 @@ public interface MemberInfoService {
     Long getMemberPk(String memberId);
 
     List<Long> getRandomMemberInfo(List<Long> followers);
+
+    Long getMemberIdByNickName(String nickName);
 }

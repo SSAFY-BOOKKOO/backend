@@ -52,6 +52,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	testImplementation 'org.springframework.security:spring-security-test'
 
+	//OAuth2
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
 	//QueryDSL
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
@@ -62,6 +65,9 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.5'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+
+	//openfeign
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
 	//actuator,  prometheus
 //	implementation 'org.springframework.boot:spring-boot-starter-actuator'
