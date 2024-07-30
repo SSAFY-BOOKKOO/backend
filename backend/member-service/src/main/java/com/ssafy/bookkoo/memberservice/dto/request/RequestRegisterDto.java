@@ -1,5 +1,6 @@
 package com.ssafy.bookkoo.memberservice.dto.request;
 
+import com.ssafy.bookkoo.memberservice.entity.SocialType;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
@@ -17,9 +18,11 @@ public record RequestRegisterDto(
         regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$",
         message = "Invalid email address"
     ) String email,
+    //null은 가능
     @Pattern(
         regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$",
         message = "Invalid password."
-    ) String password) {
+    ) String password,
+    SocialType socialType) {
 
 }
