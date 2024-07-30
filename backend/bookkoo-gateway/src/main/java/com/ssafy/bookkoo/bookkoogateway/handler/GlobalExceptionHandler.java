@@ -1,11 +1,13 @@
 package com.ssafy.bookkoo.bookkoogateway.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.bookkoo.bookkoogateway.exception.TokenExpirationException;
 import com.ssafy.bookkoo.bookkoogateway.response.CustomErrorResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBufferFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -39,6 +41,8 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
 
         if (ex instanceof ResponseStatusException) {
             response.setStatusCode(((ResponseStatusException) ex).getStatusCode());
+        } else if (ex instanceof TokenExpirationException) {
+            response.setStatusCode(HttpStatus.UNAUTHORIZED);
         }
 
         return response
