@@ -9,10 +9,12 @@ import com.ssafy.bookkoo.libraryservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.ResponseLibraryDto;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import com.ssafy.bookkoo.libraryservice.service.LibraryService;
+import com.ssafy.bookkoo.libraryservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,10 +37,11 @@ public class LibraryController {
     @PostMapping
     @Operation(summary = "서재 생성", description = "서재 생성 API")
     public ResponseEntity<ResponseLibraryDto> createLibrary(
-        @RequestBody RequestCreateLibraryDto dto,
-        @RequestParam Long memberId
-        // 임시
+        @RequestHeader HttpHeaders headers,
+        @RequestBody RequestCreateLibraryDto dto
     ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+
         return ResponseEntity.ok()
                              .body(libraryService.addLibrary(dto, memberId));
     }
@@ -72,11 +76,12 @@ public class LibraryController {
     @PostMapping("/{libraryId}/books")
     @Operation(summary = "서재에 책 등록", description = "서재에 책 등록하는 API")
     public ResponseEntity<Boolean> addBookToLibrary(
+        @RequestHeader HttpHeaders headers,
         @PathVariable Long libraryId,
-        @Valid @RequestBody RequestLibraryBookMapperCreateDto libraryBookMapperDto,
-        @RequestParam Long memberId
-        // 임시
+        @Valid @RequestBody RequestLibraryBookMapperCreateDto libraryBookMapperDto
     ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+
         libraryService.addBookToLibrary(libraryId,
             libraryBookMapperDto, memberId);
         return ResponseEntity.ok()
@@ -86,9 +91,12 @@ public class LibraryController {
     @PutMapping("/{libraryId}/books")
     @Operation(summary = "서재 내 책 수정(순서 등)", description = "서재 내 책들을 수정하는 API")
     public ResponseEntity<Boolean> updateBookToLibrary(
-        @PathVariable Long libraryId, @RequestBody
-    List<RequestLibraryBookMapperUpdateDto> lbmDto, @RequestParam Long memberId
+        @RequestHeader HttpHeaders headers,
+        @PathVariable Long libraryId,
+        @RequestBody List<RequestLibraryBookMapperUpdateDto> lbmDto
     ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+
         return ResponseEntity.ok()
                              .body(libraryService.updateLibraryBookMappers(libraryId, lbmDto,
                                  memberId));
@@ -96,9 +104,9 @@ public class LibraryController {
 
     @GetMapping("/me/books/count")
     @Operation(summary = "사용자가 등록한 모든 책 개수", description = "사용자가 본인 서재에 등록한 모든 책 개수")
-    // 임시로 memberId 받는걸로
-    public ResponseEntity<Integer> countBooks(@RequestParam Long memberId) {
-        // 그런것들
+    public ResponseEntity<Integer> countBooks(@RequestHeader HttpHeaders headers) {
+        Long memberId = CommonUtil.getMemberId(headers);
+
         return ResponseEntity.ok()
                              .body(libraryService.countBooksInLibrary(memberId));
     }
@@ -106,9 +114,11 @@ public class LibraryController {
     @PostMapping("/me/books/search")
     @Operation(summary = "사용자가 등록한 책 반환", description = "사용자가 본인 서재에 등록한 책 대상 ")
     public ResponseEntity<List<ResponseBookDto>> getMyBooks(
-        @RequestParam Long memberId, @RequestBody
-    RequestSearchBookMultiFieldDto searchDto
+        @RequestHeader HttpHeaders headers,
+        @RequestBody RequestSearchBookMultiFieldDto searchDto
     ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+
         return ResponseEntity.ok()
                              .body(libraryService.getMyBooks(memberId, searchDto));
     }
