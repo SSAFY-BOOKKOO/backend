@@ -49,13 +49,14 @@ public class CurationServiceImpl implements CurationService {
                                     .build();
         curationRepository.save(curation);
         System.out.println(
-            memberServiceClient.getMemberInfo("1d5e49b7-e4f5-4953-910f-84376c53325c"));
-        //TODO 멤버 정보 받아오기 (돌면서 curation Send 생성)
-        for (long i = 2L; i <= 4L; i++) {
+            memberServiceClient.getMemberInfo("0aed3c2c-8e72-4a08-9c8b-1d5bd8eb2ac6"));
+        //TODO 멤버 ID Token에서 가져오기
+        List<Long> idList = memberServiceClient.getLetterRecipients(1L);
+        for (long id : idList) {
             CurationSend curationSend =
                 CurationSend.builder()
                             .curation(curation)
-                            .receiver(i)
+                            .receiver(id)
                             .build();
             curationSendRepository.save(curationSend);
         }
@@ -70,25 +71,24 @@ public class CurationServiceImpl implements CurationService {
      */
     @Transactional
     @Override
-    public ResponseCurationDetailDto getCurationDetail(Long id) {
-        Curation curation = curationRepository.findById(id)
+    public ResponseCurationDetailDto getCurationDetail(Long curationId, Long memberId) {
+        Curation curation = curationRepository.findById(curationId)
                                               .orElseThrow(
                                                   () -> new CurationNotFoundException(
-                                                      id));
+                                                      curationId));
         //TODO PassPort 에서 읽은사람 가져오기
         CurationSend curationSend = curationSendRepository.findCurationSendsByCurationAndReceiver(
-                                                              curation, 2L)
+                                                              curation, memberId)
                                                           .orElseThrow(
                                                               //TODO 자신이 받은 큐레이션이 아닐경우 권한 Exception 던져야함
                                                               () -> new CurationNotFoundException(
-                                                                  id));
+                                                                  curationId));
         //읽기 처리
         curationSend.read();
-        //TODO MemberService 에게 member 정보 받아오기 (작성자 닉네임)
-//        feignMemberService.getMemberInfo(curationSend.getCuration()
-//                                                     .getWriter());
-        ResponseMemberInfoDto writerInfo = memberServiceClient.getMemberInfo(
-            "1d5e49b7-e4f5-4953-910f-84376c53325c");
+        // 작성자 정보 가져오기
+        ResponseMemberInfoDto writerInfo = memberServiceClient.getMemberInfoById(
+            curationSend.getCuration()
+                        .getWriter());
         // BookService 에게 book 정보 받아오기 (책 커버 이미지, 제목, 작가, 줄거리)
         ResponseBookDto book = bookServiceClient.getBook(curation
             .getBook());
@@ -208,9 +208,8 @@ public class CurationServiceImpl implements CurationService {
     private List<ResponseCurationDto> curationToDto(List<Curation> curationList) {
         List<ResponseCurationDto> responseCurationDtoList = new ArrayList<>();
         for (Curation curation : curationList) {
-            //TODO MemberService 에게 member 정보 받아오기 (작성자 닉네임)
-            ResponseMemberInfoDto writerInfo = memberServiceClient.getMemberInfo(
-                "1d5e49b7-e4f5-4953-910f-84376c53325c");
+            ResponseMemberInfoDto writerInfo = memberServiceClient.getMemberInfoById(
+                curation.getWriter());
             // BookService 에게 book 정보 받아오기 (책 커버 이미지, 작가)
             ResponseBookDto book = bookServiceClient.getBook(curation
                 .getBook());

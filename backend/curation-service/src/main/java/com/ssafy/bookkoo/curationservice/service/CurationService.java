@@ -11,7 +11,7 @@ public interface CurationService {
     void createCuration(Long writer, RequestCreateCurationDto requestCreateCurationDto);
 
     // 큐레이션 디테일 가져오기 (읽기 처리 )
-    ResponseCurationDetailDto getCurationDetail(Long id);
+    ResponseCurationDetailDto getCurationDetail(Long curationId, Long memberId);
 
     // 내가 받은 큐레이션 가져오기
     List<ResponseCurationDto> getCurationList(Long receiver);
