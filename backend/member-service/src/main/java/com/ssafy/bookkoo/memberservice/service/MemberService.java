@@ -3,13 +3,16 @@ package com.ssafy.bookkoo.memberservice.service;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestAdditionalInfo;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestCertificationDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterMemberDto;
+import com.ssafy.bookkoo.memberservice.dto.response.ResponseLoginTokenDto;
+import com.ssafy.bookkoo.memberservice.entity.Member;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface MemberService {
 
-    String register(RequestRegisterDto requestRegisterDto);
+    ResponseLoginTokenDto register(RequestRegisterMemberDto requestRegisterMemberDto, MultipartFile profileImg);
 
-    String register(String email);
+    Member registerMember(RequestRegisterDto requestRegisterDto);
 
     boolean checkDuplEmail(String email);
 
@@ -21,6 +24,6 @@ public interface MemberService {
 
     boolean checkDuplNickName(String nickName);
 
-    String registerAdditionalInfo(RequestAdditionalInfo requestAdditionalInfo,
+    void registerAdditionalInfo(RequestAdditionalInfo requestAdditionalInfo,
         MultipartFile profileImg);
 }
