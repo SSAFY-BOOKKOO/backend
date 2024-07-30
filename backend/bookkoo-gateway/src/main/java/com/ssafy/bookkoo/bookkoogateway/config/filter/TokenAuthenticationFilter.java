@@ -43,7 +43,8 @@ public class TokenAuthenticationFilter implements GlobalFilter {
         "/docs", "/webjars", "/v3",
         //토큰 인증 스킵 URL
         "/members/register",
-        "/auth"
+        "/auth",
+        "/actuator"
     );
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
