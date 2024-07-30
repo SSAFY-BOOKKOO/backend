@@ -2,11 +2,13 @@ package com.ssafy.bookkoo.bookservice.handler;
 
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
 import com.ssafy.bookkoo.bookservice.exception.CategoryNotFoundException;
+import com.ssafy.bookkoo.bookservice.exception.InvalidAttributeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
 @RestControllerAdvice
 public class BookExceptionHandler {
@@ -46,5 +48,32 @@ public class BookExceptionHandler {
         String errorMessage = "Invalid params value.";
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body("{\"error\":\"" + errorMessage + "\"}");
+    }
+
+    /**
+     * 엔티티에 없는 필드에 대해 요청할 때 발생하는 예외
+     *
+     * @param e : execption
+     * @return string
+     */
+    @ExceptionHandler(InvalidAttributeException.class)
+    public ResponseEntity<String> handleInvalidAttributeException(InvalidAttributeException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * dto의 valid 옵션인 것에 에러 발생시
+     *
+     * @param ex      : exception
+     * @param request : 요청
+     * @return : string
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(
+        IllegalArgumentException ex,
+        WebRequest request
+    ) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

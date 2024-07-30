@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.bookservice.service.book;
 
 import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
+import com.ssafy.bookkoo.bookservice.dto.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.bookservice.dto.RequestSearchBooksFilterDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.dto.ResponseCheckBooksByIsbnDto;
@@ -136,6 +137,13 @@ public class BookServiceImpl implements BookService {
     public ResponseAladinSearchDetail searchBookDetailFromAladin(String isbn)
         throws IOException, InterruptedException, URISyntaxException {
         return aladinAPIHandler.searchBookDetail(isbn);
+    }
+
+    @Override
+    public List<ResponseBookDto> getBooksByCondition(RequestSearchBookMultiFieldDto filterDto) {
+        List<Book> books = bookRepository.findByConditions(filterDto);
+
+        return bookMapper.toResponseDtoList(books);
     }
 
     /**
