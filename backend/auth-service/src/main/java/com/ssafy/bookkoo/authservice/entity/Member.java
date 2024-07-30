@@ -1,10 +1,7 @@
 package com.ssafy.bookkoo.authservice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -36,16 +33,17 @@ public class Member implements OAuth2User {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "is_social")
-    private Boolean isSocial;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "socialType")
+    private SocialType socialType;
 
     @Builder
-    public Member(Long id, String memberId, String email, String password, Boolean isSocial) {
+    public Member(Long id, String memberId, String email, String password, SocialType socialType) {
         this.id = id;
         this.memberId = memberId;
         this.email = email;
         this.password = password;
-        this.isSocial = isSocial;
+        this.socialType = socialType;
     }
 
     @Override
