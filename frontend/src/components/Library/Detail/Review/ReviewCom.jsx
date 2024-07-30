@@ -46,7 +46,7 @@ const ReviewCom = ({ onBackClick, book }) => {
       <div className='absolute right-6 top-0 bottom-0 shadow-2xl w-1 bg-gray-500 shadow-2xl z-10'></div>
 
       <div className='flex flex-col items-center p-4'>
-        <h1 className='text-2xl font-bold m-4 pb-4 w-10/12 text-center'>
+        <h1 className='text-2xl font-bold m-4 pb-12 w-10/12 h-4 text-center'>
           {title}
         </h1>
         {/* 회색 영역 */}

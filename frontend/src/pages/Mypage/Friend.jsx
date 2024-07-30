@@ -50,7 +50,7 @@ const UserPage = () => {
   const [userData, setUserData] = useState(detailedUserData);
   const currentUser = userData.find(user => user.username === 'user1');
   const [view, setView] = useState('following');
-
+  // 내가 팔로우 하는 사람(팔로잉) 팔로잉 취소하기
   const handleUnfollow = username => {
     setUserData(prevData => {
       const newData = prevData.map(user => {
@@ -72,6 +72,7 @@ const UserPage = () => {
     });
   };
 
+  // 나를 팔로우 하는 사람(팔로워) 삭제하기
   const handleRemoveFollower = username => {
     setUserData(prevData => {
       const newData = prevData.map(user => {
@@ -94,18 +95,20 @@ const UserPage = () => {
   };
 
   return (
-    <div className='p-8'>
-      <h1 className='text-2xl font-bold mb-6'>{currentUser.username}'s Page</h1>
-      <div className='flex space-x-4 mb-6'>
+    <div className='px-8'>
+      <h1 className='text-center text-2xl font-bold mb-2'>
+        {currentUser.username}
+      </h1>
+      <div className='flex space-x-4 mb-2'>
         <button
           onClick={() => setView('following')}
-          className={`py-2 px-4 rounded ${view === 'following' ? 'border-b-2 border-black' : ''}`}
+          className={`py-2 px-4 mb-2 ${view === 'following' ? 'border-b-2 border-black' : ''}`}
         >
           팔로잉
         </button>
         <button
           onClick={() => setView('followers')}
-          className={`py-2 px-4 rounded ${view === 'followers' ? 'border-b-2 border-black' : ''}`}
+          className={`py-2 px-4 mb-2 ${view === 'followers' ? 'border-b-2 border-black' : ''}`}
         >
           팔로워
         </button>

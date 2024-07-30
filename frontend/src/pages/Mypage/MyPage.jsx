@@ -1,10 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import settingIcon from '@assets/icons/setting.png';
-import statisticsIcon from '@assets/icons/statistics.png';
-import friendsIcon from '@assets/icons/friends.png';
-import quoteIcon from '@assets/icons/quote.png';
-import myWritingIcon from '@assets/icons/my_writing.png';
+// import statisticsIcon from '@assets/icons/statistics.png';
+import { FaCalendarDays } from 'react-icons/fa6';
+// import friendsIcon from '@assets/icons/friends.png';
+import { MdPeopleAlt } from 'react-icons/md';
+// import quoteIcon from '@assets/icons/quote.png';
+import { BsChatSquareQuoteFill } from 'react-icons/bs';
+// import myWritingIcon from '@assets/icons/my_writing.png';
+import { FaClipboardList } from 'react-icons/fa6';
 import profile_img_sample from '@assets/images/profile_img_sample.png';
 
 const MyPage = () => {
@@ -16,13 +20,13 @@ const MyPage = () => {
   };
 
   return (
-    <div className='p-4 min-h-screen'>
+    <div className='p-4 min-h-[43rem]'>
       <div className='flex items-center justify-between'>
         <div className='flex items-center space-x-8'>
           <img
             src={member.profile_img_url}
             alt='profile'
-            className='w-32 h-32 rounded-full'
+            className='w-1/2 h-32 rounded-full'
           />
           <div>
             <h2 className='text-2xl font-bold'>{member.nickname}</h2>
@@ -43,32 +47,32 @@ const MyPage = () => {
         <div className='flex flex-col items-center'>
           <Link to='/mypage/statistics'>
             <button className='p-4 rounded-full'>
-              <img src={statisticsIcon} alt='statistics' className='w-8 h-8' />
+              <FaCalendarDays className='w-8 h-8' />
             </button>
           </Link>
-          <p className='mt-2'>통계</p>
+          <p className='text-lg'>통계</p>
         </div>
         <div className='flex flex-col items-center'>
           <Link to='/mypage/quote'>
             <button className='p-4 rounded-full'>
-              <img src={quoteIcon} alt='setting' className='w-8 h-8' />
+              <BsChatSquareQuoteFill className='w-8 h-8' />
             </button>
           </Link>
-          <p className='mt-2'>내 글귀</p>
+          <p className='text-lg'>내 글귀</p>
         </div>
         <div className='flex flex-col items-center'>
           <button className='p-4 rounded-full'>
-            <img src={myWritingIcon} alt='setting' className='w-8 h-8' />
+            <FaClipboardList className='w-8 h-8' />
           </button>
-          <p className='mt-2'>내가 쓴 글</p>
+          <p className='text-lg'>내가 쓴 글</p>
         </div>
         <div className='flex flex-col items-center'>
           <Link to='/mypage/friend'>
             <button className='p-4 rounded-full'>
-              <img src={friendsIcon} alt='friend' className='w-8 h-8' />
+              <MdPeopleAlt className='w-8 h-8' />
             </button>
           </Link>
-          <p className='mt-2'>친구</p>
+          <p className='text-lg'>친구</p>
         </div>
       </div>
     </div>
