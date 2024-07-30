@@ -1,10 +1,12 @@
 package com.ssafy.bookkoo.memberservice.controller;
 
 import com.ssafy.bookkoo.memberservice.dto.request.RequestCertificationDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestLoginDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterMemberDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseLoginTokenDto;
 import com.ssafy.bookkoo.memberservice.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,14 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.Duration;
 
 @Slf4j
 @RestController
@@ -37,16 +35,26 @@ public class MemberController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(description = "회원 가입을 통해 새로운 유저를 등록합니다.", summary = "회원가입")
-    public ResponseEntity<HttpStatus> register(
+    public ResponseEntity<ResponseLoginTokenDto> register(
         @Valid @RequestPart("requestRegisterMemberDto") RequestRegisterMemberDto requestRegisterMemberDto,
         @RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
         HttpServletResponse response
     ) {
-        //TODO: WebClient를 사용해서 Response에 auth로 부터 쿠키를 넣은 상태로 반환
-        ResponseLoginTokenDto tokenDto = memberService.register(requestRegisterMemberDto,
-            profileImg);
-        return ResponseEntity.ok()
-                             .build();
+        memberService.register(requestRegisterMemberDto, profileImg);
+        RequestLoginDto loginDto = RequestLoginDto.builder()
+                                                  .email(requestRegisterMemberDto.email())
+                                                  .password(requestRegisterMemberDto.password())
+                                                  .build();
+
+        ResponseLoginTokenDto tokenDto = memberService.registerLogin(loginDto);
+        Cookie cookie = new Cookie("refresh_token", tokenDto.refreshToken());
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge((int) Duration.ofDays(7)
+                                       .getSeconds());
+        response.addCookie(cookie);
+        return ResponseEntity.ok(tokenDto);
     }
 
     @PostMapping("/validation")
