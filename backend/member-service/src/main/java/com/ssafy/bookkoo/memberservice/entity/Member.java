@@ -3,6 +3,8 @@ package com.ssafy.bookkoo.memberservice.entity;
 import com.ssafy.bookkoo.memberservice.global.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,16 +34,17 @@ public class Member extends BaseEntity {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "is_social")
-    private Boolean isSocial;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "social_type")
+    private SocialType socialType;
 
 
     @Builder
-    public Member(Long id, String memberId, String email, String password, Boolean isSocial) {
-        this.id = id;
+
+    public Member(String memberId, String email, String password, SocialType socialType) {
         this.memberId = memberId;
         this.email = email;
         this.password = password;
-        this.isSocial = isSocial;
+        this.socialType = socialType;
     }
 }
