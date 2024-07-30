@@ -10,7 +10,12 @@ public record ResponseBookDto(
     String publisher,
     String summary,
     String title,
-    String isbn
+    String isbn,
+    Integer itemPage,
+    Integer sizeDepth,
+    Integer sizeHeight,
+    Integer sizeWidth,
+    CategoryDto category
 ) {
 
 }
