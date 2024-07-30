@@ -1,5 +1,6 @@
 package com.ssafy.bookkoo.libraryservice.repository;
 
+import com.ssafy.bookkoo.libraryservice.entity.LibraryBookMapper;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import java.util.List;
 
@@ -9,7 +10,7 @@ public interface LibraryBookMapperCustomRepository {
 
     List<Long> findBookIdsByLibraryId(Long libraryId);
 
-    List<Long> findBookIdsByLibraryIdWithFilter(
+    List<LibraryBookMapper> findByLibraryIdWithFilter(
         Long libraryId,
         Status filter
     );
