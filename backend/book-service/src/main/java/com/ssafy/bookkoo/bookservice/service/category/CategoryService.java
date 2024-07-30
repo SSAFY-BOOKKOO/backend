@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.bookservice.service.category;
 
 import com.ssafy.bookkoo.bookservice.dto.CategoryDto;
+import com.ssafy.bookkoo.bookservice.dto.CategorySearchParam;
 import java.util.List;
 
 public interface CategoryService {
@@ -16,5 +17,5 @@ public interface CategoryService {
         String name
     );
 
-    List<CategoryDto> getCategoriesById(List<Integer> ids);
+    List<CategoryDto> getCategoriesByFilter(CategorySearchParam params);
 }
