@@ -73,6 +73,7 @@ public class MemberInfoController {
     public ResponseEntity<List<Long>> getLetterRecipients(
         @RequestParam("memberId") Long memberId
     ) {
+        //TODO: 자기 자신은 제외하도록 로직 추가
         List<ResponseFollowShipDto> followers = followShipService.getFollowers(memberId);
         List<Long> followerIds = followers.stream()
                                           .map(ResponseFollowShipDto::memberId)
