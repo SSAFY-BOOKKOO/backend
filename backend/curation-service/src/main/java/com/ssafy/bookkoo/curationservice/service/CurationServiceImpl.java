@@ -48,10 +48,8 @@ public class CurationServiceImpl implements CurationService {
                                     .content(createCurationDto.content())
                                     .build();
         curationRepository.save(curation);
-        System.out.println(
-            memberServiceClient.getMemberInfo("0aed3c2c-8e72-4a08-9c8b-1d5bd8eb2ac6"));
-        //TODO 멤버 ID Token에서 가져오기
-        List<Long> idList = memberServiceClient.getLetterRecipients(1L);
+        // 멤버 ID Token에서 가져오기
+        List<Long> idList = memberServiceClient.getLetterRecipients(writer);
         for (long id : idList) {
             CurationSend curationSend =
                 CurationSend.builder()
@@ -65,7 +63,8 @@ public class CurationServiceImpl implements CurationService {
     /**
      * 큐레이션 상세정보를 받아온다.
      *
-     * @param id CurationSend id
+     * @param curationId Curation id
+     * @param memberId   member id
      * @return Curation 상세정보(String coverImgUrl, String curationTitle, String writer, String
      * content, String createdAt, String bookTitle, String author, String summary)
      */
@@ -76,11 +75,11 @@ public class CurationServiceImpl implements CurationService {
                                               .orElseThrow(
                                                   () -> new CurationNotFoundException(
                                                       curationId));
-        //TODO PassPort 에서 읽은사람 가져오기
+        // PassPort 에서 읽은사람 가져오기
         CurationSend curationSend = curationSendRepository.findCurationSendsByCurationAndReceiver(
                                                               curation, memberId)
                                                           .orElseThrow(
-                                                              //TODO 자신이 받은 큐레이션이 아닐경우 권한 Exception 던져야함
+                                                              // 자신이 받은 큐레이션이 아닐경우 권한 Exception 던져야함
                                                               () -> new CurationNotFoundException(
                                                                   curationId));
         //읽기 처리
@@ -142,7 +141,7 @@ public class CurationServiceImpl implements CurationService {
         CurationSend curationSend = curationSendRepository.findCurationSendsByCurationAndReceiver(
                                                               curation, receiver)
                                                           .orElseThrow(
-                                                              //TODO 자신이 받은 큐레이션이 아닐경우 권한 Exception 던져야함
+                                                              // 자신이 받은 큐레이션이 아닐경우 권한 Exception 던져야함
                                                               () -> new CurationNotFoundException(
                                                                   id));
         curationSend.store();
@@ -164,7 +163,7 @@ public class CurationServiceImpl implements CurationService {
         CurationSend curationSend = curationSendRepository.findCurationSendsByCurationAndReceiver(
                                                               curation, receiver)
                                                           .orElseThrow(
-                                                              //TODO 자신이 받은 큐레이션이 아닐경우 권한 Exception 던져야함
+                                                              // 자신이 받은 큐레이션이 아닐경우 권한 Exception 던져야함
                                                               () -> new CurationNotFoundException(
                                                                   id));
         curationSendRepository.deleteById(curationSend.getId());
