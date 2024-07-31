@@ -7,16 +7,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ResponseAladinSearchDetail {
+public class OriginAladinBookItem {
 
     private String author;
     private String isbn;
-    private String summary;
+    private String description;
     private String title;
-    private String publishedAt;
-    private String coverImgUrl;
+    private String pubDate;
+    private String cover;
     private String publisher;
     private Integer categoryId;
-
-    private AladinSubInfo subInfo;
 }

@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.bookservice.util.AladinAPI;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.bookkoo.bookservice.mapper.BookMapper;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Component;
 public class AladinAPIHandler {
 
     final private AladinCategoryService aladinCategoryService;
+
+    final private BookMapper bookMapper;
     private static String apiKey;
 
     @Value("ttbwintiger981754003")
@@ -55,8 +58,9 @@ public class AladinAPIHandler {
 
         if (response.statusCode() == 200) {
             ObjectMapper objectMapper = new ObjectMapper();
-            ResponseAladinAPI apiResponse = objectMapper.readValue(response.body(),
-                ResponseAladinAPI.class);
+            ResponseOriginAladinAPI originResponse = objectMapper.readValue(response.body(),
+                ResponseOriginAladinAPI.class);
+            ResponseAladinAPI apiResponse = bookMapper.toResponseAladinAPI(originResponse);
             // 카테고리 매핑 적용
             aladinCategoryService.processApiResponse(apiResponse);
 
@@ -85,8 +89,10 @@ public class AladinAPIHandler {
         if (response.statusCode() == 200) {
             ObjectMapper objectMapper = new ObjectMapper();
             // response의 item 부분만 빼ㅐ네서 그거의 첫번쨰 아이템을 ResponseAladinSearchDetial로 변환
-            ResponseAladinDetail apiResponse = objectMapper.readValue(response.body(),
-                ResponseAladinDetail.class);
+            ResponseOriginAladinDetail originResponse = objectMapper.readValue(response.body(),
+                ResponseOriginAladinDetail.class);
+
+            ResponseAladinDetail apiResponse = bookMapper.toResopnseAladinDetail(originResponse);
 
             if (!apiResponse.getItem()
                             .isEmpty()) {
