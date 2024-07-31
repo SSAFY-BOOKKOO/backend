@@ -42,7 +42,6 @@ const applyResponseInterceptor = instance => {
     // 2xx 범위에서 응답 데이터가 있는 작업
     response => response,
     async error => {
-      console.log(error.config._retry);
       // 2xx 외의 범위 응답 오류가 있는 작업
       // 토큰 만료
       if (error.response && error.response?.status === 401) {
