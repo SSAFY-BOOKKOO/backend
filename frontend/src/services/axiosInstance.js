@@ -23,13 +23,15 @@ const authAxiosInstance = axios.create({
 // 요청 인터셉터
 authAxiosInstance.interceptors.request.use(
   config => {
-    // const token = localStorage.getItem('token');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    // 요청이 전달되기 전 작업
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
     return config;
   },
   error => {
+    // 요청 오류가 있는 작업
     return Promise.reject(error);
   }
 );
@@ -37,12 +39,22 @@ authAxiosInstance.interceptors.request.use(
 // 응답 인터셉터
 const applyResponseInterceptor = instance => {
   instance.interceptors.response.use(
+    // 2xx 범위에서 응답 데이터가 있는 작업
     response => response,
-    error => {
-      // if (error.response && error.response.status === 401) {
-      //   localStorage.removeItem('token');
-      //   window.location.href = '/login';
-      // }
+    async error => {
+      // 2xx 외의 범위 응답 오류가 있는 작업
+      // 토큰 만료
+      if (error.response && error.response?.status === 401) {
+        localStorage.removeItem('accessToken');
+        window.location.href = '/login';
+
+        const response = await axiosInstance.post('/auth/token');
+        const { accessToken } = response.data;
+
+        localStorage.setItem('accessToken', accessToken);
+        axiosInstance.defaults.headers.common['Authorization'] =
+          `Bearer ${accessToken}`;
+      }
       return Promise.reject(error);
     }
   );

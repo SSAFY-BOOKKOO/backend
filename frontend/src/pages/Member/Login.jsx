@@ -5,6 +5,7 @@ import Button from '@components/@common/Button';
 import useInput from '@hooks/useInput';
 import { useNavigate } from 'react-router-dom';
 import SocialLoginButton from '@components/Login/SocialLoginButton';
+import { postLogin } from '@services/Member';
 
 const Login = () => {
   const {
@@ -39,13 +40,23 @@ const Login = () => {
     }
   }, [loginInfo]);
 
-  // 로그인 API
-  const handleLogin = e => {
+  const handleLogin = async e => {
     e.preventDefault();
 
-    // 로그인 연동 작성
-    if (errorMessage === '' && !buttonDisabled) {
-      // 로그인
+    if (errorMessage !== '' && buttonDisabled) return;
+
+    try {
+      const data = await postLogin(loginInfo);
+
+      // 로그인 성공
+      localStorage.setItem('accessToken', data.accessToken);
+
+      navigate('/library');
+
+      // 페이지 이동 하기
+    } catch (error) {
+      // 에러 처리
+      setErrorMessage('아이디 혹은 비밀번호가 일치하지 않습니다.');
     }
   };
 
@@ -66,6 +77,7 @@ const Login = () => {
               <Input
                 labelText='비밀번호'
                 id='password'
+                type='password'
                 value={loginInfo.password}
                 onChange={handleChange}
               />
