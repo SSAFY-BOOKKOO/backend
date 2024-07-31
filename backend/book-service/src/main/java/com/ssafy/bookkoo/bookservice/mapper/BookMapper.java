@@ -25,7 +25,7 @@ public interface BookMapper {
     @Mapping(source = "coverImgUrl", target = "coverImgUrl")
     @Mapping(source = "author", target = "author")
     @Mapping(source = "publisher", target = "publisher")
-    @Mapping(source = "description", target = "summary")
+    @Mapping(source = "summary", target = "summary")
     @Mapping(source = "title", target = "title")
     @Mapping(source = "isbn", target = "isbn")
     @Mapping(source = "subInfo.itemPage", target = "itemPage")
@@ -43,7 +43,8 @@ public interface BookMapper {
         @Mapping(source = "cover", target = "coverImgUrl"),
         @Mapping(source = "author", target = "author"),
         @Mapping(source = "publisher", target = "publisher"),
-        @Mapping(source = "description", target = "description"),
+        @Mapping(source = "description", target = "summary"),
+        @Mapping(source = "pubDate", target = "publishedAt"),
         @Mapping(source = "title", target = "title"),
         @Mapping(source = "isbn", target = "isbn")
     })
@@ -60,6 +61,8 @@ public interface BookMapper {
 
 
     @Mapping(source = "cover", target = "coverImgUrl")
+    @Mapping(source = "pubDate", target = "publishedAt")
+    @Mapping(source = "description", target = "summary")
     ResponseAladinSearchDetail toResponseSearchDetail(ResponseOriginAladinSearchDetail dto);
 
     ResponseAladinDetail toResopnseAladinDetail(ResponseOriginAladinDetail dto);
