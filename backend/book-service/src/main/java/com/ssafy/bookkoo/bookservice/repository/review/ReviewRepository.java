@@ -1,4 +1,4 @@
-package com.ssafy.bookkoo.bookservice.repository;
+package com.ssafy.bookkoo.bookservice.repository.review;
 
 import com.ssafy.bookkoo.bookservice.entity.Review;
 import java.util.List;

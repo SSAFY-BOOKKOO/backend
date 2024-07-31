@@ -1,16 +1,16 @@
 package com.ssafy.bookkoo.bookservice.service.review;
 
-import com.ssafy.bookkoo.bookservice.dto.RequestReviewDto;
-import com.ssafy.bookkoo.bookservice.dto.ResponseReviewDto;
+import com.ssafy.bookkoo.bookservice.dto.review.RequestReviewDto;
+import com.ssafy.bookkoo.bookservice.dto.review.ResponseReviewDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import com.ssafy.bookkoo.bookservice.entity.Review;
 import com.ssafy.bookkoo.bookservice.entity.ReviewLike;
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
 import com.ssafy.bookkoo.bookservice.exception.ReviewNotFoundException;
 import com.ssafy.bookkoo.bookservice.mapper.ReviewMapper;
-import com.ssafy.bookkoo.bookservice.repository.BookRepository;
-import com.ssafy.bookkoo.bookservice.repository.ReviewLikeRepository;
-import com.ssafy.bookkoo.bookservice.repository.ReviewRepository;
+import com.ssafy.bookkoo.bookservice.repository.book.BookRepository;
+import com.ssafy.bookkoo.bookservice.repository.review.ReviewLikeRepository;
+import com.ssafy.bookkoo.bookservice.repository.review.ReviewRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

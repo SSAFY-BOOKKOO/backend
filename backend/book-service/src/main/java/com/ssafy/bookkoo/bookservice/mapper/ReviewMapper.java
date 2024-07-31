@@ -1,7 +1,7 @@
 package com.ssafy.bookkoo.bookservice.mapper;
 
-import com.ssafy.bookkoo.bookservice.dto.RequestReviewDto;
-import com.ssafy.bookkoo.bookservice.dto.ResponseReviewDto;
+import com.ssafy.bookkoo.bookservice.dto.review.RequestReviewDto;
+import com.ssafy.bookkoo.bookservice.dto.review.ResponseReviewDto;
 import com.ssafy.bookkoo.bookservice.entity.Review;
 import java.util.List;
 import org.mapstruct.Mapper;

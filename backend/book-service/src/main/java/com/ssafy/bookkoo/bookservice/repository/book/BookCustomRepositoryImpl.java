@@ -1,12 +1,12 @@
-package com.ssafy.bookkoo.bookservice.repository;
+package com.ssafy.bookkoo.bookservice.repository.book;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.bookkoo.bookservice.dto.RequestSearchBookMultiFieldDto;
-import com.ssafy.bookkoo.bookservice.dto.RequestSearchBooksFilterDto;
-import com.ssafy.bookkoo.bookservice.dto.SearchBookConditionDto;
+import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBookMultiFieldDto;
+import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBooksFilterDto;
+import com.ssafy.bookkoo.bookservice.dto.book.SearchBookConditionDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import com.ssafy.bookkoo.bookservice.entity.QBook;
 import com.ssafy.bookkoo.bookservice.exception.InvalidAttributeException;

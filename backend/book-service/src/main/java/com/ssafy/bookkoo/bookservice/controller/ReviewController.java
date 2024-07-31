@@ -1,7 +1,7 @@
 package com.ssafy.bookkoo.bookservice.controller;
 
-import com.ssafy.bookkoo.bookservice.dto.RequestReviewDto;
-import com.ssafy.bookkoo.bookservice.dto.ResponseReviewDto;
+import com.ssafy.bookkoo.bookservice.dto.review.RequestReviewDto;
+import com.ssafy.bookkoo.bookservice.dto.review.ResponseReviewDto;
 import com.ssafy.bookkoo.bookservice.service.review.ReviewService;
 import com.ssafy.bookkoo.bookservice.util.CommonUtil;
 import java.util.List;

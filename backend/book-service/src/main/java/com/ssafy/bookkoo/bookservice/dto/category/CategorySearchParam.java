@@ -1,4 +1,4 @@
-package com.ssafy.bookkoo.bookservice.dto;
+package com.ssafy.bookkoo.bookservice.dto.category;
 
 import java.util.List;
 import lombok.Builder;
