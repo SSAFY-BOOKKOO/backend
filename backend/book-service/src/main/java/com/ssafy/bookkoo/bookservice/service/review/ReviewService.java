@@ -12,5 +12,5 @@ public interface ReviewService {
 
     ResponseReviewDto addReview(Long memberId, Long bookId, RequestReviewDto requestReviewDto);
 
-    Boolean likeReview(Long memberId, Long bookId, Long reviewId);
+    Boolean toggleLikeReview(Long memberId, Long bookId, Long reviewId);
 }

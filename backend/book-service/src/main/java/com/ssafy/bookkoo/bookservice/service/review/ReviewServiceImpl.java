@@ -5,6 +5,7 @@ import com.ssafy.bookkoo.bookservice.dto.review.ResponseReviewDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import com.ssafy.bookkoo.bookservice.entity.Review;
 import com.ssafy.bookkoo.bookservice.entity.ReviewLike;
+import com.ssafy.bookkoo.bookservice.entity.ReviewMemberId;
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
 import com.ssafy.bookkoo.bookservice.exception.ReviewNotFoundException;
 import com.ssafy.bookkoo.bookservice.mapper.ReviewMapper;
@@ -12,6 +13,7 @@ import com.ssafy.bookkoo.bookservice.repository.book.BookRepository;
 import com.ssafy.bookkoo.bookservice.repository.review.ReviewLikeRepository;
 import com.ssafy.bookkoo.bookservice.repository.review.ReviewRepository;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +22,6 @@ import org.springframework.stereotype.Service;
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final ReviewLikeRepository likeRepository;
 
     private final ReviewMapper reviewMapper;
     private final BookRepository bookRepository;
@@ -58,15 +59,27 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Boolean likeReview(Long memberId, Long bookId, Long reviewId) {
+    public Boolean toggleLikeReview(Long memberId, Long bookId, Long reviewId) {
         Review review = findReviewByIdWithException(reviewId);
 
-        ReviewLike reviewLike = ReviewLike.builder()
-                                          .memberId(memberId)
-                                          .review(review)
-                                          .build();
-        reviewLikeRepository.save(reviewLike);
-        return true;
+        ReviewMemberId reviewMemberId = new ReviewMemberId(reviewId, memberId);
+        // 리뷰 좋아요가 이미 있는지 확인
+        Optional<ReviewLike> existingReviewLike = reviewLikeRepository.findById(
+            reviewMemberId);
+
+        if (existingReviewLike.isPresent()) {
+            // 이미 존재하면 삭제 (좋아요 취소)
+            reviewLikeRepository.delete(existingReviewLike.get());
+            return false; // 좋아요 취소됨
+        } else {
+            // 존재하지 않으면 저장 (좋아요 추가)
+            ReviewLike reviewLike = ReviewLike.builder()
+                                              .memberId(memberId)
+                                              .review(review)
+                                              .build();
+            reviewLikeRepository.save(reviewLike);
+            return true;
+        }
     }
 
     private Review findReviewByIdWithException(Long reviewId) {
