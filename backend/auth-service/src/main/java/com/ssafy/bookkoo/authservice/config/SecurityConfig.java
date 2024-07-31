@@ -39,7 +39,7 @@ public class SecurityConfig {
                     "/auth-service/**",
                     "/api-docs/**",
                     "/auth/login/**",
-                    "/auth/token",
+                    "/auth/token/**",
                     "/css/**",
                     "/images/**",
                     "/js/**",
