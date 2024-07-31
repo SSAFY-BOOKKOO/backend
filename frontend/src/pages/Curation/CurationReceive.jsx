@@ -7,6 +7,8 @@ import CurationTab from '@components/Curation/CurationTab';
 import { BsBookmarkStar, BsBookmarkStarFill } from 'react-icons/bs';
 import { BsTrash3 } from 'react-icons/bs';
 import { AiFillAlert } from 'react-icons/ai';
+import { IoIosArrowBack } from 'react-icons/io';
+import { IoIosArrowForward } from 'react-icons/io';
 // 연동
 import axios from 'axios';
 import { axiosInstance, authAxiosInstance } from '../../services/axiosInstance';
@@ -44,12 +46,18 @@ import { axiosInstance, authAxiosInstance } from '../../services/axiosInstance';
 const CurationReceive = () => {
   const navigate = useNavigate();
   const [letters, setLetters] = useState([]);
+  const [page, setPage] = useState(0); // 페이지 상태 추가
 
+  // /////목록 조회//////
   useEffect(
     () => {
       authAxiosInstance
         // axios로 get요청 보내기
-        .get('/curations')
+        .get('/curations', {
+          params: {
+            page: page,
+          },
+        })
         // 요청 성공하면 받아와서 letters에 할당
         .then(res => {
           setLetters(res.data);
@@ -62,12 +70,14 @@ const CurationReceive = () => {
         });
     },
     // 화면에 처음 렌더링될 때만 실행
-    []
+    [page]
   );
+
+  // ////보관함/////
+
   // 보관함 관리 위한 useState
   const [storedLetters, setStoredLetters] = useState([]);
   const [slideId, setSlideId] = useState(null);
-
   const navigateToStore = () => {
     navigate('/curation/store', { state: { storedLetters } });
   };
@@ -83,8 +93,17 @@ const CurationReceive = () => {
     // 등록 안 되어 있으면 등록(추가)
     else {
       setStoredLetters([...storedLetters, letter.id]);
-      // navigateToStore();
-      // navigate('/curation/store');
+      // 여기서 axios post 요청
+      authAxiosInstance
+        .post(`/curations/store/${letter.curationId}`, {
+          curationId: letter.curationId,
+        })
+        .then(res => {
+          console.log('Letter stored successfully:', res);
+        })
+        .catch(err => {
+          console.log('error:', err);
+        });
     }
   };
 
@@ -113,7 +132,7 @@ const CurationReceive = () => {
         받은 레터 수: {letters.length}
       </p>
       <div className='flex-1 overflow-y-auto px-4'>
-        {/* map함수로 순회하면서 레터 보기 */}
+        {/* 레터 보기 */}
         {letters.map(letter => (
           <Swiper
             key={letter.id}
@@ -130,7 +149,7 @@ const CurationReceive = () => {
                 onClick={() => handleLetterClick(letter)}
               >
                 <img
-                  src={letter.image}
+                  src={letter.coverImgUrl}
                   alt='Letter'
                   className='w-16 h-24 mr-4 rounded-lg'
                 />
@@ -154,7 +173,7 @@ const CurationReceive = () => {
                   />
                 )}
                 <p className='absolute bottom-2 right-4 text-sm text-gray-600'>
-                  FROM. {letter.from}
+                  FROM. {letter.writer}
                 </p>
               </div>
             </SwiperSlide>
@@ -172,6 +191,17 @@ const CurationReceive = () => {
             </SwiperSlide>
           </Swiper>
         ))}
+      </div>
+
+      <div className='flex justify-center space-x-4'>
+        <IoIosArrowBack
+          onClick={() => setPage(prevPage => Math.max(prevPage - 1, 1))}
+          className='cursor-pointer text-xl'
+        />
+        <IoIosArrowForward
+          onClick={() => setPage(prevPage => prevPage + 1)}
+          className='cursor-pointer text-xl'
+        />
       </div>
     </div>
   );
