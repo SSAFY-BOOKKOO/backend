@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CurationRepository extends JpaRepository<Curation, Long> {
 
-    List<Curation> findCurationsByWriter(Long writer);
+    List<Curation> findCurationsByWriterOrderByCreatedAtDesc(Long writer);
 }

@@ -14,7 +14,8 @@ public interface CurationSendRepository extends JpaRepository<CurationSend, Long
     Optional<CurationSend> findCurationSendsByCurationAndReceiver(Curation curation,
         Long receiver);
 
-    List<CurationSend> findCurationSendsByIsStoredAndReceiver(Boolean isStored, Long receiver);
+    List<CurationSend> findCurationSendsByIsStoredAndReceiverOrderByCreatedAtDesc(Boolean isStored,
+        Long receiver);
 
     List<CurationSend> findByCuration(Curation curation);
 
