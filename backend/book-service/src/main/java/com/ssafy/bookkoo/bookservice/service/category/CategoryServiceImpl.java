@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.bookservice.service.category;
 
 import com.ssafy.bookkoo.bookservice.dto.CategoryDto;
+import com.ssafy.bookkoo.bookservice.dto.CategorySearchParam;
 import com.ssafy.bookkoo.bookservice.entity.Category;
 import com.ssafy.bookkoo.bookservice.exception.CategoryNotFoundException;
 import com.ssafy.bookkoo.bookservice.mapper.CategoryMapper;
@@ -59,5 +60,10 @@ public class CategoryServiceImpl implements CategoryService {
 
         categoryRepository.save(category);
         return categoryMapper.toDto(category);
+    }
+
+    @Override
+    public List<CategoryDto> getCategoriesByFilter(CategorySearchParam params) {
+        return categoryMapper.toResponseDtoList(categoryRepository.findByFilter(params));
     }
 }
