@@ -2,6 +2,7 @@ package com.ssafy.bookkoo.bookservice.controller;
 
 import com.ssafy.bookkoo.bookservice.dto.review.RequestReviewDto;
 import com.ssafy.bookkoo.bookservice.dto.review.ResponseReviewDto;
+import com.ssafy.bookkoo.bookservice.dto.review.ResponseSurfingReviewDto;
 import com.ssafy.bookkoo.bookservice.service.review.ReviewService;
 import com.ssafy.bookkoo.bookservice.util.CommonUtil;
 import java.util.List;
@@ -61,5 +62,15 @@ public class ReviewController {
         Long memberId = CommonUtil.getMemberId(headers);
         return ResponseEntity.ok()
                              .body(reviewService.toggleLikeReview(memberId, bookId, reviewId));
+    }
+
+    @GetMapping("/{bookId}/reviews/surfing")
+    public ResponseEntity<List<ResponseSurfingReviewDto>> getSurfingReviewsByBookId(
+        @RequestHeader HttpHeaders headers,
+        @PathVariable Long bookId
+    ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+        return ResponseEntity.ok()
+                             .body(reviewService.getRandomReviewExceptMine(memberId, bookId));
     }
 }

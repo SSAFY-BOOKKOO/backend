@@ -1,7 +1,11 @@
 package com.ssafy.bookkoo.bookservice.service.review;
 
+import com.ssafy.bookkoo.bookservice.client.MemberServiceClient;
+import com.ssafy.bookkoo.bookservice.dto.other.ResponseMemberInfoDto;
+import com.ssafy.bookkoo.bookservice.dto.other.ResponseSurfingMemberInfoDto;
 import com.ssafy.bookkoo.bookservice.dto.review.RequestReviewDto;
 import com.ssafy.bookkoo.bookservice.dto.review.ResponseReviewDto;
+import com.ssafy.bookkoo.bookservice.dto.review.ResponseSurfingReviewDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import com.ssafy.bookkoo.bookservice.entity.Review;
 import com.ssafy.bookkoo.bookservice.entity.ReviewLike;
@@ -12,8 +16,10 @@ import com.ssafy.bookkoo.bookservice.mapper.ReviewMapper;
 import com.ssafy.bookkoo.bookservice.repository.book.BookRepository;
 import com.ssafy.bookkoo.bookservice.repository.review.ReviewLikeRepository;
 import com.ssafy.bookkoo.bookservice.repository.review.ReviewRepository;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +28,12 @@ import org.springframework.stereotype.Service;
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
-
-    private final ReviewMapper reviewMapper;
     private final BookRepository bookRepository;
     private final ReviewLikeRepository reviewLikeRepository;
+
+    private final ReviewMapper reviewMapper;
+
+    private final MemberServiceClient memberServiceClient;
 
 
     @Override
@@ -80,6 +88,54 @@ public class ReviewServiceImpl implements ReviewService {
             reviewLikeRepository.save(reviewLike);
             return true;
         }
+    }
+
+    @Override
+    public List<ResponseSurfingReviewDto> getRandomReviewExceptMine(Long memberId, Long bookId) {
+        // 1. 해당 책에 대한 리뷰 목록 불러오기(내가 쓴 리뷰 제외)
+        List<Review> reviewsExceptMine = reviewRepository.findByBookIdExceptMine(memberId, bookId);
+
+        // 2. 리뷰가 2개 미만인 경우 모든 리뷰 반환
+        if (reviewsExceptMine.size() <= 2) {
+            return reviewsExceptMine.stream()
+                                    .map(this::mapToSurfingReviewDto)
+                                    .collect(Collectors.toList());
+        }
+
+        // 3. 리뷰가 2개 이상일 경우 무작위 두개 선택 후 반환
+        Collections.shuffle(reviewsExceptMine);
+        List<Review> randomReviews = reviewsExceptMine.subList(0, 2);
+
+        return randomReviews.stream()
+                            .map(this::mapToSurfingReviewDto)
+                            .collect(Collectors.toList());
+    }
+
+    private ResponseSurfingReviewDto mapToSurfingReviewDto(Review review) {
+        // 작성자 정보 조회
+        ResponseMemberInfoDto memberInfo = memberServiceClient.getMemberInfoById(
+            review.getMemberId());
+
+        // 작성자 정보를 포함한 DTO로 변환
+        ResponseSurfingMemberInfoDto surfingMemberInfo = ResponseSurfingMemberInfoDto.builder()
+                                                                                     .nickName(
+                                                                                         memberInfo.nickName())
+                                                                                     .profilImgUrl(
+                                                                                         memberInfo.profilImgUrl())
+                                                                                     .build();
+
+        return ResponseSurfingReviewDto.builder()
+                                       .id(review.getId())
+                                       .bookId(review.getBook()
+                                                     .getId())
+                                       .memberId(review.getMemberId())
+                                       .content(review.getContent())
+                                       .rating(review.getRating())
+                                       .likeCount(review.getLikes()
+                                                        .size())
+                                       .member(surfingMemberInfo)
+                                       .build()
+            ;
     }
 
     private Review findReviewByIdWithException(Long reviewId) {
