@@ -3,12 +3,14 @@ package com.ssafy.bookkoo.authservice.service.Impl;
 import com.ssafy.bookkoo.authservice.dto.RequestLoginDto;
 import com.ssafy.bookkoo.authservice.dto.ResponseLoginTokenDto;
 import com.ssafy.bookkoo.authservice.entity.Member;
+import com.ssafy.bookkoo.authservice.entity.SocialType;
 import com.ssafy.bookkoo.authservice.exception.LoginFailException;
 import com.ssafy.bookkoo.authservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.authservice.repository.MemberRepository;
 import com.ssafy.bookkoo.authservice.service.AuthService;
 import com.ssafy.bookkoo.authservice.service.TokenService;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -68,13 +70,44 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
+    /**
+     * 토큰을 갱신하고 액세스 토큰을 생성하는 메서드
+     * @param member
+     * @return
+     */
     @Override
     public ResponseLoginTokenDto getResponseLoginTokenDto(Member member) {
         String refreshToken = tokenService.updateRefreshToken(member);
-        String accessToken = tokenService.createAccessToken(member);
+        String accessToken = tokenService.createAccessToken(member.getMemberId());
         return ResponseLoginTokenDto.builder()
                                     .accessToken(accessToken)
                                     .refreshToken(refreshToken)
                                     .build();
     }
+
+
+    /**
+     * 개발용 서비스 메서드
+     */
+    @Override
+    public ResponseLoginTokenDto getDeveloperTokenDto() {
+        String email = "test@test";
+        Optional<Member> optionalMember = getMemberByEmail(email);
+        Member member = null;
+        if (optionalMember.isEmpty()) {
+            member = Member.builder()
+                           .email(email)
+                           .socialType(SocialType.bookkoo)
+                           .password("test123$")
+                           .memberId(UUID.randomUUID()
+                                         .toString())
+                           .build();
+            memberRepository.save(member);
+        } else {
+            member = optionalMember.get();
+        }
+        return getResponseLoginTokenDto(member);
+    }
+
+
 }

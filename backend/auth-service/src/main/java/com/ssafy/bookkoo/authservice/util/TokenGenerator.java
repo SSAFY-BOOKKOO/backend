@@ -1,7 +1,6 @@
 package com.ssafy.bookkoo.authservice.util;
 
 import com.ssafy.bookkoo.authservice.config.JwtConfig;
-import com.ssafy.bookkoo.authservice.entity.Member;
 import io.jsonwebtoken.Jwts;
 import java.time.Duration;
 import java.util.Date;
@@ -16,18 +15,17 @@ public class TokenGenerator {
 
     /**
      * 새로운 토큰 생성
-     * @param member
+     * @param uuid (리프레시 토큰 : 랜덤, 액세스 토큰 : 멤버 UUID)
      * @param expiredAt
      * @return
      */
-    public String generateToken(Member member, Duration expiredAt) {
+    public String generateToken(String uuid, Duration expiredAt) {
         Date now = new Date();
         return Jwts.builder()
                    .issuer(jwtConfig.getIssuer())
                    .issuedAt(now)
                    .expiration(new Date(now.getTime() + expiredAt.toMillis()))
-                   .subject(member.getMemberId()
-                                  .toString())
+                   .subject(uuid)
                    .signWith(jwtConfig.getSecretKey())
                    .compact();
     }

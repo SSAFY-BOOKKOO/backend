@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 @Service
 public interface TokenService {
 
-    String createRefreshToken(Member member);
+    String createRefreshToken(String memberId);
 
-    String createAccessToken(Member member);
+    String createAccessToken(String memberId);
 
     String updateRefreshToken(Member member);
 
