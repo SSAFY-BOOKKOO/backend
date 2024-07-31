@@ -7,8 +7,10 @@ import com.ssafy.bookkoo.memberservice.service.FollowShipService;
 import com.ssafy.bookkoo.memberservice.service.MemberInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/members/info")
@@ -74,13 +77,16 @@ public class MemberInfoController {
         @RequestParam("memberId") Long memberId
     ) {
         List<ResponseFollowShipDto> followers = followShipService.getFollowers(memberId);
-        List<Long> followerIds = followers.stream()
-                                          .map(ResponseFollowShipDto::memberId)
-                                          .toList();
-        //멤버 자신의 ID추가 (목록에서 제외하기 위함)
+        List<Long> followerIds = new ArrayList<>(followers.stream()
+                                                           .map(ResponseFollowShipDto::memberId)
+                                                           .toList());
+
+        //자기 자신 ID 추가 (follwerIds의 마지막에 추가)
         followerIds.add(memberId);
         List<Long> recipientIds = memberInfoService.getRandomMemberInfo(followerIds);
         recipientIds.addAll(followerIds);
+        //마지막 원소 제거(자기 자신)
+        recipientIds.remove(recipientIds.size() - 1);
         return ResponseEntity.ok()
                              .body(recipientIds);
     }
