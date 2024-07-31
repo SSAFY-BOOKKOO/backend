@@ -24,7 +24,7 @@ const authAxiosInstance = axios.create({
 authAxiosInstance.interceptors.request.use(
   config => {
     // 요청이 전달되기 전 작업
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = localStorage.getItem('ACCESS_TOKEN');
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -42,18 +42,32 @@ const applyResponseInterceptor = instance => {
     // 2xx 범위에서 응답 데이터가 있는 작업
     response => response,
     async error => {
+      console.log(error.config._retry);
       // 2xx 외의 범위 응답 오류가 있는 작업
       // 토큰 만료
       if (error.response && error.response?.status === 401) {
-        localStorage.removeItem('accessToken');
-        window.location.href = '/login';
+        try {
+          const response = await authAxiosInstance.post('/auth/token');
+          const { accessToken } = response.data;
 
-        const response = await axiosInstance.post('/auth/token');
-        const { accessToken } = response.data;
+          localStorage.setItem('ACCESS_TOKEN', accessToken);
 
-        localStorage.setItem('accessToken', accessToken);
-        axiosInstance.defaults.headers.common['Authorization'] =
-          `Bearer ${accessToken}`;
+          // 원래 요청을 재시도
+          const retryConfig = {
+            ...error.config,
+            headers: {
+              ...error.config.headers,
+              Authorization: `Bearer ${accessToken}`,
+            },
+          };
+
+          return authAxiosInstance(retryConfig);
+        } catch (refreshError) {
+          localStorage.removeItem('ACCESS_TOKEN');
+          window.location.href = '/login';
+
+          return Promise.reject(refreshError);
+        }
       }
       return Promise.reject(error);
     }
