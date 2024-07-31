@@ -95,4 +95,15 @@ public class MemberExceptionHandler {
                              .body(e.getMessage());
     }
 
+    /**
+     * 패스워드 형식이 유효하지 않을 때 발생하는 예외입니다.
+     *
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(PasswordNotValidException.class)
+    public ResponseEntity<String> handlePasswordNotValidException(PasswordNotValidException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                             .body(e.getMessage());
+    }
 }

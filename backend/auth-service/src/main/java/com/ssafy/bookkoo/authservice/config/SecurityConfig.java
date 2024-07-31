@@ -39,7 +39,7 @@ public class SecurityConfig {
                     "/auth-service/**",
                     "/api-docs/**",
                     "/auth/login/**",
-                    "/auth/token",
+                    "/auth/token/**",
                     "/css/**",
                     "/images/**",
                     "/js/**",
@@ -61,9 +61,8 @@ public class SecurityConfig {
                                             oAuth2AuthorizationRequestBasedOnCookieRepository)
                                         //해당 URL로 요청 시 로그인 페이지로 이동 (.../authorization/provider(google,kakao))
                                         .baseUri("/auth/login/oauth2/authorization"))
-//                .redirectionEndpoint(redirection -> redirection
-//                    해당 URL로 리다이렉션
-//                    .baseUri("/auth/login/oauth2/code/*"))
+                .redirectionEndpoint(redirection -> redirection
+                    .baseUri("/auth/login/oauth2/code/*"))
                 .userInfoEndpoint(
                     userInfoEndPoint -> userInfoEndPoint.userService(
                         oAuth2MemberService))

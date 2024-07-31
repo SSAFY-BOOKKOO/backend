@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.bookservice.controller;
 
 import com.ssafy.bookkoo.bookservice.dto.CategoryDto;
+import com.ssafy.bookkoo.bookservice.dto.CategorySearchParam;
 import com.ssafy.bookkoo.bookservice.service.category.CategoryService;
 import com.ssafy.bookkoo.bookservice.util.CategoryDatabaseInitializer;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,10 +24,17 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final CategoryDatabaseInitializer categoryDatabaseInitializer;
 
-    @GetMapping
-    public ResponseEntity<List<CategoryDto>> getAllCategories() {
+    @PostMapping("/search")
+    public ResponseEntity<List<CategoryDto>> getAllCategories(
+        @RequestBody(required = false) CategorySearchParam params
+    ) {
+        if (params == null) {
+
+            return ResponseEntity.ok()
+                                 .body(categoryService.getAllCategories());
+        }
         return ResponseEntity.ok()
-                             .body(categoryService.getAllCategories());
+                             .body(categoryService.getCategoriesByFilter(params));
     }
 
     @PostMapping
