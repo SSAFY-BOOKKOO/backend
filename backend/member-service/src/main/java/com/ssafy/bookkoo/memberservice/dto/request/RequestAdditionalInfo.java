@@ -7,6 +7,7 @@ import lombok.Builder;
 
 @Builder
 public record RequestAdditionalInfo(
+    @NotNull(message = "id can not be null") Long id,
     @NotNull(message = "memberId can not be null") String memberId,
     @NotNull(message = "nickName can not be null") String nickName,
     Integer year,

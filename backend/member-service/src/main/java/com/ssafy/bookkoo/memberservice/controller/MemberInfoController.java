@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,7 +47,7 @@ public class MemberInfoController {
         return ResponseEntity.ok(memberInfo);
     }
 
-    @PostMapping("/password")
+    @PatchMapping("/password")
     @Operation(summary = "비밀번호 변경 API", description = "비밀번호를 변경합니다.")
     public ResponseEntity<HttpStatus> updatePassword(
         @Valid @RequestBody RequestUpdatePasswordDto requestUpdatePasswordDto
