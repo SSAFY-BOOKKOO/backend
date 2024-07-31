@@ -13,6 +13,7 @@ public record RequestAdditionalInfo(
     Integer year,
     Gender gender,
     @MaxArray(value = 15) Integer[] categories,
-    String introduction) {
+    String introduction,
+    String profileImgUrl) {
 
 }

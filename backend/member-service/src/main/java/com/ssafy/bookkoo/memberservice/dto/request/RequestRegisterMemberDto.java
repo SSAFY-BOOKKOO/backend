@@ -20,7 +20,8 @@ public record RequestRegisterMemberDto (
     Gender gender,
     @MaxArray(value = 15) Integer[] categories,
     String introduction,
-    SocialType socialType
+    SocialType socialType,
+    String profileImgUrl
 ) {
 
     /**
