@@ -13,7 +13,7 @@ const axiosInstance = axios.create({
 
 // 인증이 필요한 인스턴스
 const authAxiosInstance = axios.create({
-  baseURL: VITE_API_BASE_URL,
+  baseURL: '/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
