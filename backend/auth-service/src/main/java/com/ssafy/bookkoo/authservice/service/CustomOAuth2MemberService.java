@@ -53,7 +53,10 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
         }
 
         String email = oAuth2UserInfo.getEmail();
-        //없는 유저이면 등록
+        //TODO: 없는 유저이면 추가정보 처리 어떻게 할것인지 생각해야함.
+        //1. 칼럼(추가정보 O, X) 만들어두고 이걸로 확인
+        //2. 일단 저장 + 닉네임은 platform + email로 설정
+        //3.
         if (memberRepository.findByMemberId(email)
                             .isEmpty()) {
             memberServiceClient.register(email);

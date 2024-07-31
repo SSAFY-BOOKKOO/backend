@@ -1,17 +1,17 @@
 package com.ssafy.bookkoo.bookservice.service.book;
 
-import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
-import com.ssafy.bookkoo.bookservice.dto.RequestSearchBookMultiFieldDto;
-import com.ssafy.bookkoo.bookservice.dto.RequestSearchBooksFilterDto;
-import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
-import com.ssafy.bookkoo.bookservice.dto.ResponseCheckBooksByIsbnDto;
+import com.ssafy.bookkoo.bookservice.dto.book.RequestCreateBookDto;
+import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBookMultiFieldDto;
+import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBooksFilterDto;
+import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookDto;
+import com.ssafy.bookkoo.bookservice.dto.book.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import com.ssafy.bookkoo.bookservice.entity.Category;
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
 import com.ssafy.bookkoo.bookservice.exception.CategoryNotFoundException;
 import com.ssafy.bookkoo.bookservice.mapper.BookMapper;
-import com.ssafy.bookkoo.bookservice.repository.BookRepository;
-import com.ssafy.bookkoo.bookservice.repository.CategoryRepository;
+import com.ssafy.bookkoo.bookservice.repository.book.BookRepository;
+import com.ssafy.bookkoo.bookservice.repository.category.CategoryRepository;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPIHandler;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPISearchParams;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinAPI;

@@ -1,4 +1,4 @@
-package com.ssafy.bookkoo.bookservice.repository;
+package com.ssafy.bookkoo.bookservice.repository.book;
 
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import org.springframework.data.jpa.repository.JpaRepository;

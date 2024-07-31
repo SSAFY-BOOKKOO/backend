@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -38,23 +40,42 @@ public class CurationController {
     @GetMapping
     @Operation(summary = "내가 받은 큐레이션 리스트 가져오기", description = "수신한 큐레이션 레터 리스트 가져오기")
     public ResponseEntity<List<ResponseCurationDto>> getCurationList(
-        @RequestHeader HttpHeaders headers
+        @RequestHeader HttpHeaders headers,
+        @RequestParam(name = "page") int page
     ) {
         // Passport 에서 receiver 가져오기
         Long memberId = CommonUtil.getMemberId(headers);
-        return ResponseEntity.ok(curationService.getCurationList(memberId));
+        // Paging
+        return ResponseEntity.ok(
+            curationService.getCurationList(memberId, PageRequest.of(page, 10)));
 
     }
 
     @GetMapping("/store")
     @Operation(summary = "내가 보관한 큐레이션 리스트 가져오기", description = "보관한 큐레이션 레터 리스트 가져오기")
     public ResponseEntity<List<ResponseCurationDto>> getStoredCurationList(
-        @RequestHeader HttpHeaders headers
+        @RequestHeader HttpHeaders headers,
+        @RequestParam(name = "page") int page
     ) {
         // Passport 에서 receiver 가져오기
         Long memberId = CommonUtil.getMemberId(headers);
-        return ResponseEntity.ok(curationService.getStoredCurationList(memberId));
+        // Paging
+        return ResponseEntity.ok(
+            curationService.getStoredCurationList(memberId, PageRequest.of(page, 10)));
 
+    }
+
+    @GetMapping("/mycuration")
+    @Operation(summary = "내가 보낸 큐레이션 리스트 가져오기", description = "발신한 큐레이션 레터 리스트 가져오기")
+    public ResponseEntity<List<ResponseCurationDto>> getMyCurationList(
+        @RequestHeader HttpHeaders headers,
+        @RequestParam(name = "page") int page
+    ) {
+        // Passport 에서 receiver 가져오기
+        Long memberId = CommonUtil.getMemberId(headers);
+        // Paging
+        return ResponseEntity.ok(
+            curationService.getSentCurations(memberId, PageRequest.of(page, 10)));
     }
 
     @PostMapping("/store/{curationId}")
@@ -71,15 +92,6 @@ public class CurationController {
 
     }
 
-    @GetMapping("/mycuration")
-    @Operation(summary = "내가 보낸 큐레이션 리스트 가져오기", description = "발신한 큐레이션 레터 리스트 가져오기")
-    public ResponseEntity<List<ResponseCurationDto>> getMyCurationList(
-        @RequestHeader HttpHeaders headers
-    ) {
-        // Passport 에서 receiver 가져오기
-        Long memberId = CommonUtil.getMemberId(headers);
-        return ResponseEntity.ok(curationService.getSentCurations(memberId));
-    }
 
     @PostMapping
     @Operation(summary = "큐레이션 보내기", description = "큐레이션 레터를 생성하고 보내기")
@@ -125,6 +137,7 @@ public class CurationController {
     }
 
     @PostMapping("/chat")
+    @Operation(summary = "챗봇", description = "OpenAPI 를 이용한 챗봇 대화")
     public ResponseEntity<String> chatbot(
         @RequestBody @Valid ArrayList<RequestChatbotDto> requestChatbotDtoList
     ) {

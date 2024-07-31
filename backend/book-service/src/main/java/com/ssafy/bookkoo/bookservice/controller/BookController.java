@@ -1,9 +1,9 @@
 package com.ssafy.bookkoo.bookservice.controller;
 
-import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
-import com.ssafy.bookkoo.bookservice.dto.RequestSearchBookMultiFieldDto;
-import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
-import com.ssafy.bookkoo.bookservice.dto.ResponseCheckBooksByIsbnDto;
+import com.ssafy.bookkoo.bookservice.dto.book.RequestCreateBookDto;
+import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBookMultiFieldDto;
+import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookDto;
+import com.ssafy.bookkoo.bookservice.dto.book.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.service.book.BookService;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPISearchParams;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinAPI;

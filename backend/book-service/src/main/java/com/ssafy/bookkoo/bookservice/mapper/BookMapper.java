@@ -1,7 +1,7 @@
 package com.ssafy.bookkoo.bookservice.mapper;
 
-import com.ssafy.bookkoo.bookservice.dto.RequestCreateBookDto;
-import com.ssafy.bookkoo.bookservice.dto.ResponseBookDto;
+import com.ssafy.bookkoo.bookservice.dto.book.RequestCreateBookDto;
+import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinSearchDetail;
 import java.util.List;

@@ -2,8 +2,8 @@ package com.ssafy.bookkoo.bookservice.util.AladinAPI;
 
 import com.ssafy.bookkoo.bookservice.entity.AladinCategoryMapper;
 import com.ssafy.bookkoo.bookservice.entity.Category;
-import com.ssafy.bookkoo.bookservice.repository.AladinCategoryMapperRepository;
-import com.ssafy.bookkoo.bookservice.repository.CategoryRepository;
+import com.ssafy.bookkoo.bookservice.repository.category.AladinCategoryMapperRepository;
+import com.ssafy.bookkoo.bookservice.repository.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

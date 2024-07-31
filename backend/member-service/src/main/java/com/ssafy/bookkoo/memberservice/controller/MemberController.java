@@ -1,12 +1,13 @@
 package com.ssafy.bookkoo.memberservice.controller;
 
-import com.ssafy.bookkoo.memberservice.dto.request.RequestAdditionalInfo;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestCertificationDto;
-import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterDto;
-import com.ssafy.bookkoo.memberservice.exception.EmailDuplicateException;
-import com.ssafy.bookkoo.memberservice.exception.NickNameDuplicateException;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestLoginDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterMemberDto;
+import com.ssafy.bookkoo.memberservice.dto.response.ResponseLoginTokenDto;
 import com.ssafy.bookkoo.memberservice.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.Duration;
 
 @Slf4j
 @RestController
@@ -25,29 +28,34 @@ public class MemberController {
     private final MemberService memberService;
 
     /**
-     * 등록 시 등록된 memberId 반환
-     *
-     * @param requestRegisterDto
-     * @return
+     * 회원가입에 필요한 정보를 모두 받아서 회원가입합니다. 1. email 2. password (Optional : 소셜의 경우 사용 X) 3. nickName 4.
+     * year 5. Gender (Enum) 6. categories Integer[] 7. introduction (Optional) 8. profileImg
+     * (Optional) 9. SocialType (default = bookkoo)
      */
-    @PostMapping("/email")
-    @Operation(description = "회원가입을 통해 새로운 유저를 등록합니다.", summary = "회원가입")
-    public ResponseEntity<String> register(
-        @Valid @RequestBody RequestRegisterDto requestRegisterDto
-    ) {
-        String memberId = memberService.register(requestRegisterDto);
-        return ResponseEntity.ok(memberId);
-    }
 
-    @PostMapping("/social")
-    @Operation(description = "소셜 정보를 통해 회원가입 합니다.", summary = "회원가입")
-    public ResponseEntity<String> register(
-        @Valid @RequestBody String email
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(description = "회원 가입을 통해 새로운 유저를 등록합니다.", summary = "회원가입")
+    public ResponseEntity<ResponseLoginTokenDto> register(
+        @Valid @RequestPart("requestRegisterMemberDto") RequestRegisterMemberDto requestRegisterMemberDto,
+        @RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
+        HttpServletResponse response
     ) {
-        String memberId = memberService.register(email);
-        return ResponseEntity.ok(memberId);
-    }
+        memberService.register(requestRegisterMemberDto, profileImg);
+        RequestLoginDto loginDto = RequestLoginDto.builder()
+                                                  .email(requestRegisterMemberDto.email())
+                                                  .password(requestRegisterMemberDto.password())
+                                                  .build();
 
+        ResponseLoginTokenDto tokenDto = memberService.registerLogin(loginDto);
+        Cookie cookie = new Cookie("refresh_token", tokenDto.refreshToken());
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge((int) Duration.ofDays(7)
+                                       .getSeconds());
+        response.addCookie(cookie);
+        return ResponseEntity.ok(tokenDto);
+    }
 
     @PostMapping("/validation")
     @Operation(description = "이메일을 통해 인증 번호를 발송합니다.", summary = "이메일 인증 번호 발송")
@@ -75,9 +83,7 @@ public class MemberController {
     public ResponseEntity<HttpStatus> checkDuplicateEmail(
         @RequestParam(name = "email") String email
     ) {
-        if (!memberService.checkDuplEmail(email)) {
-            throw new EmailDuplicateException();
-        }
+        memberService.checkDuplEmail(email);
         return ResponseEntity.ok()
                              .build();
     }
@@ -87,21 +93,9 @@ public class MemberController {
     public ResponseEntity<HttpStatus> checkDuplicateNickName(
         @RequestParam(name = "name") String nickName
     ) {
-        if (!memberService.checkDuplNickName(nickName)) {
-            throw new NickNameDuplicateException();
-        }
+        memberService.checkDuplNickName(nickName);
         return ResponseEntity.ok()
                              .build();
-    }
-
-    @PostMapping(value = "/info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(description = "memberId, 닉네임, 카테고리, 출생년도, 소개글을 받아 추가정보를 저장합니다.", summary = "추가 정보 저장")
-    public ResponseEntity<String> registerAdditionalInfo(
-        @Valid @RequestPart RequestAdditionalInfo requestAdditionalInfo,
-        @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
-    ) {
-        String filekey = memberService.registerAdditionalInfo(requestAdditionalInfo, profileImg);
-        return ResponseEntity.ok(filekey);
     }
 
     @PostMapping("/password/reset")

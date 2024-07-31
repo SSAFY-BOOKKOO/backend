@@ -14,4 +14,6 @@ public interface AuthService {
     Optional<Member> getMemberByEmail(String email);
 
     ResponseLoginTokenDto getResponseLoginTokenDto(Member member);
+
+    ResponseLoginTokenDto getDeveloperTokenDto();
 }

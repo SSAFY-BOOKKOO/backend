@@ -8,6 +8,7 @@ import com.ssafy.bookkoo.authservice.service.TokenService;
 import com.ssafy.bookkoo.authservice.util.TokenGenerator;
 import java.time.Duration;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,22 +25,23 @@ public class TokenServiceImpl implements TokenService {
 
 
     /**
-     * 새로운 리프레시 토큰 발급 및 DB저장
+     * 새로운 리프레시 토큰 발급 및 DB저장 리프레시 토큰은 의미없는 UUID로 설정
      *
-     * @param member
+     * @param memberId
      * @return
      */
     @Override
     @Transactional
-    public String createRefreshToken(Member member) {
+    public String createRefreshToken(String memberId) {
+        //공개될 수 있기 때문에 리프레시 토큰은 랜덤 UUID를 통해 생성하도록 변경
+        String token = UUID.randomUUID()
+                           .toString();
         RefreshToken refreshToken = RefreshToken.builder()
-                                                .memberId(member.getMemberId()
-                                                                .toString())
-                                                .refreshToken(tokenGenerator.generateToken(member,
+                                                .memberId(memberId)
+                                                .refreshToken(tokenGenerator.generateToken(token,
                                                     REFRESH_TOKEN_EXPIRATION))
                                                 .ttl(REFRESH_TOKEN_EXPIRATION.getSeconds())
                                                 .build();
-
         return refreshTokenRepository.save(refreshToken)
                                      .getRefreshToken();
     }
@@ -47,12 +49,12 @@ public class TokenServiceImpl implements TokenService {
     /**
      * 1시간 유효기간의 액세스 토큰 발급
      *
-     * @param member
+     * @param memberId
      * @return
      */
     @Override
-    public String createAccessToken(Member member) {
-        return tokenGenerator.generateToken(member, ACCESS_TOKEN_EXPIRATION);
+    public String createAccessToken(String memberId) {
+        return tokenGenerator.generateToken(memberId, ACCESS_TOKEN_EXPIRATION);
     }
 
     /**
@@ -66,14 +68,13 @@ public class TokenServiceImpl implements TokenService {
     @Transactional
     public String updateRefreshToken(Member member) {
         Optional<RefreshToken> optionalRefreshToken
-            = refreshTokenRepository.findByMemberId(member.getMemberId()
-                                                          .toString());
+            = refreshTokenRepository.findByMemberId(member.getMemberId());
 
-        //리프레시 토근이 존재하면 없애기
+        //리프레시 토큰이 존재하면 없애기
         optionalRefreshToken.ifPresent(refreshTokenRepository::delete);
 
         //새로운 토큰 생성
-        return createRefreshToken(member);
+        return createRefreshToken(member.getMemberId());
     }
 
     /**

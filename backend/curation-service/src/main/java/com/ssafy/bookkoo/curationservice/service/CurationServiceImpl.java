@@ -16,6 +16,7 @@ import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -115,10 +116,10 @@ public class CurationServiceImpl implements CurationService {
      * @return ResponseCurationDto
      */
     @Override
-    public List<ResponseCurationDto> getCurationList(Long receiver) {
-        List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByIsStoredAndReceiver(
+    public List<ResponseCurationDto> getCurationList(Long receiver, Pageable pageable) {
+        List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByIsStoredAndReceiverOrderByCreatedAtDesc(
             false,
-            receiver);
+            receiver, pageable);
         List<Curation> curationList = curationSendByReceiver.stream()
                                                             .map(
                                                                 CurationSend::getCuration)
@@ -176,8 +177,9 @@ public class CurationServiceImpl implements CurationService {
      * @return ResponseCurationDto
      */
     @Override
-    public List<ResponseCurationDto> getSentCurations(Long writer) {
-        List<Curation> curationList = curationRepository.findCurationsByWriter(writer);
+    public List<ResponseCurationDto> getSentCurations(Long writer, Pageable pageable) {
+        List<Curation> curationList = curationRepository.findCurationsByWriterOrderByCreatedAtDesc(
+            writer, pageable);
 
         return curationToDto(curationList);
     }
@@ -187,10 +189,10 @@ public class CurationServiceImpl implements CurationService {
      * @return 수신한 큐레이션 DTO (작성자 닉네임, 큐레이션 ID, 큐레이션 제목, 책 커버 이미지)
      */
     @Override
-    public List<ResponseCurationDto> getStoredCurationList(Long receiver) {
-        List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByIsStoredAndReceiver(
+    public List<ResponseCurationDto> getStoredCurationList(Long receiver, Pageable pageable) {
+        List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByIsStoredAndReceiverOrderByCreatedAtDesc(
             true,
-            receiver);
+            receiver, pageable);
         List<Curation> curationList = curationSendByReceiver.stream()
                                                             .map(
                                                                 CurationSend::getCuration)

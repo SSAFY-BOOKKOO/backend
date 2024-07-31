@@ -1,4 +1,4 @@
-package com.ssafy.bookkoo.bookservice.dto;
+package com.ssafy.bookkoo.bookservice.dto.book;
 
 import lombok.Builder;
 
