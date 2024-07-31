@@ -19,7 +19,7 @@ const SearchLibraryItem = ({ book, onClick }) => {
           <p className='text-overflow text-lg font-semibold'>{book.title}</p>
           <p className='text-sm text-gray-600'>{book.author}</p>
           <p className='text-sm text-gray-600'>
-            {book.publisher} | {book.published_at}
+            {book.publisher} | {book?.published_at}
           </p>
           <p className='text-sm text-gray-600'>
             읽은 기간: {book.published_at}

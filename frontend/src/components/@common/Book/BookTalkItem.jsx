@@ -4,13 +4,13 @@ const BookTalkItem = ({ book, onClick }) => {
   return (
     <div className='flex items-center mb-4 cursor-pointer' onClick={onClick}>
       <img
-        src={book.cover_img_url}
+        src={book?.cover_img_url}
         alt='Book'
         className='w-12 h-16 mr-4 rounded-lg'
       />
       <div className='flex-grow'>
-        <h3 className='text-black text-sm'>{book.title}</h3>
-        <p className='text-gray-500 text-sm'>{book.author}</p>
+        <h3 className='text-black text-sm'>{book?.title}</h3>
+        <p className='text-gray-500 text-sm'>{book?.author}</p>
         <div className='flex space-x-2 mt-1'>
           {book?.tags?.map((tag, index) => (
             <span
