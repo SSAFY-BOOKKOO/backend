@@ -66,6 +66,10 @@ public class TokenAuthenticationFilter implements GlobalFilter {
         //토큰 인증을 거치지 않는 요청URL에 해당되면 토큰 검증 스킵
         for (String excludedPath : excludedPaths) {
             if (path.startsWith(excludedPath)) {
+                // /books/{bookId}/reviews~ 경로는 필터링 필요
+                if (excludedPath.equals("/books") && path.matches("^/books/\\d+/reviews(/.*)?$")) {
+                    break; // 필터를 거쳐야 함
+                }
                 return chain.filter(exchange);
             }
         }
