@@ -8,7 +8,8 @@ public record ResponseReviewDto(
     Long bookId,
     Long memberId,
     String content,
-    Integer rating
+    Integer rating,
+    Integer likeCount // 좋아요 개수
 ) {
 
 }
