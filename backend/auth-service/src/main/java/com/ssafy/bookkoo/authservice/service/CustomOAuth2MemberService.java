@@ -1,12 +1,12 @@
 package com.ssafy.bookkoo.authservice.service;
 
-import com.ssafy.bookkoo.authservice.client.MemberServiceClient;
 import com.ssafy.bookkoo.authservice.dto.OAuth.GoogleUserInfo;
 import com.ssafy.bookkoo.authservice.dto.OAuth.KakaoUserInfo;
 import com.ssafy.bookkoo.authservice.dto.OAuth.OAuth2UserInfo;
+import com.ssafy.bookkoo.authservice.dto.SocialRegisterDto;
 import com.ssafy.bookkoo.authservice.entity.Member;
-import com.ssafy.bookkoo.authservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.authservice.repository.MemberRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
 
-    private final MemberServiceClient memberServiceClient;
     private final MemberRepository memberRepository;
 
     /**
@@ -53,18 +52,19 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
         }
 
         String email = oAuth2UserInfo.getEmail();
-        //TODO: 없는 유저이면 추가정보 처리 어떻게 할것인지 생각해야함.
-        //1. 칼럼(추가정보 O, X) 만들어두고 이걸로 확인
-        //2. 일단 저장 + 닉네임은 platform + email로 설정
-        //3.
-        if (memberRepository.findByMemberId(email)
-                            .isEmpty()) {
-            memberServiceClient.register(email);
+
+        OAuth2User user = SocialRegisterDto.builder()
+                                           .attributes(oAuth2User.getAttributes())
+                                           .email(email)
+                                           .socialType(oAuth2UserInfo.getSocial())
+                                           .profileImgUrl(oAuth2UserInfo.getProfileImgUrl())
+                                           .build();
+
+        Optional<Member> optionalMember = memberRepository.findByMemberId(email);
+        if (optionalMember.isPresent()) {
+            user = optionalMember.get();
         }
 
-        Member member = memberRepository.findByEmail(email)
-                                        .orElseThrow(MemberNotFoundException::new);
-
-        return member;
+        return user;
     }
 }
