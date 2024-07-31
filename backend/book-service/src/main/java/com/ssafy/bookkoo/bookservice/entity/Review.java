@@ -7,6 +7,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,11 +37,18 @@ public class Review {
     @Column
     private Integer rating;
 
+    @OneToMany(mappedBy = "review")
+    private List<ReviewLike> likes = new ArrayList<>();
+
     @Builder
     public Review(Book book, Long memberId, String content, Integer rating) {
         this.book = book;
         this.memberId = memberId;
         this.content = content;
         this.rating = rating;
+    }
+
+    public Integer getLikeCount() {
+        return likes.size();
     }
 }
