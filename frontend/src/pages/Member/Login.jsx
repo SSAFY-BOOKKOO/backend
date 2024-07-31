@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import Input from '@components/@common/Input';
 import WrapContainer from '@components/Layout/WrapContainer';
 import Button from '@components/@common/Button';
@@ -17,7 +17,6 @@ const Login = () => {
     password: '',
   });
 
-  const [buttonDisabled, setButtonDisabled] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
   const navigate = useNavigate();
@@ -32,24 +31,20 @@ const Login = () => {
     navigate('/find-password');
   };
 
-  useEffect(() => {
-    if (loginInfo.email && loginInfo.password) {
-      setButtonDisabled(false);
-    } else {
-      setButtonDisabled(true);
-    }
+  const buttonDisabled = useMemo(() => {
+    return !(loginInfo.email && loginInfo.password);
   }, [loginInfo]);
 
   const handleLogin = async e => {
     e.preventDefault();
 
-    if (errorMessage !== '' && buttonDisabled) return;
+    if (buttonDisabled) return;
 
     try {
       const data = await postLogin(loginInfo);
 
       // 로그인 성공
-      localStorage.setItem('accessToken', data.accessToken);
+      localStorage.setItem('ACCESS_TOKEN', data.accessToken);
 
       navigate('/library');
 
