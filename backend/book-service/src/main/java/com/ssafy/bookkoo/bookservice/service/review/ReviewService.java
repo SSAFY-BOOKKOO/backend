@@ -2,6 +2,7 @@ package com.ssafy.bookkoo.bookservice.service.review;
 
 import com.ssafy.bookkoo.bookservice.dto.review.RequestReviewDto;
 import com.ssafy.bookkoo.bookservice.dto.review.ResponseReviewDto;
+import com.ssafy.bookkoo.bookservice.dto.review.ResponseSurfingReviewDto;
 import java.util.List;
 
 public interface ReviewService {
@@ -13,4 +14,6 @@ public interface ReviewService {
     ResponseReviewDto addReview(Long memberId, Long bookId, RequestReviewDto requestReviewDto);
 
     Boolean toggleLikeReview(Long memberId, Long bookId, Long reviewId);
+
+    List<ResponseSurfingReviewDto> getRandomReviewExceptMine(Long memberId, Long bookId);
 }
