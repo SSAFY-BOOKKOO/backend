@@ -1,5 +1,6 @@
-package com.ssafy.bookkoo.bookservice.dto;
+package com.ssafy.bookkoo.bookservice.dto.book;
 
+import com.ssafy.bookkoo.bookservice.dto.category.CategoryDto;
 import lombok.Builder;
 
 @Builder

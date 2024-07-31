@@ -1,10 +1,10 @@
-package com.ssafy.bookkoo.bookservice.repository;
+package com.ssafy.bookkoo.bookservice.repository.category;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.bookkoo.bookservice.dto.CategorySearchParam;
+import com.ssafy.bookkoo.bookservice.dto.category.CategorySearchParam;
 import com.ssafy.bookkoo.bookservice.entity.Category;
 import com.ssafy.bookkoo.bookservice.entity.QCategory;
 import java.util.List;

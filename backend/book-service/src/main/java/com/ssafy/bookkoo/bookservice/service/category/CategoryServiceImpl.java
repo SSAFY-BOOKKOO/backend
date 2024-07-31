@@ -1,11 +1,11 @@
 package com.ssafy.bookkoo.bookservice.service.category;
 
-import com.ssafy.bookkoo.bookservice.dto.CategoryDto;
-import com.ssafy.bookkoo.bookservice.dto.CategorySearchParam;
+import com.ssafy.bookkoo.bookservice.dto.category.CategoryDto;
+import com.ssafy.bookkoo.bookservice.dto.category.CategorySearchParam;
 import com.ssafy.bookkoo.bookservice.entity.Category;
 import com.ssafy.bookkoo.bookservice.exception.CategoryNotFoundException;
 import com.ssafy.bookkoo.bookservice.mapper.CategoryMapper;
-import com.ssafy.bookkoo.bookservice.repository.CategoryRepository;
+import com.ssafy.bookkoo.bookservice.repository.category.CategoryRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

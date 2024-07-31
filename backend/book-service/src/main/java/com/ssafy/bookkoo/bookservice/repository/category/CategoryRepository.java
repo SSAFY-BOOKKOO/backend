@@ -1,4 +1,4 @@
-package com.ssafy.bookkoo.bookservice.repository;
+package com.ssafy.bookkoo.bookservice.repository.category;
 
 import com.ssafy.bookkoo.bookservice.entity.Category;
 import java.util.List;

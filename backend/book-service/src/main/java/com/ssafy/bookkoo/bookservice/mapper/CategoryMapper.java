@@ -1,6 +1,6 @@
 package com.ssafy.bookkoo.bookservice.mapper;
 
-import com.ssafy.bookkoo.bookservice.dto.CategoryDto;
+import com.ssafy.bookkoo.bookservice.dto.category.CategoryDto;
 import com.ssafy.bookkoo.bookservice.entity.Category;
 import java.util.List;
 import org.mapstruct.Mapper;
