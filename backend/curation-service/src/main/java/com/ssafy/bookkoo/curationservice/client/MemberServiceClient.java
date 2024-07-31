@@ -2,10 +2,8 @@ package com.ssafy.bookkoo.curationservice.client;
 
 
 import com.ssafy.bookkoo.curationservice.dto.ResponseMemberInfoDto;
-import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,7 +16,7 @@ public interface MemberServiceClient {
         @RequestParam(name = "memberId") String memberId
     );
 
-    @GetMapping("/members/info/recipients")
+    @GetMapping("/members/info/curation/recipients")
     List<Long> getLetterRecipients(
         @RequestParam("memberId") Long memberId
     );
