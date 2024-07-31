@@ -14,7 +14,7 @@ public class ResponseAladinSearchDetail {
     private String description;
     private String title;
     private String pubDate;
-    private String cover;
+    private String coverImgUrl;
     private String publisher;
     private Integer categoryId;
 
