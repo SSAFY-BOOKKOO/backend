@@ -119,7 +119,7 @@ public class CurationServiceImpl implements CurationService {
     public List<ResponseCurationDto> getCurationList(Long receiver, Pageable pageable) {
         List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByIsStoredAndReceiverOrderByCreatedAtDesc(
             false,
-            receiver);
+            receiver, pageable);
         List<Curation> curationList = curationSendByReceiver.stream()
                                                             .map(
                                                                 CurationSend::getCuration)
@@ -179,7 +179,7 @@ public class CurationServiceImpl implements CurationService {
     @Override
     public List<ResponseCurationDto> getSentCurations(Long writer, Pageable pageable) {
         List<Curation> curationList = curationRepository.findCurationsByWriterOrderByCreatedAtDesc(
-            writer);
+            writer, pageable);
 
         return curationToDto(curationList);
     }
@@ -192,7 +192,7 @@ public class CurationServiceImpl implements CurationService {
     public List<ResponseCurationDto> getStoredCurationList(Long receiver, Pageable pageable) {
         List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByIsStoredAndReceiverOrderByCreatedAtDesc(
             true,
-            receiver);
+            receiver, pageable);
         List<Curation> curationList = curationSendByReceiver.stream()
                                                             .map(
                                                                 CurationSend::getCuration)
