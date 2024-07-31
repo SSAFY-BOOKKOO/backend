@@ -100,10 +100,11 @@ public class FollowShipServiceImpl implements FollowShipService {
         return memberInfo.getFollowers()
                          .stream()
                          .map((followShip) -> ResponseFollowShipDto.builder()
-                                                                   .memberId(followShip.getFollower()
-                                                                                       .getId())
+                                                                   .memberId(
+                                                                       followShip.getFollower()
+                                                                                 .getId())
                                                                    .build())
-                         .collect(Collectors.toList());
+                         .toList();
     }
 
     /**
