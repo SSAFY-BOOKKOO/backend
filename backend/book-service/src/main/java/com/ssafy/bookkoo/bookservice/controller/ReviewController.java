@@ -53,13 +53,13 @@ public class ReviewController {
     }
 
     @PostMapping("/{bookId}/reviews/{reviewId}/like")
-    public ResponseEntity<Boolean> likeReviewById(
+    public ResponseEntity<Boolean> toggleLikeReviewById(
         @RequestHeader HttpHeaders headers,
         @PathVariable Long bookId,
         @PathVariable Long reviewId
     ) {
         Long memberId = CommonUtil.getMemberId(headers);
         return ResponseEntity.ok()
-                             .body(reviewService.likeReview(memberId, bookId, reviewId));
+                             .body(reviewService.toggleLikeReview(memberId, bookId, reviewId));
     }
 }
