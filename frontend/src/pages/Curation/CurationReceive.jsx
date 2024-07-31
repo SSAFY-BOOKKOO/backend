@@ -1,5 +1,5 @@
 // src/pages/CurationReceive.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -7,40 +7,63 @@ import CurationTab from '@components/Curation/CurationTab';
 import { BsBookmarkStar, BsBookmarkStarFill } from 'react-icons/bs';
 import { BsTrash3 } from 'react-icons/bs';
 import { AiFillAlert } from 'react-icons/ai';
+// 연동
+import axios from 'axios';
+import { axiosInstance, authAxiosInstance } from '../../services/axiosInstance';
 
 // 임시 레터 데이터
-const initialLetters = [
-  {
-    id: 1,
-    title: '레터1',
-    content: '너무 유익했다!',
-    from: '양귀자',
-    date: '2024-07-19',
-    image: 'https://image.yes24.com/momo/TopCate249/MidCate003/24823257.jpg',
-  },
-  {
-    id: 2,
-    title: '키움 우승',
-    from: '홍원기',
-    content: '영웅질주',
-    date: '2024-07-19',
-    image:
-      'https://yt3.googleusercontent.com/HmU-cGuNTGaoyJ2dSCW7CrdNMLVXq8xgKQ2Tsri543dTS7RMSgcseDb8p9w-g2amOoNJkXxT=s900-c-k-c0x00ffffff-no-rj',
-  },
-  {
-    id: 3,
-    title: '레터2',
-    content: '너무 재밌당',
-    from: '에이미',
-    date: '2024-07-19',
-    image: 'https://image.yes24.com/goods/123400303/L',
-  },
-];
+// const initialLetters = [
+//   {
+//     id: 1,
+//     title: '레터1',
+//     content: '너무 유익했다!',
+//     from: '양귀자',
+//     date: '2024-07-19',
+//     image: 'https://image.yes24.com/momo/TopCate249/MidCate003/24823257.jpg',
+//   },
+//   {
+//     id: 2,
+//     title: '키움 우승',
+//     from: '홍원기',
+//     content: '영웅질주',
+//     date: '2024-07-19',
+//     image:
+//       'https://yt3.googleusercontent.com/HmU-cGuNTGaoyJ2dSCW7CrdNMLVXq8xgKQ2Tsri543dTS7RMSgcseDb8p9w-g2amOoNJkXxT=s900-c-k-c0x00ffffff-no-rj',
+//   },
+//   {
+//     id: 3,
+//     title: '레터2',
+//     content: '너무 재밌당',
+//     from: '에이미',
+//     date: '2024-07-19',
+//     image: 'https://image.yes24.com/goods/123400303/L',
+//   },
+// ];
 
 // 받은 편지들 보여주기
 const CurationReceive = () => {
   const navigate = useNavigate();
-  const [letters, setLetters] = useState(initialLetters);
+  const [letters, setLetters] = useState([]);
+
+  useEffect(
+    () => {
+      authAxiosInstance
+        // axios로 get요청 보내기
+        .get('/curations')
+        // 요청 성공하면 받아와서 letters에 할당
+        .then(res => {
+          setLetters(res.data);
+          console.log(res);
+        })
+
+        // 요청 실패하면 오류 일단 console에
+        .catch(err => {
+          console.log('error:', err);
+        });
+    },
+    // 화면에 처음 렌더링될 때만 실행
+    []
+  );
   // 보관함 관리 위한 useState
   const [storedLetters, setStoredLetters] = useState([]);
   const [slideId, setSlideId] = useState(null);
@@ -90,6 +113,7 @@ const CurationReceive = () => {
         받은 레터 수: {letters.length}
       </p>
       <div className='flex-1 overflow-y-auto px-4'>
+        {/* map함수로 순회하면서 레터 보기 */}
         {letters.map(letter => (
           <Swiper
             key={letter.id}
