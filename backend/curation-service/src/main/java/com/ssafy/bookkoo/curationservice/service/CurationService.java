@@ -4,6 +4,7 @@ import com.ssafy.bookkoo.curationservice.dto.RequestCreateCurationDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDetailDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDto;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface CurationService {
 
@@ -14,11 +15,13 @@ public interface CurationService {
     ResponseCurationDetailDto getCurationDetail(Long curationId, Long memberId);
 
     // 내가 받은 큐레이션 가져오기
-    List<ResponseCurationDto> getCurationList(Long receiver);
+    List<ResponseCurationDto> getCurationList(Long receiver, Pageable pageable);
 
     // 내가 저장한 큐레이션 가져오기
+    List<ResponseCurationDto> getStoredCurationList(Long receiver, Pageable pageable);
 
-    List<ResponseCurationDto> getStoredCurationList(Long receiver);
+    // 내가 보낸 큐레이션 가져오기
+    List<ResponseCurationDto> getSentCurations(Long writer, Pageable pageable);
 
     // 큐레이션 보관하기
     void storeCuration(Long id, Long receiver);
@@ -26,12 +29,7 @@ public interface CurationService {
     // 큐레이션 삭제 (지정삭제)
     void deleteCuration(Long id, Long receiver);
 
-    // 내가 보낸 큐레이션 정보 보기
-    List<ResponseCurationDto> getSentCurations(Long writer);
-
     //TODO 큐레이션 스케쥴 삭제
-
-    //TODO 챗봇
 
     //TODO 알림 메일 전송
 

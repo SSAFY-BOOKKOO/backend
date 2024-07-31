@@ -5,6 +5,7 @@ import com.ssafy.bookkoo.curationservice.entity.Curation;
 import com.ssafy.bookkoo.curationservice.entity.CurationSend;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CurationSendRepository extends JpaRepository<CurationSend, Long> {
@@ -14,7 +15,8 @@ public interface CurationSendRepository extends JpaRepository<CurationSend, Long
     Optional<CurationSend> findCurationSendsByCurationAndReceiver(Curation curation,
         Long receiver);
 
-    List<CurationSend> findCurationSendsByIsStoredAndReceiver(Boolean isStored, Long receiver);
+    List<CurationSend> findCurationSendsByIsStoredAndReceiverOrderByCreatedAtDesc(Boolean isStored,
+        Long receiver, Pageable pageable);
 
     List<CurationSend> findByCuration(Curation curation);
 
