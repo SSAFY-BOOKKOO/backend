@@ -67,6 +67,12 @@ public class AladinAPIHandler {
             ResponseOriginAladinAPI originResponse = objectMapper.readValue(response.body(),
                 ResponseOriginAladinAPI.class);
             ResponseAladinAPI apiResponse = bookMapper.toResponseAladinAPI(originResponse);
+
+            // coverImgUrl 값 변환(기본에서 큰 사이즈로)
+            apiResponse.getItem()
+                       .forEach(item -> item.setCoverImgUrl(
+                           replaceCoverImgUrlCoverSum(item.getCoverImgUrl(), "cover200")));
+
             // 카테고리 매핑 적용
             aladinCategoryService.processApiResponse(apiResponse);
 
@@ -105,6 +111,11 @@ public class AladinAPIHandler {
                 // 카테고리 매핑 적용
                 ResponseAladinSearchDetail searchDetail = apiResponse.getItem()
                                                                      .get(0);
+
+                // cover img url 의 기본 이미지 -> 500 사이즈로
+                searchDetail.setCoverImgUrl(
+                    replaceCoverImgUrlCoverSum(searchDetail.getCoverImgUrl(), "cover500"));
+
                 aladinCategoryService.processApiResponse(searchDetail);
                 return searchDetail; // 첫 번째 아이템 반환
             } else {
@@ -113,5 +124,19 @@ public class AladinAPIHandler {
         } else {
             throw new IOException("Failed to fetch data from Aladin API: " + response.body());
         }
+    }
+
+    /**
+     * coverImgUrl 값 중 "coversum"을 지정된 문자열로 바꾸는 메서드
+     *
+     * @param coverImgUrl 원본 coverImgUrl
+     * @param replacement 바꿀 문자열
+     * @return 변환된 coverImgUrl
+     */
+    private String replaceCoverImgUrlCoverSum(String coverImgUrl, String replacement) {
+        if (coverImgUrl != null && coverImgUrl.contains("coversum")) {
+            return coverImgUrl.replace("coversum", replacement);
+        }
+        return coverImgUrl;
     }
 }
