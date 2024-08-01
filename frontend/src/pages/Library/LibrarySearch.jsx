@@ -77,7 +77,7 @@ const LibrarySearch = () => {
 
   // 더보기
   const handleSeeMore = type => {
-    navigate(`/search/${type}/more`, { state: { searchText, selectedTag } });
+    navigate(`/search/${type}/more?text=${searchText}&tag=${selectedTag}`);
   };
 
   return (
