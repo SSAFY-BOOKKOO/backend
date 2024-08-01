@@ -9,6 +9,7 @@ import com.ssafy.bookkoo.libraryservice.dto.other.RequestSearchBookMultiFieldDto
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookDto;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 서재 관련 서비스 인터페이스입니다.
@@ -101,4 +102,13 @@ public interface LibraryService {
      * @return : List ResponseLibraryDto
      */
     List<ResponseLibraryDto> getMyLibraries(Long memberId);
+
+    /**
+     * 사용자의 서재에 여러 책이 등록되어 있는지 여부를 확인하는 API
+     *
+     * @param memberId member ID
+     * @param bookIds  bookId 리스트
+     * @return Map<BookId, boolean>
+     */
+    Map<Long, Boolean> areBooksInLibrary(Long memberId, List<Long> bookIds);
 }

@@ -13,6 +13,7 @@ import com.ssafy.bookkoo.libraryservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -194,5 +195,15 @@ public class LibraryController {
 
         return ResponseEntity.ok()
                              .body(libraryService.getMyBooks(memberId, searchDto));
+    }
+
+    @GetMapping("/books/check")
+    @Operation(summary = "책 등록 여부 확인", description = "사용자의 서재에 여러 책이 등록되어 있는지 여부를 확인하는 API")
+    public ResponseEntity<Map<Long, Boolean>> areBooksInLibrary(
+        @RequestParam Long memberId,
+        @RequestParam List<Long> bookIds
+    ) {
+        Map<Long, Boolean> booksInLibrary = libraryService.areBooksInLibrary(memberId, bookIds);
+        return ResponseEntity.ok(booksInLibrary);
     }
 }
