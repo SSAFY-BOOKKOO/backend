@@ -40,6 +40,13 @@ scrape_configs:
         labels:
           job: common-service
           __path__: ./logs/common-service/*.log 
+  - job_name: auth
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: auth-service
+          __path__: ./logs/auth-service/*.log 
   - job_name: gateway
     static_configs:
       - targets:
