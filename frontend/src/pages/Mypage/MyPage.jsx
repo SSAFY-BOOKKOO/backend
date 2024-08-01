@@ -1,40 +1,51 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import settingIcon from '@assets/icons/setting.png';
-// import statisticsIcon from '@assets/icons/statistics.png';
 import { FaCalendarDays } from 'react-icons/fa6';
-// import friendsIcon from '@assets/icons/friends.png';
 import { MdPeopleAlt } from 'react-icons/md';
-// import quoteIcon from '@assets/icons/quote.png';
 import { BsChatSquareQuoteFill } from 'react-icons/bs';
-// import myWritingIcon from '@assets/icons/my_writing.png';
 import { FaClipboardList } from 'react-icons/fa6';
-import profile_img_sample from '@assets/images/profile_img_sample.png';
+import profileImgSample from '@assets/images/profile_img_sample.png';
 
 const MyPage = () => {
   const member = {
-    nickname: '닉네임',
-    introduction: '소개문',
-    category: '카테고리',
-    profile_img_url: profile_img_sample,
+    nickname: '하츄핑',
+    introduction:
+      '소캐치! 티니핑 시리즈의 메인 티니핑 및 메인 로열핑으로 로미와 더불어 양대 주인공이자 메인 마스코트 캐릭터.',
+    categories: ['추리/스릴러', '로맨스', '인문학', '철학'],
+    profile_img_url: profileImgSample,
   };
+
+  const displayCategories =
+    member.categories.length > 2
+      ? member.categories.slice(0, 2).concat(['...'])
+      : member.categories;
 
   return (
     <div className='p-4 min-h-[43rem]'>
-      <div className='flex items-center justify-between'>
-        <div className='flex items-center space-x-8'>
+      <div className='flex items-start justify-between'>
+        <div className='flex items-start space-x-8'>
           <img
             src={member.profile_img_url}
             alt='profile'
-            className='w-1/2 h-32 rounded-full'
+            className='w-32 h-32 rounded-full'
           />
-          <div>
+          <div className='flex flex-col'>
             <h2 className='text-2xl font-bold'>{member.nickname}</h2>
-            <p className='text-lg'>{member.introduction}</p>
-            <p className='text-lg'>{member.category}</p>
+            <p className='text-md'>{member.introduction}</p>
+            <div className='flex flex-wrap mt-2'>
+              {displayCategories.map((category, index) => (
+                <span
+                  key={index}
+                  className='mr-2 mb-2 px-2 py-1 border rounded-lg text-gray-700 bg-gray-100'
+                >
+                  {category}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
-        <div className='flex space-x-4'>
+        <div className='flex-none'>
           <Link to='/mypage/profile'>
             <button className='p-2 rounded'>
               <img src={settingIcon} alt='setting' className='w-8 h-8' />

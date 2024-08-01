@@ -1,20 +1,44 @@
 import React from 'react';
 
-const RegisterInput = ({ labelText, error, ...props }) => {
+const RegisterInput = ({
+  labelText,
+  type,
+  id,
+  name,
+  value,
+  onChange,
+  required,
+  error,
+}) => {
   return (
     <div className='mb-4'>
-      <label
-        htmlFor={props.id}
-        className='block mb-2 text-sm font-medium text-gray-700'
-      >
+      <label htmlFor={id} className='block text-gray-700 font-medium'>
         {labelText}
       </label>
-      <input
-        {...props}
-        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-          error ? 'border-red-500' : ''
-        }`}
-      />
+      {type === 'textarea' ? (
+        <textarea
+          id={id}
+          name={name}
+          value={value}
+          onChange={onChange}
+          required={required}
+          className={`mt-1 p-2 block w-full border rounded-md ${
+            error ? 'border-red-500' : ''
+          }`}
+        />
+      ) : (
+        <input
+          type={type}
+          id={id}
+          name={name}
+          value={value}
+          onChange={onChange}
+          required={required}
+          className={`mt-1 p-2 block w-full border rounded-md ${
+            error ? 'border-red-500' : ''
+          }`}
+        />
+      )}
       {error && <p className='text-red-500 text-xs italic'>{error}</p>}
     </div>
   );
