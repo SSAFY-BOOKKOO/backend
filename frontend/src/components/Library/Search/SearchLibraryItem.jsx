@@ -9,7 +9,7 @@ const SearchLibraryItem = ({ book, onClick }) => {
       <div className='w-36 h-36 flex'>
         <img
           className='object-contain'
-          src={book.cover_img_url}
+          src={book.coverImgUrl}
           alt={book.title}
         />
       </div>
@@ -19,11 +19,9 @@ const SearchLibraryItem = ({ book, onClick }) => {
           <p className='text-overflow text-lg font-semibold'>{book.title}</p>
           <p className='text-sm text-gray-600'>{book.author}</p>
           <p className='text-sm text-gray-600'>
-            {book.publisher} | {book?.published_at}
+            {book.publisher} | {book?.publishedAt}
           </p>
-          <p className='text-sm text-gray-600'>
-            읽은 기간: {book.published_at}
-          </p>
+          <p className='text-sm text-gray-600'>읽은 기간: {book.publishedAt}</p>
           <p className='text-sm text-gray-600'>평점: {book.rating}</p>
         </div>
       </div>

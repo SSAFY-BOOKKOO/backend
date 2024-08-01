@@ -7,7 +7,7 @@ const PopularBook = ({ book, onClick }) => {
       onClick={onClick}
     >
       <img
-        src={book?.cover_img_url}
+        src={book?.coverImgUrl}
         alt='Book'
         className='w-32 h-40 mb-2 rounded-lg'
       />

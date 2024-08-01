@@ -22,7 +22,7 @@ const LibraryDetail = () => {
   const maxLength = 100;
 
   // book 정보 받기
-  const { title, author, publisher, summary, cover_img_url } = state.book;
+  const { title, author, publisher, summary, coverImgUrl } = state.book;
 
   // 삭제 로직
   const handleDelete = bookId => {
@@ -88,7 +88,7 @@ const LibraryDetail = () => {
               <div className='flex flex-col items-center p-8 pl-12'>
                 <div className='absolute left-6 top-0 bottom-0 shadow-2xl w-1 bg-gray-500 shadow-2xl z-10'></div>
                 <img
-                  src={cover_img_url}
+                  src={coverImgUrl}
                   alt={title}
                   className='w-72 h-96 cursor-pointer rounded-lg shadow-xl'
                   onClick={() => setShowReview(true)}

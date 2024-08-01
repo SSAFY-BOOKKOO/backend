@@ -6,7 +6,7 @@ import { MdOutlineRefresh } from 'react-icons/md';
 import { CgProfile } from 'react-icons/cg';
 
 const ReviewCom = ({ onBackClick, book }) => {
-  const { title, author, publisher, summary, cover_img_url } = book;
+  const { title, author, publisher, summary, coverImgUrl } = book;
   const [editReview, setEditingReview] = useState(false);
   const [reviewText, setReviewText] = useState('');
 

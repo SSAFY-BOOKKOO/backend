@@ -42,7 +42,7 @@ const BookTalkDetail = () => {
       <div className='flex flex-col items-center'>
         <div className='w-32 min-h-40 my-4 flex items-center'>
           <img
-            src={book.cover_img_url}
+            src={book?.coverImgUrl}
             alt='Book Cover'
             className='rounded-lg'
           />

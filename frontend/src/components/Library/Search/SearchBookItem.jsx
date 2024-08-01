@@ -15,7 +15,7 @@ const SearchBookItem = ({ book, onClick, onCreateClick }) => {
       <div className='w-36 h-36 flex'>
         <img
           className='object-contain'
-          src={book?.cover_img_url}
+          src={book?.coverImgUrl}
           alt={book?.title}
         />
       </div>
@@ -25,7 +25,7 @@ const SearchBookItem = ({ book, onClick, onCreateClick }) => {
           <p className='text-overflow text-lg font-semibold'>{book?.title}</p>
           <p className='text-sm text-gray-600'>{book?.author}</p>
           <p className='text-sm text-gray-600'>
-            {book?.publisher} | {book?.published_at}
+            {book?.publisher} | {book?.publishedAt}
           </p>
         </div>
         <Button className='w-14 mt-2' size='small' onClick={handleButtonClick}>

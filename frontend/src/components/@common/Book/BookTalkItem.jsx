@@ -4,7 +4,7 @@ const BookTalkItem = ({ book, onClick }) => {
   return (
     <div className='flex items-center mb-4 cursor-pointer' onClick={onClick}>
       <img
-        src={book?.cover_img_url}
+        src={book?.coverImgUrl}
         alt='Book'
         className='w-12 h-16 mr-4 rounded-lg'
       />
