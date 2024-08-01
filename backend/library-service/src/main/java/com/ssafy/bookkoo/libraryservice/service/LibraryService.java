@@ -93,4 +93,12 @@ public interface LibraryService {
         List<RequestLibraryBookMapperUpdateDto> lbmDto,
         Long memberId
     );
+
+    /**
+     * 내 서재 목록 불러오는 메서드
+     *
+     * @param memberId : member Id
+     * @return : List ResponseLibraryDto
+     */
+    List<ResponseLibraryDto> getMyLibraries(Long memberId);
 }

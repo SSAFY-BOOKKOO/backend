@@ -196,6 +196,7 @@ public class LibraryServiceImpl implements LibraryService {
                                                                                 Collectors.toList());
 
         return ResponseLibraryDto.builder()
+                                 .id(libraryId)
                                  .libraryOrder(libraryDto.libraryOrder())
                                  .libraryStyleDto(libraryDto.libraryStyleDto())
                                  .name(libraryDto.name())
@@ -343,6 +344,19 @@ public class LibraryServiceImpl implements LibraryService {
             libraryBookMapperRepository.save(lbMapper);
         }
         return null;
+    }
+
+    /**
+     * 내 서재 목록 불러오는 메서드
+     *
+     * @param memberId : member Id
+     * @return : List ResponseLibraryDto
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<ResponseLibraryDto> getMyLibraries(Long memberId) {
+        return libraryMapper.toResponseDtoList(
+            libraryRepository.findByMemberId(memberId));
     }
 
     /**
