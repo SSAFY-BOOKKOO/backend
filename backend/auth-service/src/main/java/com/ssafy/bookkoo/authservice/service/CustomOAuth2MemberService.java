@@ -2,6 +2,7 @@ package com.ssafy.bookkoo.authservice.service;
 
 import com.ssafy.bookkoo.authservice.dto.OAuth.GoogleUserInfo;
 import com.ssafy.bookkoo.authservice.dto.OAuth.KakaoUserInfo;
+import com.ssafy.bookkoo.authservice.dto.OAuth.NaverUserInfo;
 import com.ssafy.bookkoo.authservice.dto.OAuth.OAuth2UserInfo;
 import com.ssafy.bookkoo.authservice.dto.SocialRegisterDto;
 import com.ssafy.bookkoo.authservice.entity.Member;
@@ -46,6 +47,7 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
                 oAuth2UserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
                 break;
             case "naver":
+                oAuth2UserInfo = new NaverUserInfo(oAuth2User.getAttributes());
                 break;
             default:
                 throw new OAuth2AuthenticationException("Provider Not Valid");
