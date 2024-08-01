@@ -7,6 +7,7 @@ import com.ssafy.bookkoo.bookkoogateway.exception.AccessTokenExpirationException
 import com.ssafy.bookkoo.bookkoogateway.exception.WebClientRequestException;
 import com.ssafy.bookkoo.bookkoogateway.response.CustomErrorResponse;
 import com.ssafy.bookkoo.bookkoogateway.response.CustomErrorResponseWithData;
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +41,7 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
     private final AuthServiceWebClient authServiceWebClient;
     @Value("${jwt.refreshToken}")
     private String REFRESH_TOKEN;
+    public static final Duration REFRESH_TOKEN_EXPIRATION = Duration.ofDays(30);
 
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
@@ -53,7 +55,6 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
         response.getHeaders()
                 .setContentType(MediaType.APPLICATION_JSON);
 
-        //TODO: 다른 예외 검증해보기
         //게이트웨이 내부의 예외 핸들링은 여기에 정의
         if (ex instanceof AccessTokenExpirationException accessTokenExpirationException) {
             ServerHttpRequest request = exchange.getRequest();
@@ -103,17 +104,16 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
         return authServiceWebClient.getToken(cookie.getValue())
                                    .flatMap(tokenDto -> {
                                        if (tokenDto == null) {
-                                           log.info("tokenDto is null");
                                            return Mono.error(new WebClientRequestException(
                                                HttpStatus.INSUFFICIENT_STORAGE));
                                        }
-                                       log.info("tokenDto : {}", tokenDto);
-                                       ResponseCookie responseCookie = ResponseCookie.from(
-                                                                                         REFRESH_TOKEN, tokenDto.refreshToken())
-                                                                                     .path("/")
-                                                                                     .httpOnly(true)
-                                                                                     .secure(true)
-                                                                                     .build();
+                                       ResponseCookie responseCookie
+                                           = ResponseCookie.from(REFRESH_TOKEN,
+                                                               tokenDto.refreshToken())
+                                                           .path("/")
+                                                           .httpOnly(true)
+                                                           .maxAge(REFRESH_TOKEN_EXPIRATION)
+                                                           .build();
                                         response.addCookie(responseCookie);
 
                                        CustomErrorResponseWithData<ResponseTokenDto> customErrorResponse = new CustomErrorResponseWithData<>(

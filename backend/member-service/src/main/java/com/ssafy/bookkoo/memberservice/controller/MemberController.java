@@ -26,6 +26,7 @@ import java.time.Duration;
 public class MemberController {
 
     private final MemberService memberService;
+    private final Duration REFRESH_TOKEN_EXPIRATION = Duration.ofDays(30);
 
     /**
      * 회원가입에 필요한 정보를 모두 받아서 회원가입합니다. 1. email 2. password (Optional : 소셜의 경우 사용 X) 3. nickName 4.
@@ -51,8 +52,7 @@ public class MemberController {
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
-        cookie.setMaxAge((int) Duration.ofDays(7)
-                                       .getSeconds());
+        cookie.setMaxAge((int) REFRESH_TOKEN_EXPIRATION.getSeconds());
         response.addCookie(cookie);
         return ResponseEntity.ok(tokenDto);
     }
