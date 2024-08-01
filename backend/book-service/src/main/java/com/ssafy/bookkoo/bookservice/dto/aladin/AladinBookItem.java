@@ -37,4 +37,7 @@ public class AladinBookItem {
 
     @Schema(description = "카테고리 ID", example = "123")
     private Integer categoryId;
+
+    @Schema(description = "DB에 존재여부", example = "false")
+    private Boolean inLibrary;
 }
