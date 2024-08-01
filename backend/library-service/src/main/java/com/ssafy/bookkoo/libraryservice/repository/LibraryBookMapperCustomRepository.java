@@ -41,4 +41,13 @@ public interface LibraryBookMapperCustomRepository {
      * @return 책 ID 리스트
      */
     List<Long> findBookIdsByMemberId(Long memberId);
+
+    /**
+     * memberId 와 bookID 리스트를 가지고 내 서재에 등록된 책인지 여부를 반환
+     *
+     * @param memberId 본인 ID
+     * @param bookIds  book ID 리스트
+     * @return List<Long> 갖고있는 책 ID
+     */
+    List<Long> findBookIdsByMemberIdAndBookIds(Long memberId, List<Long> bookIds);
 }

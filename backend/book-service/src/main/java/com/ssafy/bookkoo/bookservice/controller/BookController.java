@@ -8,6 +8,7 @@ import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.service.book.BookService;
+import com.ssafy.bookkoo.bookservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -143,10 +146,14 @@ public class BookController {
      */
     @GetMapping("/aladin/books")
     @Operation(summary = "알라딘 API 검색", description = "알라딘 API를 사용하여 책 검색")
-    public ResponseEntity<ResponseAladinAPI> aladinSearchBooks(@Valid @ModelAttribute AladinAPISearchParams params)
+    public ResponseEntity<ResponseAladinAPI> aladinSearchBooks(
+        @RequestHeader HttpHeaders headers,
+        @Valid @ModelAttribute AladinAPISearchParams params
+    )
         throws IOException, URISyntaxException, InterruptedException, ParseException {
+        Long memberId = CommonUtil.getMemberId(headers);
         return ResponseEntity.ok()
-                             .body(bookService.searchBooksFromAladin(params));
+                             .body(bookService.searchBooksFromAladin(memberId, params));
     }
 
     /**

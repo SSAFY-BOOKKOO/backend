@@ -67,6 +67,7 @@ public interface LibraryMapper {
      * @return 변환된 ResponseLibraryDto
      */
     @Mapping(target = "libraryStyleDto", source = "libraryStyle")
+    @Mapping(target = "bookCount", expression = "java(library.getBookCount())")
     ResponseLibraryDto toResponseDto(Library library);
 
     /**
@@ -83,6 +84,8 @@ public interface LibraryMapper {
      * @param libraries 변환할 Library 엔티티 목록
      * @return 변환된 ResponseLibraryDto 목록
      */
+    @Mapping(target = "libraryStyleDto", source = "libraryStyle")
+    @Mapping(target = "bookCount", expression = "java(library.getBookCount())")
     List<ResponseLibraryDto> toResponseDtoList(List<Library> libraries);
 
     /**

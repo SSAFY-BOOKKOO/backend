@@ -7,7 +7,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,6 +42,9 @@ public class Library {
     @Setter
     private LibraryStyle libraryStyle;
 
+    @OneToMany(mappedBy = "library")
+    private List<LibraryBookMapper> books = new ArrayList<>();
+
     @Builder
     public Library(
         Long id,
@@ -52,5 +58,7 @@ public class Library {
         this.libraryOrder = libraryOrder;
     }
 
-
+    public Integer getBookCount() {
+        return books.size();
+    }
 }

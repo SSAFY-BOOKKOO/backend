@@ -26,6 +26,7 @@ import com.ssafy.bookkoo.libraryservice.repository.LibraryRepository;
 import com.ssafy.bookkoo.libraryservice.repository.LibraryStyleRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -196,6 +197,7 @@ public class LibraryServiceImpl implements LibraryService {
                                                                                 Collectors.toList());
 
         return ResponseLibraryDto.builder()
+                                 .id(libraryId)
                                  .libraryOrder(libraryDto.libraryOrder())
                                  .libraryStyleDto(libraryDto.libraryStyleDto())
                                  .name(libraryDto.name())
@@ -343,6 +345,34 @@ public class LibraryServiceImpl implements LibraryService {
             libraryBookMapperRepository.save(lbMapper);
         }
         return null;
+    }
+
+    /**
+     * 내 서재 목록 불러오는 메서드
+     *
+     * @param memberId : member Id
+     * @return : List ResponseLibraryDto
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<ResponseLibraryDto> getMyLibraries(Long memberId) {
+        return libraryMapper.toResponseDtoList(
+            libraryRepository.findByMemberId(memberId));
+    }
+
+    /**
+     * 사용자의 서재에 여러 책이 등록되어 있는지 여부를 확인하는 API
+     *
+     * @param memberId member ID
+     * @param bookIds  bookId 리스트
+     * @return Map<BookId, boolean>
+     */
+    @Override
+    public Map<Long, Boolean> areBooksInLibrary(Long memberId, List<Long> bookIds) {
+        List<Long> booksInLibrary = libraryBookMapperRepository.findBookIdsByMemberIdAndBookIds(
+            memberId, bookIds);
+        return bookIds.stream()
+                      .collect(Collectors.toMap(bookId -> bookId, booksInLibrary::contains));
     }
 
     /**

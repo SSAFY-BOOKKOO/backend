@@ -77,7 +77,7 @@ public interface BookService {
      * @throws URISyntaxException   URI 구문 예외
      * @throws ParseException       파싱 예외
      */
-    ResponseAladinAPI searchBooksFromAladin(AladinAPISearchParams params)
+    ResponseAladinAPI searchBooksFromAladin(Long memberId, AladinAPISearchParams params)
         throws IOException, InterruptedException, URISyntaxException, ParseException;
 
     /**

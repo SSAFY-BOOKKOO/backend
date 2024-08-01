@@ -13,6 +13,7 @@ import com.ssafy.bookkoo.libraryservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -63,10 +64,25 @@ public class LibraryController {
      * @return 사용자의 서재 목록 응답 DTO 리스트
      */
     @GetMapping
-    @Operation(summary = "해당 사용자의 서재 목록 조회", description = "사용자의 닉네임을 받아 해당 사용자의 서재 목록 조회 API")
+    @Operation(summary = "해당 사용자의 서재 목록 조회", description = "사용자의 닉네임을 받아 해당 사용자의 서재 목록 조회 API<br> 주의사항 : book 데이터는 비어있음")
     public ResponseEntity<List<ResponseLibraryDto>> getLibraries(@RequestParam String nickname) {
         return ResponseEntity.ok()
                              .body(libraryService.getLibrariesOfMember(nickname));
+    }
+
+    /**
+     * 본인의 서재 목록을 조회합니다.
+     *
+     * @return 사용자의 서재 목록 응답 DTO 리스트
+     */
+    @GetMapping("/me")
+    @Operation(summary = "본인의 서재 목록 조회", description = "본인의 서재 목록 조회 API")
+    public ResponseEntity<List<ResponseLibraryDto>> getMyLibraries(
+        @RequestHeader HttpHeaders headers
+    ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+        return ResponseEntity.ok()
+                             .body(libraryService.getMyLibraries(memberId));
     }
 
     /**
@@ -179,5 +195,15 @@ public class LibraryController {
 
         return ResponseEntity.ok()
                              .body(libraryService.getMyBooks(memberId, searchDto));
+    }
+
+    @GetMapping("/books/check")
+    @Operation(summary = "책 등록 여부 확인", description = "사용자의 서재에 여러 책이 등록되어 있는지 여부를 확인하는 API")
+    public ResponseEntity<Map<Long, Boolean>> areBooksInLibrary(
+        @RequestParam Long memberId,
+        @RequestParam List<Long> bookIds
+    ) {
+        Map<Long, Boolean> booksInLibrary = libraryService.areBooksInLibrary(memberId, bookIds);
+        return ResponseEntity.ok(booksInLibrary);
     }
 }

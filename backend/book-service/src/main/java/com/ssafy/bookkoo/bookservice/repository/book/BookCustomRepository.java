@@ -1,5 +1,6 @@
 package com.ssafy.bookkoo.bookservice.repository.book;
 
+import com.ssafy.bookkoo.bookservice.dto.book.CheckExistBookByIsbnDto;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBooksFilterDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
@@ -44,4 +45,12 @@ public interface BookCustomRepository {
      * @return 검색된 책 리스트
      */
     List<Book> findByConditions(RequestSearchBookMultiFieldDto filterDto);
+
+    /**
+     * isbn 리스트를 조회하여 각 isbn에 대해 책 데이터가 DB 내에 존재하는지 검색합니다.
+     *
+     * @param isbnList 책 식별번호
+     * @return List<CheckExistBookByIsbnDto>
+     */
+    List<CheckExistBookByIsbnDto> checkExistBookByIsbn(List<String> isbnList);
 }
