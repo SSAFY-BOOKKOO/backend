@@ -9,8 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -30,26 +28,8 @@ public class SecurityConfig {
             .logout(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers(
-                    "/auth-service/**",
-                    "/api-docs/**",
-                    "/auth/login/**",
-                    "/auth/token/**",
-                    "/css/**",
-                    "/images/**",
-                    "/js/**",
-                    "/swagger-ui/**",
-                    "/swagger-ui.html",
-                    "/docs/**",
-                    "/webjars/**",
-                    "/v3/api-docs/**",
-                    "/swagger-resources/**",
-                    "/actuator/**",
-                    "/favicon.*"
-                )
-                .permitAll()
                 .anyRequest()
-                .authenticated())
+                .permitAll())
             .oauth2Login((oauth2) -> oauth2
                 .authorizationEndpoint(
                     //인증 요청 설정 엔드포인트 (소셜 로그인 페이지 요청 URL)
