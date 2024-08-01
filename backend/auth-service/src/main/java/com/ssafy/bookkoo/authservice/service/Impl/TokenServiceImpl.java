@@ -20,9 +20,8 @@ public class TokenServiceImpl implements TokenService {
     private final TokenGenerator tokenGenerator;
 
     private final RefreshTokenRepository refreshTokenRepository;
-    //TODO: 테스트용으로 30초 유효시간 설정
-    private final Duration ACCESS_TOKEN_EXPIRATION = Duration.ofSeconds(30);
-    private final Duration REFRESH_TOKEN_EXPIRATION = Duration.ofDays(7);
+    private final Duration ACCESS_TOKEN_EXPIRATION = Duration.ofDays(1);
+    private final Duration REFRESH_TOKEN_EXPIRATION = Duration.ofDays(30);
 
 
     /**
