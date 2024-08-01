@@ -14,10 +14,15 @@ public interface MemberInfoMapper {
 
     // 엔티티를 DTO로 변환
     @Mapping(source = "categories", target = "categories", qualifiedByName = "mapCategories")
+    @Mapping(target = "age", ignore = true)
+    @Mapping(target = "profileImgUrl", ignore = true)
     ResponseMemberInfoDto toResponseDto(MemberInfo memberInfo);
 
     @Named("mapCategories")
     default List<Integer> mapCategories(List<MemberCategoryMapper> categories) {
-        return categories.stream().map(category -> category.getMemberCategoryMapperKey().getCategoryId()).toList();
+        return categories.stream()
+                         .map(category -> category.getMemberCategoryMapperKey()
+                                                  .getCategoryId())
+                         .toList();
     }
 }

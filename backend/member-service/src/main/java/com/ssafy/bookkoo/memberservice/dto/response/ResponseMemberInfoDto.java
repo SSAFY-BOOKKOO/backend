@@ -11,7 +11,7 @@ public record ResponseMemberInfoDto(
     List<Integer> categories,
     int age,
     String introduction,
-    String profilImgUrl
+    String profileImgUrl
 ) {
 
 }
