@@ -1,23 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ProfileUpdate from '@components/MyPage/Profile/ProfileUpdate.jsx';
 import ProfileView from '@components/MyPage/Profile/ProfileView.jsx';
 import PasswordUpdate from '@components/MyPage/Profile/PasswordUpdate.jsx';
 import AdditionalSetting from '@components/MyPage/Profile/AdditionalSetting.jsx';
-import profileImgSample from '@assets/images/profile_img_sample.png';
+import { authAxiosInstance } from '@services/axiosInstance';
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
-  const [userInfo, setUserInfo] = useState({
-    nickname: '유제3',
-    profile_img_url: profileImgSample,
-    email: 'user@example.com',
-    receiveLetters: true,
-    introduction: '안녕하세요! 반갑습니다.',
-    categories: ['추리/스릴러', '로맨스'],
-    one_line_review_privacy: 'public_reveal',
-  });
+  const [userInfo, setUserInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchMemberInfo = async () => {
+    try {
+      const response = await authAxiosInstance.get(
+        '/members/info?memberId=312c2435-d0b5-4607-808d-fc0e9c51b58d'
+      );
+      setUserInfo(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMemberInfo();
+  }, []);
 
   const handleEdit = () => setIsEditing(true);
   const handleCancelEdit = () => setIsEditing(false);
@@ -35,6 +45,10 @@ const ProfilePage = () => {
     setIsEditing(false);
     setIsChangingPassword(false);
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className='max-w-md mx-auto mt-10'>

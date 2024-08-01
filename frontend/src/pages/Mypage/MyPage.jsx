@@ -1,20 +1,57 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import settingIcon from '@assets/icons/setting.png';
 import { FaCalendarDays } from 'react-icons/fa6';
 import { MdPeopleAlt } from 'react-icons/md';
 import { BsChatSquareQuoteFill } from 'react-icons/bs';
 import { FaClipboardList } from 'react-icons/fa6';
 import profileImgSample from '@assets/images/profile_img_sample.png';
+import { authAxiosInstance, axiosInstance } from '@services/axiosInstance';
 
 const MyPage = () => {
-  const member = {
-    nickname: '하츄핑',
-    introduction:
-      '소캐치! 티니핑 시리즈의 메인 티니핑 및 메인 로열핑으로 로미와 더불어 양대 주인공이자 메인 마스코트 캐릭터.',
-    categories: ['추리/스릴러', '로맨스', '인문학', '철학'],
-    profile_img_url: profileImgSample,
-  };
+  const [member, setMember] = useState(null);
+
+  useEffect(() => {
+    // const fetchMemberInfo = async () => {
+    //   const token = localStorage.getItem('ACCESS_TOKEN');
+    //   if (!token) {
+    //     return;
+    //   }
+    //   try {
+    //     const response = await axios.get('/members/info/', {
+    //       headers: {
+    //         Authorization: `Bearer ${token}`,
+    //       },
+    //     });
+    //     setMember(response.data);
+    //     console.log(response.data);
+    //   } catch (error) {
+    //     console.error('Failed to fetch member info:', error);
+    //     // 오류 처리 (예: 로그아웃 또는 오류 메시지 표시)
+    //   }
+    // };
+
+    // fetchMemberInfo();
+
+    const fetchMemberInfo = async () => {
+      try {
+        const response = await authAxiosInstance.get(
+          '/members/info?memberId=312c2435-d0b5-4607-808d-fc0e9c51b58d'
+        );
+        setMember(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchMemberInfo();
+  }, []);
+
+  if (!member) {
+    return <div>Loading...</div>;
+  }
 
   const displayCategories =
     member.categories.length > 2
@@ -26,12 +63,12 @@ const MyPage = () => {
       <div className='flex items-start justify-between'>
         <div className='flex items-start space-x-8'>
           <img
-            src={member.profile_img_url}
+            src={member.profileImgUrl || profileImgSample}
             alt='profile'
             className='w-32 h-32 rounded-full'
           />
           <div className='flex flex-col'>
-            <h2 className='text-2xl font-bold'>{member.nickname}</h2>
+            <h2 className='text-2xl font-bold'>{member.nickName}</h2>
             <p className='text-md'>{member.introduction}</p>
             <div className='flex flex-wrap mt-2'>
               {displayCategories.map((category, index) => (

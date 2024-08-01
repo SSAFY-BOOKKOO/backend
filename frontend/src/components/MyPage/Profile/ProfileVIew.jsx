@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '@components/@common/Button';
+import profileImgSample from '@assets/images/profile_img_sample.png';
 
 const ProfileView = ({ userInfo, onEdit, onChangePassword }) => {
   return (
@@ -16,7 +17,7 @@ const ProfileView = ({ userInfo, onEdit, onChangePassword }) => {
         <div className='mb-4 flex'>
           <label className='text-gray-700 font-medium w-1/3'>닉네임</label>
           <p className='text-gray-700 font-medium w-2/3 text-right'>
-            {userInfo.nickname}
+            {userInfo.nickName}
           </p>
         </div>
         <div className='mb-4 flex'>
@@ -25,7 +26,7 @@ const ProfileView = ({ userInfo, onEdit, onChangePassword }) => {
           </label>
           <div className='w-2/3 text-right'>
             <img
-              src={userInfo.profile_img_url}
+              src={userInfo.profileImgUrl || profileImgSample}
               alt='Profile'
               className='w-16 h-16 rounded-full inline-block'
             />
