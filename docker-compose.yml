@@ -14,14 +14,12 @@ services:
       - bookkoo-net
     depends_on:
       - prometheus
-
   react-app:
     container_name: react-container
     build:
       context: ./frontend
     networks:
       - bookkoo-net
-
   nginx-proxy-manager:
     image: 'jc21/nginx-proxy-manager:latest'
     container_name: nginx-proxy-manager
@@ -49,7 +47,6 @@ services:
     command: -config.file=/etc/loki/local-config.yaml
     networks:
       - bookkoo-net
-
   promtail:
     build: ./promtail
     volumes:
@@ -69,7 +66,6 @@ services:
       - ./data/mysql:/var/lib/mysql
     networks:
       - bookkoo-net
-
   book-db:
     image: postgres:latest
     container_name: book-postgres
@@ -126,6 +122,7 @@ services:
     networks:
       - bookkoo-net
 
+  # 레디스 추가
   member-redis:
     image: redis:latest
     container_name: member-redis
@@ -164,12 +161,7 @@ services:
       - SPRING_REDIS_PORT=6379
     networks:
       - bookkoo-net
-    restart: on-failure
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8085/actuator/health || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
+    restart: always
     volumes:
       - ./auth-service:/app/
       - ./logs/auth-service:/app/logs
@@ -187,12 +179,7 @@ services:
       - bookkoo-net
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-    restart: on-failure
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8086/actuator/health || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
+    restart: always
     volumes:
       - ./auth-service:/app/
       - ./logs/common-service:/app/logs
@@ -206,11 +193,11 @@ services:
     networks:
       - bookkoo-net
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1" ]
       interval: 10s
       timeout: 3s
       retries: 3
-    restart: on-failure
+    restart: always
     volumes:
       - ./eureka-server:/app/
 
@@ -225,20 +212,16 @@ services:
         condition: service_healthy
     networks:
       - bookkoo-net
-    restart: on-failure
+    restart: always
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:postgresql://book-db:5432/bookkoo
       - SPRING_DATASOURCE_USERNAME=magumagu
       - SPRING_DATASOURCE_PASSWORD=magumagu
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8082/actuator/health || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
     volumes:
       - ./book-service:/app/
       - ./logs/book-service:/app/logs
+
 
   bookkoo-gateway:
     container_name: bookkoo-gateway
@@ -259,17 +242,13 @@ services:
         condition: service_started
     networks:
       - bookkoo-net
-    restart: on-failure
+    restart: always
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
     volumes:
       - ./bookkoo-gateway:/app/
       - ./logs/gateway-service:/app/logs
+
 
   curation-service:
     container_name: curation-service
@@ -282,13 +261,67 @@ services:
         condition: service_healthy
     networks:
       - bookkoo-net
-    restart: on-failure
+    restart: always
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:postgresql://curation-db:5432/bookkoo
       - SPRING_DATASOURCE_USERNAME=magumagu
       - SPRING_DATASOURCE_PASSWORD=magumagu
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8084/actuator/health || exit 1"]
-      interval: 10s
-      timeout: 3s
+    volumes:
+      - ./curation-service:/app/
+      - ./logs/curation-service:/app/logs
+
+  library-service:
+    container_name: library-service
+    build:
+      context: ./backend/library-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bookkoo-net
+    restart: always
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://library-db:5432/bookkoo
+      - SPRING_DATASOURCE_USERNAME=magumagu
+      - SPRING_DATASOURCE_PASSWORD=magumagu
+    volumes:
+      - ./library-service:/app/
+      - ./logs/library-service:/app/logs
+
+  member-service:
+    container_name: member-service
+    build:
+      context: ./backend/member-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bookkoo-net
+    restart: always
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://member-db:5432/bookkoo
+      - SPRING_DATASOURCE_USERNAME=magumagu
+      - SPRING_DATASOURCE_PASSWORD=magumagu
+    volumes:
+      - ./member-service:/app/
+      - ./logs/member-service:/app/logs
+
+networks:
+  bookkoo-net:
+    driver: bridge
+
+volumes:
+  book_postgres_data:
+  curation_postgres_data:
+  library_postgres_data:
+  member_postgres_data:
+  auth_postgres_data:
+  member_redis_data:
+  auth_redis_data:
