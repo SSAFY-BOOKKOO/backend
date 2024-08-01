@@ -19,6 +19,8 @@ public interface ReviewMapper {
      * @param dto RequestReviewDto 객체
      * @return 변환된 Review 엔티티
      */
+    @Mapping(target = "book", ignore = true)
+    @Mapping(target = "memberId", ignore = true)
     Review toEntity(RequestReviewDto dto);
 
     /**

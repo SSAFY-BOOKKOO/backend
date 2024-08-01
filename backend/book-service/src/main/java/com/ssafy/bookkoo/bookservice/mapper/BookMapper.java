@@ -28,6 +28,7 @@ public interface BookMapper {
      * @param dto RequestCreateBookDto 객체
      * @return 변환된 Book 엔티티
      */
+    @Mapping(source = "categoryId", target = "category.id")
     Book toEntity(RequestCreateBookDto dto);
 
     /**
@@ -46,6 +47,7 @@ public interface BookMapper {
     @Mapping(source = "subInfo.packing.sizeDepth", target = "sizeDepth")
     @Mapping(source = "subInfo.packing.sizeHeight", target = "sizeHeight")
     @Mapping(source = "subInfo.packing.sizeWidth", target = "sizeWidth")
+    @Mapping(source = "categoryId", target = "category.id")
     Book toEntity(ResponseAladinSearchDetail dto);
 
     /**
@@ -70,7 +72,8 @@ public interface BookMapper {
         @Mapping(source = "description", target = "summary"),
         @Mapping(source = "pubDate", target = "publishedAt"),
         @Mapping(source = "title", target = "title"),
-        @Mapping(source = "isbn", target = "isbn")
+        @Mapping(source = "isbn", target = "isbn"),
+        @Mapping(target = "inLibrary", ignore = true)
     })
     AladinBookItem toAladinBookItem(OriginAladinBookItem dto);
 
