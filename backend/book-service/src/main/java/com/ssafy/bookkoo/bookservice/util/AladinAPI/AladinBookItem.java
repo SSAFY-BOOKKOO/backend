@@ -11,10 +11,10 @@ public class AladinBookItem {
 
     private String author;
     private String isbn;
-    private String description;
+    private String summary;
     private String title;
-    private String pubDate;
-    private String cover;
+    private String publishedAt;
+    private String coverImgUrl;
     private String publisher;
     private Integer categoryId;
 }

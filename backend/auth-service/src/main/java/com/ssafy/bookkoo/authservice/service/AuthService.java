@@ -9,6 +9,8 @@ public interface AuthService {
 
     ResponseLoginTokenDto login(RequestLoginDto requestLoginDto);
 
+    ResponseLoginTokenDto login(String email);
+
     ResponseLoginTokenDto getTokenDto(String refreshToken);
 
     Optional<Member> getMemberByEmail(String email);

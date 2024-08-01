@@ -85,6 +85,7 @@ public class MemberServiceImpl implements MemberService {
                                    .gender(requestRegisterMemberDto.gender())
                                    .introduction(requestRegisterMemberDto.introduction())
                                    .nickName(requestRegisterMemberDto.nickName())
+                                   .profileImgUrl(requestRegisterMemberDto.profileImgUrl())
                                    .build();
         //추가정보 등록
         registerAdditionalInfo(additionalInfo, profileImg);
@@ -132,9 +133,10 @@ public class MemberServiceImpl implements MemberService {
         MultipartFile profileImg) {
         log.info(requestAdditionalInfo.memberId());
 
+        String profileImgUrl = requestAdditionalInfo.profileImgUrl();
 
-        //기본 프로필 이미지
-        String fileKey = "Default.jpg";
+        //기본 프로필 이미지 or 소셜 로그인의 경우 profileImgUrl
+        String fileKey = profileImgUrl == null ? "Default.jpg" : profileImgUrl;
         if (profileImg != null) {
             fileKey = commonServiceClient.saveProfileImg(profileImg, null);
         }

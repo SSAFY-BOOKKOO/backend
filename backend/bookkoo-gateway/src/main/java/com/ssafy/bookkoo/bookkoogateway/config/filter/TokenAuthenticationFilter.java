@@ -41,6 +41,10 @@ public class TokenAuthenticationFilter implements GlobalFilter {
         "/swagger-ui.html",
         "/swagger-ui",
         "/docs", "/webjars", "/v3",
+        //정적 리소스
+        "/js",
+        "/css",
+        "/images",
         //토큰 인증 스킵 URL
         "/members/register",
         "/auth",
@@ -72,6 +76,9 @@ public class TokenAuthenticationFilter implements GlobalFilter {
                 }
                 return chain.filter(exchange);
             }
+        }
+        if (path.matches(".*/favicon\\..*")) {
+            return chain.filter(exchange);
         }
 
         if (accessToken == null || !tokenUtils.validToken(accessToken)) {
@@ -114,70 +121,3 @@ public class TokenAuthenticationFilter implements GlobalFilter {
         return null;
     }
 }
-
-/**
- * 인엽쓰 되는 코드 (근데 헤더에 PASSPORT없음)
- */
-//package com.ssafy.bookkoo.bookkoogateway.config.filter;
-//
-//import com.ssafy.bookkoo.bookkoogateway.client.MemberServiceWebClient;
-//import com.ssafy.bookkoo.bookkoogateway.util.TokenUtils;
-//import java.util.List;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.http.HttpHeaders;
-//import org.springframework.security.core.Authentication;
-//import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
-//import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
-//import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
-//import org.springframework.stereotype.Component;
-//import org.springframework.web.server.ServerWebExchange;
-//import reactor.core.publisher.Mono;
-//
-//@Slf4j
-//@Component
-//public class TokenAuthenticationFilter extends AuthenticationWebFilter {
-//
-//    private static final String PASSPORT_HEADER = "Member-Passport";
-//    private static final String TOKEN_PREFIX = "Bearer ";
-//    private final TokenUtils tokenUtils;
-//    private final MemberServiceWebClient memberServiceWebClient;
-//    private final List<String> excludedPaths = List.of(
-//        "/auth-service/**", "/book-service/**",
-//        "/common-service/**", "/curation-service/**",
-//        "/library-service/**", "/member-service/**", "/api-docs/**",
-//        "/swagger-ui.html",
-//        "/swagger-ui/**",
-//        "/docs/**", "/webjars/**", "/v3/**"
-//    );
-//
-//    public TokenAuthenticationFilter(
-//        TokenUtils tokenUtils,
-//        MemberServiceWebClient memberServiceWebClient
-//    ) {
-//        super(new TokenAuthenticationManager(tokenUtils));
-//        this.tokenUtils = tokenUtils;
-//        this.memberServiceWebClient = memberServiceWebClient;
-//        this.setServerAuthenticationConverter(new ServerAuthenticationConverter() {
-//            @Override
-//            public Mono<Authentication> convert(ServerWebExchange exchange) {
-//                String authHeader = exchange.getRequest()
-//                                            .getHeaders()
-//                                            .getFirst(HttpHeaders.AUTHORIZATION);
-//                String token =
-//                    (authHeader != null && authHeader.startsWith("Bearer ")) ? authHeader.substring(
-//                        7) : null;
-//                return Mono.justOrEmpty(token)
-//                           .filter(tokenUtils::validToken)
-//                           .map(tokenUtils::getAuthentication);
-//            }
-//        });
-//        this.setSecurityContextRepository(new WebSessionServerSecurityContextRepository());
-//    }
-//
-//    private String getAccessToken(String authorizationHeader) {
-//        if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
-//            return authorizationHeader.substring(TOKEN_PREFIX.length());
-//        }
-//        return null;
-//    }
-//}
