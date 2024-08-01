@@ -73,6 +73,8 @@ public class TokenAuthenticationFilter implements GlobalFilter {
                 // /books/{bookId}/reviews~ 경로는 필터링 필요
                 if (excludedPath.equals("/books") && path.matches("^/books/\\d+/reviews(/.*)?$")) {
                     break; // 필터를 거쳐야 함
+                } else if (path.matches("^/books/aladin(/.*)?$")) { // aladin 검색도 필요
+                    break;
                 }
                 return chain.filter(exchange);
             }

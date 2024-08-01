@@ -1,14 +1,19 @@
 package com.ssafy.bookkoo.bookservice.repository.book;
 
+// dto 로 변환을 위한 constructor 사용
+
+import static com.querydsl.core.types.Projections.constructor;
+import static com.ssafy.bookkoo.bookservice.entity.QBook.book;
+
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.bookkoo.bookservice.dto.book.CheckExistBookByIsbnDto;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBooksFilterDto;
 import com.ssafy.bookkoo.bookservice.dto.book.SearchBookConditionDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
-import com.ssafy.bookkoo.bookservice.entity.QBook;
 import com.ssafy.bookkoo.bookservice.exception.InvalidAttributeException;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -41,7 +46,6 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
         int offset,
         int limit
     ) {
-        QBook book = QBook.book;
         BooleanExpression predicate = book.isNotNull();
 
         if (type != null) {
@@ -77,7 +81,6 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
      */
     @Override
     public List<Book> findByConditions(RequestSearchBooksFilterDto dto) {
-        QBook book = QBook.book;
         BooleanExpression predicate = book.isNotNull();
 
         PathBuilder<Book> entityPath = new PathBuilder<>(Book.class, "book");
@@ -103,7 +106,6 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
      */
     @Override
     public Book findByIsbn(String isbn) {
-        QBook book = QBook.book;
         return queryFactory.selectFrom(book)
                            .where(book.isbn.eq(isbn))
                            .fetchFirst(); // 찾지 못하면 null 반환
@@ -117,7 +119,6 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
      */
     @Override
     public List<Book> findByConditions(RequestSearchBookMultiFieldDto dto) {
-        QBook book = QBook.book;
         // 동적 쿼리 시작
         BooleanBuilder predicate = new BooleanBuilder();
 
@@ -159,6 +160,31 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
                            .where(predicate)
                            .offset(dto.offset())
                            .limit(dto.limit())
+                           .fetch();
+    }
+
+    /**
+     * isbn 리스트를 조회하여 각 isbn에 대해 책 데이터가 DB 내에 존재하는지 검색합니다.
+     *
+     * @param isbnList 책 식별번호
+     * @return List<CheckExistBookByIsbnDto>
+     */
+    @Override
+    public List<CheckExistBookByIsbnDto> checkExistBookByIsbn(List<String> isbnList) {
+        BooleanBuilder predicate = new BooleanBuilder();
+
+        // isbn 리스트 in절
+        predicate.and(book.isbn.in(isbnList));
+
+        // 결과 엔티티 -> dto
+        return queryFactory.select(
+                               constructor(
+                                   CheckExistBookByIsbnDto.class,
+                                   book.id, book.isbn
+                               )
+                           )
+                           .from(book)
+                           .where(predicate)
                            .fetch();
     }
 }

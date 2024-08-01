@@ -1,9 +1,10 @@
 package com.ssafy.bookkoo.libraryservice.repository;
 
+import static com.ssafy.bookkoo.libraryservice.entity.QLibrary.library;
+
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.bookkoo.libraryservice.entity.LibraryBookMapper;
-import com.ssafy.bookkoo.libraryservice.entity.QLibrary;
 import com.ssafy.bookkoo.libraryservice.entity.QLibraryBookMapper;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import java.util.List;
@@ -28,7 +29,6 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
     @Override
     public Integer countLibrariesByMemberId(Long memberId) {
         QLibraryBookMapper libraryBookMapper = QLibraryBookMapper.libraryBookMapper;
-        QLibrary library = QLibrary.library;
 
         // memberId에 대해 서재 개수 반환
         Long count = queryFactory.select(libraryBookMapper.count())
@@ -93,7 +93,6 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
     @Override
     public List<Long> findBookIdsByMemberId(Long memberId) {
         QLibraryBookMapper libraryBookMapper = QLibraryBookMapper.libraryBookMapper;
-        QLibrary library = QLibrary.library;
 
         BooleanBuilder predicate = new BooleanBuilder();
         // memberId가 일치하는지 확인
@@ -104,6 +103,31 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
                            .join(libraryBookMapper.library, library)
                            .where(predicate)
                            .orderBy(libraryBookMapper.bookOrder.asc())
+                           .fetch();
+    }
+
+    /**
+     * memberId 와 bookID 리스트를 가지고 내 서재에 등록된 책인지 여부를 반환
+     *
+     * @param memberId 본인 ID
+     * @param bookIds  book ID 리스트
+     * @return List<Long> 갖고있는 책 ID
+     */
+    @Override
+    public List<Long> findBookIdsByMemberIdAndBookIds(Long memberId, List<Long> bookIds) {
+        QLibraryBookMapper libraryBookMapper = QLibraryBookMapper.libraryBookMapper;
+
+        BooleanBuilder predicate = new BooleanBuilder();
+
+        // 내 서재 찾기
+        predicate.and(libraryBookMapper.library.memberId.eq(memberId));
+
+        // 책 찾기
+        predicate.and(libraryBookMapper.id.bookId.in(bookIds));
+
+        return queryFactory.select(libraryBookMapper.id.bookId)
+                           .from(libraryBookMapper)
+                           .where(predicate)
                            .fetch();
     }
 }
