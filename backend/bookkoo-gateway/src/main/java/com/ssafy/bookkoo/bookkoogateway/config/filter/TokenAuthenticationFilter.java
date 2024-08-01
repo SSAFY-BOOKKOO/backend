@@ -1,7 +1,7 @@
 package com.ssafy.bookkoo.bookkoogateway.config.filter;
 
 import com.ssafy.bookkoo.bookkoogateway.client.MemberServiceWebClient;
-import com.ssafy.bookkoo.bookkoogateway.exception.TokenExpirationException;
+import com.ssafy.bookkoo.bookkoogateway.exception.AccessTokenExpirationException;
 import com.ssafy.bookkoo.bookkoogateway.util.TokenUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -77,13 +77,14 @@ public class TokenAuthenticationFilter implements GlobalFilter {
                 return chain.filter(exchange);
             }
         }
-        if (path.matches(".*/favicon\\..*")) {
+        //파비콘 관련은 토큰 필터 거치지 않도록 추가
+        if (isSkip(path)) {
             return chain.filter(exchange);
         }
 
         if (accessToken == null || !tokenUtils.validToken(accessToken)) {
             log.info("토큰이 만료되었습니다.");
-            throw new TokenExpirationException();
+            throw new AccessTokenExpirationException();
         }
 
         Authentication authentication = tokenUtils.getAuthentication(accessToken);
@@ -112,6 +113,18 @@ public class TokenAuthenticationFilter implements GlobalFilter {
                                      .doOnError(error -> {
                                          log.error("토큰 필터 에러 {}", error.getMessage());
                                      });
+    }
+
+    /**
+     * 필터를 스킵해야하는 URI가 패턴으로 체크되어야 하는 경우
+     * @param path
+     * @return
+     */
+    private static boolean isSkip(String path) {
+        if (path.matches(".*/favicon\\..*")) {
+            return true;
+        }
+        return false;
     }
 
     private String getAccessToken(String authorizationHeader) {
