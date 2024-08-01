@@ -32,16 +32,6 @@ const ProfileView = ({ userInfo, onEdit, onChangePassword }) => {
           </div>
         </div>
         <div className='mb-4 flex'>
-          <label className='text-gray-700 font-medium w-1/3'>비밀번호</label>
-          <p className='text-gray-700 font-medium w-2/3 text-right'>********</p>
-        </div>
-        <div className='mb-4 flex'>
-          <label className='text-gray-700 font-medium w-1/3'>레터 수신</label>
-          <p className='text-gray-700 font-medium w-2/3 text-right'>
-            {userInfo.receiveLetters ? '예' : '아니오'}
-          </p>
-        </div>
-        <div className='mb-4 flex'>
           <label className='text-gray-700 font-medium w-1/3'>소개글</label>
           <p className='text-gray-700 font-medium w-2/3 text-right max-h-24 overflow-y-auto'>
             {userInfo.introduction}

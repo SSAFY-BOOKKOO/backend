@@ -30,9 +30,9 @@ const Book = ({ item, index, moveBook, onBookClick }) => {
   }[item.height];
 
   const titleLength = {
-    short: 7,
-    medium: 8,
-    tall: 9,
+    short: 8,
+    medium: 9,
+    tall: 10,
   }[item.height];
 
   const thicknessStyle = {
@@ -48,7 +48,10 @@ const Book = ({ item, index, moveBook, onBookClick }) => {
       style={{ ...thicknessStyle, opacity: isDragging ? 0.5 : 1 }}
       onClick={() => onBookClick(item)}
     >
-      <span className='writing-vertical text-xs sm:text-base'>
+      <span
+        className='writing-vertical text-xs sm:text-base'
+        style={{ letterSpacing: '-3px' }}
+      >
         {getTitle(item.title, titleLength)}
       </span>
     </div>
