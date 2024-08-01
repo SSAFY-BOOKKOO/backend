@@ -1,17 +1,24 @@
 package com.ssafy.bookkoo.bookservice.dto.book;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.Builder;
 
 @Builder
+@Schema(description = "책 검색 요청 DTO")
 public record RequestSearchBookMultiFieldDto(
-    // 검색 컬럼 이름
+
+    @Schema(description = "검색 조건 리스트", example = "[{\"field\": \"title\", \"values\": [\"Effective Java\"]}, {\"field\": \"author\", \"value\": \"Joshua Bloch\"}]")
     List<SearchBookConditionDto> conditions,
-    // 한 페이지에 몇개
-    @Positive Integer limit,
-    // 몇 페이지인지
-    @Positive Integer offset
+
+    @Schema(description = "한 페이지에 표시할 항목 수", example = "10")
+    @Positive
+    Integer limit,
+
+    @Schema(description = "페이지 번호 (0부터 시작)", example = "0")
+    @Positive
+    Integer offset
 ) {
 
 }

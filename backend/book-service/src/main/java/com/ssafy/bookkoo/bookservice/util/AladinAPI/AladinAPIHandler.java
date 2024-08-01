@@ -1,6 +1,12 @@
 package com.ssafy.bookkoo.bookservice.util.AladinAPI;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.bookkoo.bookservice.dto.aladin.AladinAPISearchParams;
+import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseAladinAPI;
+import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseAladinDetail;
+import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseAladinSearchDetail;
+import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseOriginAladinAPI;
+import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseOriginAladinDetail;
 import com.ssafy.bookkoo.bookservice.mapper.BookMapper;
 import java.io.IOException;
 import java.net.URI;

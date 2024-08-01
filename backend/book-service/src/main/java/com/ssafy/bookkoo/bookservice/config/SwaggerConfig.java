@@ -26,8 +26,8 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
             .info(new Info()
-                .title("Book API")
-                .version("1.0")
-                .description("Book API Documentation"));
+                .title("Book API") // API 제목
+                .version("1.0") // API 버전
+                .description("Book API Documentation")); // API 설명
     }
 }

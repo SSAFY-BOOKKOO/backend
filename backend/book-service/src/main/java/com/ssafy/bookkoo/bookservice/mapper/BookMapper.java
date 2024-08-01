@@ -1,27 +1,41 @@
 package com.ssafy.bookkoo.bookservice.mapper;
 
+import com.ssafy.bookkoo.bookservice.dto.aladin.AladinBookItem;
+import com.ssafy.bookkoo.bookservice.dto.aladin.OriginAladinBookItem;
+import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseAladinAPI;
+import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseAladinDetail;
+import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseAladinSearchDetail;
+import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseOriginAladinAPI;
+import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseOriginAladinDetail;
+import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseOriginAladinSearchDetail;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestCreateBookDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
-import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinBookItem;
-import com.ssafy.bookkoo.bookservice.util.AladinAPI.OriginAladinBookItem;
-import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinAPI;
-import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinDetail;
-import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinSearchDetail;
-import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseOriginAladinAPI;
-import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseOriginAladinDetail;
-import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseOriginAladinSearchDetail;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
+/**
+ * Book 엔티티와 DTO 간의 변환을 처리하는 매퍼 인터페이스입니다.
+ */
 @Mapper(componentModel = "spring", uses = {CategoryMapper.class})
 public interface BookMapper {
 
-    // DTO를 엔티티로 변환
+    /**
+     * RequestCreateBookDto를 Book 엔티티로 변환합니다.
+     *
+     * @param dto RequestCreateBookDto 객체
+     * @return 변환된 Book 엔티티
+     */
     Book toEntity(RequestCreateBookDto dto);
 
+    /**
+     * ResponseAladinSearchDetail을 Book 엔티티로 변환합니다.
+     *
+     * @param dto ResponseAladinSearchDetail 객체
+     * @return 변환된 Book 엔티티
+     */
     @Mapping(source = "coverImgUrl", target = "coverImgUrl")
     @Mapping(source = "author", target = "author")
     @Mapping(source = "publisher", target = "publisher")
@@ -34,11 +48,21 @@ public interface BookMapper {
     @Mapping(source = "subInfo.packing.sizeWidth", target = "sizeWidth")
     Book toEntity(ResponseAladinSearchDetail dto);
 
-    // 엔티티를 DTO로 변환
+    /**
+     * Book 엔티티를 ResponseBookDto로 변환합니다.
+     *
+     * @param book Book 엔티티
+     * @return 변환된 ResponseBookDto
+     */
     @Mapping(source = "category", target = "category")
     ResponseBookDto toResponseDto(Book book);
 
-    // OriginAladinBookItem을 AladinBookItem으로 변환
+    /**
+     * OriginAladinBookItem을 AladinBookItem으로 변환합니다.
+     *
+     * @param dto OriginAladinBookItem 객체
+     * @return 변환된 AladinBookItem
+     */
     @Mappings({
         @Mapping(source = "cover", target = "coverImgUrl"),
         @Mapping(source = "author", target = "author"),
@@ -50,7 +74,12 @@ public interface BookMapper {
     })
     AladinBookItem toAladinBookItem(OriginAladinBookItem dto);
 
-    // ResponseOriginAladinAPI를 ResponseAladinAPI로 변환
+    /**
+     * ResponseOriginAladinAPI를 ResponseAladinAPI로 변환합니다.
+     *
+     * @param dto ResponseOriginAladinAPI 객체
+     * @return 변환된 ResponseAladinAPI
+     */
     @Mappings({
         @Mapping(source = "totalResults", target = "totalResults"),
         @Mapping(source = "startIndex", target = "startIndex"),
@@ -59,14 +88,30 @@ public interface BookMapper {
     })
     ResponseAladinAPI toResponseAladinAPI(ResponseOriginAladinAPI dto);
 
-
+    /**
+     * ResponseOriginAladinSearchDetail을 ResponseAladinSearchDetail로 변환합니다.
+     *
+     * @param dto ResponseOriginAladinSearchDetail 객체
+     * @return 변환된 ResponseAladinSearchDetail
+     */
     @Mapping(source = "cover", target = "coverImgUrl")
     @Mapping(source = "pubDate", target = "publishedAt")
     @Mapping(source = "description", target = "summary")
     ResponseAladinSearchDetail toResponseSearchDetail(ResponseOriginAladinSearchDetail dto);
 
+    /**
+     * ResponseOriginAladinDetail을 ResponseAladinDetail로 변환합니다.
+     *
+     * @param dto ResponseOriginAladinDetail 객체
+     * @return 변환된 ResponseAladinDetail
+     */
     ResponseAladinDetail toResopnseAladinDetail(ResponseOriginAladinDetail dto);
 
-    // 리스트 변환
+    /**
+     * Book 엔티티 리스트를 ResponseBookDto 리스트로 변환합니다.
+     *
+     * @param books Book 엔티티 리스트
+     * @return 변환된 ResponseBookDto 리스트
+     */
     List<ResponseBookDto> toResponseDtoList(List<Book> books);
 }
