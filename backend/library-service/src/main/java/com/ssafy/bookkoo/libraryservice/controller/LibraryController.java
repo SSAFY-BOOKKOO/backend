@@ -63,10 +63,25 @@ public class LibraryController {
      * @return 사용자의 서재 목록 응답 DTO 리스트
      */
     @GetMapping
-    @Operation(summary = "해당 사용자의 서재 목록 조회", description = "사용자의 닉네임을 받아 해당 사용자의 서재 목록 조회 API")
+    @Operation(summary = "해당 사용자의 서재 목록 조회", description = "사용자의 닉네임을 받아 해당 사용자의 서재 목록 조회 API<br> 주의사항 : book 데이터는 비어있음")
     public ResponseEntity<List<ResponseLibraryDto>> getLibraries(@RequestParam String nickname) {
         return ResponseEntity.ok()
                              .body(libraryService.getLibrariesOfMember(nickname));
+    }
+
+    /**
+     * 본인의 서재 목록을 조회합니다.
+     *
+     * @return 사용자의 서재 목록 응답 DTO 리스트
+     */
+    @GetMapping("/me")
+    @Operation(summary = "본인의 서재 목록 조회", description = "본인의 서재 목록 조회 API")
+    public ResponseEntity<List<ResponseLibraryDto>> getMyLibraries(
+        @RequestHeader HttpHeaders headers
+    ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+        return ResponseEntity.ok()
+                             .body(libraryService.getMyLibraries(memberId));
     }
 
     /**
