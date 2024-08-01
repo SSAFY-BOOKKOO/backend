@@ -14,7 +14,7 @@ import org.springframework.util.SerializationUtils;
 @RequiredArgsConstructor
 public class CookieUtils {
 
-    public static final Duration REFRESH_TOKEN_EXPIRATION = Duration.ofDays(7);
+    public static final Duration REFRESH_TOKEN_EXPIRATION = Duration.ofDays(30);
 
     public static Cookie secureCookieGenerate(String key, String value, Duration expiration) {
         Cookie cookie = new Cookie(key, value);
