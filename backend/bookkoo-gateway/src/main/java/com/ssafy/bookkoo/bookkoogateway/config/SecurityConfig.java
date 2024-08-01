@@ -74,14 +74,10 @@
 
 package com.ssafy.bookkoo.bookkoogateway.config;
 
-import com.ssafy.bookkoo.bookkoogateway.client.MemberServiceWebClient;
-import com.ssafy.bookkoo.bookkoogateway.config.filter.TokenAuthenticationFilter;
-import com.ssafy.bookkoo.bookkoogateway.util.TokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
@@ -90,27 +86,6 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final TokenUtils tokenUtils;
-    private final MemberServiceWebClient memberServiceWebClient;
-
-    //    @Bean
-//    public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity httpSecurity) {
-//        return httpSecurity.csrf(ServerHttpSecurity.CsrfSpec::disable)
-//                           .authorizeExchange(exchanges -> exchanges
-//                               .pathMatchers("/auth-service/**", "/book-service/**",
-//                                   "/common-service/**", "/curation-service/**",
-//                                   "/library-service/**", "/member-service/**", "/api-docs/**",
-//                                   "/swagger-ui.html",
-//                                   "/swagger-ui/**",
-//                                   "/docs/**", "/webjars/**", "/v3/**")
-//                               .permitAll() // 해당 경로는 필터링하지 않음
-//                               .anyExchange()
-//                               .authenticated()
-//                           )
-//                           .addFilterBefore(tokenAuthenticationFilter(),
-//                               SecurityWebFiltersOrder.AUTHENTICATION)
-//                           .build();
-//    }
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity httpSecurity) {
         return httpSecurity.csrf(ServerHttpSecurity.CsrfSpec::disable)
@@ -118,13 +93,6 @@ public class SecurityConfig {
                                .anyExchange()
                                .permitAll() // 모든 경로를 허용
                            )
-//                           .addFilterBefore(tokenAuthenticationFilter(),
-//                               SecurityWebFiltersOrder.AUTHENTICATION)
                            .build();
     }
-//
-//    @Bean
-//    public TokenAuthenticationFilter tokenAuthenticationFilter() {
-//        return new TokenAuthenticationFilter(tokenUtils, memberServiceWebClient);
-//    }
 }

@@ -45,6 +45,19 @@ public class AuthServiceImpl implements AuthService {
         return getResponseLoginTokenDto(member);
     }
 
+    /**
+     * 소셜 로그인 시 사용되는 서비스 로직
+     *
+     * @param email
+     * @return
+     */
+    @Override
+    public ResponseLoginTokenDto login(String email) {
+        Member member = memberRepository.findByEmail(email)
+                                        .orElseThrow(() -> new MemberNotFoundException(email));
+        return getResponseLoginTokenDto(member);
+    }
+
 
     /**
      * 토큰으로 멤버ID를 찾고 이를 통해
