@@ -2,12 +2,11 @@ import { useAtom } from 'jotai';
 import { bookDataAtom } from '@atoms/bookCreateAtom';
 import CreateSelectButton from './CreateSelectButton';
 
-const ShelfSelectStep = ({ onClose }) => {
+const ShelfSelectStep = () => {
   const [bookData, setBookData] = useAtom(bookDataAtom);
 
   const handleLibraryChange = library => {
     setBookData(prev => ({ ...prev, library }));
-    onClose(); // 서가 선택 후 모달 닫기
   };
 
   const shelves = [
