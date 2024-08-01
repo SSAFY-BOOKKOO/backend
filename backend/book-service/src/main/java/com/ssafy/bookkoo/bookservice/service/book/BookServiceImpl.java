@@ -139,9 +139,9 @@ public class BookServiceImpl implements BookService {
      * @throws URISyntaxException   URI 구문 예외
      */
     @Override
-    public ResponseAladinAPI searchBooksFromAladin(AladinAPISearchParams params)
+    public ResponseAladinAPI searchBooksFromAladin(Long memberId, AladinAPISearchParams params)
         throws IOException, InterruptedException, URISyntaxException {
-        return aladinAPIHandler.searchBooks(params);
+        return aladinAPIHandler.searchBooks(memberId, params);
     }
 
     /**
