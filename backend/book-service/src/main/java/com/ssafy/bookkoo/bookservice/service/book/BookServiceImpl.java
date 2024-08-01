@@ -49,7 +49,9 @@ public class BookServiceImpl implements BookService {
         // DTO를 엔티티로 변환
         Book book = bookMapper.toEntity(bookDto);
 
-        Category category = categoryRepository.findById(bookDto.categoryId())
+        Category category = categoryRepository.findById(bookDto
+                                                  .categoryId()
+                                              )
                                               .orElseThrow(
                                                   () -> new CategoryNotFoundException(
                                                       "category Not found")
