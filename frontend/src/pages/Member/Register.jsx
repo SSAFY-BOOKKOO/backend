@@ -4,16 +4,19 @@ import { useAtom } from 'jotai';
 import RegisterStep1 from '@components/Register/RegisterStep1';
 import RegisterStep2 from '@components/Register/RegisterStep2';
 import WrapContainer from '@components/Layout/WrapContainer';
+import Alert from '@components/@common/Alert';
 import {
   emailDuplicateAtom,
   nicknameDuplicateAtom,
   errorAtom,
 } from '@atoms/RegisterAtom';
+import { alertAtom } from '@atoms/alertAtom';
 import {
   checkEmailDuplicate,
   checkNicknameDuplicate,
 } from '@utils/RegisterCheck';
 import { axiosInstance } from '@services/axiosInstance';
+import { validateForm } from '@utils/ValidateForm';
 
 const RegisterPage = () => {
   const [step, setStep] = useState(1);
@@ -23,11 +26,11 @@ const RegisterPage = () => {
     password: '',
     confirmPassword: '',
     introduction: '',
-    profile_img_url: null,
+    profileImgUrl: null,
     year: '',
     gender: '',
     categories: [],
-    socialType: 'bookkoo', // socialType 설정
+    socialType: 'bookkoo',
   });
 
   const [errors, setErrors] = useState({});
@@ -36,6 +39,7 @@ const RegisterPage = () => {
     nicknameDuplicateAtom
   );
   const [error, setError] = useAtom(errorAtom);
+  const [, setAlert] = useAtom(alertAtom);
   const navigate = useNavigate();
 
   const handleChange = e => {
@@ -55,11 +59,11 @@ const RegisterPage = () => {
     if (file) {
       setFormData(prevFormData => ({
         ...prevFormData,
-        profile_img_url: file, // 파일 객체로 저장
+        profileImgUrl: file,
       }));
       setErrors(prevErrors => ({
         ...prevErrors,
-        profile_img_url: '',
+        profileImgUrl: '',
       }));
     }
   };
@@ -78,34 +82,15 @@ const RegisterPage = () => {
     });
   };
 
-  const validateEmail = email => {
-    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return re.test(email);
-  };
-
-  const validatePassword = password => {
-    const re = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$/;
-    return re.test(password);
-  };
-
   const handleNextStep = async () => {
-    const newErrors = {};
-    if (!validateEmail(formData.email)) {
-      newErrors.email = '올바른 이메일 형식을 입력하세요.';
-    }
-    if (!validatePassword(formData.password)) {
-      newErrors.password =
-        '비밀번호는 영문, 숫자, 특수문자 조합으로 이루어진 8~16자여야 합니다.';
-    }
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = '비밀번호가 일치하지 않습니다.';
-    }
-    if (!formData.nickname) {
-      newErrors.nickname = '닉네임을 입력하세요.';
-    } else if (formData.nickname.length > 10) {
-      newErrors.nickname = '닉네임은 10자 이내로 설정해야 합니다.';
-    }
+    const validationConfig = {
+      email: true,
+      password: true,
+      confirmPassword: true,
+      nickname: true,
+    };
 
+    const newErrors = validateForm(formData, validationConfig);
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
@@ -119,15 +104,23 @@ const RegisterPage = () => {
         setNicknameDuplicate(isNicknameDuplicate);
 
         if (isEmailDuplicate) {
-          setError('이미 사용 중인 이메일입니다.');
+          setAlert({
+            isOpen: true,
+            message: '이미 사용 중인 이메일입니다.',
+          });
         } else if (isNicknameDuplicate) {
-          setError('이미 사용 중인 닉네임입니다.');
+          setAlert({
+            isOpen: true,
+            message: '이미 사용 중인 닉네임입니다.',
+          });
         } else {
-          setError('');
           setStep(step + 1);
         }
       } catch (error) {
-        setError(error.message);
+        setAlert({
+          isOpen: true,
+          message: error.message,
+        });
       }
     }
   };
@@ -136,35 +129,23 @@ const RegisterPage = () => {
     setStep(step - 1);
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.email) newErrors.email = '이메일을 입력하세요.';
-    if (!validateEmail(formData.email))
-      newErrors.email = '올바른 이메일 형식을 입력하세요.';
-    if (!formData.nickname) newErrors.nickname = '닉네임을 입력하세요.';
-    if (!formData.password) newErrors.password = '비밀번호를 입력하세요.';
-    if (!validatePassword(formData.password))
-      newErrors.password =
-        '비밀번호는 영문, 숫자, 특수문자 조합으로 이루어진 8~16자여야 합니다.';
-    if (formData.password !== formData.confirmPassword)
-      newErrors.confirmPassword = '비밀번호가 일치하지 않습니다.';
-    if (formData.nickname.length > 10)
-      newErrors.nickname = '닉네임은 10자 이내로 설정해야 합니다.';
-    if (!formData.year) newErrors.year = '연령을 입력하세요.';
-    if (!formData.gender) newErrors.gender = '성별을 선택하세요.';
-    if (formData.categories.length === 0)
-      newErrors.categories = '선호 카테고리를 선택하세요.';
-    if (!formData.introduction) newErrors.introduction = '소개글을 입력하세요.';
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleSubmit = async () => {
-    if (validateForm()) {
-      try {
-        console.log('회원가입 정보:', formData);
+    const validationConfig = {
+      email: true,
+      password: true,
+      confirmPassword: true,
+      nickname: true,
+      year: true,
+      gender: true,
+      categories: true,
+      introduction: true,
+    };
 
+    const newErrors = validateForm(formData, validationConfig);
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      try {
         const formDataToSend = new FormData();
 
         const blob = new Blob(
@@ -187,8 +168,8 @@ const RegisterPage = () => {
 
         formDataToSend.append('requestRegisterMemberDto', blob);
 
-        if (formData.profile_img_url) {
-          formDataToSend.append('profileImg', formData.profile_img_url);
+        if (formData.profileImgUrl) {
+          formDataToSend.append('profileImg', formData.profileImgUrl);
         } else {
           formDataToSend.append('profileImg', '');
         }
@@ -204,15 +185,23 @@ const RegisterPage = () => {
         );
 
         if (response.status === 200) {
-          alert('회원가입이 완료되었습니다.');
+          setAlert({
+            isOpen: true,
+            message: '회원가입이 완료되었습니다.',
+            onConfirm: () => navigate('/library'),
+          });
           setStep(3);
         } else {
-          console.error('Unexpected response status:', response.status);
-          setError('회원가입에 실패했습니다.');
+          setAlert({
+            isOpen: true,
+            message: '회원가입에 실패했습니다.',
+          });
         }
       } catch (error) {
-        console.error('Error submitting form:', error);
-        setError('회원가입에 실패했습니다.');
+        setAlert({
+          isOpen: true,
+          message: '회원가입에 실패했습니다.',
+        });
       }
     }
   };
@@ -243,6 +232,7 @@ const RegisterPage = () => {
           )}
         </div>
       </div>
+      <Alert />
     </WrapContainer>
   );
 };

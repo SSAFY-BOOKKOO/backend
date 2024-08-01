@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
 import RegisterInput from '@components/Register/RegisterInput';
 import Button from '@components/@common/Button';
+import Alert from '@components/@common/Alert';
+import { alertAtom } from '@atoms/alertAtom';
 import { axiosInstance } from '@services/axiosInstance';
+import { validateForm } from '@utils/ValidateForm';
 
 const AdditionalInfo = ({ userInfo, onSave }) => {
   const [formData, setFormData] = useState({
@@ -10,10 +14,11 @@ const AdditionalInfo = ({ userInfo, onSave }) => {
     gender: '',
     categories: [],
     introduction: '',
-    ...userInfo, // 기존의 사용자 정보가 있으면 병합
+    ...userInfo,
   });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const [, setAlert] = useAtom(alertAtom);
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
@@ -41,25 +46,25 @@ const AdditionalInfo = ({ userInfo, onSave }) => {
     });
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.age) newErrors.age = '연령을 입력하세요.';
-    if (!formData.gender) newErrors.gender = '성별을 선택하세요.';
-    if (formData.categories.length === 0)
-      newErrors.categories = '선호 카테고리를 선택하세요.';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleSubmit = async e => {
     e.preventDefault();
 
-    if (validateForm()) {
+    const validationConfig = {
+      year: true,
+      gender: true,
+      categories: true,
+      introduction: true,
+    };
+
+    const newErrors = validateForm(formData, validationConfig);
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
       try {
         const requestData = {
           memberId: formData.memberId,
           nickName: formData.nickname,
-          year: parseInt(formData.age),
+          year: parseInt(formData.year),
           gender: formData.gender.toUpperCase(),
           categories: formData.categories.map(category => parseInt(category)),
           introduction: formData.introduction || '',
@@ -67,11 +72,16 @@ const AdditionalInfo = ({ userInfo, onSave }) => {
 
         await axiosInstance.post('/members/register/info', requestData);
 
-        alert('회원가입이 완료되었습니다.');
-        navigate('/Library'); // 저장 후 다른 페이지로 이동
+        setAlert({
+          isOpen: true,
+          message: '회원가입이 완료되었습니다.',
+          onConfirm: () => navigate('/library'),
+        });
       } catch (error) {
-        console.error('회원정보 저장 중 오류가 발생했습니다.', error);
-        alert('회원정보 저장 중 오류가 발생했습니다.');
+        setAlert({
+          isOpen: true,
+          message: '회원정보 저장 중 오류가 발생했습니다.',
+        });
       }
     }
   };
@@ -186,7 +196,7 @@ const AdditionalInfo = ({ userInfo, onSave }) => {
             onChange={handleChange}
             error={errors.introduction}
           />
-          <div className='flex justify-center mt-6 '>
+          <div className='flex justify-center mt-6'>
             <Button
               text='가입 완료'
               type='submit'
@@ -197,6 +207,7 @@ const AdditionalInfo = ({ userInfo, onSave }) => {
           </div>
         </form>
       </div>
+      <Alert />
     </div>
   );
 };

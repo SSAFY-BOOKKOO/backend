@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
 import Button from '@components/@common/Button';
 import Input from '@components/@common/Input';
+import Alert from '@components/@common/Alert';
+import { alertAtom } from '@atoms/alertAtom';
+import { validateForm } from '@utils/ValidateForm';
 
 const PasswordFind = () => {
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const [, setAlert] = useAtom(alertAtom);
 
   const handleChange = e => {
     setEmail(e.target.value);
@@ -16,22 +21,19 @@ const PasswordFind = () => {
     }));
   };
 
-  const validateEmail = email => {
-    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return re.test(email);
-  };
-
   const handleSubmit = e => {
     e.preventDefault();
-    const newErrors = {};
-    if (!validateEmail(email)) {
-      newErrors.email = '올바른 이메일 형식을 입력하세요.';
-    }
+    const validationConfig = { email: true };
+    const formData = { email };
+    const newErrors = validateForm(formData, validationConfig);
     setErrors(newErrors);
+
     if (Object.keys(newErrors).length === 0) {
-      // 이메일 유효성 검사 후 서버에 요청 보내기
-      alert('비밀번호 재설정 이메일이 전송되었습니다.');
-      navigate('/login');
+      setAlert({
+        isOpen: true,
+        message: '비밀번호 재설정 이메일이 전송되었습니다.',
+        onConfirm: () => navigate('/login'),
+      });
     }
   };
 
@@ -64,6 +66,7 @@ const PasswordFind = () => {
           </div>
         </form>
       </div>
+      <Alert />
     </div>
   );
 };

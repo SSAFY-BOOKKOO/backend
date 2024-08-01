@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
+import { useSetAtom } from 'jotai';
 import Button from '@components/@common/Button';
+import Alert from '@components/@common/Alert';
+import { alertAtom } from '@atoms/alertAtom';
+import { validateForm } from '@utils/ValidateForm';
 
 const categoriesList = [
   '추리/스릴러',
@@ -20,6 +24,7 @@ const categoriesList = [
 const ProfileUpdate = ({ userInfo, onSave, onCancel }) => {
   const [formData, setFormData] = useState(userInfo);
   const [errors, setErrors] = useState({});
+  const setAlert = useSetAtom(alertAtom);
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
@@ -55,43 +60,34 @@ const ProfileUpdate = ({ userInfo, onSave, onCancel }) => {
     if (file) {
       setFormData({
         ...formData,
-        profile_img_url: URL.createObjectURL(file),
+        profileImgUrl: URL.createObjectURL(file),
       });
       setErrors(prevErrors => ({
         ...prevErrors,
-        profile_img_url: '',
+        profileImgUrl: '',
       }));
     }
   };
 
-  const validateEmail = email => {
-    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return re.test(email);
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!validateEmail(formData.email)) {
-      newErrors.email = '올바른 이메일 형식을 입력하세요.';
-    }
-    if (!formData.nickname) {
-      newErrors.nickname = '닉네임을 입력하세요.';
-    }
-    if (!formData.introduction) {
-      newErrors.introduction = '소개글을 입력하세요.';
-    }
-    if (formData.nickname.length > 10) {
-      newErrors.nickname = '닉네임은 10자 이내로 설정해야 합니다.';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleSubmit = e => {
     e.preventDefault();
-    if (validateForm()) {
+
+    const validationConfig = {
+      email: true,
+      nickname: true,
+      introduction: true,
+    };
+
+    const newErrors = validateForm(formData, validationConfig);
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
       onSave(formData);
+    } else {
+      setAlert({
+        isOpen: true,
+        message: '폼에 오류가 있습니다. 다시 확인해 주세요.',
+      });
     }
   };
 
@@ -145,20 +141,20 @@ const ProfileUpdate = ({ userInfo, onSave, onCancel }) => {
         <div className='mb-4'>
           <label
             className='block mb-2 text-sm font-medium text-gray-700'
-            htmlFor='profile_img_url'
+            htmlFor='profileImgUrl'
           >
             프로필 이미지
           </label>
           <input
             type='file'
-            id='profile_img_url'
-            name='profile_img_url'
+            id='profileImgUrl'
+            name='profileImgUrl'
             onChange={handleFileChange}
             className='mt-1 p-2 block w-full border rounded-md'
           />
-          {formData.profile_img_url && (
+          {formData.profileImgUrl && (
             <img
-              src={formData.profile_img_url}
+              src={formData.profileImgUrl}
               alt='Profile Preview'
               className='mt-2 w-32 h-32 object-cover rounded-full inline-block'
             />
@@ -205,21 +201,24 @@ const ProfileUpdate = ({ userInfo, onSave, onCancel }) => {
           </div>
         </div>
         <div className='flex justify-end mt-14'>
-          <button
+          <Button
+            text='저장'
             type='submit'
-            className='bg-green-400 text-white px-4 py-2 rounded-md mr-4'
-          >
-            저장
-          </button>
-          <button
+            color='text-white bg-green-400 active:bg-green-600'
+            size='large'
+            full={false}
+          />
+          <Button
+            text='취소'
             type='button'
-            className='bg-gray-500 text-white px-4 py-2 rounded-md'
+            color='text-white bg-gray-500 active:bg-gray-600'
+            size='large'
+            full={false}
             onClick={onCancel}
-          >
-            취소
-          </button>
+          />
         </div>
       </form>
+      <Alert />
     </div>
   );
 };

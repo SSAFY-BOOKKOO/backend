@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
+import { useSetAtom } from 'jotai';
 import { authAxiosInstance } from '@services/axiosInstance';
 import Button from '@components/@common/Button';
+import Alert from '@components/@common/Alert';
+import { alertAtom } from '@atoms/alertAtom';
 
 const PasswordUpdate = ({ onCancel }) => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const setAlert = useSetAtom(alertAtom);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -21,8 +25,11 @@ const PasswordUpdate = ({ onCancel }) => {
         currentPassword,
         newPassword,
       });
-      alert('비밀번호가 성공적으로 변경되었습니다.');
-      onCancel();
+      setAlert({
+        isOpen: true,
+        message: '비밀번호가 성공적으로 변경되었습니다.',
+        onConfirm: onCancel,
+      });
     } catch (error) {
       setError('비밀번호 변경에 실패했습니다.');
     }
@@ -83,6 +90,7 @@ const PasswordUpdate = ({ onCancel }) => {
           </button>
         </div>
       </form>
+      <Alert />
     </div>
   );
 };

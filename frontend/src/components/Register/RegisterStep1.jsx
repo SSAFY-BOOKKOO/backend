@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
+import { useSetAtom } from 'jotai';
 import RegisterInput from './RegisterInput';
 import Button from '../@common/Button';
 import {
   checkEmailDuplicate,
   checkNicknameDuplicate,
 } from '@utils/RegisterCheck';
-import { useSetAtom } from 'jotai';
 import {
   emailDuplicateAtom,
   nicknameDuplicateAtom,
   errorAtom,
 } from '@atoms/RegisterAtom';
+import { alertAtom } from '@atoms/alertAtom';
+import Alert from '../@common/Alert';
 
 const RegisterStep1 = ({
   formData,
@@ -22,6 +24,7 @@ const RegisterStep1 = ({
   const setEmailDuplicate = useSetAtom(emailDuplicateAtom);
   const setNicknameDuplicate = useSetAtom(nicknameDuplicateAtom);
   const setError = useSetAtom(errorAtom);
+  const setAlert = useSetAtom(alertAtom);
 
   const [emailError, setEmailError] = useState('');
   const [nicknameError, setNicknameError] = useState('');
@@ -42,7 +45,10 @@ const RegisterStep1 = ({
         setEmailError('이미 사용 중인 이메일입니다.');
       } else {
         setEmailError('');
-        alert('사용 가능한 이메일입니다.');
+        setAlert({
+          isOpen: true,
+          message: '사용 가능한 이메일입니다.',
+        });
       }
     } catch (error) {
       setEmailError(error.message);
@@ -62,7 +68,10 @@ const RegisterStep1 = ({
         setNicknameError('이미 사용 중인 닉네임입니다.');
       } else {
         setNicknameError('');
-        alert('사용 가능한 닉네임입니다.');
+        setAlert({
+          isOpen: true,
+          message: '사용 가능한 닉네임입니다.',
+        });
       }
     } catch (error) {
       setNicknameError(error.message);
@@ -71,15 +80,24 @@ const RegisterStep1 = ({
 
   const validateAndProceed = () => {
     if (!isEmailChecked) {
-      alert('이메일 중복확인을 해주세요.');
+      setAlert({
+        isOpen: true,
+        message: '이메일 중복확인을 해주세요.',
+      });
       return;
     }
     if (!isNicknameChecked) {
-      alert('닉네임 중복확인을 해주세요.');
+      setAlert({
+        isOpen: true,
+        message: '닉네임 중복확인을 해주세요.',
+      });
       return;
     }
     if (emailError || nicknameError) {
-      alert('중복 확인을 다시 해주세요.');
+      setAlert({
+        isOpen: true,
+        message: '중복 확인을 다시 해주세요.',
+      });
       return;
     }
     handleNextStep();
@@ -192,9 +210,9 @@ const RegisterStep1 = ({
             onClick={() => document.getElementById('profile_img_input').click()}
           />
         </div>
-        {formData.profile_img_url && (
+        {formData.profileImgUrl && (
           <img
-            src={URL.createObjectURL(formData.profile_img_url)}
+            src={URL.createObjectURL(formData.profileImgUrl)}
             alt='Profile Preview'
             className='mt-2 w-32 h-32 object-cover rounded-full'
           />
@@ -210,6 +228,7 @@ const RegisterStep1 = ({
           onClick={validateAndProceed}
         />
       </div>
+      <Alert />
     </>
   );
 };

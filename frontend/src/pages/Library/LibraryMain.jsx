@@ -4,6 +4,7 @@ import { MultiBackend, TouchTransition } from 'react-dnd-multi-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAtom } from 'jotai';
 import MemberProfile from '@components/Library/Main/MemberProfile';
 import LibraryModal from '@components/Library/Main/LibraryModal';
 import CreateLibraryModal from '@components/Library/Main/CreateLibraryModal';
@@ -11,6 +12,8 @@ import LibraryOptions from '@components/Library/Main/LibraryOptions';
 import BookShelf from '@components/Library/Main/BookShelf';
 import { books as initialBooks } from '@mocks/BookData';
 import profile_img_sample from '@assets/images/profile_img_sample.png';
+import Alert from '@components/@common/Alert';
+import { alertAtom } from '@atoms/alertAtom';
 
 const HTML5toTouch = {
   backends: [
@@ -32,7 +35,7 @@ const member = {
   nickname: 'user1',
   followers: ['user2', 'user3'],
   following: ['user4', 'user5', 'user6'],
-  profile_img_url: profile_img_sample,
+  profileImgUrl: profile_img_sample,
 };
 
 const LibraryMain = () => {
@@ -44,6 +47,7 @@ const LibraryMain = () => {
   const [activeLibrary, setActiveLibrary] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
+  const [, setAlert] = useAtom(alertAtom);
 
   const [libraries, setLibraries] = useState([
     {
@@ -111,7 +115,10 @@ const LibraryMain = () => {
       setNewLibraryName('');
       setShowModal(false);
     } else {
-      alert('서재 이름은 10자 이내로 설정해야 합니다.');
+      setAlert({
+        isOpen: true,
+        message: '서재 이름은 10자 이내로 설정해야 합니다.',
+      });
     }
   };
 
@@ -127,7 +134,10 @@ const LibraryMain = () => {
   const createLibrary = () => {
     if (createLibraryName.trim()) {
       if (createLibraryName.length > 10) {
-        alert('서재 이름은 10자 이내로 설정해야 합니다.');
+        setAlert({
+          isOpen: true,
+          message: '서재 이름은 10자 이내로 설정해야 합니다.',
+        });
       } else {
         setLibraries([...libraries, { name: createLibraryName, books: [] }]);
         setActiveLibrary(libraries.length);
@@ -181,6 +191,7 @@ const LibraryMain = () => {
           />
         )}
       </div>
+      <Alert />
     </DndProvider>
   );
 };

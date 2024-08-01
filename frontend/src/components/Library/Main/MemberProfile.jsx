@@ -4,7 +4,7 @@ const MemberProfile = ({ member }) => (
   <div className='text-center pb-4 relative'>
     <div className='flex items-center justify-center flex-row space-x-8'>
       <img
-        src={member.profile_img_url}
+        src={member.profileImgUrl}
         alt={member.nickname}
         className='rounded-full w-24 h-24 sm:w-32 sm:h-32'
       />

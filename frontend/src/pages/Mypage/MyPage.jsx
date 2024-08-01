@@ -13,27 +13,6 @@ const MyPage = () => {
   const [member, setMember] = useState(null);
 
   useEffect(() => {
-    // const fetchMemberInfo = async () => {
-    //   const token = localStorage.getItem('ACCESS_TOKEN');
-    //   if (!token) {
-    //     return;
-    //   }
-    //   try {
-    //     const response = await axios.get('/members/info/', {
-    //       headers: {
-    //         Authorization: `Bearer ${token}`,
-    //       },
-    //     });
-    //     setMember(response.data);
-    //     console.log(response.data);
-    //   } catch (error) {
-    //     console.error('Failed to fetch member info:', error);
-    //     // 오류 처리 (예: 로그아웃 또는 오류 메시지 표시)
-    //   }
-    // };
-
-    // fetchMemberInfo();
-
     const fetchMemberInfo = async () => {
       try {
         const response = await authAxiosInstance.get(
@@ -54,7 +33,7 @@ const MyPage = () => {
   }
 
   const displayCategories =
-    member.categories.length > 2
+    member.categories.length > 4
       ? member.categories.slice(0, 2).concat(['...'])
       : member.categories;
 
