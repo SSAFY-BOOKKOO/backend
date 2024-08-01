@@ -20,11 +20,9 @@ export const getAladinBooks = async (text, tag, start = 1, maxResult = 4) => {
   }
 };
 
-export const getAladinBooksByIsbn = isbn => {
+export const getAladinBookByIsbn = async isbn => {
   try {
-    const response = authAxiosInstance.get('/books/aladin/books', {
-      isbn,
-    });
+    const response = await authAxiosInstance.get(`/books/aladin/books/${isbn}`);
 
     return response.data;
   } catch (error) {
