@@ -1,9 +1,9 @@
 package com.ssafy.bookkoo.libraryservice.mapper;
 
-import com.ssafy.bookkoo.libraryservice.dto.LibraryStyleDto;
-import com.ssafy.bookkoo.libraryservice.dto.RequestCreateLibraryDto;
-import com.ssafy.bookkoo.libraryservice.dto.RequestUpdateLibraryDto;
-import com.ssafy.bookkoo.libraryservice.dto.ResponseLibraryDto;
+import com.ssafy.bookkoo.libraryservice.dto.library.LibraryStyleDto;
+import com.ssafy.bookkoo.libraryservice.dto.library.RequestCreateLibraryDto;
+import com.ssafy.bookkoo.libraryservice.dto.library.RequestUpdateLibraryDto;
+import com.ssafy.bookkoo.libraryservice.dto.library.ResponseLibraryDto;
 import com.ssafy.bookkoo.libraryservice.entity.Library;
 import com.ssafy.bookkoo.libraryservice.entity.LibraryStyle;
 import java.util.List;
