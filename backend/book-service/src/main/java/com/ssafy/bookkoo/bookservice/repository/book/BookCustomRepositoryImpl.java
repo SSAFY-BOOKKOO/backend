@@ -16,6 +16,9 @@ import org.hibernate.query.sqm.PathElementException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Repository;
 
+/**
+ * BookCustomRepository의 구현체로, 책 검색 관련 커스텀 쿼리를 처리합니다.
+ */
 @Repository
 @AllArgsConstructor
 public class BookCustomRepositoryImpl implements BookCustomRepository {
@@ -25,11 +28,11 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
     /**
      * 책 검색(검색 종류, 검색 내용, 페이지, 페이지 내 개수)
      *
-     * @param type    : 검색 종류
-     * @param content : 검색 내용
-     * @param offset  : 페이지
-     * @param limit   : 페이지 내 개수
-     * @return List<Book>
+     * @param type    검색 종류 (title, author, publisher 등)
+     * @param content 검색 내용
+     * @param offset  페이지 오프셋
+     * @param limit   페이지 내 개수
+     * @return 검색된 책 리스트
      */
     @Override
     public List<Book> findByConditions(
@@ -42,7 +45,7 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
         BooleanExpression predicate = book.isNotNull();
 
         if (type != null) {
-            // type이 title, author, publisher일 경우 에 따라 content를 조건에 동적 추가
+            // type이 title, author, publisher일 경우에 따라 content를 조건에 동적 추가
             switch (type) {
                 case "title":
                     predicate = predicate.and(book.title.contains(content));
@@ -66,6 +69,12 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
                            .fetch();
     }
 
+    /**
+     * 책 검색 필터 DTO를 기반으로 책 목록을 검색합니다.
+     *
+     * @param dto RequestSearchBooksFilterDto 객체
+     * @return 검색된 책 리스트
+     */
     @Override
     public List<Book> findByConditions(RequestSearchBooksFilterDto dto) {
         QBook book = QBook.book;
@@ -86,6 +95,12 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
                            .fetch();
     }
 
+    /**
+     * ISBN을 기반으로 책을 검색합니다.
+     *
+     * @param isbn ISBN 문자열
+     * @return 검색된 책, 없으면 null 반환
+     */
     @Override
     public Book findByIsbn(String isbn) {
         QBook book = QBook.book;
@@ -94,6 +109,12 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
                            .fetchFirst(); // 찾지 못하면 null 반환
     }
 
+    /**
+     * 여러 필드를 기반으로 책 목록을 검색합니다.
+     *
+     * @param dto RequestSearchBookMultiFieldDto 객체
+     * @return 검색된 책 리스트
+     */
     @Override
     public List<Book> findByConditions(RequestSearchBookMultiFieldDto dto) {
         QBook book = QBook.book;
@@ -105,16 +126,16 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
         // 각 조건 별로 쿼리 조건 추가
         for (SearchBookConditionDto condition : dto.conditions()) {
             try {
-
                 // 필드 유효성 검사
                 if (condition.field() != null && condition.values() != null && !condition.values()
                                                                                          .isEmpty()) {
-                    // title, author, publisher 에 대해서는 like 쿼리
+                    // title, author, publisher에 대해서는 like 쿼리
                     if (condition.field()
-                                 .equalsIgnoreCase("title") || condition.field()
-                                                                        .equalsIgnoreCase("author")
-                        || condition.field()
-                                    .equalsIgnoreCase("publisher")) {
+                                 .equalsIgnoreCase("title") ||
+                        condition.field()
+                                 .equalsIgnoreCase("author") ||
+                        condition.field()
+                                 .equalsIgnoreCase("publisher")) {
                         // LIKE 쿼리
                         for (String value : condition.values()) {
                             BooleanExpression likeExpression = entityPath.getString(

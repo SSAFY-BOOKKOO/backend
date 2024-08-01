@@ -17,6 +17,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
+/**
+ * 카테고리 데이터베이스 초기화 서비스 클래스입니다.
+ */
 @Service
 @RequiredArgsConstructor
 public class CategoryDatabaseInitializer {
@@ -26,6 +29,9 @@ public class CategoryDatabaseInitializer {
     private final ResourceLoader resourceLoader;
     private Map<String, String> genreMappingRules;
 
+    /**
+     * 카테고리와 알라딘 카테고리 매핑을 초기화합니다.
+     */
     @Transactional
     public void init() {
         List<String> categoryNames = List.of("추리/스릴러", "판타지", "로맨스", "인문학", "철학", "경제/경영",
@@ -112,6 +118,12 @@ public class CategoryDatabaseInitializer {
         aladinCategoryMapperRepository.saveAll(aladinCategoryMappings);
     }
 
+    /**
+     * 주어진 경로의 CSV 파일을 파싱합니다.
+     *
+     * @param resourcePath 리소스 경로
+     * @return 파싱된 CSV 데이터 리스트
+     */
     private List<String[]> parseCsv(String resourcePath) {
         try {
             Resource resource = resourceLoader.getResource(resourcePath);
