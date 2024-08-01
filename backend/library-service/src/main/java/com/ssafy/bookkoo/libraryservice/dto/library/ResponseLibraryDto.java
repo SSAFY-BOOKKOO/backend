@@ -12,6 +12,9 @@ import lombok.Builder;
 @Builder
 public record ResponseLibraryDto(
 
+    @Schema(description = "서재 ID", example = "1")
+    Long id,
+
     @Schema(description = "서재 이름", example = "My Library")
     String name,
 
@@ -22,8 +25,10 @@ public record ResponseLibraryDto(
     LibraryStyleDto libraryStyleDto,
 
     @Schema(description = "서재에 포함된 책 리스트")
-    List<ResponseLibraryBookMapperDto> books
+    List<ResponseLibraryBookMapperDto> books,
 
+    @Schema(description = "서재에 포함된 책 개수", example = "5")
+    Integer bookCount
 ) {
 
 }
