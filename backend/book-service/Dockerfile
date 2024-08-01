@@ -6,7 +6,7 @@ COPY gradlew .
 COPY gradle gradle
 COPY build.gradle .
 COPY settings.gradle .
-COPY src src
+COPY ./src src
 RUN dos2unix ./gradlew
 RUN chmod +x ./gradlew
 RUN ./gradlew bootJar
