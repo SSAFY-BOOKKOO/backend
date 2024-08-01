@@ -1,5 +1,8 @@
 package com.ssafy.bookkoo.bookservice.service.book;
 
+import com.ssafy.bookkoo.bookservice.dto.aladin.AladinAPISearchParams;
+import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseAladinAPI;
+import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseAladinSearchDetail;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestCreateBookDto;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBooksFilterDto;
@@ -13,9 +16,6 @@ import com.ssafy.bookkoo.bookservice.mapper.BookMapper;
 import com.ssafy.bookkoo.bookservice.repository.book.BookRepository;
 import com.ssafy.bookkoo.bookservice.repository.category.CategoryRepository;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPIHandler;
-import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPISearchParams;
-import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinAPI;
-import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinSearchDetail;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -25,6 +25,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * BookService의 구현체로, 책 관련 비즈니스 로직을 처리합니다.
+ */
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
@@ -35,10 +38,10 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
 
     /**
-     * 책 생성
+     * 새로운 책을 생성합니다.
      *
-     * @param bookDto : 책 생성 데이터
-     * @return 생성한 책
+     * @param bookDto 책 생성 요청 DTO
+     * @return 생성된 책 응답 DTO
      */
     @Override
     @Transactional
@@ -62,13 +65,13 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * 책 검색(검색 종류, 검색 내용, 페이지, 페이지 내 개수)
+     * 검색 조건을 기반으로 책 목록을 조회합니다.
      *
-     * @param type    : 검색 종류
-     * @param content : 검색 내용
-     * @param offset  : 페이지
-     * @param limit   : 페이지 내 개수
-     * @return 검색결과 : List<ResponseBookDto>
+     * @param type    검색 종류 (title, author, publisher 등)
+     * @param content 검색 내용
+     * @param offset  페이지 오프셋
+     * @param limit   페이지 내 개수
+     * @return 검색된 책 응답 DTO 리스트
      */
     @Override
     @Transactional(readOnly = true)
@@ -84,10 +87,10 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * 책 단일 조회 API
+     * 특정 책 ID를 기반으로 책 정보를 조회합니다.
      *
-     * @param bookId : 조회할 책 ID
-     * @return 책 데이터(ResponseBookDto)
+     * @param bookId 책 ID
+     * @return 책 응답 DTO
      */
     @Override
     @Transactional(readOnly = true)
@@ -98,10 +101,10 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * 책 단일 조회 API by isbn
+     * ISBN을 기반으로 책 정보를 조회합니다.
      *
-     * @param isbn : isbn
-     * @return 책 데이터
+     * @param isbn 책 ISBN
+     * @return 책 응답 DTO
      */
     @Override
     @Transactional(readOnly = true)
@@ -112,10 +115,10 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * 책 삭제 API
+     * 특정 책 ID를 기반으로 책을 삭제합니다.
      *
-     * @param bookId : 삭제할 책 ID
-     * @return 삭제한 책 데이터(ResponseBookDto)
+     * @param bookId 책 ID
+     * @return 삭제된 책 응답 DTO
      */
     @Override
     @Transactional
@@ -126,19 +129,42 @@ public class BookServiceImpl implements BookService {
         return bookMapper.toResponseDto(book);
     }
 
+    /**
+     * 알라딘 API를 사용하여 책을 검색합니다.
+     *
+     * @param params 알라딘 API 검색 파라미터
+     * @return 알라딘 API 응답 객체
+     * @throws IOException          입출력 예외
+     * @throws InterruptedException 인터럽트 예외
+     * @throws URISyntaxException   URI 구문 예외
+     */
     @Override
     public ResponseAladinAPI searchBooksFromAladin(AladinAPISearchParams params)
         throws IOException, InterruptedException, URISyntaxException {
         return aladinAPIHandler.searchBooks(params);
     }
 
-
+    /**
+     * 알라딘 API를 사용하여 특정 ISBN의 책 상세 정보를 검색합니다.
+     *
+     * @param isbn 책 ISBN
+     * @return 알라딘 API 책 상세 응답 객체
+     * @throws IOException          입출력 예외
+     * @throws InterruptedException 인터럽트 예외
+     * @throws URISyntaxException   URI 구문 예외
+     */
     @Override
     public ResponseAladinSearchDetail searchBookDetailFromAladin(String isbn)
         throws IOException, InterruptedException, URISyntaxException {
         return aladinAPIHandler.searchBookDetail(isbn);
     }
 
+    /**
+     * 여러 조건을 적용하여 책 목록을 조회합니다.
+     *
+     * @param filterDto 여러 조건을 담은 검색 필터 DTO
+     * @return 검색된 책 응답 DTO 리스트
+     */
     @Override
     public List<ResponseBookDto> getBooksByCondition(RequestSearchBookMultiFieldDto filterDto) {
         List<Book> books = bookRepository.findByConditions(filterDto);
@@ -147,10 +173,10 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * isbn 리스트를 받아서 각 isbn에 해당하는 book이 db에 있는지 확인 후 반환
+     * ISBN 리스트를 기반으로 책들이 존재하는지 여부를 확인합니다.
      *
-     * @param isbnList : isbn 리스트
-     * @return List<ResponseCheckBooksByIsbnDto>
+     * @param isbnList ISBN 리스트
+     * @return 책 존재 여부 응답 DTO 리스트
      */
     @Override
     @Transactional(readOnly = true)
@@ -165,10 +191,10 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * book 데이터를 받아서 isbn으로 조회 후 없으면 생성, 있으면 해당 데이터를 반환
+     * 주어진 책 데이터를 기반으로 책을 조회하거나 존재하지 않으면 새로 생성합니다.
      *
-     * @param bookDto : RequestCreateBookDto
-     * @return ResponseBookDto
+     * @param bookDto 책 생성 요청 DTO
+     * @return 생성되거나 조회된 책 응답 DTO
      */
     @Override
     @Transactional
@@ -186,10 +212,10 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * 동적 쿼리 생성을 위한 메서드 확장성있게 다시 고칠 필요 있음
+     * 검색 필터 DTO를 기반으로 책 목록을 조회합니다.
      *
-     * @param filterDto : RequestSearchBooksFilterDto
-     * @return List ResponseBookDto
+     * @param filterDto 검색 필터 DTO
+     * @return 검색된 책 응답 DTO 리스트
      */
     @Override
     @Transactional(readOnly = true)
@@ -199,6 +225,12 @@ public class BookServiceImpl implements BookService {
         return bookMapper.toResponseDtoList(books);
     }
 
+    /**
+     * 주어진 책 ID로 책을 찾지 못했을 때 예외를 발생시키는 헬퍼 메서드
+     *
+     * @param bookId 책 ID
+     * @return 조회된 책 엔티티
+     */
     private Book findBookByIdWithException(Long bookId) {
         return bookRepository.findById(bookId)
                              .orElseThrow(() -> new BookNotFoundException(

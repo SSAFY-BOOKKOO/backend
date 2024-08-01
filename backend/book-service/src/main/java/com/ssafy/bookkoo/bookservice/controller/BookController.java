@@ -1,13 +1,13 @@
 package com.ssafy.bookkoo.bookservice.controller;
 
+import com.ssafy.bookkoo.bookservice.dto.aladin.AladinAPISearchParams;
+import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseAladinAPI;
+import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseAladinSearchDetail;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestCreateBookDto;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.service.book.BookService;
-import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPISearchParams;
-import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinAPI;
-import com.ssafy.bookkoo.bookservice.util.AladinAPI.ResponseAladinSearchDetail;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -48,16 +48,6 @@ public class BookController {
                              .body(createdBook);
     }
 
-//    @GetMapping
-//    @Operation(summary = "책 목록 조회", description = "책 조회(필터링 포함)시 사용하는 API")
-//    public ResponseEntity<List<ResponseBookDto>> getBooksByCondition(
-//        @ModelAttribute RequestSearchBooksFilterDto filterDto
-//    ) {
-//        List<ResponseBookDto> books = bookService.getBooksByCondition(filterDto);
-//        return ResponseEntity.ok()
-//                             .body(books);
-//    }
-
     /**
      * 복잡한 쿼리로 인한 Body 사용을 위해 PostMapping으로 바꾼 책 목록 조회 api
      *
@@ -88,6 +78,12 @@ public class BookController {
                              .body(bookDto);
     }
 
+    /**
+     * isbn 으로 책 조회 하는 API
+     *
+     * @param isbn : isbn
+     * @return : ResponseBookDto
+     */
     @GetMapping("/isbn/{isbn}")
     @Operation(summary = "isbn으로 책 조회", description = "책을 isbn으로 조회할 때 사용하는 API")
     public ResponseEntity<ResponseBookDto> getBookByIsbn(@PathVariable("isbn") String isbn) {
@@ -96,6 +92,12 @@ public class BookController {
                              .body(bookDto);
     }
 
+    /**
+     * isbn 으로 책 조회 또는 생성하는 API, 사용처 : 서재 서비스에서 책 등록 시 호출
+     *
+     * @param bookDto : bookDto(id 제외한 책 정보 )
+     * @return ResponseBookDto
+     */
     @PostMapping("/isbn")
     @Operation(summary = "isbn으로 책 조회 또는 생성", description = "책을 isbn으로 조회하거나 존재하지 않으면 생성하는 API")
     public ResponseEntity<ResponseBookDto> getOrCreateBookByIsbn(@RequestBody RequestCreateBookDto bookDto) {
@@ -104,6 +106,12 @@ public class BookController {
                              .body(bookResult);
     }
 
+    /**
+     * ISBN 리스트를 받아서 해당 책 데이터가 DB 내에 존재하는지 여부를 반환
+     *
+     * @param isbnList : isbn 리스트
+     * @return : List<ResponseCheckBooksByIsbnDto>
+     */
     @PostMapping("/check-books")
     @Operation(summary = "ISBN 리스트로 DB내 존재하는지 여부 조회", description = "ISBN 리스트로 DB내 존재하는지 여부를 확인하는 API")
     public ResponseEntity<List<ResponseCheckBooksByIsbnDto>> checkBooksByIsbn(@RequestBody String[] isbnList) {

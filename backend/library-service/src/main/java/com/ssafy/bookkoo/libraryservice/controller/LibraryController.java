@@ -1,12 +1,12 @@
 package com.ssafy.bookkoo.libraryservice.controller;
 
-import com.ssafy.bookkoo.libraryservice.dto.RequestCreateLibraryDto;
-import com.ssafy.bookkoo.libraryservice.dto.RequestLibraryBookMapperCreateDto;
-import com.ssafy.bookkoo.libraryservice.dto.RequestLibraryBookMapperUpdateDto;
-import com.ssafy.bookkoo.libraryservice.dto.RequestSearchBookMultiFieldDto;
-import com.ssafy.bookkoo.libraryservice.dto.RequestUpdateLibraryDto;
-import com.ssafy.bookkoo.libraryservice.dto.ResponseBookDto;
-import com.ssafy.bookkoo.libraryservice.dto.ResponseLibraryDto;
+import com.ssafy.bookkoo.libraryservice.dto.library.RequestCreateLibraryDto;
+import com.ssafy.bookkoo.libraryservice.dto.library.RequestUpdateLibraryDto;
+import com.ssafy.bookkoo.libraryservice.dto.library.ResponseLibraryDto;
+import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMapperCreateDto;
+import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMapperUpdateDto;
+import com.ssafy.bookkoo.libraryservice.dto.other.RequestSearchBookMultiFieldDto;
+import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookDto;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import com.ssafy.bookkoo.libraryservice.service.LibraryService;
 import com.ssafy.bookkoo.libraryservice.util.CommonUtil;
@@ -27,6 +27,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 서재 관련 API를 제공하는 컨트롤러 클래스입니다.
+ */
 @RestController
 @RequestMapping("/libraries")
 @RequiredArgsConstructor
@@ -34,6 +37,13 @@ public class LibraryController {
 
     private final LibraryService libraryService;
 
+    /**
+     * 서재를 생성합니다.
+     *
+     * @param headers HTTP 헤더
+     * @param dto     서재 생성 요청 DTO
+     * @return 생성된 서재 응답 DTO
+     */
     @PostMapping
     @Operation(summary = "서재 생성", description = "서재 생성 API")
     public ResponseEntity<ResponseLibraryDto> createLibrary(
@@ -46,6 +56,12 @@ public class LibraryController {
                              .body(libraryService.addLibrary(dto, memberId));
     }
 
+    /**
+     * 해당 사용자의 서재 목록을 조회합니다.
+     *
+     * @param nickname 사용자의 닉네임
+     * @return 사용자의 서재 목록 응답 DTO 리스트
+     */
     @GetMapping
     @Operation(summary = "해당 사용자의 서재 목록 조회", description = "사용자의 닉네임을 받아 해당 사용자의 서재 목록 조회 API")
     public ResponseEntity<List<ResponseLibraryDto>> getLibraries(@RequestParam String nickname) {
@@ -53,6 +69,13 @@ public class LibraryController {
                              .body(libraryService.getLibrariesOfMember(nickname));
     }
 
+    /**
+     * 서재 단일 조회 API
+     *
+     * @param libraryId 서재 ID
+     * @param filter    상태 필터
+     * @return 조회된 서재 응답 DTO
+     */
     @GetMapping("/{libraryId}")
     @Operation(summary = "서재 단일 조회", description = "서재 단일 조회 API")
     public ResponseEntity<ResponseLibraryDto> getLibrary(
@@ -63,6 +86,13 @@ public class LibraryController {
                              .body(libraryService.getLibrary(libraryId, filter));
     }
 
+    /**
+     * 서재를 수정합니다.
+     *
+     * @param libraryId  서재 ID
+     * @param libraryDto 서재 수정 요청 DTO
+     * @return 수정된 서재 응답 DTO
+     */
     @PatchMapping("/{libraryId}")
     @Operation(summary = "서재 수정", description = "서재 수정 API")
     public ResponseEntity<ResponseLibraryDto> updateLibrary(
@@ -73,6 +103,14 @@ public class LibraryController {
                              .body(libraryService.updateLibrary(libraryId, libraryDto));
     }
 
+    /**
+     * 서재에 책을 등록합니다.
+     *
+     * @param headers              HTTP 헤더
+     * @param libraryId            서재 ID
+     * @param libraryBookMapperDto 서재 책 매핑 생성 요청 DTO
+     * @return 등록 성공 여부
+     */
     @PostMapping("/{libraryId}/books")
     @Operation(summary = "서재에 책 등록", description = "서재에 책 등록하는 API")
     public ResponseEntity<Boolean> addBookToLibrary(
@@ -82,12 +120,19 @@ public class LibraryController {
     ) {
         Long memberId = CommonUtil.getMemberId(headers);
 
-        libraryService.addBookToLibrary(libraryId,
-            libraryBookMapperDto, memberId);
+        libraryService.addBookToLibrary(libraryId, libraryBookMapperDto, memberId);
         return ResponseEntity.ok()
                              .body(true);
     }
 
+    /**
+     * 서재 내 책을 수정합니다.
+     *
+     * @param headers   HTTP 헤더
+     * @param libraryId 서재 ID
+     * @param lbmDto    서재 책 매핑 수정 요청 DTO 리스트
+     * @return 수정 성공 여부
+     */
     @PutMapping("/{libraryId}/books")
     @Operation(summary = "서재 내 책 수정(순서 등)", description = "서재 내 책들을 수정하는 API")
     public ResponseEntity<Boolean> updateBookToLibrary(
@@ -102,6 +147,12 @@ public class LibraryController {
                                  memberId));
     }
 
+    /**
+     * 사용자가 등록한 모든 책 개수를 조회합니다.
+     *
+     * @param headers HTTP 헤더
+     * @return 사용자가 본인 서재에 등록한 모든 책 개수
+     */
     @GetMapping("/me/books/count")
     @Operation(summary = "사용자가 등록한 모든 책 개수", description = "사용자가 본인 서재에 등록한 모든 책 개수")
     public ResponseEntity<Integer> countBooks(@RequestHeader HttpHeaders headers) {
@@ -111,6 +162,13 @@ public class LibraryController {
                              .body(libraryService.countBooksInLibrary(memberId));
     }
 
+    /**
+     * 사용자가 등록한 책을 조회합니다.
+     *
+     * @param headers   HTTP 헤더
+     * @param searchDto 책 검색 요청 DTO
+     * @return 사용자가 본인 서재에 등록한 책 목록 응답 DTO 리스트
+     */
     @PostMapping("/me/books/search")
     @Operation(summary = "사용자가 등록한 책 반환", description = "사용자가 본인 서재에 등록한 책 대상 ")
     public ResponseEntity<List<ResponseBookDto>> getMyBooks(

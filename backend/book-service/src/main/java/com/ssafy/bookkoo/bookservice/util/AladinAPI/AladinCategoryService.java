@@ -1,5 +1,8 @@
 package com.ssafy.bookkoo.bookservice.util.AladinAPI;
 
+import com.ssafy.bookkoo.bookservice.dto.aladin.AladinBookItem;
+import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseAladinAPI;
+import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseAladinSearchDetail;
 import com.ssafy.bookkoo.bookservice.entity.AladinCategoryMapper;
 import com.ssafy.bookkoo.bookservice.entity.Category;
 import com.ssafy.bookkoo.bookservice.repository.category.AladinCategoryMapperRepository;
