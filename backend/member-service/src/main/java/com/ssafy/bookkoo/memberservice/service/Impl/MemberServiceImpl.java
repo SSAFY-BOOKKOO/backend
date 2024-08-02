@@ -7,6 +7,7 @@ import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterDto.RequestReg
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseLoginTokenDto;
 import com.ssafy.bookkoo.memberservice.entity.*;
 import com.ssafy.bookkoo.memberservice.entity.Member.MemberBuilder;
+import com.ssafy.bookkoo.memberservice.enums.SocialType;
 import com.ssafy.bookkoo.memberservice.exception.*;
 import com.ssafy.bookkoo.memberservice.repository.CertificationRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberCategoryMapperRepository;

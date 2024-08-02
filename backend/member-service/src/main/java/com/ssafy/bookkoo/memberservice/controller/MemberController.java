@@ -98,7 +98,7 @@ public class MemberController {
                              .build();
     }
 
-    @PostMapping("/password/reset")
+    @PatchMapping("/password/reset")
     @Operation(description = "가입한 이메일에 대한 비밀번호를 초기화 합니다.", summary = "비밀번호 초기화")
     public ResponseEntity<HttpStatus> passwordReset(
         @RequestBody String email

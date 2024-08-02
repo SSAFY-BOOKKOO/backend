@@ -1,6 +1,6 @@
 package com.ssafy.bookkoo.memberservice.dto.response;
 
-import com.ssafy.bookkoo.memberservice.entity.Gender;
+import com.ssafy.bookkoo.memberservice.enums.Gender;
 import java.util.List;
 import lombok.Builder;
 
