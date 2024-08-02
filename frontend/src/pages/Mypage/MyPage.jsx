@@ -19,7 +19,6 @@ const MyPage = () => {
           '/members/info?memberId=312c2435-d0b5-4607-808d-fc0e9c51b58d'
         );
         setMember(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error(error);
       }

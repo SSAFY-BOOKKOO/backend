@@ -27,6 +27,7 @@ const PasswordUpdate = ({ onCancel }) => {
       });
       setAlert({
         isOpen: true,
+        confirmOnly: true,
         message: '비밀번호가 성공적으로 변경되었습니다.',
         onConfirm: onCancel,
       });

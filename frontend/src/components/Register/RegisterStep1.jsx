@@ -70,6 +70,7 @@ const RegisterStep1 = ({
         setNicknameError('');
         setAlert({
           isOpen: true,
+          confirmOnly: true,
           message: '사용 가능한 닉네임입니다.',
         });
       }
@@ -82,6 +83,7 @@ const RegisterStep1 = ({
     if (!isEmailChecked) {
       setAlert({
         isOpen: true,
+        confirmOnly: true,
         message: '이메일 중복확인을 해주세요.',
       });
       return;
@@ -89,6 +91,7 @@ const RegisterStep1 = ({
     if (!isNicknameChecked) {
       setAlert({
         isOpen: true,
+        confirmOnly: true,
         message: '닉네임 중복확인을 해주세요.',
       });
       return;
@@ -96,6 +99,7 @@ const RegisterStep1 = ({
     if (emailError || nicknameError) {
       setAlert({
         isOpen: true,
+        confirmOnly: true,
         message: '중복 확인을 다시 해주세요.',
       });
       return;

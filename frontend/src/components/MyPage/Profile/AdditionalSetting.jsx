@@ -15,7 +15,6 @@ const AdditionalSetting = ({ userInfo, onSave }) => {
   const handleSubmit = e => {
     e.preventDefault();
     onSave(formData);
-    console.log('추가 설정 저장:', formData);
   };
 
   return (

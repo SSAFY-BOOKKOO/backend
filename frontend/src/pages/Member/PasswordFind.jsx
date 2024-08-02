@@ -31,6 +31,7 @@ const PasswordFind = () => {
     if (Object.keys(newErrors).length === 0) {
       setAlert({
         isOpen: true,
+        confirmOnly: true,
         message: '비밀번호 재설정 이메일이 전송되었습니다.',
         onConfirm: () => navigate('/login'),
       });

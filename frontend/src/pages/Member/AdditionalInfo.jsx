@@ -74,12 +74,14 @@ const AdditionalInfo = ({ userInfo, onSave }) => {
 
         setAlert({
           isOpen: true,
+          confirmOnly: true,
           message: '회원가입이 완료되었습니다.',
           onConfirm: () => navigate('/library'),
         });
       } catch (error) {
         setAlert({
           isOpen: true,
+          confirmOnly: true,
           message: '회원정보 저장 중 오류가 발생했습니다.',
         });
       }

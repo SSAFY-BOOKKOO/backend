@@ -106,11 +106,13 @@ const RegisterPage = () => {
         if (isEmailDuplicate) {
           setAlert({
             isOpen: true,
+            confirmOnly: true,
             message: '이미 사용 중인 이메일입니다.',
           });
         } else if (isNicknameDuplicate) {
           setAlert({
             isOpen: true,
+            confirmOnly: true,
             message: '이미 사용 중인 닉네임입니다.',
           });
         } else {
@@ -187,6 +189,7 @@ const RegisterPage = () => {
         if (response.status === 200) {
           setAlert({
             isOpen: true,
+            confirmOnly: true,
             message: '회원가입이 완료되었습니다.',
             onConfirm: () => navigate('/library'),
           });
@@ -194,14 +197,12 @@ const RegisterPage = () => {
         } else {
           setAlert({
             isOpen: true,
+            confirmOnly: true,
             message: '회원가입에 실패했습니다.',
           });
         }
       } catch (error) {
-        setAlert({
-          isOpen: true,
-          message: '회원가입에 실패했습니다.',
-        });
+        console.error(error);
       }
     }
   };

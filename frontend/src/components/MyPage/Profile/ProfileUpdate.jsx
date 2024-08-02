@@ -86,6 +86,7 @@ const ProfileUpdate = ({ member, onSave, onCancel }) => {
     } else {
       setAlert({
         isOpen: true,
+        confirmOnly: true,
         message: '폼에 오류가 있습니다. 다시 확인해 주세요.',
       });
     }
