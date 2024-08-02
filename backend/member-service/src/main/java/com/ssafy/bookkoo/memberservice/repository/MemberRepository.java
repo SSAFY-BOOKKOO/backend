@@ -1,10 +1,12 @@
 package com.ssafy.bookkoo.memberservice.repository;
 
 import com.ssafy.bookkoo.memberservice.entity.Member;
+import com.ssafy.bookkoo.memberservice.repository.custom.MemberCustomRepository;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long>,
+    MemberCustomRepository {
 
     /**
      * 이메일을 통해 멤버 찾기
@@ -13,12 +15,4 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
      * @return
      */
     Optional<Member> findByEmail(String email);
-
-    /**
-     * 멤버 고유 ID (UUID)를 통해 멤버 찾기
-     *
-     * @param memberId
-     * @return
-     */
-    Optional<Member> findByMemberId(String memberId);
 }
