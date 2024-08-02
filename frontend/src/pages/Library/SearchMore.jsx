@@ -1,85 +1,85 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import WrapContainer from '@components/Layout/WrapContainer';
 import SearchBookItem from '@components/Library/Search/SearchBookItem';
 import SearchLibraryItem from '@components/Library/Search/SearchLibraryItem';
 import BookTalkItem from '@components/@common/Book/BookTalkItem';
-import { books as bookData } from '@mocks/BookData';
-import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
-import useModal from '@hooks/useModal';
+import useBookInfiniteScroll from '@hooks/useBookInfiniteScroll';
+import { useInView } from 'react-intersection-observer';
 
 const SearchMore = () => {
   const { type } = useParams();
-  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const searchText = location.state?.searchText || '';
+  const searchText = searchParams.get('text');
+  const selectedTag = searchParams.get('tag');
 
-  const [books, setBooks] = useState(bookData);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const getQuery = () => {
+    switch (type) {
+      case 'book':
+        return useBookInfiniteScroll(searchText, selectedTag);
+      case 'library':
+      case 'booktalk':
+        return {
+          data: null,
+          fetchNextPage: () => {},
+          hasNextPage: false,
+          isFetchingNextPage: false,
+        };
+      default:
+        return;
+    }
+  };
 
-  const { isOpen, toggleModal } = useModal();
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = getQuery();
+  const { ref, inView } = useInView();
 
   useEffect(() => {
-    loadBooks();
-  }, []);
-
-  const loadBooks = () => {
-    // API 연동
-  };
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage]);
 
   const handleBookClick = book => {
     navigate(`/${type}/detail/${book.book_id}`, { state: { book } });
   };
 
   const renderBookItem = book => {
-    switch (type) {
-      case 'library':
-        return (
-          <SearchLibraryItem
-            key={book.book_id}
-            book={book}
-            onClick={() => handleBookClick(book)}
-          />
-        );
-      case 'book':
-        return (
-          <SearchBookItem
-            key={book.book_id}
-            book={book}
-            onClick={() => handleBookClick(book)}
-            onCreateClick={toggleModal}
-          />
-        );
-      case 'booktalk':
-        return (
-          <BookTalkItem
-            key={book.book_id}
-            book={book}
-            onClick={() => handleBookClick(book)}
-          />
-        );
-      default:
-        return null;
-    }
+    const components = {
+      library: SearchLibraryItem,
+      book: SearchBookItem,
+      booktalk: BookTalkItem,
+    };
+    const Component = components[type];
+    return Component ? (
+      <Component
+        key={book.book_id}
+        book={book}
+        onClick={() => handleBookClick(book)}
+      />
+    ) : null;
+  };
+
+  const getTitle = () => {
+    const titles = {
+      library: '내 서재',
+      book: '도서',
+      booktalk: '북톡',
+    };
+    return `${titles[type] || ''} 검색 결과`;
   };
 
   return (
     <WrapContainer className='mt-4'>
-      <h1 className='text-2xl font-bold mb-4'>
-        {type === 'library' ? '내 서재' : type === 'book' ? '도서' : '북톡'}{' '}
-        검색 결과
-      </h1>
-      {books.map(renderBookItem)}
-      {loading && <p>Loading...</p>}
-      {!hasMore && <p>더 이상 결과가 없습니다.</p>}
-      {type === 'book' && (
-        <BookCreateModal
-          isCreateModalOpen={isOpen}
-          toggleCreateModal={toggleModal}
-        />
+      <h1 className='text-2xl font-bold mb-4'>{getTitle()}</h1>
+      {data?.pages?.map((page, index) => (
+        <div key={index}>{page.data?.map(renderBookItem)}</div>
+      ))}
+      {isFetchingNextPage && <p className='text-center'>로딩중...</p>}
+      {!hasNextPage && data?.pages?.length > 0 && (
+        <p className='text-center'>더 이상 결과가 없습니다.</p>
       )}
+      <div ref={ref}></div>
     </WrapContainer>
   );
 };
