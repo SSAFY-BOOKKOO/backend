@@ -21,15 +21,21 @@ public record RequestRegisterMemberDto (
     @MaxArray(value = 15) Integer[] categories,
     String introduction,
     SocialType socialType,
-    String profileImgUrl
+    String profileImgUrl,
+    RequestMemberSettingDto memberSettingDto
 ) {
 
     /**
-     * SocialType이 없으면 bookkoo로 설정
+     * Default
+     * SocialType: bookkoo
+     * Gender: NONE
      */
     public RequestRegisterMemberDto {
         if (socialType == null) {
             socialType = SocialType.bookkoo;
+        }
+        if (gender == null) {
+            gender = Gender.NONE;
         }
     }
 }
