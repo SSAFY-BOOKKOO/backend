@@ -38,8 +38,8 @@ const LibraryMain = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [, setAlert] = useAtom(alertAtom);
-
   const [member, setMember] = useState(null);
+  const [testLibrary, setTestLibrary] = useState(null);
 
   useEffect(() => {
     const fetchMemberInfo = async () => {
@@ -54,16 +54,30 @@ const LibraryMain = () => {
     fetchMemberInfo();
   }, []);
 
+  useEffect(() => {
+    const fetchLibraries = async () => {
+      try {
+        const response = await authAxiosInstance.get('/libraries/me/');
+        setTestLibrary(response.data);
+        console.log(response.data); // Fetch한 데이터를 콘솔에 출력
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchLibraries();
+  }, []);
+
   const [libraries, setLibraries] = useState([
     {
       name: '서재 1',
       id: 1,
-      books: initialBooks.filter(book => book.library_id === 1),
+      books: initialBooks.filter(book => book.libraryId === 1),
     },
     {
       name: '서재 2',
       id: 2,
-      books: initialBooks.filter(book => book.library_id === 2),
+      books: initialBooks.filter(book => book.libraryId === 2),
     },
   ]);
 
@@ -73,7 +87,7 @@ const LibraryMain = () => {
       setLibraries(prevLibraries => {
         return prevLibraries.map(library => ({
           ...library,
-          books: library.books.filter(book => book.book_id !== deleteBookId),
+          books: library.books.filter(book => book.bookId !== deleteBookId),
         }));
       });
     }
@@ -84,18 +98,15 @@ const LibraryMain = () => {
       const newLibraries = prevLibraries.map(library => {
         if (library.id === libraries[activeLibrary].id) {
           const newBooks = [...library.books];
-          const movedBook = newBooks.find(book => book.slot_id === fromIndex);
+          const movedBook = newBooks.find(book => book.slotId === fromIndex);
 
           if (movedBook) {
-            movedBook.slot_id = toIndex;
+            movedBook.slotId = toIndex;
           }
 
           newBooks.forEach(book => {
-            if (
-              book.slot_id === toIndex &&
-              book.book_id !== movedBook.book_id
-            ) {
-              book.slot_id = fromIndex;
+            if (book.slotId === toIndex && book.bookId !== movedBook.bookId) {
+              book.slotId = fromIndex;
             }
           });
 
@@ -153,7 +164,7 @@ const LibraryMain = () => {
   };
 
   const handleBookClick = book => {
-    navigate(`/library/detail/${book.book_id}`, { state: { book } });
+    navigate(`/library/detail/${book.bookId}`, { state: { book } });
   };
 
   return (

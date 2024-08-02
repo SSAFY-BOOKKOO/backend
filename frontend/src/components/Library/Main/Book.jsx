@@ -6,7 +6,7 @@ const ItemType = 'BOOK';
 const Book = ({ item, index, moveBook, onBookClick }) => {
   const [{ isDragging }, dragRef] = useDrag({
     type: ItemType,
-    item: { id: item.book_id, originalIndex: index },
+    item: { id: item.bookId, originalIndex: index },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
