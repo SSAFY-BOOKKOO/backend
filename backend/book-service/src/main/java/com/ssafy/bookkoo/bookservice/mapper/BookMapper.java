@@ -73,7 +73,8 @@ public interface BookMapper {
         @Mapping(source = "pubDate", target = "publishedAt"),
         @Mapping(source = "title", target = "title"),
         @Mapping(source = "isbn", target = "isbn"),
-        @Mapping(target = "inLibrary", ignore = true)
+        @Mapping(target = "inLibrary", ignore = true),
+        @Mapping(target = "category", ignore = true),
     })
     AladinBookItem toAladinBookItem(OriginAladinBookItem dto);
 
@@ -100,6 +101,7 @@ public interface BookMapper {
     @Mapping(source = "cover", target = "coverImgUrl")
     @Mapping(source = "pubDate", target = "publishedAt")
     @Mapping(source = "description", target = "summary")
+    @Mapping(target = "category", ignore = true)
     ResponseAladinSearchDetail toResponseSearchDetail(ResponseOriginAladinSearchDetail dto);
 
     /**
