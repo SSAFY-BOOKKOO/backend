@@ -131,8 +131,6 @@ services:
     container_name: member-redis
     ports:
       - "6379:6379"
-    volumes:
-      - member_redis_data:/data
     networks:
       - bookkoo-net
 
@@ -141,8 +139,6 @@ services:
     container_name: auth-redis
     ports:
       - "6380:6379"
-    volumes:
-      - auth_redis_data:/data
     networks:
       - bookkoo-net
   
@@ -356,5 +352,3 @@ volumes:
   library_postgres_data:
   member_postgres_data:
   auth_postgres_data:
-  member_redis_data:
-  auth_redis_data:
