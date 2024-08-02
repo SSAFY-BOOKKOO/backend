@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import WrapContainer from '@components/Layout/WrapContainer';
 import SearchBookItem from '@components/Library/Search/SearchBookItem';
@@ -6,6 +6,8 @@ import SearchLibraryItem from '@components/Library/Search/SearchLibraryItem';
 import BookTalkItem from '@components/@common/Book/BookTalkItem';
 import useBookInfiniteScroll from '@hooks/useBookInfiniteScroll';
 import { useInView } from 'react-intersection-observer';
+import useModal from '@hooks/useModal';
+import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
 
 const SearchMore = () => {
   const { type } = useParams();
@@ -13,6 +15,8 @@ const SearchMore = () => {
   const navigate = useNavigate();
   const searchText = searchParams.get('text');
   const selectedTag = searchParams.get('tag');
+  const { isOpen, toggleModal } = useModal();
+  const [selectedBook, setSelectedBook] = useState(null);
 
   const getQuery = () => {
     switch (type) {
@@ -41,23 +45,44 @@ const SearchMore = () => {
   }, [inView, hasNextPage, fetchNextPage]);
 
   const handleBookClick = book => {
-    navigate(`/${type}/detail/${book.book_id}`, { state: { book } });
+    navigate(`/ ${type}/detail/${book.book_id}`, { state: { book } });
+  };
+
+  const handleBookCreateButton = book => {
+    setSelectedBook(book);
+    toggleModal();
   };
 
   const renderBookItem = book => {
-    const components = {
-      library: SearchLibraryItem,
-      book: SearchBookItem,
-      booktalk: BookTalkItem,
-    };
-    const Component = components[type];
-    return Component ? (
-      <Component
-        key={book.book_id}
-        book={book}
-        onClick={() => handleBookClick(book)}
-      />
-    ) : null;
+    switch (type) {
+      case 'library':
+        return (
+          <SearchLibraryItem
+            key={book.book_id}
+            book={book}
+            onClick={() => handleBookClick(book)}
+          />
+        );
+      case 'book':
+        return (
+          <SearchBookItem
+            key={book.book_id}
+            book={book}
+            onClick={() => handleBookClick(book)}
+            onCreateClick={() => handleBookCreateButton(book)}
+          />
+        );
+      case 'booktalk':
+        return (
+          <BookTalkItem
+            key={book.book_id}
+            book={book}
+            onClick={() => handleBookClick(book)}
+          />
+        );
+      default:
+        return null;
+    }
   };
 
   const getTitle = () => {
@@ -80,6 +105,11 @@ const SearchMore = () => {
         <p className='text-center'>더 이상 결과가 없습니다.</p>
       )}
       <div ref={ref}></div>
+      <BookCreateModal
+        isCreateModalOpen={isOpen}
+        toggleCreateModal={toggleModal}
+        selectedBook={selectedBook}
+      />
     </WrapContainer>
   );
 };
