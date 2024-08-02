@@ -1,56 +1,12 @@
 import React, { useState } from 'react';
 import Following from '@components/MyPage/Friend/Following.jsx';
 import Follower from '@components/MyPage/Friend/Follower.jsx';
-
-// dummy data: 사용자 정보
-const detailedUserData = [
-  {
-    username: 'userY',
-    followers: ['userX', 'userC'],
-    following: ['userD', 'userX'],
-  },
-  {
-    username: 'userD',
-    followers: ['userY', 'userZ', 'userA', 'userX', 'userB', 'userC'],
-    following: ['userB', 'userY', 'userZ', 'userA'],
-  },
-  {
-    username: 'userZ',
-    followers: ['userD', 'userY', 'userX', 'userB'],
-    following: ['userC', 'userX', 'userD', 'userB'],
-  },
-  {
-    username: 'userA',
-    followers: ['userB', 'userD'],
-    following: ['userC', 'userX', 'userB'],
-  },
-  {
-    username: 'userX',
-    followers: ['userZ', 'userD', 'userY', 'userC', 'user1'],
-    following: ['userZ', 'userA', 'userD', 'userY', 'userB', 'user1'],
-  },
-  {
-    username: 'userB',
-    followers: ['userC', 'userA', 'userD', 'userX', 'userZ'],
-    following: ['userD', 'userX', 'userZ', 'userY'],
-  },
-  {
-    username: 'userC',
-    followers: ['userY', 'userB', 'userD', 'userX', 'userZ', 'userA', 'user1'],
-    following: ['userA', 'userB', 'userD', 'user1'],
-  },
-  {
-    username: 'user1',
-    followers: ['userB', 'userX', 'userD'],
-    following: ['userX', 'userC'],
-  },
-];
+import detailedUserData from '@mocks/FollowUserData';
 
 const UserPage = () => {
   const [userData, setUserData] = useState(detailedUserData);
   const currentUser = userData.find(user => user.username === 'user1');
   const [view, setView] = useState('following');
-  // 내가 팔로우 하는 사람(팔로잉) 팔로잉 취소하기
   const handleUnfollow = username => {
     setUserData(prevData => {
       const newData = prevData.map(user => {
@@ -72,7 +28,6 @@ const UserPage = () => {
     });
   };
 
-  // 나를 팔로우 하는 사람(팔로워) 삭제하기
   const handleRemoveFollower = username => {
     setUserData(prevData => {
       const newData = prevData.map(user => {
