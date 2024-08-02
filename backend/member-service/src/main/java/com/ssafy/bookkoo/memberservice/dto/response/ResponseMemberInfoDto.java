@@ -9,7 +9,7 @@ public record ResponseMemberInfoDto(
     String nickName,
     Gender gender,
     List<Integer> categories,
-    int age,
+    Integer age,
     String introduction,
     String profileImgUrl
 ) {
