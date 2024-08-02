@@ -1,7 +1,6 @@
 import React from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import App from './App.jsx';
-import LibraryHome from './pages/Library/LibraryHome.jsx';
 import LibraryDetail from './pages/Library/LibraryDetail.jsx';
 import LibrarySearch from './pages/Library/LibrarySearch.jsx';
 import SearchBookDetail from './pages/Library/SearchBookDetail.jsx';

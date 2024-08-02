@@ -11,7 +11,7 @@ import SettingsModal from '@components/@common/SettingsModal';
 import { PRESET_COLORS } from '@constants/ColorData';
 import { bookDataAtom } from '@atoms/bookCreateAtom';
 import { IoBookmarkSharp } from 'react-icons/io5';
-import './LibraryDetail.css'; // CSS 파일 추가
+import './LibraryDetail.css';
 
 const LibraryDetail = () => {
   const { state } = useLocation();
