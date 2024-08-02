@@ -1,66 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import settingIcon from '@assets/icons/setting.png';
+// import statisticsIcon from '@assets/icons/statistics.png';
 import { FaCalendarDays } from 'react-icons/fa6';
+// import friendsIcon from '@assets/icons/friends.png';
 import { MdPeopleAlt } from 'react-icons/md';
+// import quoteIcon from '@assets/icons/quote.png';
 import { BsChatSquareQuoteFill } from 'react-icons/bs';
+// import myWritingIcon from '@assets/icons/my_writing.png';
 import { FaClipboardList } from 'react-icons/fa6';
-import profileImgSample from '@assets/images/profile_img_sample.png';
-import { authAxiosInstance, axiosInstance } from '@services/axiosInstance';
+import profile_img_sample from '@assets/images/profile_img_sample.png';
 
 const MyPage = () => {
-  const [member, setMember] = useState(null);
-
-  useEffect(() => {
-    const fetchMemberInfo = async () => {
-      try {
-        const response = await authAxiosInstance.get(
-          '/members/info?memberId=312c2435-d0b5-4607-808d-fc0e9c51b58d'
-        );
-        setMember(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchMemberInfo();
-  }, []);
-
-  if (!member) {
-    return <div>Loading...</div>;
-  }
-
-  const displayCategories =
-    member.categories.length > 4
-      ? member.categories.slice(0, 2).concat(['...'])
-      : member.categories;
+  const member = {
+    nickname: '닉네임',
+    introduction: '소개문',
+    category: '카테고리',
+    profile_img_url: profile_img_sample,
+  };
 
   return (
     <div className='p-4 min-h-[43rem]'>
-      <div className='flex items-start justify-between'>
-        <div className='flex items-start space-x-8'>
+      <div className='flex items-center justify-between'>
+        <div className='flex items-center space-x-8'>
           <img
-            src={member.profileImgUrl || profileImgSample}
+            src={member.profile_img_url}
             alt='profile'
-            className='w-32 h-32 rounded-full'
+            className='w-1/2 h-32 rounded-full'
           />
-          <div className='flex flex-col'>
-            <h2 className='text-2xl font-bold'>{member.nickName}</h2>
-            <p className='text-md'>{member.introduction}</p>
-            <div className='flex flex-wrap mt-2'>
-              {displayCategories.map((category, index) => (
-                <span
-                  key={index}
-                  className='mr-2 mb-2 px-2 py-1 border rounded-lg text-gray-700 bg-gray-100'
-                >
-                  {category}
-                </span>
-              ))}
-            </div>
+          <div>
+            <h2 className='text-2xl font-bold'>{member.nickname}</h2>
+            <p className='text-lg'>{member.introduction}</p>
+            <p className='text-lg'>{member.category}</p>
           </div>
         </div>
-        <div className='flex-none'>
+        <div className='flex space-x-4'>
           <Link to='/mypage/profile'>
             <button className='p-2 rounded'>
               <img src={settingIcon} alt='setting' className='w-8 h-8' />

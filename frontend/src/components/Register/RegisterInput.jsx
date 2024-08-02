@@ -1,44 +1,21 @@
 import React from 'react';
-import Input from '@components/@common/Input';
-import Textarea from '@components/@common/Textarea';
 
-const RegisterInput = ({
-  labelText,
-  type,
-  id,
-  name,
-  value,
-  onChange,
-  required,
-  error,
-}) => {
-  const commonProps = {
-    labelText,
-    id,
-    name,
-    onChange,
-    isRequired: required,
-    isValid: !error,
-    errorMessage: error,
-    value,
-  };
-
+const RegisterInput = ({ labelText, error, ...props }) => {
   return (
     <div className='mb-4'>
-      {type === 'textarea' ? (
-        <Textarea
-          {...commonProps}
-          inputWidth='w-full'
-          customClass={`${error ? 'border-red-500' : ''}`}
-        />
-      ) : (
-        <Input
-          {...commonProps}
-          type={type}
-          inputWidth='w-full'
-          customClass={`${error ? 'border-red-500' : ''}`}
-        />
-      )}
+      <label
+        htmlFor={props.id}
+        className='block mb-2 text-sm font-medium text-gray-700'
+      >
+        {labelText}
+      </label>
+      <input
+        {...props}
+        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+          error ? 'border-red-500' : ''
+        }`}
+      />
+      {error && <p className='text-red-500 text-xs italic'>{error}</p>}
     </div>
   );
 };

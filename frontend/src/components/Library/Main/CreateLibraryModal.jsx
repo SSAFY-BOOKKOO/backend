@@ -9,11 +9,6 @@ const CreateLibraryModal = ({
 }) => {
   if (!showCreateModal) return null;
 
-  const handleCreateLibrary = () => {
-    createLibrary();
-    setShowCreateModal(false);
-  };
-
   return (
     <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-20'>
       <div className='bg-pink-100 p-6 rounded-lg shadow-lg'>
@@ -27,7 +22,7 @@ const CreateLibraryModal = ({
         />
         <div className='flex justify-end'>
           <button
-            onClick={handleCreateLibrary}
+            onClick={createLibrary}
             className='bg-green-400 text-white p-2 rounded-lg mr-2'
           >
             확인

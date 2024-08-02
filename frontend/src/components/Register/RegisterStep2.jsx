@@ -18,12 +18,12 @@ const RegisterStep2 = ({
       <RegisterInput
         labelText='연령'
         type='number'
-        id='year'
-        name='year'
-        value={formData.year}
+        id='age'
+        name='age'
+        value={formData.age}
         onChange={handleChange}
         required
-        error={errors.year}
+        error={errors.age}
       />
       <label className='block mb-2 text-sm font-medium text-gray-700'>
         성별
@@ -33,8 +33,8 @@ const RegisterStep2 = ({
               type='radio'
               id='gender-male'
               name='gender'
-              value='MALE'
-              checked={formData.gender === 'MALE'}
+              value='male'
+              checked={formData.gender === 'male'}
               onChange={handleChange}
             />
             <span className='ml-2'>남성</span>
@@ -44,8 +44,8 @@ const RegisterStep2 = ({
               type='radio'
               id='gender-female'
               name='gender'
-              value='FEMALE'
-              checked={formData.gender === 'FEMALE'}
+              value='female'
+              checked={formData.gender === 'female'}
               onChange={handleChange}
             />
             <span className='ml-2'>여성</span>
@@ -55,8 +55,8 @@ const RegisterStep2 = ({
               type='radio'
               id='gender-none'
               name='gender'
-              value='NONE'
-              checked={formData.gender === 'NONE'}
+              value='none'
+              checked={formData.gender === 'none'}
               onChange={handleChange}
             />
             <span className='ml-2'>선택 안함</span>
@@ -66,20 +66,24 @@ const RegisterStep2 = ({
           <p className='text-red-500 text-sm'>{errors.gender}</p>
         )}
       </label>
-      <RegisterInput
-        labelText='소개글'
-        type='textarea'
-        id='introduction'
-        name='introduction'
-        value={formData.introduction}
-        onChange={handleChange}
-        required
-        error={errors.introduction}
-      />
       <label className='block mb-2 text-sm font-medium text-gray-700'>
         선호 카테고리
         <div className='flex flex-wrap mt-2 justify-center'>
-          {[1, 2, 3, 4, 5].map(category => (
+          {[
+            '추리/스릴러',
+            '로맨스',
+            '인문학',
+            '철학',
+            '경제/경영',
+            '역사',
+            '시',
+            '에세이',
+            '소설',
+            '과학',
+            '사회과학',
+            '자기계발',
+            '기타',
+          ].map(category => (
             <div key={category} className='mr-2 mb-2'>
               <label className='flex items-center border px-2 py-1 rounded-lg cursor-pointer'>
                 <input
@@ -115,7 +119,7 @@ const RegisterStep2 = ({
         />
         <Button
           text='가입 완료'
-          type='button'
+          type='submit'
           color='text-white bg-green-400 active:bg-green-600'
           size='large'
           full={false}
