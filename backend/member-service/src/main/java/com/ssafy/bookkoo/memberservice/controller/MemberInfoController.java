@@ -3,8 +3,10 @@ package com.ssafy.bookkoo.memberservice.controller;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseFollowShipDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
+import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberProfileDto;
 import com.ssafy.bookkoo.memberservice.service.FollowShipService;
 import com.ssafy.bookkoo.memberservice.service.MemberInfoService;
+import com.ssafy.bookkoo.memberservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
@@ -31,23 +33,21 @@ public class MemberInfoController {
 
     private final MemberInfoService memberInfoService;
     private final FollowShipService followShipService;
-    private final String PASSPORT_PREFIX = "member-passport";
 
     @GetMapping
-    @Operation(summary = "멤버 정보 반환 API", description = "멤버 ID(UUID)를 통해 멤버 정보를 반환합니다.")
-    public ResponseEntity<ResponseMemberInfoDto> getMemberInfo(
+    @Operation(summary = "멤버 정보 반환 API", description = "멤버 ID(UUID)를 통해 멤버 정보를 반환합니다. (멤버의 프로필 정보에 보여지는 데이터를 반환합니다.)")
+    public ResponseEntity<ResponseMemberProfileDto> getMemberInfo(
         @RequestHeader HttpHeaders headers,
         @RequestParam(name = "memberId", required = false) String memberId
     ) {
-        ResponseMemberInfoDto memberInfo = null;
+        ResponseMemberProfileDto memberProfileDto = null;
         if (memberId == null) {
-            Long id = Long.valueOf(headers.get(PASSPORT_PREFIX)
-                                          .get(0));
-            memberInfo = memberInfoService.getMemberInfo(id);
+            Long id = CommonUtil.getMemberId(headers);
+            memberProfileDto = memberInfoService.getMemberProfileInfo(id);
         } else {
-            memberInfo = memberInfoService.getMemberInfo(memberId);
+            memberProfileDto = memberInfoService.getMemberProfileInfo(memberId);
         }
-        return ResponseEntity.ok(memberInfo);
+        return ResponseEntity.ok(memberProfileDto);
     }
 
 
@@ -64,9 +64,11 @@ public class MemberInfoController {
     @PatchMapping("/password")
     @Operation(summary = "비밀번호 변경 API", description = "비밀번호를 변경합니다.")
     public ResponseEntity<HttpStatus> updatePassword(
+        @RequestHeader HttpHeaders headers,
         @Valid @RequestBody RequestUpdatePasswordDto requestUpdatePasswordDto
     ) {
-        memberInfoService.updatePassword(requestUpdatePasswordDto);
+        Long id = CommonUtil.getMemberId(headers);
+        memberInfoService.updatePassword(id, requestUpdatePasswordDto);
         return ResponseEntity.ok()
                              .build();
     }
