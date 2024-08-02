@@ -24,7 +24,7 @@ const LibraryDetail = () => {
   const maxLength = 100;
 
   // book 정보 받기
-  const { title, author, publisher, summary, coverImgUrl } = state.book;
+  const { title, author, publisher, summary, cover_img_url } = state.book;
 
   // 삭제 로직
   const handleDelete = bookId => {
@@ -104,9 +104,9 @@ const LibraryDetail = () => {
               {/* 회색 영역 */}
               <div className='relative flex flex-col items-center pb-4'>
                 <img
-                  src={coverImgUrl}
+                  src={cover_img_url}
                   alt={title}
-                  className='w-10/12 h-45/6 pt-6 pr-7 pl-12 cursor-pointer rounded-lg mt-[2rem] '
+                  className='w-10/12 h-5/6 pt-6 pr-7 pl-12 cursor-pointer rounded-lg mt-[2rem] '
                   onClick={() => setShowReview(true)}
                 />
                 {/* <IoBookmarkSharp className='absolute top-[3.7rem] right-[4rem] text-6xl text-blue-500' /> */}
@@ -139,8 +139,7 @@ const LibraryDetail = () => {
 
                 {/* 읽은 상태 */}
                 <p className='text-lg text-black'>{author}</p>
-                <p className='text-sm text-black'>{publisher}</p>
-                <p className='text-sm text-black'>2024.06.18-2024.06.29</p>
+                <p className='text-sm text-black'>{publisher} | 2022-07-14</p>
                 <p className='mt-2 text-sm text-black'>{displaySummary}</p>
               </div>
             </div>

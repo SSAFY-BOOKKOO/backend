@@ -79,7 +79,7 @@ const BookSearch = () => {
             'books being passed to SearchResultSection:',
             searchResults.bookStore
           )}
-          {/* SearchBook -> SearchResultSection ->  commond=-book-bookItem*/}
+          {/* 도서 검색 결과 */}
           <SearchResultSection
             title='도서 검색 결과'
             books={searchResults.bookStore}

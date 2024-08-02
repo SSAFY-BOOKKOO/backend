@@ -1,5 +1,5 @@
 import React from 'react';
-import BookItem from '../../@common/Book/BookItem';
+import BookItem from '../../Curation/Search/BookItem';
 
 const SearchResultSection = ({
   title,
