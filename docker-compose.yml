@@ -222,7 +222,10 @@ services:
       - "8082:8082"
     depends_on:
       eureka-server:
-        condition: service_healthy
+        condition: service_healthy  
+      auth-service:
+        condition: service_started
+
     networks:
       - bookkoo-net
     restart: on-failure
@@ -256,6 +259,8 @@ services:
       library-service:
         condition: service_started
       member-service:
+        condition: service_started
+      auth-service:
         condition: service_started
     networks:
       - bookkoo-net
