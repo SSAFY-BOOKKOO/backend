@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.libraryservice.dto.other;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.sql.Date;
 import lombok.Builder;
 
 @Builder
@@ -36,6 +37,9 @@ public record RequestCreateBookDto(
 
     @Schema(description = "책 너비(mm)", example = "150")
     Integer sizeWidth,
+
+    @Schema(description = "출판일", example = "2023-01-10")
+    Date publishedAt,
 
     @Schema(description = "카테고리")
     CategoryDto category

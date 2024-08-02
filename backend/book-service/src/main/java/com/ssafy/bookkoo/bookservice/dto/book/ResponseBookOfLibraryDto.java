@@ -1,14 +1,14 @@
 package com.ssafy.bookkoo.bookservice.dto.book;
 
 import com.ssafy.bookkoo.bookservice.dto.category.CategoryDto;
+import com.ssafy.bookkoo.bookservice.dto.review.ResponseReviewDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.sql.Date;
 import lombok.Builder;
 
 @Builder
-@Schema(description = "책 응답 DTO")
-public record ResponseBookDto(
-
+@Schema(description = "서재 내 책 응답 DTO")
+public record ResponseBookOfLibraryDto(
     @Schema(description = "책 ID", example = "1")
     Long id,
 
@@ -44,9 +44,12 @@ public record ResponseBookDto(
 
     @Schema(description = "출판일", example = "2023-01-10")
     Date publishedAt,
-    
+
     @Schema(description = "카테고리 정보")
-    CategoryDto category
+    CategoryDto category,
+
+    @Schema(description = "내 한줄평 정보")
+    ResponseReviewDto review
 ) {
 
 }
