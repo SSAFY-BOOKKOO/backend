@@ -46,7 +46,7 @@ const Login = () => {
       // 로그인 성공
       localStorage.setItem('ACCESS_TOKEN', data.accessToken);
 
-      navigate('/library');
+      navigate('/');
 
       // 페이지 이동 하기
     } catch (error) {

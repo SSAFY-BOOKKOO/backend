@@ -27,7 +27,7 @@ const LibraryDetail = () => {
   // 삭제 로직
   const handleDelete = bookId => {
     console.log({ bookId });
-    navigate('/library', { state: { deleteBookId: bookId } });
+    navigate('/', { state: { deleteBookId: bookId } });
   };
 
   // 서가 색 변경 로직

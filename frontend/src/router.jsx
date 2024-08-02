@@ -51,10 +51,8 @@ const router = createBrowserRouter([
           />
         ),
         children: [
-          { path: '/', element: <LibraryHome /> },
-
           // library
-          { path: 'library', element: <LibraryMain /> },
+          { path: '', element: <LibraryMain /> },
 
           // book in library detail
           { path: 'library/detail/:bookId', element: <LibraryDetail /> },
