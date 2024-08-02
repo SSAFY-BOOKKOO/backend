@@ -7,7 +7,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -26,6 +28,10 @@ public class MemberInfo extends BaseEntity {
     @Id
     @Column(name = "id")
     private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "member")
+    private Member member;
 
     @Column(name = "member_id")
     private String memberId;
@@ -52,6 +58,10 @@ public class MemberInfo extends BaseEntity {
     @Column(name = "profile_img_url")
     private String profileImgUrl;
 
+    @OneToOne
+    @JoinColumn(name = "member_setting")
+    private MemberSetting memberSetting;
+
     //해당 멤버를 팔로우하는 팔로우 관계
     @OneToMany(mappedBy = "followee")
     private List<FollowShip> followers = new ArrayList<>();
@@ -60,22 +70,32 @@ public class MemberInfo extends BaseEntity {
     @OneToMany(mappedBy = "follower")
     private List<FollowShip> followees = new ArrayList<>();
 
-
     @Builder
-    public MemberInfo(Long id, String memberId, String nickName, Integer year, Gender gender,
-        String introduction, String profileImgUrl) {
+    public MemberInfo(Long id, Member member, String memberId, String nickName, Integer year,
+        Gender gender, String introduction,
+        String profileImgUrl, MemberSetting memberSetting) {
         this.id = id;
+        this.member = member;
         this.memberId = memberId;
         this.nickName = nickName;
         this.year = year;
         this.gender = gender;
         this.introduction = introduction;
         this.profileImgUrl = profileImgUrl;
+        this.memberSetting = memberSetting;
     }
 
     /**
      * 연관관계 편의 메서드
      */
+
+    /**
+     * 멤버의 선호 카테고리 추가
+     */
+    public void addCategory(MemberCategoryMapper categoryMapper) {
+        this.categories.add(categoryMapper);
+    }
+
     /**
      * 해당 멤버가 팔로우하는 목록에 추가
      *
