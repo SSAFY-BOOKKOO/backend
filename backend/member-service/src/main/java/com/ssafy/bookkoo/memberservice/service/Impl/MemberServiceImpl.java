@@ -18,6 +18,7 @@ import com.ssafy.bookkoo.memberservice.service.MailSendService;
 import com.ssafy.bookkoo.memberservice.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +48,8 @@ public class MemberServiceImpl implements MemberService {
     private final CommonServiceClient commonServiceClient;
     private final String passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$";
 
+    @Value("${config.default-img-url}")
+    private String DEFAULT_IMG_URL;
     /**
      * 회원가입에 필요한 모든 정보를 받아 회원가입하는 서비스
      *
@@ -147,9 +150,9 @@ public class MemberServiceImpl implements MemberService {
         String profileImgUrl = additionalInfo.profileImgUrl();
 
         //기본 프로필 이미지 or 소셜 로그인의 경우 profileImgUrl
-        String fileKey = profileImgUrl == null ? "Default.jpg" : profileImgUrl;
+        String imgUrl = profileImgUrl == null ? DEFAULT_IMG_URL : profileImgUrl;
         if (profileImg != null) {
-            fileKey = commonServiceClient.saveProfileImg(profileImg, null);
+            imgUrl = commonServiceClient.saveProfileImg(profileImg, null);
         }
         MemberInfo memberInfo = MemberInfo.builder()
                                           .id(additionalInfo.id())
@@ -160,7 +163,7 @@ public class MemberServiceImpl implements MemberService {
                                           .nickName(additionalInfo.nickName())
                                           .year(additionalInfo.year())
                                           .introduction(additionalInfo.introduction())
-                                          .profileImgUrl(fileKey)
+                                          .profileImgUrl(imgUrl)
                                           .build();
 
         //추가 정보 저장
@@ -195,7 +198,7 @@ public class MemberServiceImpl implements MemberService {
      * @param info
      */
     @Transactional
-    private void saveCategories(RequestAdditionalInfo requestAdditionalInfo, MemberInfo info) {
+    protected void saveCategories(RequestAdditionalInfo requestAdditionalInfo, MemberInfo info) {
         Arrays.stream(requestAdditionalInfo.categories())
               .forEach((categoryId) -> {
                   //멤버 매퍼 키를 생성
