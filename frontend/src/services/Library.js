@@ -11,7 +11,7 @@ export const getLibrarySearchBooks = async (
     const bodyData = {
       conditions: [
         {
-          field: tag,
+          field: tag.toLowerCase(),
           values: [text],
         },
       ],
@@ -25,7 +25,7 @@ export const getLibrarySearchBooks = async (
     );
     return response.data;
   } catch (error) {
-    console.error('aladin books failed:', error);
+    console.error('library search failed:', error);
     throw error;
   }
 };
@@ -39,7 +39,7 @@ export const postLibraryBook = async (libraryId, info) => {
     );
     return response.data;
   } catch (error) {
-    console.error('aladin books failed:', error);
+    console.error('library book create failed:', error);
     throw error;
   }
 };
