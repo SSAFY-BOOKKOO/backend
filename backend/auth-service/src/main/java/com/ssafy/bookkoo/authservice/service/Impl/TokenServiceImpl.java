@@ -67,12 +67,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     @Transactional
     public String updateRefreshToken(Member member) {
-        Optional<RefreshToken> optionalRefreshToken
-            = refreshTokenRepository.findByMemberId(member.getMemberId());
-
-        //리프레시 토큰이 존재하면 없애기
-        optionalRefreshToken.ifPresent(refreshTokenRepository::delete);
-
+        deleteRefreshToken(member.getMemberId());
         //새로운 토큰 생성
         return createRefreshToken(member.getMemberId());
     }
@@ -89,5 +84,14 @@ public class TokenServiceImpl implements TokenService {
         return refreshTokenRepository.findByRefreshToken(refreshToken)
                                      .orElseThrow(TokenExpiredException::new)
                                      .getMemberId();
+    }
+
+    @Override
+    @Transactional
+    public void deleteRefreshToken(String memberId) {
+        Optional<RefreshToken> optionalRefreshToken
+            = refreshTokenRepository.findByMemberId(memberId);
+        //리프레시 토큰이 존재하면 없애기
+        optionalRefreshToken.ifPresent(refreshTokenRepository::delete);
     }
 }

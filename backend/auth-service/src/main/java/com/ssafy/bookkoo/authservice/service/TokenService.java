@@ -13,4 +13,6 @@ public interface TokenService {
     String updateRefreshToken(Member member);
 
     String getMemberIdByRefreshToken(String refreshToken);
+
+    void deleteRefreshToken(String memberId);
 }
