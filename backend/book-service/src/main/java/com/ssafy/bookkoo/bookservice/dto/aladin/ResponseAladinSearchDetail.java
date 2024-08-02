@@ -42,6 +42,15 @@ public class ResponseAladinSearchDetail {
     @Schema(description = "카테고리")
     private Category category;
 
-    @Schema(description = "서브 정보")
-    private AladinSubInfo subInfo;
+    @Schema(description = "포장 깊이", example = "10")
+    private Integer sizeDepth;
+
+    @Schema(description = "포장 높이", example = "20")
+    private Integer sizeHeight;
+
+    @Schema(description = "포장 너비", example = "15")
+    private Integer sizeWidth;
+
+    @Schema(description = "아이템 페이지 수", example = "350")
+    private Integer itemPage;
 }
