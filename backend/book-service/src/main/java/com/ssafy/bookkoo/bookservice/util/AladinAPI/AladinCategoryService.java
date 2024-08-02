@@ -17,31 +17,29 @@ public class AladinCategoryService {
     final private AladinCategoryMapperRepository categoryMapperRepository;
     final private CategoryRepository categoryRepository;
 
-    public Integer convertToServiceCategoryId(Integer aladinCategoryId) {
+    public Category convertToServiceCategoryId(Integer aladinCategoryId) {
 
         AladinCategoryMapper mapper = categoryMapperRepository.findByAladinCategoryId(
             aladinCategoryId);
         if (mapper != null) {
-            return mapper.getCategory()
-                         .getId();
+            return mapper.getCategory();
         } else {
             // If no mapping found, return ID for "기타" category or null
-            Category otherCategory = categoryRepository.findByName("기타");
-            return otherCategory != null ? otherCategory.getId() : null;
+            return categoryRepository.findByName("기타");
         }
     }
 
     public void processApiResponse(ResponseAladinAPI response) {
         for (AladinBookItem item : response.getItem()) {
             Integer aladinCategoryId = item.getCategoryId();
-            Integer serviceCategoryId = convertToServiceCategoryId(aladinCategoryId);
-            item.setCategoryId(serviceCategoryId);
+            Category category = convertToServiceCategoryId(aladinCategoryId);
+            item.setCategory(category);
         }
     }
 
     public void processApiResponse(ResponseAladinSearchDetail item) {
         Integer aladinCategoryId = item.getCategoryId();
-        Integer serviceCategoryId = convertToServiceCategoryId(aladinCategoryId);
-        item.setCategoryId(serviceCategoryId);
+        Category category = convertToServiceCategoryId(aladinCategoryId);
+        item.setCategory(category);
     }
 }

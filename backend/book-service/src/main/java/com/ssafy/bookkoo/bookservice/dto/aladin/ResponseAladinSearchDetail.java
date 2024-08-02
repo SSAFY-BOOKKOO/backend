@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.bookservice.dto.aladin;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.ssafy.bookkoo.bookservice.entity.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,6 +38,9 @@ public class ResponseAladinSearchDetail {
 
     @Schema(description = "카테고리 ID", example = "123")
     private Integer categoryId;
+
+    @Schema(description = "카테고리")
+    private Category category;
 
     @Schema(description = "서브 정보")
     private AladinSubInfo subInfo;

@@ -45,7 +45,6 @@ public interface LibraryBookMapperMapper {
     default LibraryBookMapper toEntity(RequestLibraryBookMapperCreateDto dto, MapperKey mapperKey) {
         return LibraryBookMapper.builder()
                                 .id(mapperKey)
-                                .bookOrder(dto.bookOrder())
                                 .bookColor(dto.bookColor())
                                 .startAt(dto.startAt())
                                 .endAt(dto.endAt())

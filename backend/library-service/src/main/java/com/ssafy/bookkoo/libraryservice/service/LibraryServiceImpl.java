@@ -263,6 +263,10 @@ public class LibraryServiceImpl implements LibraryService {
 
         // 2.2 엔티티 생성
         LibraryBookMapper lbMapper = libraryBookMapperMapper.toEntity(mapperDto, mapperKey);
+        // 2.3 가장 큰 BookOrder 값 + 1을 넣어주기
+        int maxBookOrder = libraryBookMapperRepository.findMaxBookOrderByLibraryId(libraryId);
+        lbMapper.setBookOrder(
+            maxBookOrder + 1);
         // lbMapper와 서재 매핑해주기
         lbMapper.setLibrary(library);
         // 2.3 매퍼 엔티티 저장

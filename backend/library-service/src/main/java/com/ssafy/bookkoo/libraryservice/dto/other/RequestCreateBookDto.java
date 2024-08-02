@@ -37,8 +37,8 @@ public record RequestCreateBookDto(
     @Schema(description = "책 너비(mm)", example = "150")
     Integer sizeWidth,
 
-    @Schema(description = "카테고리 ID", example = "5")
-    Integer categoryId
+    @Schema(description = "카테고리")
+    CategoryDto category
 ) {
 
 }

@@ -50,4 +50,12 @@ public interface LibraryBookMapperCustomRepository {
      * @return List<Long> 갖고있는 책 ID
      */
     List<Long> findBookIdsByMemberIdAndBookIds(Long memberId, List<Long> bookIds);
+
+    /**
+     * 해당 서재의 가장 큰 book Order 값 찾기
+     *
+     * @param libraryId : 서재 ID
+     * @return 가장 큰 Book Order
+     */
+    Integer findMaxBookOrderByLibraryId(Long libraryId);
 }
