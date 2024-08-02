@@ -13,11 +13,11 @@ const InfoStep = () => {
   const [bookData, setBookData] = useAtom(bookDataAtom);
 
   const handleStartDateChange = date => {
-    setBookData(prev => ({ ...prev, startDate: date }));
+    setBookData(prev => ({ ...prev, startDate: date.target.value }));
   };
 
   const handleEndDateChange = date => {
-    setBookData(prev => ({ ...prev, endDate: date }));
+    setBookData(prev => ({ ...prev, endDate: date.target.value }));
   };
 
   const handleRatingChange = rating => {
@@ -35,27 +35,33 @@ const InfoStep = () => {
       <div className='flex flex-col'>
         {bookData.status !== 'want' && (
           <>
-            <label>시작 날짜</label>
-            <DatePicker onChange={handleStartDateChange} />
+            <h2 className='mb-3 text-lg'>시작 날짜</h2>
+            <DatePicker
+              onChange={handleStartDateChange}
+              endDate={bookData.endDate}
+            />
           </>
         )}
         {bookData.status === 'read' && (
           <>
-            <h2 className='mb-3 text-lg'>종료 날짜</h2>
-            <DatePicker onChange={handleEndDateChange} />
+            <h2 className='my-3 text-lg'>종료 날짜</h2>
+            <DatePicker
+              onChange={handleEndDateChange}
+              startDate={bookData.startDate}
+            />
           </>
         )}
       </div>
       {bookData.status === 'read' && (
         <>
-          <h2 className='mb-3 text-lg'>별점</h2>
+          <h2 className='my-3 text-lg'>별점</h2>
           <StarRating
             selected={bookData.rating}
             onChange={handleRatingChange}
           />
         </>
       )}
-      <h2 className='mb-3 text-lg'>책 색상</h2>
+      <h2 className='my-3 text-lg'>책 색상</h2>
       <ColorPicker
         presetColors={PRESET_COLORS}
         selected={bookData.color}

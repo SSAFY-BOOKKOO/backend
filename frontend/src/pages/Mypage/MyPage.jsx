@@ -1,33 +1,66 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import settingIcon from '@assets/icons/setting.png';
-import statisticsIcon from '@assets/icons/statistics.png';
-import friendsIcon from '@assets/icons/friends.png';
+import { FaCalendarDays } from 'react-icons/fa6';
+import { MdPeopleAlt } from 'react-icons/md';
+import { BsChatSquareQuoteFill } from 'react-icons/bs';
+import { FaClipboardList } from 'react-icons/fa6';
+import profileImgSample from '@assets/images/profile_img_sample.png';
+import { authAxiosInstance, axiosInstance } from '@services/axiosInstance';
 
 const MyPage = () => {
-  const member = {
-    nickname: '닉네임',
-    introduction: '소개문',
-    category: '카테고리',
-    profilePicture: 'https://via.placeholder.com/200',
-  };
+  const [member, setMember] = useState(null);
+
+  useEffect(() => {
+    const fetchMemberInfo = async () => {
+      try {
+        const response = await authAxiosInstance.get(
+          '/members/info?memberId=312c2435-d0b5-4607-808d-fc0e9c51b58d'
+        );
+        setMember(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchMemberInfo();
+  }, []);
+
+  if (!member) {
+    return <div>Loading...</div>;
+  }
+
+  const displayCategories =
+    member.categories.length > 4
+      ? member.categories.slice(0, 2).concat(['...'])
+      : member.categories;
 
   return (
-    <div className='p-4'>
-      <div className='flex items-center justify-between'>
-        <div className='flex items-center space-x-8'>
+    <div className='p-4 min-h-[43rem]'>
+      <div className='flex items-start justify-between'>
+        <div className='flex items-start space-x-8'>
           <img
-            src={member.profilePicture}
+            src={member.profileImgUrl || profileImgSample}
             alt='profile'
             className='w-32 h-32 rounded-full'
           />
-          <div>
-            <h2 className='text-2xl font-bold'>{member.nickname}</h2>
-            <p className='text-lg'>{member.introduction}</p>
-            <p className='text-lg'>{member.category}</p>
+          <div className='flex flex-col'>
+            <h2 className='text-2xl font-bold'>{member.nickName}</h2>
+            <p className='text-md'>{member.introduction}</p>
+            <div className='flex flex-wrap mt-2'>
+              {displayCategories.map((category, index) => (
+                <span
+                  key={index}
+                  className='mr-2 mb-2 px-2 py-1 border rounded-lg text-gray-700 bg-gray-100'
+                >
+                  {category}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
-        <div className='flex space-x-4'>
+        <div className='flex-none'>
           <Link to='/mypage/profile'>
             <button className='p-2 rounded'>
               <img src={settingIcon} alt='setting' className='w-8 h-8' />
@@ -36,66 +69,36 @@ const MyPage = () => {
         </div>
       </div>
       <hr className='my-4' />
-      <div className='grid grid-cols-4 gap-4 text-center'>
-        <div>
-          <button className='bg-gray-200 p-4 rounded-full'>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              className='h-8 w-8 mx-auto'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                d='M12 4v16m8-8H4'
-              />
-            </svg>
-          </button>
-          <p className='mt-2'>내 일기</p>
-        </div>
-        <div>
+      <div className='grid grid-cols-2 gap-x-8 gap-y-12 text-center'>
+        <div className='flex flex-col items-center'>
           <Link to='/mypage/statistics'>
             <button className='p-4 rounded-full'>
-              <img src={statisticsIcon} alt='statistics' />
+              <FaCalendarDays className='w-8 h-8' />
             </button>
           </Link>
-          <p className='mt-2'>통계</p>
+          <p className='text-lg'>통계</p>
         </div>
-        <div>
-          <button className='bg-gray-200 p-4 rounded-full'>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              className='h-8 w-8 mx-auto'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                d='M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4z'
-              />
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                d='M12 14c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5z'
-              />
-            </svg>
+        <div className='flex flex-col items-center'>
+          <Link to='/mypage/quote'>
+            <button className='p-4 rounded-full'>
+              <BsChatSquareQuoteFill className='w-8 h-8' />
+            </button>
+          </Link>
+          <p className='text-lg'>내 글귀</p>
+        </div>
+        <div className='flex flex-col items-center'>
+          <button className='p-4 rounded-full'>
+            <FaClipboardList className='w-8 h-8' />
           </button>
-          <p className='mt-2'>나의 일기</p>
+          <p className='text-lg'>내가 쓴 글</p>
         </div>
-        <div>
+        <div className='flex flex-col items-center'>
           <Link to='/mypage/friend'>
             <button className='p-4 rounded-full'>
-              <img src={friendsIcon} alt='friend' />
+              <MdPeopleAlt className='w-8 h-8' />
             </button>
           </Link>
-          <p className='mt-2'>친구</p>
+          <p className='text-lg'>친구</p>
         </div>
       </div>
     </div>

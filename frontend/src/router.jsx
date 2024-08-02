@@ -4,7 +4,7 @@ import App from './App.jsx';
 import LibraryHome from './pages/Library/LibraryHome.jsx';
 import LibraryDetail from './pages/Library/LibraryDetail.jsx';
 import LibrarySearch from './pages/Library/LibrarySearch.jsx';
-import LibrarySearchDetail from './pages/Library/LibrarySearchDetail.jsx';
+import SearchBookDetail from './pages/Library/SearchBookDetail.jsx';
 import LibraryMain from './pages/Library/LibraryMain.jsx';
 import Register from './pages/Member/Register.jsx';
 import MyPage from './pages/Mypage/MyPage.jsx';
@@ -20,9 +20,15 @@ import CurationChatBot from './pages/Curation/CurationChatBot.jsx';
 import CurationLetterCreate from './pages/Curation/CurationLetterCreate.jsx';
 import CurationLetterDetail from './pages/Curation/CurationLetterDetail.jsx';
 import BookTalkMain from './pages/BookTalk/BookTalkMain.jsx';
+import BookTalkDetail from './pages/BookTalk/BookTalkDetail.jsx';
 import Intro from './pages/Member/Intro.jsx';
 import PrivateRoute from '@/components/@common/PrivateRoute';
 import CurationLetterSend from './pages/Curation/CurationLetterSend.jsx';
+import Quote from './pages/Mypage/Quote.jsx';
+import SearchMore from './pages/Library/SearchMore.jsx';
+import BookTalkMore from './pages/BookTalk/BookTalkMore.jsx';
+import PasswordFind from './pages/Member/PasswordFind.jsx';
+import AdditionalInfo from './pages/Member/AdditionalInfo.jsx';
 
 const isAuthenticated = true; // 로그인 상태를 확인하는 로직 추가 필요
 
@@ -33,8 +39,9 @@ const router = createBrowserRouter([
     children: [
       { path: 'intro', element: <Intro /> },
 
-      // 커뮤니티 탭 (로그인 여부와 상관없이 접근 가능)
       { path: 'booktalk', element: <BookTalkMain /> },
+      { path: 'booktalk/detail/:bookId', element: <BookTalkDetail /> },
+      { path: 'booktalk/more', element: <BookTalkMore /> },
 
       // 인증이 필요한 페이지
       {
@@ -45,13 +52,20 @@ const router = createBrowserRouter([
           />
         ),
         children: [
-          { path: '/', element: <LibraryHome /> },
-
           // library
-          { path: 'library', element: <LibraryMain /> },
-          { path: 'library/detail/:id', element: <LibraryDetail /> },
-          { path: 'library/search', element: <LibrarySearch /> },
-          { path: 'library/search/:bookId', element: <LibrarySearchDetail /> },
+          { path: '', element: <LibraryMain /> },
+
+          // book in library detail
+          { path: 'library/detail/:bookId', element: <LibraryDetail /> },
+
+          // search
+          { path: 'search', element: <LibrarySearch /> },
+
+          // search more
+          { path: 'search/:type/more', element: <SearchMore /> },
+
+          // book detail
+          { path: 'book/detail/:bookId', element: <SearchBookDetail /> },
 
           // curation
           { path: 'curation/receive', element: <CurationReceive /> },
@@ -69,6 +83,7 @@ const router = createBrowserRouter([
           { path: 'mypage/friend', element: <Friend /> },
           { path: 'mypage/statistics', element: <Statistics /> },
           { path: 'mypage/profile', element: <Profile /> },
+          { path: 'mypage/quote', element: <Quote /> },
           { path: 'mypage', element: <MyPage /> },
 
           { path: 'notification', element: <Notification /> },
@@ -79,6 +94,14 @@ const router = createBrowserRouter([
   {
     path: 'register',
     element: <Register />,
+  },
+  {
+    path: 'register/additional-info',
+    element: <AdditionalInfo />,
+  },
+  {
+    path: 'find-password',
+    element: <PasswordFind />,
   },
   {
     path: 'login',
