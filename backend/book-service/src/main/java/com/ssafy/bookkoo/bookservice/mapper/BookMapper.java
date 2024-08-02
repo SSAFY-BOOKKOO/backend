@@ -43,10 +43,10 @@ public interface BookMapper {
     @Mapping(source = "summary", target = "summary")
     @Mapping(source = "title", target = "title")
     @Mapping(source = "isbn", target = "isbn")
-    @Mapping(source = "subInfo.itemPage", target = "itemPage")
-    @Mapping(source = "subInfo.packing.sizeDepth", target = "sizeDepth")
-    @Mapping(source = "subInfo.packing.sizeHeight", target = "sizeHeight")
-    @Mapping(source = "subInfo.packing.sizeWidth", target = "sizeWidth")
+    @Mapping(source = "itemPage", target = "itemPage")
+    @Mapping(source = "sizeDepth", target = "sizeDepth")
+    @Mapping(source = "sizeHeight", target = "sizeHeight")
+    @Mapping(source = "sizeWidth", target = "sizeWidth")
     @Mapping(source = "category", target = "category")
     Book toEntity(ResponseAladinSearchDetail dto);
 
@@ -73,7 +73,8 @@ public interface BookMapper {
         @Mapping(source = "pubDate", target = "publishedAt"),
         @Mapping(source = "title", target = "title"),
         @Mapping(source = "isbn", target = "isbn"),
-        @Mapping(target = "inLibrary", ignore = true)
+        @Mapping(target = "inLibrary", ignore = true),
+        @Mapping(target = "category", ignore = true),
     })
     AladinBookItem toAladinBookItem(OriginAladinBookItem dto);
 
@@ -100,6 +101,11 @@ public interface BookMapper {
     @Mapping(source = "cover", target = "coverImgUrl")
     @Mapping(source = "pubDate", target = "publishedAt")
     @Mapping(source = "description", target = "summary")
+    @Mapping(target = "category", ignore = true)
+    @Mapping(source = "subInfo.itemPage", target = "itemPage")
+    @Mapping(source = "subInfo.packing.sizeDepth", target = "sizeDepth")
+    @Mapping(source = "subInfo.packing.sizeHeight", target = "sizeHeight")
+    @Mapping(source = "subInfo.packing.sizeWidth", target = "sizeWidth")
     ResponseAladinSearchDetail toResponseSearchDetail(ResponseOriginAladinSearchDetail dto);
 
     /**
