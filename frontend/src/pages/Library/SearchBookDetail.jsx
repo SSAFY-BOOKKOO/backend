@@ -11,10 +11,19 @@ const SearchBookDetail = () => {
   const { isOpen, toggleModal } = useModal();
   const { bookId } = useParams();
   const [book, setBook] = useState([]);
+  const [loading, setLoading] = useState(false); // 로딩여부
 
   const handleGetBook = async () => {
-    const bookData = await getAladinBookByIsbn(bookId);
-    setBook(bookData);
+    setLoading(true);
+
+    try {
+      const bookData = await getAladinBookByIsbn(bookId);
+      setBook(bookData);
+    } catch (error) {
+      console.error('error', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -23,8 +32,9 @@ const SearchBookDetail = () => {
 
   return (
     <WrapContainer>
-      <div className='h-screen max-h-screen'>
-        <div className='h-1/2 w-full flex justify-center my-3'>
+      {loading && <div>Loading...</div>}
+      <div className=''>
+        <div className='h-96 w-full flex justify-center my-3'>
           <img
             src={book?.coverImgUrl}
             className='max-h-full max-w-full object-contain rounded-lg'
