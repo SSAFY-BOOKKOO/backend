@@ -18,6 +18,7 @@ import CurationStore from './pages/Curation/CurationStore.jsx';
 import Login from './pages/Member/Login.jsx';
 import CurationChatBot from './pages/Curation/CurationChatBot.jsx';
 import CurationLetterCreate from './pages/Curation/CurationLetterCreate.jsx';
+import SearchBook from './pages/SearchBook.jsx';
 import CurationLetterDetail from './pages/Curation/CurationLetterDetail.jsx';
 import BookTalkMain from './pages/BookTalk/BookTalkMain.jsx';
 import BookTalkDetail from './pages/BookTalk/BookTalkDetail.jsx';
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
           { path: 'curation/store', element: <CurationStore /> },
           { path: 'curation/chatbot', element: <CurationChatBot /> },
           { path: 'curation/letter-create', element: <CurationLetterCreate /> },
+          {
+            path: 'curation/letter-create/book-search',
+            element: <SearchBook />,
+          },
           { path: 'curation/letter/:id', element: <CurationLetterDetail /> },
           {
             path: 'curation/letter-create/send',

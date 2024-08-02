@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import Input from '@components/@common/Input';
 import Button from '@components/@common/Button';
-import BookSearch from '@components/Curation/BookSearch';
+// import BookSearch from '@components/Curation/BookSearch';
 import { useNavigate } from 'react-router-dom';
 
 const CreateLetter = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  // const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -19,13 +19,17 @@ const CreateLetter = () => {
     setContent(e.target.value);
   };
 
+  // const handleSearchButtonClick = () => {
+  //   setIsSearchModalOpen(true);
+  // };
+
   const handleSearchButtonClick = () => {
-    setIsSearchModalOpen(true);
+    navigate('/curation/letter-create/book-search');
   };
 
-  const handleSearchModalClose = () => {
-    setIsSearchModalOpen(false);
-  };
+  // const handleSearchModalClose = () => {
+  //   setIsSearchModalOpen(false);
+  // };
 
   const handleLetterCreate = () => {
     navigate('send');
@@ -67,10 +71,10 @@ const CreateLetter = () => {
           onClick={handleLetterCreate}
         />
       </div>
-      <BookSearch
+      {/* <BookSearch
         isOpen={isSearchModalOpen}
         onRequestClose={handleSearchModalClose}
-      />
+      /> */}
     </div>
   );
 };

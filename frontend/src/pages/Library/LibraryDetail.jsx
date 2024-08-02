@@ -103,6 +103,7 @@ const LibraryDetail = () => {
                 </div>
                 <p className='text-lg text-black'>{author}</p>
                 <p className='text-sm text-black'>{publisher}</p>
+                <p className='text-sm text-black'>2024.06.18-2024.06.29</p>
                 <p className='mt-2 text-sm text-black'>{displaySummary}</p>
               </div>
             </div>
