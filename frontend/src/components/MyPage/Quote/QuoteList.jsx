@@ -8,16 +8,10 @@ const QuoteList = ({ quotes, onQuoteClick }) => {
   const { isOpen, toggleModal } = useModal();
 
   // 글귀 수정
-  const handleQuoteUpdate = index => {
-    // 여기에 글귀 수정 로직 추가
-    console.log(`Updating quote at index ${index}`);
-  };
+  const handleQuoteUpdate = index => {};
 
   // 글귀 삭제
-  const handleQuoteDelete = index => {
-    // 여기에 글귀 삭제 로직 추가
-    console.log(`Deleting quote at index ${index}`);
-  };
+  const handleQuoteDelete = index => {};
 
   const handleSettingsClick = (e, index) => {
     e.stopPropagation();

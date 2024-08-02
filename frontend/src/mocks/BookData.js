@@ -3,10 +3,10 @@ const books = [
     book_id: 1,
     title: '미움받을 용기',
     author: '기시미 이치로',
-    published_at: 2014,
+    publishedAt: 2014,
     publisher: '인플루엔셜',
     summary: '자기계발서의 새로운 기준을 제시한 책',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/30782/55/cover500/k442831368_1.jpg',
     library_id: 1,
     color: 'bg-red-500',
@@ -17,10 +17,10 @@ const books = [
     book_id: 2,
     title: '하루의 취향',
     author: '밀란 쿤데라',
-    published_at: 2006,
+    publishedAt: 2006,
     publisher: '문학동네',
     summary: '일상의 소중함을 느끼게 해주는 책',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/15563/54/cover500/k042533738_1.jpg',
     library_id: 1,
     color: 'bg-green-500',
@@ -31,10 +31,10 @@ const books = [
     book_id: 3,
     title: '죽고 싶지만 떡볶이는 먹고 싶어',
     author: '백세희',
-    published_at: 2018,
+    publishedAt: 2018,
     publisher: '흔',
     summary: '우울증을 극복한 자전적 에세이',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/15136/29/cover500/k962533360_2.jpg',
     library_id: 1,
     color: 'bg-blue-500',
@@ -45,10 +45,10 @@ const books = [
     book_id: 4,
     title: '그릿',
     author: '앤젤라 더크워스',
-    published_at: 2016,
+    publishedAt: 2016,
     publisher: '비즈니스북스',
     summary: '성공의 새로운 정의를 제시하는 책',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/30657/56/cover500/k272830938_1.jpg',
     library_id: 1,
     color: 'bg-yellow-500',
@@ -59,10 +59,10 @@ const books = [
     book_id: 5,
     title: '나미야 잡화점의 기적',
     author: '히가시노 게이고',
-    published_at: 2012,
+    publishedAt: 2012,
     publisher: '비채',
     summary: '감동적인 이야기가 담긴 소설',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/30768/99/cover500/k252830652_2.jpg',
     library_id: 2,
     color: 'bg-purple-500',
@@ -73,10 +73,10 @@ const books = [
     book_id: 6,
     title: '아몬드',
     author: '손원평',
-    published_at: 2017,
+    publishedAt: 2017,
     publisher: '창비',
     summary: '감정을 느끼지 못하는 소년의 이야기',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/31893/32/cover200/k212833749_2.jpg',
     library_id: 2,
     color: 'bg-pink-500',
@@ -87,10 +87,10 @@ const books = [
     book_id: 7,
     title: '종의 기원',
     author: '정유정',
-    published_at: 2016,
+    publishedAt: 2016,
     publisher: '은행나무',
     summary: '살인자의 심리를 탐구한 소설',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/7492/9/cover200/8956609950_2.jpg',
     library_id: 2,
     color: 'bg-orange-500',
@@ -101,10 +101,10 @@ const books = [
     book_id: 8,
     title: '멋진 신세계',
     author: '올더스 헉슬리',
-    published_at: 1932,
+    publishedAt: 1932,
     publisher: '현대문학',
     summary: '디스토피아적 미래 사회를 그린 소설',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/6083/61/cover200/8973814729_2.jpg',
     library_id: 2,
     color: 'bg-gray-500',
@@ -115,10 +115,10 @@ const books = [
     book_id: 9,
     title: '불편한 편의점',
     author: '김호연',
-    published_at: 2021,
+    publishedAt: 2021,
     publisher: '재미주의',
     summary: '소소한 일상의 이야기를 담은 소설',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/29045/74/cover200/k192836746_2.jpg',
     library_id: 2,
     color: 'bg-blue-500',
@@ -129,10 +129,10 @@ const books = [
     book_id: 10,
     title: '여행의 이유',
     author: '김영하',
-    published_at: 2019,
+    publishedAt: 2019,
     publisher: '문학동네',
     summary: '여행을 통해 삶을 돌아보게 하는 책',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/33763/31/cover200/k312930064_3.jpg',
     library_id: 2,
     color: 'bg-green-500',
@@ -144,11 +144,11 @@ const books = [
     book_id: 11,
     title: '불편한 편의점 2',
     author: '김호연',
-    published_at: 2022,
+    publishedAt: 2022,
     publisher: '재미주의',
     summary:
       '전작의 인기에 힘입어 나온 후속작. 다시 한번 편의점에서 일어나는 소소한 일상을 담았다.',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/30370/64/cover200/s122834213_1.jpg',
     library_id: 2,
     color: 'bg-red-500',
@@ -162,11 +162,11 @@ const books = [
     book_id: 12,
     title: '인생의 태도',
     author: '롤프 도벨리',
-    published_at: 2021,
+    publishedAt: 2021,
     publisher: '열린책들',
     summary:
       '단순히 파이썬 구문을 깊이 다루는 선에서 그치지 않고, 명령행, 코드 포매터, 린터, 버전 관리 등 전문 개발자가 사용하는 명령행 도구에 대해 다양하게 설명한다. 무엇이 코드의 가독성을 높이고 어떻게 하면 제대로 클린 코드를 작성할 수 있는지 등을 설명했다. 무엇이 코드의 가독성을 높이고 어떻게 하면 제대로 클린 코드를 작성할 수 있는지 등을 설명했다',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/33141/28/cover200/k422937227_1.jpg',
     library_id: 2,
     color: 'bg-green-500',
@@ -180,10 +180,10 @@ const books = [
     book_id: 13,
     title: '방구석 미술관',
     author: '조원재',
-    published_at: 2018,
+    publishedAt: 2018,
     publisher: '블랙피쉬',
     summary: '미술 작품들을 방구석에서 쉽게 즐길 수 있도록 해설한 책.',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/33927/98/cover200/k082930037_2.jpg',
     library_id: 2,
     color: 'bg-blue-500',
@@ -197,10 +197,10 @@ const books = [
     book_id: 14,
     title: '심리학이 이렇게 쓸모 있을 줄이야',
     author: '폴커 키츠',
-    published_at: 2019,
+    publishedAt: 2019,
     publisher: '스몰빅라이프',
     summary: '심리학의 다양한 지식을 실생활에 활용할 수 있도록 안내하는 책.',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/16754/75/cover500/k342534660_1.jpg',
     library_id: 2,
     color: 'bg-yellow-500',
@@ -214,11 +214,11 @@ const books = [
     book_id: 15,
     title: '죽고 싶지만 떡볶이는 먹고 싶어 2',
     author: '백세희',
-    published_at: 2019,
+    publishedAt: 2019,
     publisher: '흔',
     summary:
       '전작의 성공에 힘입어 출간된 후속작. 우울증을 극복한 자전적 에세이의 두 번째 이야기.',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/19054/22/cover200/k082635297_1.jpg',
     library_id: 2,
     color: 'bg-purple-500',
@@ -232,11 +232,11 @@ const books = [
     book_id: 16,
     title: '해리포터와 저주받은 아이',
     author: 'J.K. 롤링',
-    published_at: 2016,
+    publishedAt: 2016,
     publisher: '문학동네',
     summary:
       '해리 포터 시리즈의 후속작. 해리 포터와 그의 아들 알버스의 이야기.',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/33209/46/cover200/k542937957_1.jpg',
     library_id: 2,
     color: 'bg-pink-500',
@@ -250,10 +250,10 @@ const books = [
     book_id: 17,
     title: '가면산장 살인사건',
     author: '히가시노 게이고',
-    published_at: 2014,
+    publishedAt: 2014,
     publisher: '알에이치코리아(RHK)',
     summary: '히가시노 게이고의 대표적인 추리 소설.',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/4745/51/cover200/899098257x_2.jpg',
     library_id: 2,
     color: 'bg-orange-500',
@@ -267,10 +267,10 @@ const books = [
     book_id: 18,
     title: '지적 대화를 위한 넓고 얕은 지식',
     author: '채사장',
-    published_at: 2014,
+    publishedAt: 2014,
     publisher: '웨일북',
     summary: '지식의 폭을 넓히기 위한 필독서.',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/22872/79/cover200/k992636841_2.jpg',
     library_id: 2,
     color: 'bg-blue-500',
@@ -284,10 +284,10 @@ const books = [
     book_id: 19,
     title: '어린 왕자',
     author: '앙투안 드 생텍쥐페리',
-    published_at: 1943,
+    publishedAt: 1943,
     publisher: '열린책들',
     summary: '어린 왕자의 여행과 사랑 이야기.',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/6853/49/cover200/8932917248_2.jpg',
     library_id: 2,
     color: 'bg-yellow-500',
@@ -301,10 +301,10 @@ const books = [
     book_id: 20,
     title: '데미안',
     author: '헤르만 헤세',
-    published_at: 1919,
+    publishedAt: 1919,
     publisher: '민음사',
     summary: '자아를 찾는 한 소년의 성장 이야기.',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/26/0/cover200/s742633278_1.jpg',
     library_id: 2,
     color: 'bg-green-500',
@@ -318,10 +318,10 @@ const books = [
     book_id: 21,
     title: '1984',
     author: '조지 오웰',
-    published_at: 1949,
+    publishedAt: 1949,
     publisher: '열린책들',
     summary: '전체주의의 위험성을 경고한 소설.',
-    cover_img_url:
+    coverImgUrl:
       'https://image.aladin.co.kr/product/41/89/cover200/s122531356_1.jpg',
     library_id: 2,
     color: 'bg-gray-500',
@@ -337,11 +337,11 @@ const book = {
   book_id: 3,
   title: '나미야 잡화점의 기적',
   author: '히가시노 게이고',
-  published_at: 2012,
+  publishedAt: 2012,
   publisher: '비채',
   summary:
     '집에서 나오지 않는 집주인과 커뮤니케이션을 하는 조건으로 동경하던 일본 가옥에서 한 달간 살게 된 노아. 어떤 사람일까 걱정하던 노아의 앞에 나타난 것은 사람의 손을 타지 않은 고양이처럼 말 없고 무표정한 청년, 케이였다.',
-  cover_img_url:
+  coverImgUrl:
     'https://image.aladin.co.kr/product/30768/99/cover500/k252830652_2.jpg',
   library_id: 2,
   color: 'bg-blue-500',

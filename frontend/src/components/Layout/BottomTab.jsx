@@ -4,7 +4,7 @@ import { FaComments, FaEnvelope, FaUserCircle } from 'react-icons/fa';
 import { PiBooksFill } from 'react-icons/pi';
 
 const navItems = [
-  { path: '/library', component: <PiBooksFill />, label: '나만의 서재' },
+  { path: '/', component: <PiBooksFill />, label: '나만의 서재' },
   {
     path: '/curation/receive',
     component: <FaEnvelope />,

@@ -46,8 +46,7 @@ const applyResponseInterceptor = instance => {
       // 토큰 만료
       if (error.response && error.response?.status === 401) {
         try {
-          const response = await authAxiosInstance.post('/auth/token');
-          const { accessToken } = response.data;
+          const { accessToken } = error.response.data.data;
 
           localStorage.setItem('ACCESS_TOKEN', accessToken);
 
@@ -64,7 +63,6 @@ const applyResponseInterceptor = instance => {
         } catch (refreshError) {
           localStorage.removeItem('ACCESS_TOKEN');
           window.location.href = '/login';
-
           return Promise.reject(refreshError);
         }
       }
