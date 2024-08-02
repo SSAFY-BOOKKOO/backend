@@ -28,7 +28,7 @@ public class AuthController {
     private static final String REFRESH_TOKEN_NAME = "refresh_token";
 
     @PostMapping("/login/email")
-    @Operation(description = "이메일과 비밀번호를 통해 로그인 합니다.", summary = "로그인")
+    @Operation(summary = "로그인", description = "이메일과 비밀번호를 통해 로그인 합니다.")
     public ResponseEntity<ResponseLoginTokenDto> login(
         @RequestBody RequestLoginDto requestLoginDto,
         HttpServletResponse response
@@ -45,8 +45,8 @@ public class AuthController {
     }
 
     @PostMapping("/token")
-    @Operation(description = "쿠키(헤더)에 포함된 리프레시 토큰을 통해 액세스 토큰을 재발급합니다.",
-        summary = "새로운 리프레시 토큰도 함께 발급합니다.")
+    @Operation(summary = "새로운 리프레시 토큰도 함께 발급합니다.",
+        description = "쿠키(헤더)에 포함된 리프레시 토큰을 통해 액세스 토큰을 재발급합니다.")
     public ResponseEntity<ResponseLoginTokenDto> getToken(
         HttpServletRequest request,
         HttpServletResponse response
@@ -70,8 +70,8 @@ public class AuthController {
     }
 
     @GetMapping("/token/develop")
-    @Operation(description = "개발용 토큰 발급 API입니다. 기본 유저 (test@test/test123$)에 대한 토큰을 발급합니다.",
-        summary = "기본 유저를 통해 토큰을 발급합니다.")
+    @Operation(summary = "기본 유저를 통해 토큰을 발급합니다.",
+        description = "개발용 토큰 발급 API입니다. 기본 유저 (test@test/test123$)에 대한 토큰을 발급합니다.")
     public ResponseEntity<ResponseLoginTokenDto> forDeveloperToken(
         HttpServletResponse response
     ) {
