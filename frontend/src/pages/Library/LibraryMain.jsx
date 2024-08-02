@@ -12,6 +12,7 @@ import { books as initialBooks } from '@mocks/BookData';
 import profileImgSample from '@assets/images/profile_img_sample.png';
 import Alert from '@components/@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
+import { authAxiosInstance } from '@services/axiosInstance';
 
 const HTML5toTouch = {
   backends: [
@@ -29,13 +30,6 @@ const HTML5toTouch = {
   ],
 };
 
-const member = {
-  nickname: 'user1',
-  followers: ['user2', 'user3'],
-  following: ['user4', 'user5', 'user6'],
-  profileImgUrl: profileImgSample,
-};
-
 const LibraryMain = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [newLibraryName, setNewLibraryName] = useState('');
@@ -44,6 +38,21 @@ const LibraryMain = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [, setAlert] = useAtom(alertAtom);
+
+  const [member, setMember] = useState(null);
+
+  useEffect(() => {
+    const fetchMemberInfo = async () => {
+      try {
+        const response = await authAxiosInstance.get('/members/info');
+        setMember(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchMemberInfo();
+  }, []);
 
   const [libraries, setLibraries] = useState([
     {

@@ -166,26 +166,6 @@ const ProfileUpdate = ({ member, onSave, onCancel }) => {
           )}
         </div>
         <div className='mb-4'>
-          <label
-            className='block mb-2 text-sm font-medium text-gray-700'
-            htmlFor='introduction'
-          >
-            소개글
-          </label>
-          <textarea
-            id='introduction'
-            name='introduction'
-            value={formData.introduction}
-            onChange={handleChange}
-            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-              errors.introduction ? 'border-red-500' : ''
-            }`}
-          ></textarea>
-          {errors.introduction && (
-            <p className='text-red-500 text-xs italic'>{errors.introduction}</p>
-          )}
-        </div>
-        <div className='mb-4'>
           <label className='block mb-2 text-sm font-medium text-gray-700'>
             선호 카테고리
           </label>

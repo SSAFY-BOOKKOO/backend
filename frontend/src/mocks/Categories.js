@@ -1,27 +1,35 @@
-const categoriesMapping = {
-  '추리/스릴러': 0,
-  로맨스: 1,
-  인문학: 2,
-  철학: 3,
-  '경제/경영': 4,
-  역사: 5,
-  시: 6,
-  에세이: 7,
-  소설: 8,
-  과학: 9,
-  사회과학: 10,
-  자기계발: 11,
-  기타: 12,
+const categoriesMapping = [
+  { id: 1, name: '추리/스릴러' },
+  { id: 2, name: '판타지' },
+  { id: 3, name: '로맨스' },
+  { id: 4, name: '인문학' },
+  { id: 5, name: '철학' },
+  { id: 6, name: '경제/경영' },
+  { id: 7, name: '역사' },
+  { id: 8, name: '시' },
+  { id: 9, name: '소설' },
+  { id: 10, name: '사회' },
+  { id: 11, name: '과학/기술' },
+  { id: 12, name: '교육' },
+  { id: 13, name: '자기계발' },
+  { id: 14, name: '에세이' },
+  { id: 15, name: '기타' },
+];
+
+const categoriesList = categoriesMapping.map(category => category.name);
+
+const getCategoryNumber = categoryName => {
+  const category = categoriesMapping.find(
+    category => category.name === categoryName
+  );
+  return category ? category.id : null;
 };
 
-const categoriesList = Object.keys(categoriesMapping);
-
-const getCategoryNumber = categoryName => categoriesMapping[categoryName];
-
 const getCategoryName = categoryNumber => {
-  return Object.keys(categoriesMapping).find(
-    key => categoriesMapping[key] === categoryNumber
+  const category = categoriesMapping.find(
+    category => category.id === categoryNumber
   );
+  return category ? category.name : null;
 };
 
 export { categoriesList, getCategoryNumber, getCategoryName };

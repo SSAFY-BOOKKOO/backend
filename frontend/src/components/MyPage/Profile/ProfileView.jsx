@@ -12,7 +12,7 @@ const ProfileView = ({ member, onEdit, onChangePassword }) => {
         <div className='mb-4 flex'>
           <label className='text-gray-700 font-medium w-1/3'>이메일</label>
           <p className='text-gray-700 font-medium w-2/3 text-right'>
-            {/* {member.email} */}
+            {member.email}
           </p>
         </div>
         <div className='mb-4 flex'>
