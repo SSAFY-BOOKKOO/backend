@@ -171,7 +171,6 @@ services:
       timeout: 3s
       retries: 3
     volumes:
-      - ./auth-service:/app/
       - ./logs/auth-service:/app/logs
 
   common-service:
@@ -194,7 +193,6 @@ services:
       timeout: 3s
       retries: 3
     volumes:
-      - ./auth-service:/app/
       - ./logs/common-service:/app/logs
 
   eureka-server:
@@ -211,8 +209,6 @@ services:
       timeout: 3s
       retries: 3
     restart: on-failure
-    volumes:
-      - ./eureka-server:/app/
 
   book-service:
     container_name: book-service
@@ -240,7 +236,6 @@ services:
       timeout: 3s
       retries: 3
     volumes:
-      - ./book-service:/app/
       - ./logs/book-service:/app/logs
 
   bookkoo-gateway:
@@ -273,7 +268,6 @@ services:
       timeout: 3s
       retries: 3
     volumes:
-      - ./bookkoo-gateway:/app/
       - ./logs/gateway-service:/app/logs
 
   curation-service:
@@ -299,7 +293,6 @@ services:
       timeout: 3s
       retries: 3
     volumes:
-      - ./curation-service:/app/
       - ./logs/curation-service:/app/logs
 
   library-service:
@@ -325,7 +318,6 @@ services:
       timeout: 3s
       retries: 3
     volumes:
-      - ./library-service:/app/
       - ./logs/library-service:/app/logs
 
   member-service:
@@ -334,6 +326,7 @@ services:
       context: ./backend/member-service
     ports:
       - "8081:8081"
+      - "587:587"
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -351,7 +344,6 @@ services:
       timeout: 3s
       retries: 3
     volumes:
-      - ./member-service:/app/
       - ./logs/member-service:/app/logs
 
 networks:
