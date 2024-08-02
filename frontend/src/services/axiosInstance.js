@@ -1,11 +1,8 @@
 import axios from 'axios';
 
-const { VITE_API_BASE_URL, MODE } = import.meta.env;
+const { MODE } = import.meta.env;
 
-const baseURL =
-  MODE === 'production'
-    ? VITE_API_BASE_URL // 배포 환경
-    : '/api'; // 개발 환경 (프록시 사용)
+const baseURL = MODE === 'production' ? 'https://api.i11a506.ssafy.io' : '/api';
 
 // 기본 인스턴스
 const axiosInstance = axios.create({
