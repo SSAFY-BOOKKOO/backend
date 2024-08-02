@@ -80,6 +80,7 @@ public class TokenServiceImpl implements TokenService {
      * @return
      */
     @Override
+    @Transactional(readOnly = true)
     public String getMemberIdByRefreshToken(String refreshToken) {
         return refreshTokenRepository.findByRefreshToken(refreshToken)
                                      .orElseThrow(TokenExpiredException::new)
