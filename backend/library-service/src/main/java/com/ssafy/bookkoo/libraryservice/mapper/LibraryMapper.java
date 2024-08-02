@@ -30,6 +30,9 @@ public interface LibraryMapper {
     @Mapping(target = "name", source = "dto.name")
     @Mapping(target = "libraryOrder", source = "dto.libraryOrder")
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "memberId", ignore = true)
+    @Mapping(target = "libraryStyle", ignore = true)
+    @Mapping(target = "books", ignore = true)
     void updateLibraryFromDto(
         RequestUpdateLibraryDto dto,
         @MappingTarget Library entity
