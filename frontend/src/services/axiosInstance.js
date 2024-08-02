@@ -1,10 +1,15 @@
 import axios from 'axios';
 
-const { VITE_API_BASE_URL } = import.meta.env;
+const { VITE_API_BASE_URL, MODE } = import.meta.env;
+
+const baseURL =
+  MODE === 'production'
+    ? VITE_API_BASE_URL // 배포 환경
+    : '/api'; // 개발 환경 (프록시 사용)
 
 // 기본 인스턴스
 const axiosInstance = axios.create({
-  baseURL: '/api',
+  baseURL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -13,7 +18,7 @@ const axiosInstance = axios.create({
 
 // 인증이 필요한 인스턴스
 const authAxiosInstance = axios.create({
-  baseURL: '/api',
+  baseURL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
