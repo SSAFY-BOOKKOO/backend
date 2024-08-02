@@ -5,7 +5,6 @@ import com.ssafy.bookkoo.libraryservice.entity.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import java.sql.Date;
 
 /**
@@ -13,10 +12,6 @@ import java.sql.Date;
  */
 @Schema(description = "서재 책 매핑 생성 요청 정보를 담는 DTO")
 public record RequestLibraryBookMapperCreateDto(
-
-    @NotNull(message = "책 순서를 입력해주세요")
-    @Schema(description = "책 순서", example = "1")
-    Integer bookOrder,
 
     @Schema(description = "책 색상", example = "#FFFFFF")
     String bookColor,

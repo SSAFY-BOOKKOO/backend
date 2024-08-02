@@ -50,7 +50,8 @@ public class BookServiceImpl implements BookService {
         Book book = bookMapper.toEntity(bookDto);
 
         Category category = categoryRepository.findById(bookDto
-                                                  .categoryId()
+                                                  .category()
+                                                  .getId()
                                               )
                                               .orElseThrow(
                                                   () -> new CategoryNotFoundException(

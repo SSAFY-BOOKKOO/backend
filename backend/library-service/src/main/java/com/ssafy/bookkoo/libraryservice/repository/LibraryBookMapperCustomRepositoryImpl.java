@@ -130,4 +130,25 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
                            .where(predicate)
                            .fetch();
     }
+
+    /**
+     * 해당 서재의 가장 큰 book Order 값 찾기
+     *
+     * @param libraryId : 서재 ID
+     * @return 가장 큰 Book Order
+     */
+    @Override
+    public Integer findMaxBookOrderByLibraryId(Long libraryId) {
+        QLibraryBookMapper libraryBookMapper = QLibraryBookMapper.libraryBookMapper;
+
+        BooleanBuilder predicate = new BooleanBuilder();
+
+        predicate.and(libraryBookMapper.id.libraryId.eq(libraryId));
+        Integer maxBookOrder = queryFactory.select(libraryBookMapper.bookOrder.max())
+                                           .from(libraryBookMapper)
+                                           .where(predicate)
+                                           .fetchOne();
+
+        return maxBookOrder != null ? maxBookOrder : 0; // null인 경우 0반환
+    }
 }
