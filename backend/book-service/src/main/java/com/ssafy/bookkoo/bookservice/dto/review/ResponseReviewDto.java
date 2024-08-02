@@ -24,6 +24,7 @@ public record ResponseReviewDto(
 
     @Schema(description = "좋아요 개수", example = "25")
     Integer likeCount
+
 ) {
 
 }
