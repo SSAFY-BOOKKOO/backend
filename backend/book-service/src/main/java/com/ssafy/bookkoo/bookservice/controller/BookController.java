@@ -58,7 +58,37 @@ public class BookController {
      * @return List<ResponseBookDto>
      */
     @PostMapping("/search")
-    @Operation(summary = "책 목록 조회", description = "책 조회(필터링 포함)시 사용하는 API")
+    @Operation(
+        summary = "책 목록 조회",
+        description = """
+            책 조회(필터링 포함)시 사용하는 API
+
+
+            <b>Input</b>:
+            | Name | Type  | Description |
+            |-----|-----|-------|
+            | conditions | SearchBookConditionDto | 조건 데이터 구조 |
+            | limit | int | 한 번의 요청에 나올 최대 데이터 개수 |
+            | offset | int | 페이지 넘버 |
+
+            <br>
+            <br>
+
+            <b>SearchBookConditionDto</b>:
+            | Name | Type  | Description |
+            |-----|-----|-------|
+            | field | string | 검색할 컬럼 이름(title, author, publisher, id, ... 등) |
+            | values | List(string) | 검색할 값 ex) ["어린왕자","냠냠",...] |
+
+            <b>Output</b>:
+            <br>
+                type: _description_
+
+            | Var | Type | Description |
+            |-----|-----|-------|
+            |  |  |  |
+            """
+    )
     public ResponseEntity<List<ResponseBookDto>> searchBooksByCondition(
         @Valid @RequestBody RequestSearchBookMultiFieldDto filterDto
     ) {
