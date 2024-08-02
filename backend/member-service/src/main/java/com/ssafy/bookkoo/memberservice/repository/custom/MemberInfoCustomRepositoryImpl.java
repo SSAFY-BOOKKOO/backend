@@ -10,13 +10,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class MemberInfoCustomRepositoryImpl implements MemberInfoCustomRepository{
+public class MemberInfoCustomRepositoryImpl implements MemberInfoCustomRepository {
 
     private final JPAQueryFactory queryFactory;
 
     /**
-     * follwers에 속한 Member를 제외하고
-     * 랜덤으로 3명의 Member ID(Long)을 반환합니다.
+     * follwers에 속한 Member를 제외하고 랜덤으로 3명의 Member ID(Long)을 반환합니다.
+     *
      * @param followers
      * @return
      */
@@ -25,9 +25,8 @@ public class MemberInfoCustomRepositoryImpl implements MemberInfoCustomRepositor
         return queryFactory.select(memberInfo.id)
                            .from(memberInfo)
                            .where(memberInfo.id.notIn(followers))
-                           .orderBy(Expressions.numberTemplate(Double.class,
-                                                               "function('RANDOM')")
-                                                           .asc())
+                           .orderBy(Expressions.numberTemplate(Double.class, "function('RANDOM')")
+                                               .asc())
                            .limit(3)
                            .fetch();
     }
