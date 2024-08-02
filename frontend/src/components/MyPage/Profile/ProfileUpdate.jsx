@@ -1,8 +1,30 @@
 import React, { useState } from 'react';
+import { useSetAtom } from 'jotai';
+import Button from '@components/@common/Button';
+import Alert from '@components/@common/Alert';
+import { alertAtom } from '@atoms/alertAtom';
+import { validateForm } from '@utils/ValidateForm';
 
-const ProfileUpdate = ({ userInfo, onSave, onCancel }) => {
-  const [formData, setFormData] = useState(userInfo);
+const categoriesList = [
+  '추리/스릴러',
+  '로맨스',
+  '인문학',
+  '철학',
+  '경제/경영',
+  '역사',
+  '시',
+  '에세이',
+  '소설',
+  '과학',
+  '사회과학',
+  '자기계발',
+  '기타',
+];
+
+const ProfileUpdate = ({ member, onSave, onCancel }) => {
+  const [formData, setFormData] = useState(member);
   const [errors, setErrors] = useState({});
+  const setAlert = useSetAtom(alertAtom);
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
@@ -16,167 +38,188 @@ const ProfileUpdate = ({ userInfo, onSave, onCancel }) => {
     }));
   };
 
+  const handleCategoryChange = category => {
+    setFormData(prevState => {
+      const { categories } = prevState;
+      if (categories.includes(category)) {
+        return {
+          ...prevState,
+          categories: categories.filter(c => c !== category),
+        };
+      } else {
+        return {
+          ...prevState,
+          categories: [...categories, category],
+        };
+      }
+    });
+  };
+
   const handleFileChange = e => {
     const file = e.target.files[0];
     if (file) {
       setFormData({
         ...formData,
-        profileImage: URL.createObjectURL(file),
+        profileImgUrl: URL.createObjectURL(file),
       });
       setErrors(prevErrors => ({
         ...prevErrors,
-        profileImage: '',
+        profileImgUrl: '',
       }));
     }
   };
 
-  const validateEmail = email => {
-    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return re.test(email);
-  };
-
-  const validatePassword = password => {
-    const re = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$/;
-    return re.test(password);
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!validateEmail(formData.email)) {
-      newErrors.email = '올바른 이메일 형식을 입력하세요.';
-    }
-    if (formData.password && !validatePassword(formData.password)) {
-      newErrors.password =
-        '비밀번호는 영문, 숫자, 특수문자 조합으로 이루어진 8~16자여야 합니다.';
-    }
-    if (!formData.nickname) {
-      newErrors.nickname = '닉네임을 입력하세요.';
-    }
-    if (!formData.introduction) {
-      newErrors.introduction = '소개글을 입력하세요.';
-    }
-    if (formData.nickname.length > 10) {
-      newErrors.nickname = '닉네임은 10자 이내로 설정해야 합니다.';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleSubmit = e => {
     e.preventDefault();
-    if (validateForm()) {
+
+    const validationConfig = {
+      email: true,
+      nickname: true,
+      introduction: true,
+    };
+
+    const newErrors = validateForm(formData, validationConfig);
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
       onSave(formData);
+    } else {
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '폼에 오류가 있습니다. 다시 확인해 주세요.',
+      });
     }
   };
 
   return (
-    <div className='max-w-md mx-auto mt-10 p-4 bg-white shadow rounded-lg'>
+    <div className='max-w-md mx-4 mt-10 p-4 bg-white border border-gray-300 rounded-lg'>
       <h2 className='text-xl font-bold mb-4'>회원 정보 수정</h2>
+      <div className='border-t border-gray-300 mb-4'></div>
       <form onSubmit={handleSubmit}>
         <div className='mb-4'>
-          <label className='block text-gray-700'>닉네임</label>
-          <input
-            type='text'
-            name='nickname'
-            value={formData.nickname}
-            onChange={handleChange}
-            className={`mt-1 p-2 block w-full border rounded-md ${errors.nickname ? 'border-red-500' : ''}`}
-          />
-          {errors.nickname && (
-            <p className='text-red-500 text-xs italic'>{errors.nickname}</p>
-          )}
-        </div>
-        <div className='mb-4'>
-          <label className='block text-gray-700'>프로필 이미지</label>
-          <input
-            type='file'
-            name='profileImage'
-            onChange={handleFileChange}
-            className='mt-1 p-2 block w-full border rounded-md'
-          />
-          {formData.profileImage && (
-            <img
-              src={formData.profileImage}
-              alt='Profile Preview'
-              className='mt-2 w-32 h-32 object-cover rounded-full'
-            />
-          )}
-        </div>
-        <div className='mb-4'>
-          <label className='block text-gray-700'>이메일</label>
+          <label
+            className='block mb-2 text-sm font-medium text-gray-700'
+            htmlFor='email'
+          >
+            이메일
+          </label>
           <input
             type='email'
+            id='email'
             name='email'
             value={formData.email}
             onChange={handleChange}
-            className={`mt-1 p-2 block w-full border rounded-md ${errors.email ? 'border-red-500' : ''}`}
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+              errors.email ? 'border-red-500' : ''
+            }`}
           />
           {errors.email && (
             <p className='text-red-500 text-xs italic'>{errors.email}</p>
           )}
         </div>
         <div className='mb-4'>
-          <label className='block text-gray-700'>비밀번호 (변경 시 입력)</label>
+          <label
+            className='block mb-2 text-sm font-medium text-gray-700'
+            htmlFor='nickname'
+          >
+            닉네임
+          </label>
           <input
-            type='password'
-            name='password'
-            value={formData.password}
+            type='text'
+            id='nickname'
+            name='nickname'
+            value={formData.nickname}
             onChange={handleChange}
-            className={`mt-1 p-2 block w-full border rounded-md ${errors.password ? 'border-red-500' : ''}`}
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+              errors.nickname ? 'border-red-500' : ''
+            }`}
           />
-          {errors.password && (
-            <p className='text-red-500 text-xs italic'>{errors.password}</p>
+          {errors.nickname && (
+            <p className='text-red-500 text-xs italic'>{errors.nickname}</p>
           )}
         </div>
         <div className='mb-4'>
-          <label className='block text-gray-700'>레터 수신</label>
+          <label
+            className='block mb-2 text-sm font-medium text-gray-700'
+            htmlFor='profileImgUrl'
+          >
+            프로필 이미지
+          </label>
           <input
-            type='checkbox'
-            name='receiveLetters'
-            checked={formData.receiveLetters}
-            onChange={handleChange}
-            className='mt-1'
+            type='file'
+            id='profileImgUrl'
+            name='profileImgUrl'
+            onChange={handleFileChange}
+            className='mt-1 p-2 block w-full border rounded-md'
           />
+          {formData.profileImgUrl && (
+            <img
+              src={formData.profileImgUrl}
+              alt='Profile Preview'
+              className='mt-2 w-32 h-32 object-cover rounded-full inline-block'
+            />
+          )}
         </div>
         <div className='mb-4'>
-          <label className='block text-gray-700'>소개글</label>
+          <label
+            className='block mb-2 text-sm font-medium text-gray-700'
+            htmlFor='introduction'
+          >
+            소개글
+          </label>
           <textarea
+            id='introduction'
             name='introduction'
             value={formData.introduction}
             onChange={handleChange}
-            className={`mt-1 p-2 block w-full border rounded-md ${errors.introduction ? 'border-red-500' : ''}`}
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+              errors.introduction ? 'border-red-500' : ''
+            }`}
           ></textarea>
           {errors.introduction && (
             <p className='text-red-500 text-xs italic'>{errors.introduction}</p>
           )}
         </div>
         <div className='mb-4'>
-          <label className='block text-gray-700'>선호 카테고리</label>
-          <input
-            type='text'
-            name='favoriteCategory'
-            value={formData.favoriteCategory}
-            onChange={handleChange}
-            className='mt-1 p-2 block w-full border rounded-md'
+          <label className='block mb-2 text-sm font-medium text-gray-700'>
+            선호 카테고리
+          </label>
+          <div className='flex flex-wrap'>
+            {categoriesList.map(category => (
+              <span
+                key={category}
+                className={`mr-2 mb-2 px-2 py-1 border rounded-lg cursor-pointer text-gray-700 ${
+                  formData.categories.includes(category)
+                    ? 'bg-pink-100'
+                    : 'bg-gray-100'
+                }`}
+                onClick={() => handleCategoryChange(category)}
+              >
+                {category}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className='flex justify-end mt-14'>
+          <Button
+            text='저장'
+            type='submit'
+            color='text-white bg-green-400 active:bg-green-600 mr-4'
+            size='medium'
+            full={false}
+          />
+          <Button
+            text='취소'
+            type='button'
+            color='text-white bg-gray-500 active:bg-gray-600'
+            size='medium'
+            full={false}
+            onClick={onCancel}
           />
         </div>
-        <div className='flex justify-between'>
-          <button
-            type='submit'
-            className='bg-green-400 text-white px-4 py-2 rounded-md'
-          >
-            저장
-          </button>
-          <button
-            type='button'
-            className='bg-gray-500 text-white px-4 py-2 rounded-md'
-            onClick={onCancel}
-          >
-            취소
-          </button>
-        </div>
       </form>
+      <Alert />
     </div>
   );
 };
