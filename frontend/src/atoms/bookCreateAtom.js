@@ -1,12 +1,12 @@
 import { atom } from 'jotai';
 
 export const bookDataAtom = atom({
-  status: 'read',
-  startDate: '',
-  endDate: '',
+  status: 'READ',
+  startAt: '',
+  endAt: '',
   rating: 0,
-  color: '',
-  library: 'library1',
+  bookColor: '',
+  libraryId: '1',
 });
 
 export const modalStepAtom = atom(1);

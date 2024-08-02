@@ -10,8 +10,13 @@ import { showAlertAtom } from '@atoms/alertAtom';
 import IconButton from '@components/@common/IconButton';
 import { IoCloseSharp } from 'react-icons/io5';
 import Alert from '../../@common/Alert';
+import { postLibraryBook } from '@services/Library';
 
-const BookCreateModal = ({ isCreateModalOpen, toggleCreateModal }) => {
+const BookCreateModal = ({
+  isCreateModalOpen,
+  toggleCreateModal,
+  selectedBook,
+}) => {
   const [step, setStep] = useState(1);
   const [bookData, setBookData] = useAtom(bookDataAtom);
   const [, showAlert] = useAtom(showAlertAtom);
@@ -28,13 +33,12 @@ const BookCreateModal = ({ isCreateModalOpen, toggleCreateModal }) => {
     toggleCreateModal();
     setStep(1);
     setBookData({
-      status: 'read',
-      startDate: '',
-      endDate: '',
+      status: 'READ',
+      startAt: '',
+      endAt: '',
       rating: 0,
-      color: '',
-      library_id: 1,
-      library: 'library1',
+      bookColor: '',
+      libraryId: 1,
     });
   };
 
@@ -45,28 +49,28 @@ const BookCreateModal = ({ isCreateModalOpen, toggleCreateModal }) => {
   };
 
   const validateBookData = bookData => {
-    if (bookData.status === 'read') {
+    if (bookData.status === 'READ') {
       if (
-        !bookData.startDate ||
-        !bookData.endDate ||
+        !bookData.startAt ||
+        !bookData.endAt ||
         !bookData.rating ||
-        !bookData.color
+        !bookData.bookColor
       ) {
         return false;
       }
-    } else if (bookData.status === 'reading') {
-      if (!bookData.startDate || !bookData.color) {
+    } else if (bookData.status === 'READING') {
+      if (!bookData.startAt || !bookData.bookColor) {
         return false;
       }
-    } else if (bookData.status === 'want') {
-      if (!bookData.color) {
+    } else if (bookData.status === 'DIB') {
+      if (!bookData.bookColor) {
         return false;
       }
     }
     return true;
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     // 유효성 검사
     if (!validateBookData(bookData)) {
       handleShowAlert();
@@ -74,6 +78,20 @@ const BookCreateModal = ({ isCreateModalOpen, toggleCreateModal }) => {
     }
 
     // 등록 서버 연동
+    console.log(bookData);
+    console.log(selectedBook);
+
+    const bodyData = {
+      bookColor: bookData.bookColor,
+      startAt: bookData.startAt,
+      endAt: bookData.endAt,
+      status: bookData.status,
+      rating: bookData.rating,
+      bookDto: selectedBook,
+    };
+
+    const data = await postLibraryBook(bookData.libraryId, bodyData);
+
     reset();
   };
 
