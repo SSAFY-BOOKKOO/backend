@@ -24,7 +24,7 @@ const BookItem = ({ book, onClick }) => {
       onClick={onClick}
     >
       <img
-        src={book.coverImgUrl}
+        src={book?.coverImgUrl}
         alt='Book'
         className='w-24 h-32 mb-6 rounded-lg'
       />

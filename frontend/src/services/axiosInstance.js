@@ -1,10 +1,12 @@
 import axios from 'axios';
 
-const { VITE_API_BASE_URL } = import.meta.env;
+const { MODE } = import.meta.env;
+
+const baseURL = MODE === 'production' ? 'https://api.i11a506.ssafy.io' : '/api';
 
 // 기본 인스턴스
 const axiosInstance = axios.create({
-  baseURL: '/api',
+  baseURL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -13,7 +15,7 @@ const axiosInstance = axios.create({
 
 // 인증이 필요한 인스턴스
 const authAxiosInstance = axios.create({
-  baseURL: '/api',
+  baseURL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -46,8 +48,7 @@ const applyResponseInterceptor = instance => {
       // 토큰 만료
       if (error.response && error.response?.status === 401) {
         try {
-          const response = await authAxiosInstance.post('/auth/token');
-          const { accessToken } = response.data;
+          const { accessToken } = error.response.data.data;
 
           localStorage.setItem('ACCESS_TOKEN', accessToken);
 
@@ -64,7 +65,6 @@ const applyResponseInterceptor = instance => {
         } catch (refreshError) {
           localStorage.removeItem('ACCESS_TOKEN');
           window.location.href = '/login';
-
           return Promise.reject(refreshError);
         }
       }

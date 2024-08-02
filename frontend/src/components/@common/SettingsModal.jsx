@@ -27,7 +27,7 @@ const SettingsModal = ({ isOpen, onClose, onToggle, actions }) => {
         </div>
       </button>
       {isOpen && (
-        <div className='absolute right-0 mt-1 w-24 bg-white border rounded-lg shadow-lg'>
+        <div className='absolute right-0 mt-1 w-28 bg-white border rounded-lg shadow-lg'>
           {actions.map((action, index) => (
             <button
               key={index}

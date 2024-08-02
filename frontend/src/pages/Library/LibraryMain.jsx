@@ -4,13 +4,14 @@ import { MultiBackend, TouchTransition } from 'react-dnd-multi-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAtom } from 'jotai';
 import MemberProfile from '@components/Library/Main/MemberProfile';
-import LibraryModal from '@components/Library/Main/LibraryModal';
-import CreateLibraryModal from '@components/Library/Main/CreateLibraryModal';
 import LibraryOptions from '@components/Library/Main/LibraryOptions';
 import BookShelf from '@components/Library/Main/BookShelf';
 import { books as initialBooks } from '@mocks/BookData';
-import profile_img_sample from '@assets/images/profile_img_sample.png';
+import profileImgSample from '@assets/images/profile_img_sample.png';
+import Alert from '@components/@common/Alert';
+import { alertAtom } from '@atoms/alertAtom';
 
 const HTML5toTouch = {
   backends: [
@@ -32,18 +33,17 @@ const member = {
   nickname: 'user1',
   followers: ['user2', 'user3'],
   following: ['user4', 'user5', 'user6'],
-  profile_img_url: profile_img_sample,
+  profileImgUrl: profileImgSample,
 };
 
 const LibraryMain = () => {
   const [showMenu, setShowMenu] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [newLibraryName, setNewLibraryName] = useState('');
   const [createLibraryName, setCreateLibraryName] = useState('');
   const [activeLibrary, setActiveLibrary] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
+  const [, setAlert] = useAtom(alertAtom);
 
   const [libraries, setLibraries] = useState([
     {
@@ -109,9 +109,12 @@ const LibraryMain = () => {
         return newLibraries;
       });
       setNewLibraryName('');
-      setShowModal(false);
     } else {
-      alert('서재 이름은 10자 이내로 설정해야 합니다.');
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '서재 이름은 1자이상 10자 이하로 설정해야 합니다.',
+      });
     }
   };
 
@@ -120,19 +123,22 @@ const LibraryMain = () => {
       const newLibraries = prev.filter((_, index) => index !== activeLibrary);
       return newLibraries;
     });
-    setActiveLibrary(0); // 첫 번째 서재로 이동
+    setActiveLibrary(0);
     setShowMenu(false);
   };
 
   const createLibrary = () => {
     if (createLibraryName.trim()) {
       if (createLibraryName.length > 10) {
-        alert('서재 이름은 10자 이내로 설정해야 합니다.');
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '서재 이름은 10자 이내로 설정해야 합니다.',
+        });
       } else {
         setLibraries([...libraries, { name: createLibraryName, books: [] }]);
         setActiveLibrary(libraries.length);
         setCreateLibraryName('');
-        setShowCreateModal(false);
       }
     }
   };
@@ -146,31 +152,18 @@ const LibraryMain = () => {
       <div className='bg-white min-h-screen'>
         <MemberProfile member={member} />
 
-        <LibraryModal
-          showModal={showModal}
-          newLibraryName={newLibraryName}
-          setNewLibraryName={setNewLibraryName}
-          changeLibraryName={changeLibraryName}
-          setShowModal={setShowModal}
-        />
-
-        <CreateLibraryModal
-          showCreateModal={showCreateModal}
-          createLibraryName={createLibraryName}
-          setCreateLibraryName={setCreateLibraryName}
-          createLibrary={createLibrary}
-          setShowCreateModal={setShowCreateModal}
-        />
-
         <LibraryOptions
           activeLibrary={activeLibrary}
           setActiveLibrary={setActiveLibrary}
           libraries={libraries}
-          showMenu={showMenu}
           setShowMenu={setShowMenu}
-          setShowModal={setShowModal}
-          setShowCreateModal={setShowCreateModal}
           deleteLibrary={deleteLibrary}
+          createLibraryName={createLibraryName}
+          setCreateLibraryName={setCreateLibraryName}
+          createLibrary={createLibrary}
+          newLibraryName={newLibraryName}
+          setNewLibraryName={setNewLibraryName}
+          changeLibraryName={changeLibraryName}
         />
 
         {libraries.length > 0 && (
@@ -181,6 +174,7 @@ const LibraryMain = () => {
           />
         )}
       </div>
+      <Alert />
     </DndProvider>
   );
 };

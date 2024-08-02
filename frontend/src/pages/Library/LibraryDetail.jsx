@@ -3,12 +3,14 @@ import { AiFillStar } from 'react-icons/ai';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import { useAtom } from 'jotai';
-import Modal from '@components/Library/Detail/Modal/Modal';
+import useModal from '@hooks/useModal';
 import ReviewCom from '@components/Library/Detail/Review/ReviewCom';
 import ColorPicker from '@components/Library/BookCreate/ColorPicker';
 import ShelfSelectStep from '@components/Library/BookCreate/ShelfSelectStep';
+import SettingsModal from '@components/@common/SettingsModal';
 import { PRESET_COLORS } from '@constants/ColorData';
 import { bookDataAtom } from '@atoms/bookCreateAtom';
+import { IoBookmarkSharp } from 'react-icons/io5';
 import './LibraryDetail.css'; // CSS 파일 추가
 
 const LibraryDetail = () => {
@@ -22,7 +24,7 @@ const LibraryDetail = () => {
   const maxLength = 100;
 
   // book 정보 받기
-  const { title, author, publisher, summary, cover_img_url } = state.book;
+  const { title, author, publisher, summary, coverImgUrl } = state.book;
 
   // 삭제 로직
   const handleDelete = bookId => {
@@ -53,6 +55,15 @@ const LibraryDetail = () => {
     setShowShelfSelect(false);
   };
 
+  //modal 설정
+  const { isOpen, closeModal, toggleModal } = useModal();
+
+  const actions = [
+    { label: '삭제', onClick: handleDelete },
+    { label: '서재 이동', onClick: handleShelfChangeClick },
+    { label: '색 변경', onClick: handleColorChangeClick },
+  ];
+
   // 요약 텍스트 길이 조정
   const displaySummary =
     summary.length > maxLength
@@ -78,29 +89,55 @@ const LibraryDetail = () => {
             />
           ) : (
             // 책 큰 틀
-            <div className='relative bg-zinc-300 rounded-lg w-10/12 max-w-md h-full overflow-auto'>
-              <Modal
-                bookId={id}
-                onDelete={handleDelete}
-                onColorChange={handleColorChangeClick}
-                onShelfChange={handleShelfChangeClick}
+            <div className='relative bg-zinc-300 rounded-lg w-10/12 max-w-md h-full flex flex-col justify-between overflow-auto'>
+              {/* 모달 */}
+
+              <SettingsModal
+                isOpen={isOpen}
+                onClose={closeModal}
+                onToggle={toggleModal}
+                actions={actions}
+                className='z-20'
               />
-              <div className='flex flex-col items-center p-8 pl-12'>
-                <div className='absolute left-6 top-0 bottom-0 shadow-2xl w-1 bg-gray-500 shadow-2xl z-10'></div>
+              {/* 하드커버 선 */}
+              <div className='absolute left-6 top-0 bottom-0 shadow-2xl w-1 bg-gray-500 shadow-2xl z-10'></div>
+              {/* 회색 영역 */}
+              <div className='relative flex flex-col items-center pb-4'>
                 <img
-                  src={cover_img_url}
+                  src={coverImgUrl}
                   alt={title}
-                  className='w-72 h-96 cursor-pointer rounded-lg shadow-xl'
+                  className='w-10/12 h-45/6 pt-6 pr-7 pl-12 cursor-pointer rounded-lg mt-[2rem] '
                   onClick={() => setShowReview(true)}
                 />
-                {/* <button>전환</button> */}
+                {/* <IoBookmarkSharp className='absolute top-[3.7rem] right-[4rem] text-6xl text-blue-500' /> */}
+                <div className='absolute top-5 right-16 flex items-center justify-center w-16 h-32 text-blue-500'>
+                  <IoBookmarkSharp className='h-full w-full' />
+                  <span
+                    className='absolute text-black text-xs mb-5 font-bold'
+                    style={{
+                      writingMode: 'vertical-rl',
+                      textOrientation: 'upright',
+                      letterSpacing: '-0.23em',
+                    }}
+                  >
+                    읽는중
+                  </span>
+                </div>
+                {/* 읽은 기간 로직 (수정예정) */}
+                <p className='m-2 pl-3'>2024.07.19-2024.07-24</p>
               </div>
+
               {/* 띠지 부분 */}
-              <div className='mt-6 p-4 pl-14 bg-pink-500 rounded-b-md opacity-70 w-full h-[215px]'>
-                <h2 className='text-2xl text-black font-bold'>{title}</h2>
-                <div className='flex space-x-1'>
+              <div className='p-4 pl-14 pt-5 bg-pink-500 rounded-b-md opacity-70 w-full h-[215px]'>
+                <div className='flex flex-grow'>
+                  <h2 className='text-2xl text-black font-bold'>{title}</h2>
+                </div>
+                <div className='flex space-x-1 mt-1'>
                   {Array(5).fill(<AiFillStar className='text-amber-300' />)}
                 </div>
+                {/* 읽은 기간 */}
+
+                {/* 읽은 상태 */}
                 <p className='text-lg text-black'>{author}</p>
                 <p className='text-sm text-black'>{publisher}</p>
                 <p className='text-sm text-black'>2024.06.18-2024.06.29</p>

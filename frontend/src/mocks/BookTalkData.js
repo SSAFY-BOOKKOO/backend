@@ -45,7 +45,7 @@ const talkbook = {
   publisher: '비채',
   summary:
     '집에서 나오지 않는 집주인과 커뮤니케이션을 하는 조건으로 동경하던 일본 가옥에서 한 달간 살게 된 노아. 어떤 사람일까 걱정하던 노아의 앞에 나타난 것은 사람의 손을 타지 않은 고양이처럼 말 없고 무표정한 청년, 케이였다.',
-  cover_img_url: 'https://image.yes24.com/Goods/8157957/XL',
+  coverImgUrl: 'https://image.yes24.com/Goods/8157957/XL',
   content: '이 책에 대해서 다같이 토론해봐요',
 };
 
