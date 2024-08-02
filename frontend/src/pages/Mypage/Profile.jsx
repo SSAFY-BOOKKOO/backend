@@ -14,9 +14,7 @@ const ProfilePage = () => {
 
   const fetchMemberInfo = async () => {
     try {
-      const response = await authAxiosInstance.get(
-        '/members/info?memberId=312c2435-d0b5-4607-808d-fc0e9c51b58d'
-      );
+      const response = await authAxiosInstance.get('/members/info');
       setMember(response.data);
       setLoading(false);
     } catch (error) {

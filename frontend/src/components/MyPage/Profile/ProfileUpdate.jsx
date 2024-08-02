@@ -1,19 +1,33 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSetAtom } from 'jotai';
 import Button from '@components/@common/Button';
 import Alert from '@components/@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
 import { validateForm } from '@utils/ValidateForm';
-import {
-  categoriesList,
-  getCategoryNumber,
-  getCategoryName,
-} from '@mocks/Categories';
+import { categoriesList, getCategoryNumber } from '@mocks/Categories';
 
 const ProfileUpdate = ({ member, onSave, onCancel }) => {
-  const [formData, setFormData] = useState(member);
+  const [formData, setFormData] = useState({
+    email: '',
+    nickname: '',
+    profileImgUrl: '',
+    introduction: '',
+    categories: [],
+  });
   const [errors, setErrors] = useState({});
   const setAlert = useSetAtom(alertAtom);
+
+  useEffect(() => {
+    if (member) {
+      setFormData({
+        email: member.email || '',
+        nickname: member.nickName || '',
+        profileImgUrl: member.profileImgUrl || '',
+        introduction: member.introduction || '',
+        categories: member.categories || [],
+      });
+    }
+  }, [member]);
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
