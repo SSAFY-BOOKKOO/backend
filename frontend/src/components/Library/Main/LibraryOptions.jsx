@@ -1,29 +1,37 @@
 import React, { useState } from 'react';
 import { useSetAtom } from 'jotai';
-import Button from '../../@common/Button';
 import DeleteLibraryModal from './DeleteLibraryModal';
 import SettingsModal from '../../@common/SettingsModal';
 import Alert from '../../@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
+import CreateLibraryModal from './CreateLibraryModal';
+import ChangeLibraryNameModal from './ChangeLibraryNameModal';
 
 const LibraryOptions = ({
   activeLibrary,
   setActiveLibrary,
   libraries,
-  showMenu,
   setShowMenu,
-  setShowModal,
-  setShowCreateModal,
   deleteLibrary,
+  createLibraryName,
+  setCreateLibraryName,
+  createLibrary,
+  newLibraryName,
+  setNewLibraryName,
+  changeLibraryName,
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showChangeLibraryNameModal, setShowChangeLibraryNameModal] =
+    useState(false);
   const setAlert = useSetAtom(alertAtom);
 
   const handleDeleteLibrary = () => {
     if (libraries.length <= 1) {
       setAlert({
         isOpen: true,
+        confirmOnly: true,
         message: '서재가 하나만 남아 있어 삭제할 수 없습니다.',
       });
     } else {
@@ -36,7 +44,7 @@ const LibraryOptions = ({
       label: '서재명 변경',
       onClick: () => {
         setShowMenu(false);
-        setShowModal(true);
+        setShowChangeLibraryNameModal(true);
       },
     },
     {
@@ -68,12 +76,6 @@ const LibraryOptions = ({
           ))}
         </select>
       </div>
-      <Button
-        text='+'
-        color='text-white bg-green-400 active:bg-pink-400'
-        size='medium'
-        onClick={() => setShowMenu(true)}
-      />
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
@@ -84,6 +86,20 @@ const LibraryOptions = ({
         showDeleteModal={showDeleteModal}
         deleteLibrary={deleteLibrary}
         setShowDeleteModal={setShowDeleteModal}
+      />
+      <CreateLibraryModal
+        showCreateModal={showCreateModal}
+        createLibraryName={createLibraryName}
+        setCreateLibraryName={setCreateLibraryName}
+        createLibrary={createLibrary}
+        setShowCreateModal={setShowCreateModal}
+      />
+      <ChangeLibraryNameModal
+        showModal={showChangeLibraryNameModal}
+        newLibraryName={newLibraryName}
+        setNewLibraryName={setNewLibraryName}
+        changeLibraryName={changeLibraryName}
+        setShowModal={setShowChangeLibraryNameModal}
       />
       <Alert />
     </div>

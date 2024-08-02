@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '@components/@common/Button';
 import profileImgSample from '@assets/images/profile_img_sample.png';
 
-const ProfileView = ({ userInfo, onEdit, onChangePassword }) => {
+const ProfileView = ({ member, onEdit, onChangePassword }) => {
   return (
     <div className='space-y-4 mb-16'>
       <div className='max-w-md mx-4 mt-10 p-4 bg-white border border-gray-300 rounded-lg'>
@@ -11,13 +11,13 @@ const ProfileView = ({ userInfo, onEdit, onChangePassword }) => {
         <div className='mb-4 flex'>
           <label className='text-gray-700 font-medium w-1/3'>이메일</label>
           <p className='text-gray-700 font-medium w-2/3 text-right'>
-            {userInfo.email}
+            {member.email}
           </p>
         </div>
         <div className='mb-4 flex'>
           <label className='text-gray-700 font-medium w-1/3'>닉네임</label>
           <p className='text-gray-700 font-medium w-2/3 text-right'>
-            {userInfo.nickName}
+            {member.nickName}
           </p>
         </div>
         <div className='mb-4 flex'>
@@ -26,7 +26,7 @@ const ProfileView = ({ userInfo, onEdit, onChangePassword }) => {
           </label>
           <div className='w-2/3 text-right'>
             <img
-              src={userInfo.profileImgUrl || profileImgSample}
+              src={member.profileImgUrl || profileImgSample}
               alt='Profile'
               className='w-16 h-16 rounded-full inline-block'
             />
@@ -35,7 +35,7 @@ const ProfileView = ({ userInfo, onEdit, onChangePassword }) => {
         <div className='mb-4 flex'>
           <label className='text-gray-700 font-medium w-1/3'>소개글</label>
           <p className='text-gray-700 font-medium w-2/3 text-right max-h-24 overflow-y-auto'>
-            {userInfo.introduction}
+            {member.introduction}
           </p>
         </div>
         <div className='mb-4 flex'>
@@ -43,7 +43,7 @@ const ProfileView = ({ userInfo, onEdit, onChangePassword }) => {
             선호 카테고리
           </label>
           <div className='flex flex-wrap w-2/3 text-right justify-end'>
-            {userInfo.categories.map(category => (
+            {member.categories.map(category => (
               <span
                 key={category}
                 className='mr-2 mb-2 px-2 py-1 border rounded-lg text-gray-700 bg-gray-100'

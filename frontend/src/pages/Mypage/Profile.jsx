@@ -9,7 +9,7 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
-  const [userInfo, setUserInfo] = useState(null);
+  const [member, setMember] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const fetchMemberInfo = async () => {
@@ -17,7 +17,7 @@ const ProfilePage = () => {
       const response = await authAxiosInstance.get(
         '/members/info?memberId=312c2435-d0b5-4607-808d-fc0e9c51b58d'
       );
-      setUserInfo(response.data);
+      setMember(response.data);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -33,7 +33,7 @@ const ProfilePage = () => {
   const handleCancelEdit = () => setIsEditing(false);
 
   const handleSave = updatedInfo => {
-    setUserInfo(updatedInfo);
+    setMember(updatedInfo);
     setIsEditing(false);
   };
 
@@ -77,7 +77,7 @@ const ProfilePage = () => {
       {activeTab === 'profile' ? (
         isEditing ? (
           <ProfileUpdate
-            userInfo={userInfo}
+            member={member}
             onSave={handleSave}
             onCancel={handleCancelEdit}
           />
@@ -85,13 +85,13 @@ const ProfilePage = () => {
           <PasswordUpdate onCancel={handleCancelChangePassword} />
         ) : (
           <ProfileView
-            userInfo={userInfo}
+            member={member}
             onEdit={handleEdit}
             onChangePassword={handleChangePassword}
           />
         )
       ) : (
-        <AdditionalSetting userInfo={userInfo} onSave={handleSave} />
+        <AdditionalSetting member={member} onSave={handleSave} />
       )}
     </div>
   );

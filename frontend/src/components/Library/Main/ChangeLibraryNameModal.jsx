@@ -1,6 +1,6 @@
 import React from 'react';
 
-const LibraryModal = ({
+const ChangeLibraryNameModal = ({
   showModal,
   newLibraryName,
   setNewLibraryName,
@@ -8,6 +8,11 @@ const LibraryModal = ({
   setShowModal,
 }) => {
   if (!showModal) return null;
+
+  const handleChangeLibraryName = () => {
+    changeLibraryName();
+    setShowModal(false);
+  };
 
   return (
     <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-20'>
@@ -22,7 +27,7 @@ const LibraryModal = ({
         />
         <div className='flex justify-end'>
           <button
-            onClick={changeLibraryName}
+            onClick={handleChangeLibraryName}
             className='bg-green-400 text-white p-2 rounded-lg mr-2'
           >
             확인
@@ -39,4 +44,4 @@ const LibraryModal = ({
   );
 };
 
-export default LibraryModal;
+export default ChangeLibraryNameModal;

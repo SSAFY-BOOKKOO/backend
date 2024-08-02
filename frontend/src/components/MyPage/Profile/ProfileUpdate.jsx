@@ -21,8 +21,8 @@ const categoriesList = [
   '기타',
 ];
 
-const ProfileUpdate = ({ userInfo, onSave, onCancel }) => {
-  const [formData, setFormData] = useState(userInfo);
+const ProfileUpdate = ({ member, onSave, onCancel }) => {
+  const [formData, setFormData] = useState(member);
   const [errors, setErrors] = useState({});
   const setAlert = useSetAtom(alertAtom);
 
@@ -204,15 +204,15 @@ const ProfileUpdate = ({ userInfo, onSave, onCancel }) => {
           <Button
             text='저장'
             type='submit'
-            color='text-white bg-green-400 active:bg-green-600'
-            size='large'
+            color='text-white bg-green-400 active:bg-green-600 mr-4'
+            size='medium'
             full={false}
           />
           <Button
             text='취소'
             type='button'
             color='text-white bg-gray-500 active:bg-gray-600'
-            size='large'
+            size='medium'
             full={false}
             onClick={onCancel}
           />

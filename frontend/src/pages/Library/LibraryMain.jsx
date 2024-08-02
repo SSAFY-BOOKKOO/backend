@@ -6,8 +6,6 @@ import { TouchBackend } from 'react-dnd-touch-backend';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import MemberProfile from '@components/Library/Main/MemberProfile';
-import LibraryModal from '@components/Library/Main/LibraryModal';
-import CreateLibraryModal from '@components/Library/Main/CreateLibraryModal';
 import LibraryOptions from '@components/Library/Main/LibraryOptions';
 import BookShelf from '@components/Library/Main/BookShelf';
 import { books as initialBooks } from '@mocks/BookData';
@@ -40,8 +38,6 @@ const member = {
 
 const LibraryMain = () => {
   const [showMenu, setShowMenu] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [newLibraryName, setNewLibraryName] = useState('');
   const [createLibraryName, setCreateLibraryName] = useState('');
   const [activeLibrary, setActiveLibrary] = useState(0);
@@ -113,11 +109,11 @@ const LibraryMain = () => {
         return newLibraries;
       });
       setNewLibraryName('');
-      setShowModal(false);
     } else {
       setAlert({
         isOpen: true,
-        message: '서재 이름은 10자 이내로 설정해야 합니다.',
+        confirmOnly: true,
+        message: '서재 이름은 1자이상 10자 이하로 설정해야 합니다.',
       });
     }
   };
@@ -127,7 +123,7 @@ const LibraryMain = () => {
       const newLibraries = prev.filter((_, index) => index !== activeLibrary);
       return newLibraries;
     });
-    setActiveLibrary(0); // 첫 번째 서재로 이동
+    setActiveLibrary(0);
     setShowMenu(false);
   };
 
@@ -136,13 +132,13 @@ const LibraryMain = () => {
       if (createLibraryName.length > 10) {
         setAlert({
           isOpen: true,
+          confirmOnly: true,
           message: '서재 이름은 10자 이내로 설정해야 합니다.',
         });
       } else {
         setLibraries([...libraries, { name: createLibraryName, books: [] }]);
         setActiveLibrary(libraries.length);
         setCreateLibraryName('');
-        setShowCreateModal(false);
       }
     }
   };
@@ -156,31 +152,18 @@ const LibraryMain = () => {
       <div className='bg-white min-h-screen'>
         <MemberProfile member={member} />
 
-        <LibraryModal
-          showModal={showModal}
-          newLibraryName={newLibraryName}
-          setNewLibraryName={setNewLibraryName}
-          changeLibraryName={changeLibraryName}
-          setShowModal={setShowModal}
-        />
-
-        <CreateLibraryModal
-          showCreateModal={showCreateModal}
-          createLibraryName={createLibraryName}
-          setCreateLibraryName={setCreateLibraryName}
-          createLibrary={createLibrary}
-          setShowCreateModal={setShowCreateModal}
-        />
-
         <LibraryOptions
           activeLibrary={activeLibrary}
           setActiveLibrary={setActiveLibrary}
           libraries={libraries}
-          showMenu={showMenu}
           setShowMenu={setShowMenu}
-          setShowModal={setShowModal}
-          setShowCreateModal={setShowCreateModal}
           deleteLibrary={deleteLibrary}
+          createLibraryName={createLibraryName}
+          setCreateLibraryName={setCreateLibraryName}
+          createLibrary={createLibrary}
+          newLibraryName={newLibraryName}
+          setNewLibraryName={setNewLibraryName}
+          changeLibraryName={changeLibraryName}
         />
 
         {libraries.length > 0 && (
