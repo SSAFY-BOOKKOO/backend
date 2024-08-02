@@ -75,6 +75,8 @@ public class TokenAuthenticationFilter implements GlobalFilter {
                     break; // 필터를 거쳐야 함
                 } else if (path.matches("^/books/aladin(/.*)?$")) { // aladin 검색도 필요
                     break;
+                } else if (path.startsWith("/auth/logout")) { //로그아웃은 토큰 필요
+                    break;
                 }
                 return chain.filter(exchange);
             }
