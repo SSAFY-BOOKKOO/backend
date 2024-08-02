@@ -85,7 +85,6 @@ const BookTalkDetail = () => {
           </Button>
         </div>
       </div>
-      <TopDownButton />
     </div>
   );
 };
