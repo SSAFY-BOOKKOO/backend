@@ -7,6 +7,7 @@ import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMappe
 import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMapperUpdateDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookDto;
+import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookOfLibraryDto;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import java.util.List;
 import java.util.Map;
@@ -111,4 +112,14 @@ public interface LibraryService {
      * @return Map<BookId, boolean>
      */
     Map<Long, Boolean> areBooksInLibrary(Long memberId, List<Long> bookIds);
+
+    /**
+     * 사용자 서재 내 책 단일 조회
+     *
+     * @param memberId  토큰을 위한 헤더
+     * @param libraryId 서재 id
+     * @param bookId    book id
+     * @return ResponseBookOfLibraryDto
+     */
+    ResponseBookOfLibraryDto getBookOfLibrary(Long memberId, Long libraryId, Long bookId);
 }

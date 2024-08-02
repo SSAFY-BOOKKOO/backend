@@ -3,6 +3,7 @@ package com.ssafy.bookkoo.libraryservice.client;
 import com.ssafy.bookkoo.libraryservice.dto.other.RequestCreateBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookDto;
+import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookOfLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseCheckBooksByIsbnDto;
 import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * BookService와 통신하기 위한 FeignClient 인터페이스입니다.
@@ -74,4 +76,11 @@ public interface BookServiceClient {
      */
     @PostMapping(prefix + "/check-books")
     List<ResponseCheckBooksByIsbnDto> checkBooksByIsbn(@RequestBody String[] isbnList);
+
+    @GetMapping(prefix + "/{bookId}/me")
+    ResponseBookOfLibraryDto getBookOfLibrary(
+        @PathVariable Long bookId,
+        @RequestParam Long memberId
+    );
+
 }

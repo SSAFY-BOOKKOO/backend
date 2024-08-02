@@ -7,6 +7,7 @@ import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMappe
 import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMapperUpdateDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookDto;
+import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookOfLibraryDto;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import com.ssafy.bookkoo.libraryservice.service.LibraryService;
 import com.ssafy.bookkoo.libraryservice.util.CommonUtil;
@@ -139,6 +140,18 @@ public class LibraryController {
         libraryService.addBookToLibrary(libraryId, libraryBookMapperDto, memberId);
         return ResponseEntity.ok()
                              .body(true);
+    }
+
+    @GetMapping("/{libraryId}/books/{bookId}")
+    @Operation(summary = "서재 내 책 단일 조회", description = "서재 내 책 단일 조회 API")
+    public ResponseEntity<ResponseBookOfLibraryDto> getBookOfLibrary(
+        @RequestHeader HttpHeaders headers,
+        @PathVariable Long libraryId,
+        @PathVariable Long bookId
+    ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+        return ResponseEntity.ok()
+                             .body(libraryService.getBookOfLibrary(memberId, libraryId, bookId));
     }
 
     /**
