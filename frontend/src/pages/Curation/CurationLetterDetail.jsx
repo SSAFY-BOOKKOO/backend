@@ -11,7 +11,7 @@ const CurationLetterDetail = () => {
 
   // 레터 보관
   const handleLetterStore = () => {
-    // 연동c
+    // 연동
   };
 
   // 레터 삭제

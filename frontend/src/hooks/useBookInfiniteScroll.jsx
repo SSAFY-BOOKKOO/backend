@@ -8,7 +8,6 @@ const useBookInfiniteScroll = (text, tag) => {
     getNextPageParam: lastPage => {
       const { totalResults, startIndex, itemsPerPage } = lastPage;
       const nextIndex = startIndex + 1;
-      console.log(nextIndex, totalResults, startIndex);
       return (nextIndex - 1) * itemsPerPage < totalResults
         ? nextIndex
         : undefined;
