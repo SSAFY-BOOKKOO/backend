@@ -326,6 +326,7 @@ services:
       context: ./backend/member-service
     ports:
       - "8081:8081"
+      - "587:587"
     depends_on:
       eureka-server:
         condition: service_healthy
