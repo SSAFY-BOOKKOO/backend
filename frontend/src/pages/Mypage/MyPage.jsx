@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import settingIcon from '@assets/icons/setting.png';
-import { FaCalendarDays } from 'react-icons/fa6';
+import { FaCalendarDays, FaClipboardList } from 'react-icons/fa6';
 import { MdPeopleAlt } from 'react-icons/md';
 import { BsChatSquareQuoteFill } from 'react-icons/bs';
-import { FaClipboardList } from 'react-icons/fa6';
 import profileImgSample from '@assets/images/profile_img_sample.png';
-import { authAxiosInstance, axiosInstance } from '@services/axiosInstance';
+import settingIcon from '@assets/icons/setting.png';
+import { authAxiosInstance } from '@services/axiosInstance';
+import { getCategoryName } from '@mocks/Categories';
 
 const MyPage = () => {
   const [member, setMember] = useState(null);
@@ -54,7 +53,7 @@ const MyPage = () => {
                   key={index}
                   className='mr-2 mb-2 px-2 py-1 border rounded-lg text-gray-700 bg-gray-100'
                 >
-                  {category}
+                  {category === '...' ? '...' : getCategoryName(category)}
                 </span>
               ))}
             </div>

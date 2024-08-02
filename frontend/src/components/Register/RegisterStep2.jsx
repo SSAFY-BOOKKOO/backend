@@ -7,8 +7,9 @@ const RegisterStep2 = ({
   errors,
   handleChange,
   handleCategoryChange,
+  categoriesList,
   handlePrevStep,
-  handleSubmit,
+  handleNextStep,
 }) => {
   return (
     <>
@@ -79,7 +80,7 @@ const RegisterStep2 = ({
       <label className='block mb-2 text-sm font-medium text-gray-700'>
         선호 카테고리
         <div className='flex flex-wrap mt-2 justify-center'>
-          {[1, 2, 3, 4, 5].map(category => (
+          {categoriesList.map(category => (
             <div key={category} className='mr-2 mb-2'>
               <label className='flex items-center border px-2 py-1 rounded-lg cursor-pointer'>
                 <input
@@ -114,12 +115,12 @@ const RegisterStep2 = ({
           onClick={handlePrevStep}
         />
         <Button
-          text='가입 완료'
+          text='다음'
           type='button'
           color='text-white bg-green-400 active:bg-green-600'
           size='large'
           full={false}
-          onClick={handleSubmit}
+          onClick={handleNextStep}
         />
       </div>
     </>

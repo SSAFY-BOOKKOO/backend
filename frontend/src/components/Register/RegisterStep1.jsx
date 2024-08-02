@@ -47,6 +47,7 @@ const RegisterStep1 = ({
         setEmailError('');
         setAlert({
           isOpen: true,
+          confirmOnly: true,
           message: '사용 가능한 이메일입니다.',
         });
       }

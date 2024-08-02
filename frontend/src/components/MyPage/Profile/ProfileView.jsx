@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from '@components/@common/Button';
 import profileImgSample from '@assets/images/profile_img_sample.png';
+import { getCategoryName } from '@mocks/Categories';
 
 const ProfileView = ({ member, onEdit, onChangePassword }) => {
   return (
@@ -48,7 +49,7 @@ const ProfileView = ({ member, onEdit, onChangePassword }) => {
                 key={category}
                 className='mr-2 mb-2 px-2 py-1 border rounded-lg text-gray-700 bg-gray-100'
               >
-                {category}
+                {getCategoryName(category)}
               </span>
             ))}
           </div>

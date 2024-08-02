@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import RegisterStep1 from '@components/Register/RegisterStep1';
 import RegisterStep2 from '@components/Register/RegisterStep2';
+import RegisterStep3 from '@components/Register/RegisterStep3';
 import WrapContainer from '@components/Layout/WrapContainer';
 import Alert from '@components/@common/Alert';
 import {
@@ -17,6 +18,7 @@ import {
 } from '@utils/RegisterCheck';
 import { axiosInstance } from '@services/axiosInstance';
 import { validateForm } from '@utils/ValidateForm';
+import { categoriesList, getCategoryNumber } from '@mocks/Categories';
 
 const RegisterPage = () => {
   const [step, setStep] = useState(1);
@@ -26,11 +28,15 @@ const RegisterPage = () => {
     password: '',
     confirmPassword: '',
     introduction: '',
-    profileImgUrl: null,
+    profileImgUrl: '',
     year: '',
     gender: '',
     categories: [],
     socialType: 'bookkoo',
+    memberSettingDto: {
+      isLetterReceive: false,
+      reviewVisibility: 'PUBLIC',
+    },
   });
 
   const [errors, setErrors] = useState({});
@@ -44,10 +50,20 @@ const RegisterPage = () => {
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    if (name in formData.memberSettingDto) {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        memberSettingDto: {
+          ...prevFormData.memberSettingDto,
+          [name]: type === 'checkbox' ? checked : value,
+        },
+      }));
+    } else {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        [name]: type === 'checkbox' ? checked : value,
+      }));
+    }
     setErrors(prevErrors => ({
       ...prevErrors,
       [name]: '',
@@ -71,13 +87,14 @@ const RegisterPage = () => {
   const handleCategoryChange = category => {
     setFormData(prevFormData => {
       const categories = [...prevFormData.categories];
-      if (categories.includes(category)) {
+      const categoryNumber = getCategoryNumber(category);
+      if (categories.includes(categoryNumber)) {
         return {
           ...prevFormData,
-          categories: categories.filter(cat => cat !== category),
+          categories: categories.filter(cat => cat !== categoryNumber),
         };
       } else {
-        return { ...prevFormData, categories: [...categories, category] };
+        return { ...prevFormData, categories: [...categories, categoryNumber] };
       }
     });
   };
@@ -161,6 +178,7 @@ const RegisterPage = () => {
               categories: formData.categories,
               introduction: formData.introduction,
               socialType: formData.socialType,
+              memberSettingDto: formData.memberSettingDto,
             }),
           ],
           {
@@ -227,7 +245,16 @@ const RegisterPage = () => {
               errors={errors}
               handleChange={handleChange}
               handleCategoryChange={handleCategoryChange}
+              categoriesList={categoriesList}
               handlePrevStep={handlePrevStep}
+              handleNextStep={() => setStep(3)}
+            />
+          )}
+          {step === 3 && (
+            <RegisterStep3
+              formData={formData.memberSettingDto}
+              errors={errors}
+              handleChange={handleChange}
               handleSubmit={handleSubmit}
             />
           )}

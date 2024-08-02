@@ -4,22 +4,11 @@ import Button from '@components/@common/Button';
 import Alert from '@components/@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
 import { validateForm } from '@utils/ValidateForm';
-
-const categoriesList = [
-  '추리/스릴러',
-  '로맨스',
-  '인문학',
-  '철학',
-  '경제/경영',
-  '역사',
-  '시',
-  '에세이',
-  '소설',
-  '과학',
-  '사회과학',
-  '자기계발',
-  '기타',
-];
+import {
+  categoriesList,
+  getCategoryNumber,
+  getCategoryName,
+} from '@mocks/Categories';
 
 const ProfileUpdate = ({ member, onSave, onCancel }) => {
   const [formData, setFormData] = useState(member);
@@ -40,16 +29,17 @@ const ProfileUpdate = ({ member, onSave, onCancel }) => {
 
   const handleCategoryChange = category => {
     setFormData(prevState => {
+      const categoryNumber = getCategoryNumber(category);
       const { categories } = prevState;
-      if (categories.includes(category)) {
+      if (categories.includes(categoryNumber)) {
         return {
           ...prevState,
-          categories: categories.filter(c => c !== category),
+          categories: categories.filter(c => c !== categoryNumber),
         };
       } else {
         return {
           ...prevState,
-          categories: [...categories, category],
+          categories: [...categories, categoryNumber],
         };
       }
     });
@@ -190,7 +180,7 @@ const ProfileUpdate = ({ member, onSave, onCancel }) => {
               <span
                 key={category}
                 className={`mr-2 mb-2 px-2 py-1 border rounded-lg cursor-pointer text-gray-700 ${
-                  formData.categories.includes(category)
+                  formData.categories.includes(getCategoryNumber(category))
                     ? 'bg-pink-100'
                     : 'bg-gray-100'
                 }`}
