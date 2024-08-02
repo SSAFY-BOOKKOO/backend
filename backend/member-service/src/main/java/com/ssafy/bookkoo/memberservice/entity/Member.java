@@ -1,5 +1,6 @@
 package com.ssafy.bookkoo.memberservice.entity;
 
+import com.ssafy.bookkoo.memberservice.enums.SocialType;
 import com.ssafy.bookkoo.memberservice.global.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

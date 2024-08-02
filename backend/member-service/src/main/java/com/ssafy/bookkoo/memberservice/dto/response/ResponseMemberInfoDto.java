@@ -1,6 +1,6 @@
 package com.ssafy.bookkoo.memberservice.dto.response;
 
-import com.ssafy.bookkoo.memberservice.entity.Gender;
+import com.ssafy.bookkoo.memberservice.enums.Gender;
 import java.util.List;
 import lombok.Builder;
 
@@ -9,7 +9,7 @@ public record ResponseMemberInfoDto(
     String nickName,
     Gender gender,
     List<Integer> categories,
-    int age,
+    Integer age,
     String introduction,
     String profileImgUrl
 ) {

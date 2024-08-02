@@ -7,6 +7,7 @@ import com.ssafy.bookkoo.bookservice.dto.book.RequestCreateBookDto;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBooksFilterDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookDto;
+import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookOfLibraryDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import com.ssafy.bookkoo.bookservice.entity.Category;
@@ -173,6 +174,19 @@ public class BookServiceImpl implements BookService {
         List<Book> books = bookRepository.findByConditions(filterDto);
 
         return bookMapper.toResponseDtoList(books);
+    }
+
+    /**
+     * 내 서재의 책 단일 조회 시 사용
+     *
+     * @param bookId   BOok ID
+     * @param memberId member ID
+     * @return ResponseBookOfLibraryDto
+     */
+    @Override
+    public ResponseBookOfLibraryDto getBookOfLibrary(Long bookId, Long memberId) {
+        
+        return bookRepository.getBookOfLibrary(bookId, memberId);
     }
 
     /**

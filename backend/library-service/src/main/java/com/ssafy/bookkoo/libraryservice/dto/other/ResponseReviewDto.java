@@ -1,4 +1,4 @@
-package com.ssafy.bookkoo.bookservice.dto.review;
+package com.ssafy.bookkoo.libraryservice.dto.other;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -24,7 +24,6 @@ public record ResponseReviewDto(
 
     @Schema(description = "좋아요 개수", example = "25")
     Integer likeCount
-
 ) {
 
 }

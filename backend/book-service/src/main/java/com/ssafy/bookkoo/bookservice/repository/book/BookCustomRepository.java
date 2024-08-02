@@ -3,6 +3,7 @@ package com.ssafy.bookkoo.bookservice.repository.book;
 import com.ssafy.bookkoo.bookservice.dto.book.CheckExistBookByIsbnDto;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBooksFilterDto;
+import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookOfLibraryDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import java.util.List;
 
@@ -53,4 +54,13 @@ public interface BookCustomRepository {
      * @return List<CheckExistBookByIsbnDto>
      */
     List<CheckExistBookByIsbnDto> checkExistBookByIsbn(List<String> isbnList);
+
+    /**
+     * 내 서재의 책 단일 조회 시 사용
+     *
+     * @param bookId   BOok ID
+     * @param memberId member ID
+     * @return ResponseBookOfLibraryDto
+     */
+    ResponseBookOfLibraryDto getBookOfLibrary(Long bookId, Long memberId);
 }

@@ -1,7 +1,7 @@
 package com.ssafy.bookkoo.memberservice.dto.request;
 
 import com.ssafy.bookkoo.memberservice.annotation.MaxArray;
-import com.ssafy.bookkoo.memberservice.entity.Gender;
+import com.ssafy.bookkoo.memberservice.enums.Gender;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 

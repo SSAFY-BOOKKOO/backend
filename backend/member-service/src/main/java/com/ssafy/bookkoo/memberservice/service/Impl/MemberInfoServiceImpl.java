@@ -3,6 +3,7 @@ package com.ssafy.bookkoo.memberservice.service.Impl;
 import com.ssafy.bookkoo.memberservice.client.CommonServiceClient;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
+import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberProfileDto;
 import com.ssafy.bookkoo.memberservice.entity.Member;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
@@ -32,9 +33,10 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @param requestUpdatePasswordDto
      */
     @Override
-    public void updatePassword(RequestUpdatePasswordDto requestUpdatePasswordDto) {
-        Member member = memberRepository.findByMemberId(requestUpdatePasswordDto.memberId())
+    public void updatePassword(Long memberId, RequestUpdatePasswordDto requestUpdatePasswordDto) {
+        Member member = memberRepository.findById(memberId)
                                         .orElseThrow(MemberNotFoundException::new);
+
         member.setPassword(passwordEncoder.encode(requestUpdatePasswordDto.password()));
 
         memberRepository.save(member);
@@ -42,17 +44,14 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     }
 
     /**
-     * 새로운 이미지를 버킷에 저장하고
-     * 기본 이미지가 아니면 버킷에서 삭제하고 새로운 이미지 저장
-     * 멤버 정보의 프로필 사진 정보 수정
+     * 새로운 이미지를 버킷에 저장하고 기본 이미지가 아니면 버킷에서 삭제하고 새로운 이미지 저장 멤버 정보의 프로필 사진 정보 수정
      *
-     * @param memberId
+     * @param id
      * @param profileImg
      */
     @Override
-    public void updateProfileImg(String memberId, MultipartFile profileImg) {
-
-        MemberInfo memberInfo = memberInfoRepository.findByMemberId(memberId)
+    public void updateProfileImg(Long id, MultipartFile profileImg) {
+        MemberInfo memberInfo = memberInfoRepository.findById(id)
                                                     .orElseThrow(MemberNotFoundException::new);
         String profileImgUrl = memberInfo.getProfileImgUrl();
         if (!profileImgUrl.equals("Default.jpg")) {
@@ -65,20 +64,33 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     }
 
     /**
-     * 멤버 ID(UUID)를 통해 멤버 정보를 반환합니다.
+     * 멤버 ID(UUID)를 통해 멤버 정보를 반환합니다. (마이페이지에 보여줄 내용만 반환)
+     *
      * @param memberId
      * @return
      */
     @Override
-    public ResponseMemberInfoDto getMemberInfo(String memberId) {
+    public ResponseMemberProfileDto getMemberProfileInfo(String memberId) {
         MemberInfo memberInfo = memberInfoRepository.findByMemberId(memberId)
                                                     .orElseThrow(MemberNotFoundException::new);
+        String email = memberInfo.getMember()
+                                 .getEmail();
+        return memberInfoMapper.toResponseProfileDto(email, memberInfo);
+    }
 
-        return memberInfoMapper.toResponseDto(memberInfo);
+    @Override
+    public ResponseMemberProfileDto getMemberProfileInfo(Long id) {
+        MemberInfo memberInfo = memberInfoRepository.findById(id)
+                                                    .orElseThrow(MemberNotFoundException::new);
+        String email = memberInfo.getMember()
+                                 .getEmail();
+        return memberInfoMapper.toResponseProfileDto(email, memberInfo);
     }
 
     /**
      * 멤버 ID(Long)을 통해 멤버 정보를 반환합니다.
+     * 멤버 정보 전체를 반환합니다.
+     *
      * @param memberId
      * @return
      */
@@ -98,7 +110,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      */
     @Override
     public Long getMemberPk(String memberId) {
-        return memberRepository.findByMemberId(memberId)
+        return memberInfoRepository.findByMemberId(memberId)
                                    .orElseThrow(MemberNotFoundException::new)
                                    .getId();
     }

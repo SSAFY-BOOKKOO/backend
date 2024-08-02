@@ -1,8 +1,10 @@
 package com.ssafy.bookkoo.memberservice.mapper;
 
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
+import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberProfileDto;
 import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapper;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
+import java.time.LocalDate;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,9 +16,18 @@ public interface MemberInfoMapper {
 
     // 엔티티를 DTO로 변환
     @Mapping(source = "categories", target = "categories", qualifiedByName = "mapCategories")
-    @Mapping(target = "age", ignore = true)
+    @Mapping(source = "year", target = "age", qualifiedByName = "toAge")
     @Mapping(target = "profileImgUrl", ignore = true)
     ResponseMemberInfoDto toResponseDto(MemberInfo memberInfo);
+
+
+    //마이 페이지에서 사용할 DTO로 변환
+    @Mapping(source = "memberInfo.nickName", target = "nickName")
+    @Mapping(source = "memberInfo.profileImgUrl", target = "profileImgUrl")
+    @Mapping(source = "memberInfo.introduction", target = "introduction")
+    @Mapping(source = "memberInfo.categories", target = "categories", qualifiedByName = "mapCategories")
+    ResponseMemberProfileDto toResponseProfileDto(String email, MemberInfo memberInfo);
+
 
     @Named("mapCategories")
     default List<Integer> mapCategories(List<MemberCategoryMapper> categories) {
@@ -25,4 +36,17 @@ public interface MemberInfoMapper {
                                                   .getCategoryId())
                          .toList();
     }
+
+    /**
+     * 저장된 탄생년도를 통해 나이로 변환해서 매핑
+     * @param year
+     * @return
+     */
+    @Named("toAge")
+    default int calcAge(Integer year) {
+        int currentYear = LocalDate.now()
+                                   .getYear();
+        return currentYear - year + 1;
+    }
+
 }
