@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.sql.Date;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -59,6 +60,9 @@ public class Book {
     @Setter
     private Category category;
 
+    @Column
+    private Date publishedAt;
+
     @Builder
     public Book(
         String coverImgUrl,
@@ -71,7 +75,8 @@ public class Book {
         Integer sizeDepth,
         Integer sizeHeight,
         Integer sizeWidth,
-        Category category
+        Category category,
+        Date publishedAt
     ) {
         this.coverImgUrl = coverImgUrl;
         this.author = author;
@@ -84,5 +89,6 @@ public class Book {
         this.sizeHeight = sizeHeight;
         this.sizeWidth = sizeWidth;
         this.category = category;
+        this.publishedAt = publishedAt;
     }
 }
