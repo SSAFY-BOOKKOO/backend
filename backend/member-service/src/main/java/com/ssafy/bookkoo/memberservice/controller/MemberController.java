@@ -1,9 +1,9 @@
 package com.ssafy.bookkoo.memberservice.controller;
 
 import com.ssafy.bookkoo.memberservice.dto.request.RequestCertificationDto;
-import com.ssafy.bookkoo.memberservice.dto.request.RequestLoginDto;
+import com.ssafy.bookkoo.memberservice.client.dto.request.RequestLoginDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterMemberDto;
-import com.ssafy.bookkoo.memberservice.dto.response.ResponseLoginTokenDto;
+import com.ssafy.bookkoo.memberservice.client.dto.response.ResponseLoginTokenDto;
 import com.ssafy.bookkoo.memberservice.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
