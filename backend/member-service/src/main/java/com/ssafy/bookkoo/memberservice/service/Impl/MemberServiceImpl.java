@@ -2,9 +2,13 @@ package com.ssafy.bookkoo.memberservice.service.Impl;
 
 import com.ssafy.bookkoo.memberservice.client.AuthServiceClient;
 import com.ssafy.bookkoo.memberservice.client.CommonServiceClient;
+import com.ssafy.bookkoo.memberservice.client.LibraryServiceClient;
+import com.ssafy.bookkoo.memberservice.client.dto.request.LibraryStyleDto;
+import com.ssafy.bookkoo.memberservice.client.dto.request.RequestCreateLibraryDto;
+import com.ssafy.bookkoo.memberservice.client.dto.request.RequestLoginDto;
 import com.ssafy.bookkoo.memberservice.dto.request.*;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterDto.RequestRegisterDtoBuilder;
-import com.ssafy.bookkoo.memberservice.dto.response.ResponseLoginTokenDto;
+import com.ssafy.bookkoo.memberservice.client.dto.response.ResponseLoginTokenDto;
 import com.ssafy.bookkoo.memberservice.entity.*;
 import com.ssafy.bookkoo.memberservice.entity.Member.MemberBuilder;
 import com.ssafy.bookkoo.memberservice.enums.SocialType;
@@ -43,6 +47,7 @@ public class MemberServiceImpl implements MemberService {
     private final MailSendService mailSendService;
     private final MemberCategoryMapperRepository memberCategoryMapperRepository;
     private final AuthServiceClient authServiceClient;
+    private final LibraryServiceClient libraryServiceClient;
 
     //S3 common 서비스
     private final CommonServiceClient commonServiceClient;
@@ -170,6 +175,8 @@ public class MemberServiceImpl implements MemberService {
         MemberInfo info = memberInfoRepository.save(memberInfo);
         //선호 카테고리 추가
         saveCategories(additionalInfo, info);
+        //기본 서재 생성
+        createLibrary(member.getId());
         return info;
     }
 
@@ -181,7 +188,7 @@ public class MemberServiceImpl implements MemberService {
      * @return
      */
     @Transactional
-    public MemberSetting registerMemberSetting(Long memberId, RequestMemberSettingDto memberSettingDto) {
+    protected MemberSetting registerMemberSetting(Long memberId, RequestMemberSettingDto memberSettingDto) {
         MemberSetting memberSetting = MemberSetting.builder()
                                                    .id(memberId)
                                                    .isLetterReceive(
@@ -220,6 +227,18 @@ public class MemberServiceImpl implements MemberService {
                   //멤버 정보에 카테고리 연관관계 추가
                   info.addCategory(categoryMapper);
               });
+    }
+
+    private void createLibrary(Long memberId) {
+        RequestCreateLibraryDto createLibraryDto
+            = RequestCreateLibraryDto.builder()
+                                     .name("기본 서재")
+                                     .libraryOrder(1)
+                                     .libraryStyleDto(LibraryStyleDto.builder()
+                                                                     .libraryColor("#FFFFFF")
+                                                                     .build())
+                                     .build();
+        libraryServiceClient.createLibrary(memberId, createLibraryDto);
     }
 
     /**
@@ -326,4 +345,5 @@ public class MemberServiceImpl implements MemberService {
     public ResponseLoginTokenDto registerLogin(RequestLoginDto requestLoginDto) {
         return authServiceClient.login(requestLoginDto);
     }
+
 }
