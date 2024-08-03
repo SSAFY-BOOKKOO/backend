@@ -189,9 +189,9 @@ const CurationReceive = () => {
         ))}
       </div>
       {isDeleting && (
-        <div className='flex justify-center py-4'>
+        <div className='flex justify-center pb-6 px-4'>
           <button 
-            className='bg-pink-500 text-white px-4 py-2 rounded-lg'
+            className='bg-pink-500 text-white px-4 p-2 w-full rounded-lg'
             onClick={handleDeleteSelected}
           >
             선택한 레터 삭제
