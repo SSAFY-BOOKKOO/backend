@@ -54,6 +54,7 @@ const SearchBookDetail = () => {
       <BookCreateModal
         isCreateModalOpen={isOpen}
         toggleCreateModal={toggleModal}
+        selectedBook={book}
       />
     </WrapContainer>
   );
