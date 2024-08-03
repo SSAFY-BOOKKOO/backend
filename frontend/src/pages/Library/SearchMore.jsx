@@ -8,6 +8,7 @@ import useBookInfiniteScroll from '@hooks/useBookInfiniteScroll';
 import { useInView } from 'react-intersection-observer';
 import useModal from '@hooks/useModal';
 import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
+import { getAladinBookByIsbn } from '@services/Book';
 
 const SearchMore = () => {
   const { type } = useParams();
@@ -48,8 +49,14 @@ const SearchMore = () => {
     navigate(`/ ${type}/detail/${book.book_id}`, { state: { book } });
   };
 
-  const handleBookCreateButton = book => {
-    setSelectedBook(book);
+  const handleBookCreateButton = async book => {
+    try {
+      const bookData = await getAladinBookByIsbn(book.isbn);
+      setSelectedBook(bookData);
+    } catch (error) {
+      console.error('error', error);
+    }
+
     toggleModal();
   };
 
