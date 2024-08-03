@@ -42,28 +42,27 @@ const BookCreateModal = ({
     });
   };
 
-  const handleShowAlert = () => {
-    showAlert('빈칸을 입력해주세요.', true, () => {
-      // 확인
-    });
-  };
-
   const validateBookData = bookData => {
     if (bookData.status === 'READ') {
       if (
         !bookData.startAt ||
         !bookData.endAt ||
         !bookData.rating ||
-        !bookData.bookColor
+        !bookData.bookColor ||
+        bookData.libraryId === 0
       ) {
         return false;
       }
     } else if (bookData.status === 'READING') {
-      if (!bookData.startAt || !bookData.bookColor) {
+      if (
+        !bookData.startAt ||
+        !bookData.bookColor ||
+        bookData.libraryId === 0
+      ) {
         return false;
       }
     } else if (bookData.status === 'DIB') {
-      if (!bookData.bookColor) {
+      if (!bookData.bookColor || bookData.libraryId === 0) {
         return false;
       }
     }
@@ -73,14 +72,12 @@ const BookCreateModal = ({
   const handleComplete = async () => {
     // 유효성 검사
     if (!validateBookData(bookData)) {
-      handleShowAlert();
+      showAlert('빈칸을 입력해주세요.', true, () => {
+        // 확인
+      });
       return;
     }
-
-    // 등록 서버 연동
-    console.log(bookData);
     console.log(selectedBook);
-
     const bodyData = {
       bookColor: bookData.bookColor,
       startAt: bookData.startAt,
@@ -90,9 +87,19 @@ const BookCreateModal = ({
       bookDto: selectedBook,
     };
 
-    const data = await postLibraryBook(bookData.libraryId, bodyData);
-
-    reset();
+    try {
+      const data = await postLibraryBook(bookData.libraryId, bodyData);
+      showAlert('책이 성공적으로 등록되었습니다.', true, () => {
+        reset();
+      });
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        showAlert(error.response.data, true, () => {});
+      } else {
+        // 그 외의 에러
+        showAlert('오류가 발생했습니다. 다시 시도해주세요.', true, () => {});
+      }
+    }
   };
 
   if (!isCreateModalOpen) return null;

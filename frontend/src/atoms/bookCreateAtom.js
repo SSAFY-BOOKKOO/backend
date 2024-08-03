@@ -6,7 +6,7 @@ export const bookDataAtom = atom({
   endAt: '',
   rating: 0,
   bookColor: '',
-  libraryId: '1',
+  libraryId: 0,
 });
 
 export const modalStepAtom = atom(1);
