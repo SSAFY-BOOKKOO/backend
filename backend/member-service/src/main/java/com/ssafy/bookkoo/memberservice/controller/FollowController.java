@@ -4,24 +4,26 @@ import com.ssafy.bookkoo.memberservice.dto.request.RequestFollowShipDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseFollowShipDto;
 import com.ssafy.bookkoo.memberservice.service.FollowShipService;
 import com.ssafy.bookkoo.memberservice.service.MemberInfoService;
+import com.ssafy.bookkoo.memberservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/members/follow")
 public class FollowController {
 
-    private static final Logger log = LoggerFactory.getLogger(FollowController.class);
-    private final String PASSPORT_PREFIX = "member-passport";
     private final FollowShipService followShipService;
     private final MemberInfoService memberInfoService;
 
@@ -31,9 +33,8 @@ public class FollowController {
         @RequestHeader HttpHeaders headers,
         @RequestBody RequestFollowShipDto requestFollowShipDto
     ) {
-        Long followerId = Long.valueOf(headers.getFirst(PASSPORT_PREFIX));
+        Long followerId = CommonUtil.getMemberId(headers);
         Long followeeId = memberInfoService.getMemberPk(requestFollowShipDto.memberId());
-        log.info("{} followed {}", followerId, followeeId);
         followShipService.follow(followerId, followeeId);
         return ResponseEntity.ok()
                              .build();
@@ -45,7 +46,7 @@ public class FollowController {
         @RequestHeader HttpHeaders headers,
         @RequestBody RequestFollowShipDto requestFollowShipDto
     ) {
-        Long followerId = Long.valueOf(headers.getFirst(PASSPORT_PREFIX));
+        Long followerId = CommonUtil.getMemberId(headers);
         Long followeeId = memberInfoService.getMemberPk(requestFollowShipDto.memberId());
         followShipService.unFollow(followerId, followeeId);
         return ResponseEntity.ok()
@@ -59,8 +60,11 @@ public class FollowController {
         @RequestHeader HttpHeaders headers,
         @RequestParam(required = false) RequestFollowShipDto requestFollowShipDto
     ) {
-        Long memberId = Long.valueOf(headers.getFirst(PASSPORT_PREFIX));
-        List<ResponseFollowShipDto> followees = followShipService.getFollowees(memberId);
+        Long id = CommonUtil.getMemberId(headers);
+        if (requestFollowShipDto != null) {
+            id = memberInfoService.getMemberPk(requestFollowShipDto.memberId());
+        }
+        List<ResponseFollowShipDto> followees = followShipService.getFollowees(id);
         return ResponseEntity.ok(followees);
     }
 
@@ -70,8 +74,11 @@ public class FollowController {
         @RequestHeader HttpHeaders headers,
         @RequestParam(required = false) RequestFollowShipDto requestFollowShipDto
     ) {
-        Long memberId = Long.valueOf(headers.getFirst(PASSPORT_PREFIX));
-        List<ResponseFollowShipDto> followers = followShipService.getFollowers(memberId);
+        Long id = CommonUtil.getMemberId(headers);
+        if (requestFollowShipDto != null) {
+            id = memberInfoService.getMemberPk(requestFollowShipDto.memberId());
+        }
+        List<ResponseFollowShipDto> followers = followShipService.getFollowers(id);
         return ResponseEntity.ok(followers);
     }
 }

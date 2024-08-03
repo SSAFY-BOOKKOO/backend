@@ -1,19 +1,25 @@
 package com.ssafy.bookkoo.memberservice.service.Impl;
 
 import com.ssafy.bookkoo.memberservice.client.CommonServiceClient;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestMemberSettingDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdateMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberProfileDto;
 import com.ssafy.bookkoo.memberservice.entity.Member;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
+import com.ssafy.bookkoo.memberservice.entity.MemberSetting;
+import com.ssafy.bookkoo.memberservice.exception.MemberInfoNotExistException;
 import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.memberservice.mapper.MemberInfoMapper;
 import com.ssafy.bookkoo.memberservice.repository.MemberInfoRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberRepository;
+import com.ssafy.bookkoo.memberservice.repository.MemberSettingRepository;
 import com.ssafy.bookkoo.memberservice.service.MemberInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -27,6 +33,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     private final PasswordEncoder passwordEncoder;
     private final MemberInfoMapper memberInfoMapper;
     private final CommonServiceClient commonServiceClient;
+    private final MemberSettingRepository memberSettingRepository;
 
     /**
      * 비밀번호를 업데이트합니다.
@@ -41,26 +48,6 @@ public class MemberInfoServiceImpl implements MemberInfoService {
 
         memberRepository.save(member);
         memberRepository.flush();
-    }
-
-    /**
-     * 새로운 이미지를 버킷에 저장하고 기본 이미지가 아니면 버킷에서 삭제하고 새로운 이미지 저장 멤버 정보의 프로필 사진 정보 수정
-     *
-     * @param id
-     * @param profileImg
-     */
-    @Override
-    public void updateProfileImg(Long id, MultipartFile profileImg) {
-        MemberInfo memberInfo = memberInfoRepository.findById(id)
-                                                    .orElseThrow(MemberNotFoundException::new);
-        String profileImgUrl = memberInfo.getProfileImgUrl();
-        if (!profileImgUrl.equals("Default.jpg")) {
-            commonServiceClient.deleteProfileImg(profileImgUrl, null);
-        }
-        String fileName = commonServiceClient.saveProfileImg(profileImg, null);
-        memberInfo.setProfileImgUrl(fileName);
-        memberInfoRepository.save(memberInfo);
-        memberInfoRepository.flush();
     }
 
     /**
@@ -135,4 +122,63 @@ public class MemberInfoServiceImpl implements MemberInfoService {
                                    .orElseThrow(MemberNotFoundException::new)
                                    .getId();
     }
+
+    /**
+     * 멤버의 공개 범위 설정 변경을 위한 서비스 로직
+     * @param id
+     * @param memberSettingDto
+     */
+    @Override
+    @Transactional
+    public void updateMemberSetting(Long id, RequestMemberSettingDto memberSettingDto) {
+        MemberSetting memberSetting = memberSettingRepository.findById(id)
+                                                             .orElseThrow(
+                                                                 MemberNotFoundException::new);
+        memberSetting.setIsLetterReceive(memberSetting.getIsLetterReceive());
+        memberSetting.setReviewVisibility(memberSetting.getReviewVisibility());
+        memberSettingRepository.save(memberSetting);
+        memberSettingRepository.flush();
+    }
+
+    /**
+     * 멤버 추가 정보를 변경하는 서비스 로직
+     * @param id
+     * @param memberInfoUpdateDto
+     * @param profileImg
+     */
+    @Override
+    @Transactional
+    public void updateMemberInfo(Long id, RequestUpdateMemberInfoDto memberInfoUpdateDto,
+        MultipartFile profileImg) {
+        MemberInfo memberInfo = memberInfoRepository.findById(id)
+                                                    .orElseThrow(MemberInfoNotExistException::new);
+        //TODO: 닉네임 중복 체크 필요
+        memberInfo.setNickName(memberInfoUpdateDto.nickName());
+        if (profileImg != null) {
+            updateProfileImg(id, profileImg);
+        }
+        memberInfo.setIntroduction(memberInfoUpdateDto.introduction());
+        memberInfoRepository.save(memberInfo);
+        memberInfoRepository.flush();
+    }
+
+    /**
+     * 새로운 이미지를 버킷에 저장하고 기본 이미지가 아니면 버킷에서 삭제하고 새로운 이미지 저장 멤버 정보의 프로필 사진 정보 수정
+     *
+     * @param id
+     * @param profileImg
+     */
+    public void updateProfileImg(Long id, MultipartFile profileImg) {
+        MemberInfo memberInfo = memberInfoRepository.findById(id)
+                                                    .orElseThrow(MemberNotFoundException::new);
+        String profileImgUrl = memberInfo.getProfileImgUrl();
+        if (!profileImgUrl.equals("Default.jpg")) {
+            commonServiceClient.deleteProfileImg(profileImgUrl, null);
+        }
+        String fileName = commonServiceClient.saveProfileImg(profileImg, null);
+        memberInfo.setProfileImgUrl(fileName);
+        memberInfoRepository.save(memberInfo);
+        memberInfoRepository.flush();
+    }
+
 }

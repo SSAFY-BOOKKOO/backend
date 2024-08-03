@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -21,9 +22,11 @@ public class MemberSetting {
     private Long id;
 
     //레터 이메일 수신 여부
+    @Setter
     @Column(name = "is_letter_receive")
     private Boolean isLetterReceive;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "review_visibility")
     private ReviewVisibility reviewVisibility;
