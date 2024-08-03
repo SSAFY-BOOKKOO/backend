@@ -120,7 +120,7 @@ public class MemberServiceImpl implements MemberService {
      * @param registerDto
      */
     @Transactional
-    public Member registerMember(RequestRegisterDto registerDto) {
+    protected Member registerMember(RequestRegisterDto registerDto) {
         MemberBuilder memberBuilder = Member.builder()
                                      .memberId(UUID.randomUUID()
                                                    .toString())
@@ -143,7 +143,7 @@ public class MemberServiceImpl implements MemberService {
      * @return
      */
     @Transactional
-    public MemberInfo registerAdditionalInfo(Member member, MemberSetting memberSetting,
+    protected MemberInfo registerAdditionalInfo(Member member, MemberSetting memberSetting,
         RequestAdditionalInfo additionalInfo, MultipartFile profileImg) {
         log.info(additionalInfo.memberId());
 
