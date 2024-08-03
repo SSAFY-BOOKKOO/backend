@@ -126,6 +126,20 @@ services:
     networks:
       - bookkoo-net
 
+  notification-db:
+    image: postgres:latest
+    container_name: notification-postgres
+    environment:
+      POSTGRES_USER: magumagu
+      POSTGRES_PASSWORD: magumagu
+      POSTGRES_DB: bookkoo
+    ports:
+      - "5436:5432"
+    volumes:
+      - notification_postgres_data:/var/lib/postgresql/data
+    networks:
+      - bookkoo-net
+
   member-redis:
     image: redis:latest
     container_name: member-redis
@@ -342,6 +356,31 @@ services:
     volumes:
       - ./logs/member-service:/app/logs
 
+  notification-service:
+    container_name: notification-service
+    build:
+      context: ./backend/notification-service
+    ports:
+      - "8088:8088"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bookkoo-net
+    restart: on-failure
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://library-db:5436/bookkoo
+      - SPRING_DATASOURCE_USERNAME=magumagu
+      - SPRING_DATASOURCE_PASSWORD=magumagu
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8088/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - ./logs/notification-service:/app/logs
+
 networks:
   bookkoo-net:
     driver: bridge
@@ -352,3 +391,4 @@ volumes:
   library_postgres_data:
   member_postgres_data:
   auth_postgres_data:
+  notification_postgres_data:

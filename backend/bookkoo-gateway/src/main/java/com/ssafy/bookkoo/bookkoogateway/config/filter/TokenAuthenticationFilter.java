@@ -37,6 +37,7 @@ public class TokenAuthenticationFilter implements GlobalFilter {
         "/curation-service",
         "/library-service",
         "/member-service",
+        "/notification-service",
         "/api-docs",
         "/swagger-ui.html",
         "/swagger-ui",
