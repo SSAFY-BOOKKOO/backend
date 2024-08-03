@@ -45,12 +45,12 @@ export const postLibraryBook = async (libraryId, info) => {
 };
 
 // 내가 가진 서재 목록 조회
-const getLibraryList = async () => {
+export const getLibraryList = async () => {
   try {
-    const response = await authAxiosInstance.post('libraries/me');
+    const response = await authAxiosInstance.get('libraries/me');
     return response.data;
   } catch (error) {
-    console.error('aladin books failed:', error);
+    console.error('library me failed:', error);
     throw error;
   }
 };
