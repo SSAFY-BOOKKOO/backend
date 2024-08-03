@@ -42,24 +42,29 @@ const LibrarySearch = () => {
   const handleSearch = async (text, tag) => {
     setIsSearched(true);
     setLoading(true);
+
     try {
-      // API 호출 로직 (현재는 더미 데이터)
+      const results = await Promise.allSettled([
+        getLibrarySearchBooks(text, tag),
+        getAladinBooks(text, tag),
+        // 북톡 API 추가 예정
+      ]);
 
-      // 내 서재
-      const libraryBooksData = await getLibrarySearchBooks(text, tag);
-      // 도서
-      const aladinBooksData = await getAladinBooks(text, tag);
+      const [libraryResult, aladinResult] = results;
 
-      // 북톡
       setSearchResults({
-        library: libraryBooksData,
-        bookStore: aladinBooksData.item || [],
-        bookTalk: books,
+        library:
+          libraryResult.status === 'fulfilled' ? libraryResult.value : [],
+        bookStore:
+          aladinResult.status === 'fulfilled'
+            ? aladinResult.value.item || []
+            : [],
+        bookTalk: books, // 더미 데이터
       });
 
-      setSearchParams({ text, tag }); // 쿼리 스트링에 검색어와 태그 저장
+      setSearchParams({ text, tag });
     } catch (error) {
-      console.error('error', error);
+      console.error('Unexpected error', error);
     } finally {
       setLoading(false);
     }
