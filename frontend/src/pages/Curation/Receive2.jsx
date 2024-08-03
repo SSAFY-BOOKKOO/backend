@@ -50,11 +50,6 @@ const CurationReceive = () => {
   const [letters, setLetters] = useState(initialLetters);
   const [page, setPage] = useState(0); // 페이지 상태 추가
 
-   // letters 데이터 콘솔에 출력
-   useEffect(() => {
-    console.log('Letters:', letters);
-  }, [letters[0]]);
-
 
   // ////보관함/////
 
@@ -91,24 +86,39 @@ const CurationReceive = () => {
   };
 
   //삭제 로직
-  // const handleDelete = id => {
-  //   setLetters(letters.filter(letter => letter.id !== id));
-  // };
   const [selectedLetters, setSelectedLetters] = useState([]);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // 삭제 함수
+  // 선택한 레터 연동해서 삭제
   const handleDeleteSelected = () => {
-    setLetters(letters.filter(letter => !selectedLetters.includes(letter.id)));
-    setSelectedLetters([]);
+    const deleteRequests = selectedLetters.map(id => 
+      authAxiosInstance.delete(`/curations/${id}`)
+    );
+    // 다 삭제 되면 필터로 삭제된 거 제외
+    Promise.all(deleteRequests)
+      .then(responses => {
+        // console 추후 삭제
+        console.log('Letters deleted successfully:', responses);
+        setLetters(letters.filter(letter => !selectedLetters.includes(letter.id)));
+        setSelectedLetters([]);
+      })
+      .catch(err => {
+        console.log('Error deleting letters:', err);
+      });
   };
 
+  // 삭제를 위한 레터 선택
   const handleSelectLetter = (id) => {
     if (selectedLetters.includes(id)) {
       setSelectedLetters(selectedLetters.filter(letterId => letterId !== id));
     } else {
       setSelectedLetters([...selectedLetters, id]);
     }
+    
   };
 
+  // 레터 상세보기
   const handleLetterClick = letter => {
     navigate(`/curation/letter/${letter.id}`, { state: { letter } });
   };
@@ -122,7 +132,7 @@ const CurationReceive = () => {
           받은 날부터 15일 후 자동 삭제됩니다!
         </p>
       </div>
-      <div className='flex justify-between items-center pl-6 pr-4 pt-3'>
+      <div className='flex justify-between items-center pl-6 pr-4 py-3'>
         <p className='font-bold text-green-400'>
           받은 레터 수: {letters.length}
         </p>
