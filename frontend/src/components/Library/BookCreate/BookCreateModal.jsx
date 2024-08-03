@@ -38,7 +38,7 @@ const BookCreateModal = ({
       endAt: '',
       rating: 0,
       bookColor: '',
-      libraryId: 1,
+      libraryId: 0,
     });
   };
 
@@ -77,7 +77,6 @@ const BookCreateModal = ({
       });
       return;
     }
-    console.log(selectedBook);
     const bodyData = {
       bookColor: bookData.bookColor,
       startAt: bookData.startAt,
