@@ -18,4 +18,6 @@ public interface AuthService {
     ResponseLoginTokenDto getResponseLoginTokenDto(Member member);
 
     ResponseLoginTokenDto getDeveloperTokenDto();
+
+    void logout(Long memberId);
 }

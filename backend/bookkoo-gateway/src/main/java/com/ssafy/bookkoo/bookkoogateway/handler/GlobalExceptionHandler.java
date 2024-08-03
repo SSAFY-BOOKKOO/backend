@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.bookkoo.bookkoogateway.client.AuthServiceWebClient;
 import com.ssafy.bookkoo.bookkoogateway.dto.ResponseTokenDto;
 import com.ssafy.bookkoo.bookkoogateway.exception.AccessTokenExpirationException;
+import com.ssafy.bookkoo.bookkoogateway.exception.RefreshTokenExpirationException;
 import com.ssafy.bookkoo.bookkoogateway.exception.WebClientRequestException;
 import com.ssafy.bookkoo.bookkoogateway.response.CustomErrorResponse;
 import com.ssafy.bookkoo.bookkoogateway.response.CustomErrorResponseWithData;
@@ -62,10 +63,22 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
                 accessTokenExpirationException);
         } else if (ex instanceof WebClientRequestException) {
             response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+        } else if (ex instanceof RefreshTokenExpirationException refreshTokenExpirationException) {
+            return handleRefreshTokenExpirationException(response, refreshTokenExpirationException);
         } else {
             response.setStatusCode(((ResponseStatusException) ex).getStatusCode());
         }
 
+        return handleDefaultExceptionWithMessage(ex, response);
+    }
+
+    /**
+     * 추가적인 핸들링을 정의하지 않은 경우 예외 처리 공통 로직 분리
+     * @param ex
+     * @param response
+     * @return
+     */
+    private Mono<Void> handleDefaultExceptionWithMessage(Throwable ex, ServerHttpResponse response) {
         return response
             .writeWith(Mono.fromSupplier(() -> {
                 DataBufferFactory bufferFactory = response.bufferFactory();
@@ -82,6 +95,20 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
     }
 
     /**
+     * 리프레시 토큰 만료에 대한 예외 처리
+     *
+     * @param response
+     * @param refreshTokenExpirationException
+     * @return
+     */
+    private Mono<Void> handleRefreshTokenExpirationException(ServerHttpResponse response,
+        RefreshTokenExpirationException refreshTokenExpirationException) {
+        // 403 상태코드 세팅
+        response.setStatusCode(HttpStatus.FORBIDDEN);
+        return handleDefaultExceptionWithMessage(refreshTokenExpirationException, response);
+    }
+
+    /**
      * 액세스 토큰 만료에 대한 예외 처리 코드 status : 401 message : 액세스 토큰이 만료되었습니다. data : 액세스 토큰
      *
      * @param request
@@ -94,13 +121,16 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
         // 401 상태코드 세팅
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
 
-        // authServiceWebClient로 부터 토큰 가져오기
+        // 쿠키에서 리프레시 토큰 가져오기
         MultiValueMap<String, HttpCookie> cookies = request.getCookies();
         HttpCookie cookie = cookies.getFirst(REFRESH_TOKEN);
         if (cookie == null) {
-            return Mono.error(new IllegalStateException("Refresh token cookie not found"));
+            //쿠키에 리프레시 토큰이 없으면 RefreshTokenExpirationException를 핸들링
+            RefreshTokenExpirationException refreshTokenExpirationException = new RefreshTokenExpirationException();
+            return handleDefaultExceptionWithMessage(refreshTokenExpirationException, response);
         }
 
+        // authServiceWebClient로 부터 토큰 가져오기
         return authServiceWebClient.getToken(cookie.getValue())
                                    .flatMap(tokenDto -> {
                                        if (tokenDto == null) {
@@ -138,5 +168,4 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
                                        }
                                    });
     }
-
 }
