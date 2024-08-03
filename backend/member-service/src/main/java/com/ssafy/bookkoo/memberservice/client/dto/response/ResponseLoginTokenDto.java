@@ -1,4 +1,4 @@
-package com.ssafy.bookkoo.memberservice.dto.response;
+package com.ssafy.bookkoo.memberservice.client.dto.response;
 
 import lombok.Builder;
 
