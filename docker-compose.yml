@@ -126,13 +126,25 @@ services:
     networks:
       - bookkoo-net
 
+  notification-db:
+    image: postgres:latest
+    container_name: notification-postgres
+    environment:
+      POSTGRES_USER: magumagu
+      POSTGRES_PASSWORD: magumagu
+      POSTGRES_DB: bookkoo
+    ports:
+      - "5438:5432"
+    volumes:
+      - notification_postgres_data:/var/lib/postgresql/data
+    networks:
+      - bookkoo-net
+
   member-redis:
     image: redis:latest
     container_name: member-redis
     ports:
       - "6379:6379"
-    volumes:
-      - member_redis_data:/data
     networks:
       - bookkoo-net
 
@@ -141,8 +153,6 @@ services:
     container_name: auth-redis
     ports:
       - "6380:6379"
-    volumes:
-      - auth_redis_data:/data
     networks:
       - bookkoo-net
   
@@ -171,7 +181,6 @@ services:
       timeout: 3s
       retries: 3
     volumes:
-      - ./auth-service:/app/
       - ./logs/auth-service:/app/logs
 
   common-service:
@@ -194,7 +203,6 @@ services:
       timeout: 3s
       retries: 3
     volumes:
-      - ./auth-service:/app/
       - ./logs/common-service:/app/logs
 
   eureka-server:
@@ -211,8 +219,6 @@ services:
       timeout: 3s
       retries: 3
     restart: on-failure
-    volumes:
-      - ./eureka-server:/app/
 
   book-service:
     container_name: book-service
@@ -240,7 +246,6 @@ services:
       timeout: 3s
       retries: 3
     volumes:
-      - ./book-service:/app/
       - ./logs/book-service:/app/logs
 
   bookkoo-gateway:
@@ -273,7 +278,6 @@ services:
       timeout: 3s
       retries: 3
     volumes:
-      - ./bookkoo-gateway:/app/
       - ./logs/gateway-service:/app/logs
 
   curation-service:
@@ -299,7 +303,6 @@ services:
       timeout: 3s
       retries: 3
     volumes:
-      - ./curation-service:/app/
       - ./logs/curation-service:/app/logs
 
   library-service:
@@ -325,7 +328,6 @@ services:
       timeout: 3s
       retries: 3
     volumes:
-      - ./library-service:/app/
       - ./logs/library-service:/app/logs
 
   member-service:
@@ -334,6 +336,7 @@ services:
       context: ./backend/member-service
     ports:
       - "8081:8081"
+      - "587:587"
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -351,8 +354,27 @@ services:
       timeout: 3s
       retries: 3
     volumes:
-      - ./member-service:/app/
       - ./logs/member-service:/app/logs
+
+  notification-service:
+    container_name: notification-service
+    build:
+      context: ./backend/notification-service
+    ports:
+      - "8088:8088"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bookkoo-net
+    restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8088/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - ./logs/notification-service:/app/logs
 
 networks:
   bookkoo-net:
@@ -364,5 +386,4 @@ volumes:
   library_postgres_data:
   member_postgres_data:
   auth_postgres_data:
-  member_redis_data:
-  auth_redis_data:
+  notification_postgres_data:

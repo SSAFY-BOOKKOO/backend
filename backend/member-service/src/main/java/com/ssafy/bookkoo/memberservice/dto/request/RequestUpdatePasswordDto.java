@@ -6,7 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record RequestUpdatePasswordDto(
-    @NotNull(message = "Member Id can not be null") String memberId,
+    @NotNull
     @Pattern(
         regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$",
         message = "Invalid password."

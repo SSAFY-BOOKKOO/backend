@@ -2,20 +2,27 @@ package com.ssafy.bookkoo.memberservice.service.Impl;
 
 import com.ssafy.bookkoo.memberservice.client.AuthServiceClient;
 import com.ssafy.bookkoo.memberservice.client.CommonServiceClient;
+import com.ssafy.bookkoo.memberservice.client.LibraryServiceClient;
+import com.ssafy.bookkoo.memberservice.client.dto.request.LibraryStyleDto;
+import com.ssafy.bookkoo.memberservice.client.dto.request.RequestCreateLibraryDto;
+import com.ssafy.bookkoo.memberservice.client.dto.request.RequestLoginDto;
 import com.ssafy.bookkoo.memberservice.dto.request.*;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterDto.RequestRegisterDtoBuilder;
-import com.ssafy.bookkoo.memberservice.dto.response.ResponseLoginTokenDto;
+import com.ssafy.bookkoo.memberservice.client.dto.response.ResponseLoginTokenDto;
 import com.ssafy.bookkoo.memberservice.entity.*;
 import com.ssafy.bookkoo.memberservice.entity.Member.MemberBuilder;
+import com.ssafy.bookkoo.memberservice.enums.SocialType;
 import com.ssafy.bookkoo.memberservice.exception.*;
 import com.ssafy.bookkoo.memberservice.repository.CertificationRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberCategoryMapperRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberInfoRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberRepository;
+import com.ssafy.bookkoo.memberservice.repository.MemberSettingRepository;
 import com.ssafy.bookkoo.memberservice.service.MailSendService;
 import com.ssafy.bookkoo.memberservice.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,65 +41,78 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberInfoRepository memberInfoRepository;
+    private final MemberSettingRepository memberSettingRepository;
     private final CertificationRepository certificationRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailSendService mailSendService;
     private final MemberCategoryMapperRepository memberCategoryMapperRepository;
     private final AuthServiceClient authServiceClient;
+    private final LibraryServiceClient libraryServiceClient;
 
     //S3 common 서비스
     private final CommonServiceClient commonServiceClient;
     private final String passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$";
 
+    @Value("${config.default-img-url}")
+    private String DEFAULT_IMG_URL;
     /**
      * 회원가입에 필요한 모든 정보를 받아 회원가입하는 서비스
      *
-     * @param requestRegisterMemberDto
+     * @param registerMemberDto
      */
     @Override
     @Transactional
-    public void register(RequestRegisterMemberDto requestRegisterMemberDto, MultipartFile profileImg) {
+    public void register(RequestRegisterMemberDto registerMemberDto, MultipartFile profileImg) {
         //회원 정보 저장을 위한 DTO
         RequestRegisterDtoBuilder registerDtoBuilder
             = RequestRegisterDto.builder()
-                                .email(requestRegisterMemberDto.email())
-                                .socialType(requestRegisterMemberDto.socialType());
+                                .email(registerMemberDto.email())
+                                .socialType(registerMemberDto.socialType());
 
         //이메일 중복 확인
-        checkDuplEmail(requestRegisterMemberDto.email());
+        checkDuplEmail(registerMemberDto.email());
         //닉네임 중복 확인
-        checkDuplNickName(requestRegisterMemberDto.nickName());
+        checkDuplNickName(registerMemberDto.nickName());
         //비밀번호 유효성 검증 (bookkoo 도메인인 경우 : 이메일 가입)
-        if (requestRegisterMemberDto.socialType() == SocialType.bookkoo) {
-            if (requestRegisterMemberDto.password()
+        if (registerMemberDto.socialType() == SocialType.bookkoo) {
+            if (registerMemberDto.password()
                                         .matches(passwordRegex)) {
-                registerDtoBuilder.password(requestRegisterMemberDto.password());
+                registerDtoBuilder.password(registerMemberDto.password());
 
             } else {
                 throw new PasswordNotValidException();
             }
+        } else { //소셜 정보를 통해 가입한 경우 랜덤 비밀번호를 추가
+            registerDtoBuilder.password(UUID.randomUUID()
+                                            .toString());
         }
 
         //회원정보 등록
         Member member = registerMember(registerDtoBuilder.build());
-
         //추가정보 저장을 위한 DTO
         RequestAdditionalInfo additionalInfo
             = RequestAdditionalInfo.builder()
                                    .id(member.getId())
                                    .memberId(member.getMemberId())
-                                   .categories(requestRegisterMemberDto.categories())
-                                   .gender(requestRegisterMemberDto.gender())
-                                   .introduction(requestRegisterMemberDto.introduction())
-                                   .nickName(requestRegisterMemberDto.nickName())
-                                   .profileImgUrl(requestRegisterMemberDto.profileImgUrl())
+                                   .categories(registerMemberDto.categories())
+                                   .gender(registerMemberDto.gender())
+                                   .introduction(registerMemberDto.introduction())
+                                   .nickName(registerMemberDto.nickName())
+                                   .profileImgUrl(registerMemberDto.profileImgUrl())
+                                   .year(registerMemberDto.year())
                                    .build();
+
+        //멤버 세팅 등록
+        MemberSetting memberSetting = registerMemberSetting(member.getId(),
+            registerMemberDto.memberSettingDto());
+
         //추가정보 등록
-        registerAdditionalInfo(additionalInfo, profileImg);
+        MemberInfo memberInfo = registerAdditionalInfo(member, memberSetting, additionalInfo, profileImg);
+
         //회원가입시 사용한 정보를 통해 로그인 요청
         RequestLoginDto loginDto = RequestLoginDto.builder()
-                                                  .email(requestRegisterMemberDto.email())
-                                                  .password(requestRegisterMemberDto.password())
+                                                  .email(registerMemberDto.email())
+                                                  .password(registerMemberDto.password())
                                                   .build();
     }
 
@@ -102,17 +122,16 @@ public class MemberServiceImpl implements MemberService {
      * 1. 이메일 중복 체크
      * 2. 이메일 인증
      *
-     * @param requestRegisterDto
+     * @param registerDto
      */
-    @Override
     @Transactional
-    public Member registerMember(RequestRegisterDto requestRegisterDto) {
+    protected Member registerMember(RequestRegisterDto registerDto) {
         MemberBuilder memberBuilder = Member.builder()
                                      .memberId(UUID.randomUUID()
                                                    .toString())
-                                     .email(requestRegisterDto.email())
-                                     .socialType(requestRegisterDto.socialType());
-        String password = requestRegisterDto.password();
+                                     .email(registerDto.email())
+                                     .socialType(registerDto.socialType());
+        String password = registerDto.password();
         //password가 null이 아니면 추가 (소셜 로그인인 경우 추가하지 않기 위해)
         if (password != null) {
             memberBuilder.password(passwordEncoder.encode(password));
@@ -122,39 +141,62 @@ public class MemberServiceImpl implements MemberService {
     }
 
     /**
-     * 이메일을 통해 추가정보 등록
+     * 멤버 추가 정보 저장
      *
-     * @param requestAdditionalInfo
+     * @param additionalInfo
      * @param profileImg
+     * @return
      */
-    @Override
     @Transactional
-    public void registerAdditionalInfo(RequestAdditionalInfo requestAdditionalInfo,
-        MultipartFile profileImg) {
-        log.info(requestAdditionalInfo.memberId());
+    protected MemberInfo registerAdditionalInfo(Member member, MemberSetting memberSetting,
+        RequestAdditionalInfo additionalInfo, MultipartFile profileImg) {
+        log.info(additionalInfo.memberId());
 
-        String profileImgUrl = requestAdditionalInfo.profileImgUrl();
+        String profileImgUrl = additionalInfo.profileImgUrl();
 
         //기본 프로필 이미지 or 소셜 로그인의 경우 profileImgUrl
-        String fileKey = profileImgUrl == null ? "Default.jpg" : profileImgUrl;
+        String imgUrl = profileImgUrl == null ? DEFAULT_IMG_URL : profileImgUrl;
         if (profileImg != null) {
-            fileKey = commonServiceClient.saveProfileImg(profileImg, null);
+            imgUrl = commonServiceClient.saveProfileImg(profileImg, null);
         }
         MemberInfo memberInfo = MemberInfo.builder()
-                                          .id(requestAdditionalInfo.id())
-                                          .memberId(requestAdditionalInfo.memberId())
-                                          .gender(requestAdditionalInfo.gender())
-                                          .nickName(requestAdditionalInfo.nickName())
-                                          .year(requestAdditionalInfo.year())
-                                          .introduction(requestAdditionalInfo.introduction())
-                                          .profileImgUrl(fileKey)
+                                          .id(additionalInfo.id())
+                                          .member(member)
+                                          .memberSetting(memberSetting)
+                                          .memberId(additionalInfo.memberId())
+                                          .gender(additionalInfo.gender())
+                                          .nickName(additionalInfo.nickName())
+                                          .year(additionalInfo.year())
+                                          .introduction(additionalInfo.introduction())
+                                          .profileImgUrl(imgUrl)
                                           .build();
 
         //추가 정보 저장
         MemberInfo info = memberInfoRepository.save(memberInfo);
-        log.info("memberInfo : {}", info);
         //선호 카테고리 추가
-        saveCategories(requestAdditionalInfo, info);
+        saveCategories(additionalInfo, info);
+        //기본 서재 생성
+        createLibrary(member.getId());
+        return info;
+    }
+
+    /**
+     * 멤버 세팅 저장
+     *
+     * @param memberId
+     * @param memberSettingDto
+     * @return
+     */
+    @Transactional
+    protected MemberSetting registerMemberSetting(Long memberId, RequestMemberSettingDto memberSettingDto) {
+        MemberSetting memberSetting = MemberSetting.builder()
+                                                   .id(memberId)
+                                                   .isLetterReceive(
+                                                       memberSettingDto.isLetterReceive())
+                                                   .reviewVisibility(
+                                                       memberSettingDto.reviewVisibility())
+                                                   .build();
+        return memberSettingRepository.save(memberSetting);
     }
 
     /**
@@ -162,7 +204,8 @@ public class MemberServiceImpl implements MemberService {
      * @param requestAdditionalInfo
      * @param info
      */
-    private void saveCategories(RequestAdditionalInfo requestAdditionalInfo, MemberInfo info) {
+    @Transactional
+    protected void saveCategories(RequestAdditionalInfo requestAdditionalInfo, MemberInfo info) {
         Arrays.stream(requestAdditionalInfo.categories())
               .forEach((categoryId) -> {
                   //멤버 매퍼 키를 생성
@@ -179,8 +222,23 @@ public class MemberServiceImpl implements MemberService {
                                             .memberInfo(info)
                                             .build();
                   //매퍼 테이블에 매퍼 정보 저장
-                  memberCategoryMapperRepository.save(memberCategoryMapper);
+                  MemberCategoryMapper categoryMapper = memberCategoryMapperRepository.save(
+                      memberCategoryMapper);
+                  //멤버 정보에 카테고리 연관관계 추가
+                  info.addCategory(categoryMapper);
               });
+    }
+
+    private void createLibrary(Long memberId) {
+        RequestCreateLibraryDto createLibraryDto
+            = RequestCreateLibraryDto.builder()
+                                     .name("기본 서재")
+                                     .libraryOrder(1)
+                                     .libraryStyleDto(LibraryStyleDto.builder()
+                                                                     .libraryColor("#FFFFFF")
+                                                                     .build())
+                                     .build();
+        libraryServiceClient.createLibrary(memberId, createLibraryDto);
     }
 
     /**
@@ -287,4 +345,5 @@ public class MemberServiceImpl implements MemberService {
     public ResponseLoginTokenDto registerLogin(RequestLoginDto requestLoginDto) {
         return authServiceClient.login(requestLoginDto);
     }
+
 }

@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import Input from '@components/@common/Input';
 import WrapContainer from '@components/Layout/WrapContainer';
 import Button from '@components/@common/Button';
 import useInput from '@hooks/useInput';
 import { useNavigate } from 'react-router-dom';
 import SocialLoginButton from '@components/Login/SocialLoginButton';
+import { postLogin } from '@services/Member';
 
 const Login = () => {
   const {
@@ -16,7 +17,6 @@ const Login = () => {
     password: '',
   });
 
-  const [buttonDisabled, setButtonDisabled] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
   const navigate = useNavigate();
@@ -31,21 +31,27 @@ const Login = () => {
     navigate('/find-password');
   };
 
-  useEffect(() => {
-    if (loginInfo.email && loginInfo.password) {
-      setButtonDisabled(false);
-    } else {
-      setButtonDisabled(true);
-    }
+  const buttonDisabled = useMemo(() => {
+    return !(loginInfo.email && loginInfo.password);
   }, [loginInfo]);
 
-  // 로그인 API
-  const handleLogin = e => {
+  const handleLogin = async e => {
     e.preventDefault();
 
-    // 로그인 연동 작성
-    if (errorMessage === '' && !buttonDisabled) {
-      // 로그인
+    if (buttonDisabled) return;
+
+    try {
+      const data = await postLogin(loginInfo);
+
+      // 로그인 성공
+      localStorage.setItem('ACCESS_TOKEN', data.accessToken);
+
+      navigate('/');
+
+      // 페이지 이동 하기
+    } catch (error) {
+      // 에러 처리
+      setErrorMessage('아이디 혹은 비밀번호가 일치하지 않습니다.');
     }
   };
 
@@ -66,6 +72,7 @@ const Login = () => {
               <Input
                 labelText='비밀번호'
                 id='password'
+                type='password'
                 value={loginInfo.password}
                 onChange={handleChange}
               />

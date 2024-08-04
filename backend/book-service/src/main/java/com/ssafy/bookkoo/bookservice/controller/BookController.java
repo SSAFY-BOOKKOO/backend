@@ -6,6 +6,7 @@ import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseAladinSearchDetail;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestCreateBookDto;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookDto;
+import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookOfLibraryDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.service.book.BookService;
 import com.ssafy.bookkoo.bookservice.util.CommonUtil;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -109,6 +111,23 @@ public class BookController {
         ResponseBookDto bookDto = bookService.getBook(bookId);
         return ResponseEntity.ok()
                              .body(bookDto);
+    }
+
+    /**
+     * 서재 내 책 단일 조회
+     *
+     * @param memberId memberId
+     * @param bookId   book id
+     * @return ResponseBookOfLibraryDto (book + review)
+     */
+    @GetMapping("/{bookId}/me")
+    @Operation(summary = "서재 내 책 단일 조회", description = "서재 내 책 단일 조회 시 사용하는 API(내가 쓴 한줄평도 포함)")
+    public ResponseEntity<ResponseBookOfLibraryDto> getBookByIsbn(
+        @PathVariable("bookId") Long bookId,
+        @RequestParam("memberId") Long memberId
+    ) {
+        return ResponseEntity.ok()
+                             .body(bookService.getBookOfLibrary(bookId, memberId));
     }
 
     /**

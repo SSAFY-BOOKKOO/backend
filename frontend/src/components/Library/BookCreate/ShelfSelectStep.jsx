@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useAtom } from 'jotai';
 import { bookDataAtom } from '@atoms/bookCreateAtom';
 import CreateSelectButton from './CreateSelectButton';

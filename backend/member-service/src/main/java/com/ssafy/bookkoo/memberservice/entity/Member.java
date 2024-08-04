@@ -1,5 +1,6 @@
 package com.ssafy.bookkoo.memberservice.entity;
 
+import com.ssafy.bookkoo.memberservice.enums.SocialType;
 import com.ssafy.bookkoo.memberservice.global.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,9 +39,7 @@ public class Member extends BaseEntity {
     @Column(name = "social_type")
     private SocialType socialType;
 
-
     @Builder
-
     public Member(String memberId, String email, String password, SocialType socialType) {
         this.memberId = memberId;
         this.email = email;

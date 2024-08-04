@@ -1,8 +1,8 @@
 package com.ssafy.bookkoo.memberservice.dto.request;
 
 import com.ssafy.bookkoo.memberservice.annotation.MaxArray;
-import com.ssafy.bookkoo.memberservice.entity.Gender;
-import com.ssafy.bookkoo.memberservice.entity.SocialType;
+import com.ssafy.bookkoo.memberservice.enums.Gender;
+import com.ssafy.bookkoo.memberservice.enums.SocialType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
@@ -21,15 +21,21 @@ public record RequestRegisterMemberDto (
     @MaxArray(value = 15) Integer[] categories,
     String introduction,
     SocialType socialType,
-    String profileImgUrl
+    String profileImgUrl,
+    RequestMemberSettingDto memberSettingDto
 ) {
 
     /**
-     * SocialType이 없으면 bookkoo로 설정
+     * Default
+     * SocialType: bookkoo
+     * Gender: NONE
      */
     public RequestRegisterMemberDto {
         if (socialType == null) {
             socialType = SocialType.bookkoo;
+        }
+        if (gender == null) {
+            gender = Gender.NONE;
         }
     }
 }

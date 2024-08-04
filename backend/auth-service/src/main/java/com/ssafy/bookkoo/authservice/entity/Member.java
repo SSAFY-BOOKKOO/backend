@@ -19,8 +19,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 public class Member implements OAuth2User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "member_id")
@@ -33,7 +33,7 @@ public class Member implements OAuth2User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "socialType")
+    @Column(name = "social_type")
     private SocialType socialType;
 
     @Builder

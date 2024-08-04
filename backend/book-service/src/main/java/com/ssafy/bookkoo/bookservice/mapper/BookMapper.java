@@ -11,6 +11,7 @@ import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseOriginAladinSearchDetail
 import com.ssafy.bookkoo.bookservice.dto.book.RequestCreateBookDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
+import com.ssafy.bookkoo.bookservice.util.DateMapper;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,7 +20,7 @@ import org.mapstruct.Mappings;
 /**
  * Book 엔티티와 DTO 간의 변환을 처리하는 매퍼 인터페이스입니다.
  */
-@Mapper(componentModel = "spring", uses = {CategoryMapper.class})
+@Mapper(componentModel = "spring", uses = {CategoryMapper.class, DateMapper.class})
 public interface BookMapper {
 
     /**
@@ -37,17 +38,20 @@ public interface BookMapper {
      * @param dto ResponseAladinSearchDetail 객체
      * @return 변환된 Book 엔티티
      */
-    @Mapping(source = "coverImgUrl", target = "coverImgUrl")
-    @Mapping(source = "author", target = "author")
-    @Mapping(source = "publisher", target = "publisher")
-    @Mapping(source = "summary", target = "summary")
-    @Mapping(source = "title", target = "title")
-    @Mapping(source = "isbn", target = "isbn")
-    @Mapping(source = "itemPage", target = "itemPage")
-    @Mapping(source = "sizeDepth", target = "sizeDepth")
-    @Mapping(source = "sizeHeight", target = "sizeHeight")
-    @Mapping(source = "sizeWidth", target = "sizeWidth")
-    @Mapping(source = "category", target = "category")
+    @Mappings({
+        @Mapping(source = "coverImgUrl", target = "coverImgUrl"),
+        @Mapping(source = "author", target = "author"),
+        @Mapping(source = "publisher", target = "publisher"),
+        @Mapping(source = "summary", target = "summary"),
+        @Mapping(source = "title", target = "title"),
+        @Mapping(source = "isbn", target = "isbn"),
+        @Mapping(source = "itemPage", target = "itemPage"),
+        @Mapping(source = "sizeDepth", target = "sizeDepth"),
+        @Mapping(source = "sizeHeight", target = "sizeHeight"),
+        @Mapping(source = "sizeWidth", target = "sizeWidth"),
+        @Mapping(source = "category", target = "category"),
+        @Mapping(source = "publishedAt", target = "publishedAt", qualifiedByName = "asDate")
+    })
     Book toEntity(ResponseAladinSearchDetail dto);
 
     /**
@@ -70,7 +74,7 @@ public interface BookMapper {
         @Mapping(source = "author", target = "author"),
         @Mapping(source = "publisher", target = "publisher"),
         @Mapping(source = "description", target = "summary"),
-        @Mapping(source = "pubDate", target = "publishedAt"),
+        @Mapping(source = "pubDate", target = "publishedAt", qualifiedByName = "asDate"),
         @Mapping(source = "title", target = "title"),
         @Mapping(source = "isbn", target = "isbn"),
         @Mapping(target = "inLibrary", ignore = true),
@@ -99,7 +103,7 @@ public interface BookMapper {
      * @return 변환된 ResponseAladinSearchDetail
      */
     @Mapping(source = "cover", target = "coverImgUrl")
-    @Mapping(source = "pubDate", target = "publishedAt")
+    @Mapping(source = "pubDate", target = "publishedAt", qualifiedByName = "asDate")
     @Mapping(source = "description", target = "summary")
     @Mapping(target = "category", ignore = true)
     @Mapping(source = "subInfo.itemPage", target = "itemPage")

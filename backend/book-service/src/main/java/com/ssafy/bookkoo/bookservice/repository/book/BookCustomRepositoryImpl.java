@@ -4,6 +4,9 @@ package com.ssafy.bookkoo.bookservice.repository.book;
 
 import static com.querydsl.core.types.Projections.constructor;
 import static com.ssafy.bookkoo.bookservice.entity.QBook.book;
+import static com.ssafy.bookkoo.bookservice.entity.QCategory.category;
+import static com.ssafy.bookkoo.bookservice.entity.QReview.review;
+import static com.ssafy.bookkoo.bookservice.entity.QReviewLike.reviewLike;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -12,7 +15,10 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.bookkoo.bookservice.dto.book.CheckExistBookByIsbnDto;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBooksFilterDto;
+import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookOfLibraryDto;
 import com.ssafy.bookkoo.bookservice.dto.book.SearchBookConditionDto;
+import com.ssafy.bookkoo.bookservice.dto.category.CategoryDto;
+import com.ssafy.bookkoo.bookservice.dto.review.ResponseReviewDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import com.ssafy.bookkoo.bookservice.exception.InvalidAttributeException;
 import java.util.List;
@@ -186,5 +192,60 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
                            .from(book)
                            .where(predicate)
                            .fetch();
+    }
+
+    @Override
+    public ResponseBookOfLibraryDto getBookOfLibrary(Long bookId, Long memberId) {
+        // 책 정보 조회
+        Book bookEntity = queryFactory.selectFrom(book)
+                                      .leftJoin(book.category, category)
+                                      .where(book.id.eq(bookId))
+                                      .fetchOne();
+
+        if (bookEntity == null) {
+            return null;
+        }
+
+        // 리뷰와 likeCount 조회
+        ResponseReviewDto reviewDto = queryFactory.select(
+                                                      constructor(ResponseReviewDto.class,
+                                                          review.id,
+                                                          review.book.id,
+                                                          review.memberId,
+                                                          review.content,
+                                                          review.rating,
+                                                          reviewLike.id.count()
+                                                                       .intValue()
+                                                                       .as("likeCount")
+                                                      ))
+                                                  .from(review)
+                                                  .leftJoin(reviewLike)
+                                                  .on(reviewLike.review.id.eq(review.id))
+                                                  .where(review.book.id.eq(bookId)
+                                                                       .and(review.memberId.eq(
+                                                                           memberId)))
+                                                  .groupBy(review.id)
+                                                  .fetchOne();
+
+        CategoryDto categoryDto = new CategoryDto(bookEntity.getCategory()
+                                                            .getId(), bookEntity.getCategory()
+                                                                                .getName());
+
+        return new ResponseBookOfLibraryDto(
+            bookEntity.getId(),
+            bookEntity.getCoverImgUrl(),
+            bookEntity.getAuthor(),
+            bookEntity.getPublisher(),
+            bookEntity.getSummary(),
+            bookEntity.getTitle(),
+            bookEntity.getIsbn(),
+            bookEntity.getItemPage(),
+            bookEntity.getSizeDepth(),
+            bookEntity.getSizeHeight(),
+            bookEntity.getSizeWidth(),
+            bookEntity.getPublishedAt(),
+            categoryDto,
+            reviewDto
+        );
     }
 }

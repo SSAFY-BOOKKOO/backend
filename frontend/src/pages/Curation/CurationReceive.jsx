@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import Tab from '@components/Curation/Tab';
+import CurationTab from '@components/Curation/CurationTab';
 import { BsBookmarkStar, BsBookmarkStarFill } from 'react-icons/bs';
 import { BsTrash3 } from 'react-icons/bs';
 import { AiFillAlert } from 'react-icons/ai';
@@ -79,25 +79,28 @@ const CurationReceive = () => {
 
   return (
     <div className='flex flex-col'>
-      <Tab />
-      <div className='flex justify-center items-center bg-gray-100 space-x-2 p-2 m-4 rounded'>
+      <CurationTab />
+      <div className='flex justify-center items-center space-x-2 pt-4 rounded'>
         <AiFillAlert className='text-red-500 ' />
-        <p className='font-bold'>15일 후 자동 삭제됩니다!</p>
-        console.log({storedLetters})
+        <p className='font-bold text-pink-400'>
+          받은 날부터 15일 후 자동 삭제됩니다!
+        </p>
       </div>
-
+      <p className='pl-6 pt-3 font-bold text-green-400'>
+        받은 레터 수: {letters.length}
+      </p>
       <div className='flex-1 overflow-y-auto px-4'>
         {letters.map(letter => (
           <Swiper
             key={letter.id}
             onSlideChange={() => handleSlide(letter.id)}
-            className='relative flex items-center my-8 cursor-pointer'
+            className='relative flex items-center mb-4 cursor-pointer'
             slidesPerView={1}
           >
             {/* 레터 */}
             <SwiperSlide>
               <div
-                className={`flex items-center bg-gray-100 rounded-lg p-4 shadow w-full h-40 transition-transform duration-300 ease-in-out ${
+                className={`relative flex items-center bg-green-50 rounded-lg px-4 shadow w-full h-40 transition-transform duration-300 ease-in-out ${
                   slideId === letter.id ? 'transform translate-x-2/3' : ''
                 }`}
                 onClick={() => handleLetterClick(letter)}
@@ -107,32 +110,35 @@ const CurationReceive = () => {
                   alt='Letter'
                   className='w-16 h-24 mr-4 rounded-lg'
                 />
-                <div className='flex-1 pb-12'>
-                  <p className='text-sm text-gray-600'>FROM. {letter.from}</p>
+                <div className='flex-1 pb-7'>
                   <h2 className='text-lg font-bold'>{letter.title}</h2>
+                  <p>책 제목</p>
+                  <p>2024.07.26</p>
                 </div>
-
                 {/* 보관x: 빈 아이콘 보관o: 꽉찬 아이콘 */}
                 {storedLetters.includes(letter.id) ? (
                   <BsBookmarkStarFill
                     key={letter.id}
                     onClick={event => onStore(event, letter)}
-                    className='mt-20 cursor-pointer size-7'
+                    className='absolute top-7 right-3 cursor-pointer size-7'
                   />
                 ) : (
                   <BsBookmarkStar
                     key={letter.id}
-                    className='mt-20 cursor-pointer size-7'
+                    className='absolute top-7 right-3 cursor-pointer size-7'
                     onClick={event => onStore(event, letter)}
                   />
                 )}
+                <p className='absolute bottom-2 right-4 text-sm text-gray-600'>
+                  FROM. {letter.from}
+                </p>
               </div>
             </SwiperSlide>
 
             {/* 삭제 영역 */}
             <SwiperSlide>
               <div
-                className={`flex justify-center items-center w-1/3 h-40 bg-red-500 rounded-r-lg ml-44 transition-transform duration-300 ease-in-out ${
+                className={`flex justify-center items-center w-1/3 h-40 bg-pink-500 rounded-r-lg ml-44 transition-transform duration-300 ease-in-out ${
                   slideId === letter.id ? 'transform translate-x-2/3' : ''
                 }`}
                 onClick={() => handleDelete(letter.id)}
