@@ -373,7 +373,10 @@ public class LibraryServiceImpl implements LibraryService {
      * @return Map<BookId, boolean>
      */
     @Override
-    public Map<Long, Boolean> areBooksInLibrary(Long memberId, List<Long> bookIds) {
+    public Map<Long, Boolean> areBooksInLibrary(
+        Long memberId,
+        List<Long> bookIds
+    ) {
         List<Long> booksInLibrary = libraryBookMapperRepository.findBookIdsByMemberIdAndBookIds(
             memberId, bookIds);
         return bookIds.stream()
@@ -395,6 +398,28 @@ public class LibraryServiceImpl implements LibraryService {
         Long bookId
     ) {
         return bookServiceClient.getBookOfLibrary(bookId, memberId);
+    }
+
+    /**
+     * 서재 삭제 : libraryBookMapper 도 cascade 삭제 필요
+     *
+     * @param libraryId 서재 ID
+     * @return true / false
+     */
+    @Override
+    public Boolean deleteLibrary(Long libraryId) {
+        try {
+            // 있을 경우 삭제
+            if (libraryRepository.existsById(libraryId)) {
+                libraryRepository.deleteById(libraryId);
+                return true;
+            }
+            // 없을 경우 삭제 못함 : false
+            return false;
+        } catch (Exception e) {
+            // 에러날경우 false
+            return false;
+        }
     }
 
     /**
