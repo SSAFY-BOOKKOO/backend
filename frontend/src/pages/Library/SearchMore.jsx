@@ -5,6 +5,7 @@ import SearchBookItem from '@components/Library/Search/SearchBookItem';
 import SearchLibraryItem from '@components/Library/Search/SearchLibraryItem';
 import BookTalkItem from '@components/@common/Book/BookTalkItem';
 import useBookInfiniteScroll from '@hooks/useBookInfiniteScroll';
+import useLibraryInfiniteScroll from '@hooks/useLibraryInfiniteScroll';
 import { useInView } from 'react-intersection-observer';
 import useModal from '@hooks/useModal';
 import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
@@ -24,6 +25,7 @@ const SearchMore = () => {
       case 'book':
         return useBookInfiniteScroll(searchText, selectedTag);
       case 'library':
+        return useLibraryInfiniteScroll(searchText, selectedTag);
       case 'booktalk':
         return {
           data: null,
@@ -42,11 +44,12 @@ const SearchMore = () => {
   useEffect(() => {
     if (inView && hasNextPage) {
       fetchNextPage();
+      console.log(hasNextPage, data?.pages?.length, data);
     }
   }, [inView, hasNextPage, fetchNextPage]);
 
   const handleBookClick = book => {
-    navigate(`/ ${type}/detail/${book.book_id}`, { state: { book } });
+    navigate(`/${type}/detail/${book.isbn}`, { state: { book } });
   };
 
   const handleBookCreateButton = async book => {
@@ -65,7 +68,7 @@ const SearchMore = () => {
       case 'library':
         return (
           <SearchLibraryItem
-            key={book.book_id}
+            key={book.id}
             book={book}
             onClick={() => handleBookClick(book)}
           />
@@ -73,7 +76,7 @@ const SearchMore = () => {
       case 'book':
         return (
           <SearchBookItem
-            key={book.book_id}
+            key={book.isbn}
             book={book}
             onClick={() => handleBookClick(book)}
             onCreateClick={() => handleBookCreateButton(book)}
@@ -108,9 +111,6 @@ const SearchMore = () => {
         <div key={index}>{page.data?.map(renderBookItem)}</div>
       ))}
       {isFetchingNextPage && <p className='text-center'>로딩중...</p>}
-      {!hasNextPage && data?.pages?.length > 0 && (
-        <p className='text-center'>더 이상 결과가 없습니다.</p>
-      )}
       <div ref={ref}></div>
       <BookCreateModal
         isCreateModalOpen={isOpen}
