@@ -6,9 +6,9 @@ const SearchLibraryItem = ({ book, onClick }) => {
       className='flex items-start space-x-4 p-3 mb-2 bg-white cursor-pointer'
       onClick={onClick}
     >
-      <div className='w-36 h-36 flex'>
+      <div className='w-36 h-36 flex '>
         <img
-          className='object-contain'
+          className='object-contain rounded-lg'
           src={book.coverImgUrl}
           alt={book.title}
         />
@@ -21,8 +21,6 @@ const SearchLibraryItem = ({ book, onClick }) => {
           <p className='text-sm text-gray-600'>
             {book.publisher} | {book?.publishedAt}
           </p>
-          <p className='text-sm text-gray-600'>읽은 기간: {book.publishedAt}</p>
-          <p className='text-sm text-gray-600'>평점: {book.rating}</p>
         </div>
       </div>
     </div>
