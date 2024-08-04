@@ -7,12 +7,15 @@ import SearchForm from '@components/Library/Search/SearchForm';
 import SearchResultSection from '@components/Library/Search/SearchResultSection';
 import { getAladinBooks } from '@services/Book';
 import { getLibrarySearchBooks } from '@services/Library';
+import Spinner from '@components/@common/Spinner';
+import { useAtomValue } from 'jotai';
+import { isLoadingAtom } from '@atoms/loadingAtom';
 
 const LibrarySearch = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [loading, setLoading] = useState(false); // 로딩여부
+  const isLoading = useAtomValue(isLoadingAtom);
   const [isSearched, setIsSearched] = useState(false); // 검색여부
   const [searchText, setSearchText] = useState(''); // 검색 내용
   const [selectedTag, setSelectedTag] = useState('Title'); // 검색 카테고리
@@ -41,7 +44,6 @@ const LibrarySearch = () => {
 
   const handleSearch = async (text, tag) => {
     setIsSearched(true);
-    setLoading(true);
 
     try {
       const results = await Promise.allSettled([
@@ -65,8 +67,6 @@ const LibrarySearch = () => {
       setSearchParams({ text, tag });
     } catch (error) {
       console.error('Unexpected error', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -87,6 +87,7 @@ const LibrarySearch = () => {
 
   return (
     <WrapContainer className='mt-4'>
+      <Spinner />
       <SearchForm
         searchText={searchText}
         setSearchText={setSearchText}
@@ -97,8 +98,7 @@ const LibrarySearch = () => {
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
       />
-      {loading && <div>Loading...</div>}
-      {isSearched && (
+      {isSearched && !isLoading && (
         <>
           <SearchResultSection
             title='내 서재 검색'

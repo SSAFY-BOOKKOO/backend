@@ -10,6 +10,7 @@ import { useInView } from 'react-intersection-observer';
 import useModal from '@hooks/useModal';
 import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
 import { getAladinBookByIsbn } from '@services/Book';
+import Spinner from '@components/@common/Spinner';
 
 const SearchMore = () => {
   const { type } = useParams();
@@ -109,7 +110,7 @@ const SearchMore = () => {
       {data?.pages?.map((page, index) => (
         <div key={index}>{page.data?.map(renderBookItem)}</div>
       ))}
-      {isFetchingNextPage && <p className='text-center'>로딩중...</p>}
+      {isFetchingNextPage && <Spinner infiniteScroll />}
       <div ref={ref}></div>
       <BookCreateModal
         isCreateModalOpen={isOpen}
