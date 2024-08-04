@@ -1,9 +1,9 @@
 package com.ssafy.bookkoo.memberservice.controller;
 
 import com.ssafy.bookkoo.memberservice.dto.request.RequestCertificationDto;
-import com.ssafy.bookkoo.memberservice.dto.request.RequestLoginDto;
+import com.ssafy.bookkoo.memberservice.client.dto.request.RequestLoginDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterMemberDto;
-import com.ssafy.bookkoo.memberservice.dto.response.ResponseLoginTokenDto;
+import com.ssafy.bookkoo.memberservice.client.dto.response.ResponseLoginTokenDto;
 import com.ssafy.bookkoo.memberservice.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
@@ -98,7 +98,7 @@ public class MemberController {
                              .build();
     }
 
-    @PatchMapping("/password/reset")
+    @PostMapping("/password/reset")
     @Operation(description = "가입한 이메일에 대한 비밀번호를 초기화 합니다.", summary = "비밀번호 초기화")
     public ResponseEntity<HttpStatus> passwordReset(
         @RequestBody String email

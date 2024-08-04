@@ -1,5 +1,7 @@
 package com.ssafy.bookkoo.memberservice.controller;
 
+import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdateMemberInfoDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestMemberSettingDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseFollowShipDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
@@ -15,15 +17,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
@@ -91,8 +97,8 @@ public class MemberInfoController {
     ) {
         List<ResponseFollowShipDto> followers = followShipService.getFollowers(memberId);
         List<Long> followerIds = new ArrayList<>(followers.stream()
-                                                           .map(ResponseFollowShipDto::memberId)
-                                                           .toList());
+                                                          .map(ResponseFollowShipDto::memberId)
+                                                          .toList());
 
         //자기 자신 ID 추가 (follwerIds의 마지막에 추가)
         followerIds.add(memberId);
@@ -105,10 +111,41 @@ public class MemberInfoController {
     }
 
     @GetMapping("/name")
+    @Operation(summary = "닉네임을 통해 멤버의 실제 Long ID를 반환하는 API",
+        description = "닉네임을 통해 멤버의 실제 Long ID를 반환하는 API (서비스 내부에서 사용하기 위한 API)")
     public ResponseEntity<Long> getMemberIdByNickName(
         @RequestParam("nickName") String nickName
     ) {
         Long memberId = memberInfoService.getMemberIdByNickName(nickName);
         return ResponseEntity.ok(memberId);
+    }
+
+    @PutMapping("/setting")
+    @Operation(summary = "멤버의 공개 범위 설정 변경 API",
+        description = "멤버의 공개 범위 설정을 변경하는 API 입니다. ReviewVisibility[PUBLIC, FOLLOWER_PUBLIC, PRIVATE]")
+    public ResponseEntity<HttpStatus> updateMemberSetting(
+        @RequestHeader HttpHeaders headers,
+        @RequestBody RequestMemberSettingDto memberSettingDto
+    ) {
+        Long id = CommonUtil.getMemberId(headers);
+        memberInfoService.updateMemberSetting(id, memberSettingDto);
+        return ResponseEntity.ok()
+                             .build();
+    }
+
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "멤버의 추가 정보를 변경하는 API",
+        description = "멤버의 닉네임, 프로필 이미지, 소개글, 선호 카테고리를 변경하는 API 입니다.")
+    public ResponseEntity<HttpStatus> updateMemberInfo(
+        @RequestHeader HttpHeaders headers,
+        @Valid @RequestPart(value = "requestUpdateMemberInfoDto")
+        RequestUpdateMemberInfoDto memberInfoUpdateDto,
+        @RequestPart(value = "profileImg", required = false)
+        MultipartFile profileImg
+    ) {
+        Long id = CommonUtil.getMemberId(headers);
+        memberInfoService.updateMemberInfo(id, memberInfoUpdateDto, profileImg);
+        return ResponseEntity.ok()
+                             .build();
     }
 }

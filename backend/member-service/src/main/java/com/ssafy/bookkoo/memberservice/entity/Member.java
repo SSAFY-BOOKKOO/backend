@@ -39,9 +39,7 @@ public class Member extends BaseEntity {
     @Column(name = "social_type")
     private SocialType socialType;
 
-
     @Builder
-
     public Member(String memberId, String email, String password, SocialType socialType) {
         this.memberId = memberId;
         this.email = email;

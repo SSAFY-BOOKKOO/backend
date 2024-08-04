@@ -2,9 +2,13 @@ package com.ssafy.bookkoo.memberservice.service.Impl;
 
 import com.ssafy.bookkoo.memberservice.client.AuthServiceClient;
 import com.ssafy.bookkoo.memberservice.client.CommonServiceClient;
+import com.ssafy.bookkoo.memberservice.client.LibraryServiceClient;
+import com.ssafy.bookkoo.memberservice.client.dto.request.LibraryStyleDto;
+import com.ssafy.bookkoo.memberservice.client.dto.request.RequestCreateLibraryDto;
+import com.ssafy.bookkoo.memberservice.client.dto.request.RequestLoginDto;
 import com.ssafy.bookkoo.memberservice.dto.request.*;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterDto.RequestRegisterDtoBuilder;
-import com.ssafy.bookkoo.memberservice.dto.response.ResponseLoginTokenDto;
+import com.ssafy.bookkoo.memberservice.client.dto.response.ResponseLoginTokenDto;
 import com.ssafy.bookkoo.memberservice.entity.*;
 import com.ssafy.bookkoo.memberservice.entity.Member.MemberBuilder;
 import com.ssafy.bookkoo.memberservice.enums.SocialType;
@@ -18,6 +22,7 @@ import com.ssafy.bookkoo.memberservice.service.MailSendService;
 import com.ssafy.bookkoo.memberservice.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,11 +47,14 @@ public class MemberServiceImpl implements MemberService {
     private final MailSendService mailSendService;
     private final MemberCategoryMapperRepository memberCategoryMapperRepository;
     private final AuthServiceClient authServiceClient;
+    private final LibraryServiceClient libraryServiceClient;
 
     //S3 common 서비스
     private final CommonServiceClient commonServiceClient;
     private final String passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$";
 
+    @Value("${config.default-img-url}")
+    private String DEFAULT_IMG_URL;
     /**
      * 회원가입에 필요한 모든 정보를 받아 회원가입하는 서비스
      *
@@ -117,7 +125,7 @@ public class MemberServiceImpl implements MemberService {
      * @param registerDto
      */
     @Transactional
-    public Member registerMember(RequestRegisterDto registerDto) {
+    protected Member registerMember(RequestRegisterDto registerDto) {
         MemberBuilder memberBuilder = Member.builder()
                                      .memberId(UUID.randomUUID()
                                                    .toString())
@@ -140,16 +148,16 @@ public class MemberServiceImpl implements MemberService {
      * @return
      */
     @Transactional
-    public MemberInfo registerAdditionalInfo(Member member, MemberSetting memberSetting,
+    protected MemberInfo registerAdditionalInfo(Member member, MemberSetting memberSetting,
         RequestAdditionalInfo additionalInfo, MultipartFile profileImg) {
         log.info(additionalInfo.memberId());
 
         String profileImgUrl = additionalInfo.profileImgUrl();
 
         //기본 프로필 이미지 or 소셜 로그인의 경우 profileImgUrl
-        String fileKey = profileImgUrl == null ? "Default.jpg" : profileImgUrl;
+        String imgUrl = profileImgUrl == null ? DEFAULT_IMG_URL : profileImgUrl;
         if (profileImg != null) {
-            fileKey = commonServiceClient.saveProfileImg(profileImg, null);
+            imgUrl = commonServiceClient.saveProfileImg(profileImg, null);
         }
         MemberInfo memberInfo = MemberInfo.builder()
                                           .id(additionalInfo.id())
@@ -160,13 +168,15 @@ public class MemberServiceImpl implements MemberService {
                                           .nickName(additionalInfo.nickName())
                                           .year(additionalInfo.year())
                                           .introduction(additionalInfo.introduction())
-                                          .profileImgUrl(fileKey)
+                                          .profileImgUrl(imgUrl)
                                           .build();
 
         //추가 정보 저장
         MemberInfo info = memberInfoRepository.save(memberInfo);
         //선호 카테고리 추가
         saveCategories(additionalInfo, info);
+        //기본 서재 생성
+        createLibrary(member.getId());
         return info;
     }
 
@@ -178,7 +188,7 @@ public class MemberServiceImpl implements MemberService {
      * @return
      */
     @Transactional
-    public MemberSetting registerMemberSetting(Long memberId, RequestMemberSettingDto memberSettingDto) {
+    protected MemberSetting registerMemberSetting(Long memberId, RequestMemberSettingDto memberSettingDto) {
         MemberSetting memberSetting = MemberSetting.builder()
                                                    .id(memberId)
                                                    .isLetterReceive(
@@ -195,7 +205,7 @@ public class MemberServiceImpl implements MemberService {
      * @param info
      */
     @Transactional
-    private void saveCategories(RequestAdditionalInfo requestAdditionalInfo, MemberInfo info) {
+    protected void saveCategories(RequestAdditionalInfo requestAdditionalInfo, MemberInfo info) {
         Arrays.stream(requestAdditionalInfo.categories())
               .forEach((categoryId) -> {
                   //멤버 매퍼 키를 생성
@@ -217,6 +227,18 @@ public class MemberServiceImpl implements MemberService {
                   //멤버 정보에 카테고리 연관관계 추가
                   info.addCategory(categoryMapper);
               });
+    }
+
+    private void createLibrary(Long memberId) {
+        RequestCreateLibraryDto createLibraryDto
+            = RequestCreateLibraryDto.builder()
+                                     .name("기본 서재")
+                                     .libraryOrder(1)
+                                     .libraryStyleDto(LibraryStyleDto.builder()
+                                                                     .libraryColor("#FFFFFF")
+                                                                     .build())
+                                     .build();
+        libraryServiceClient.createLibrary(memberId, createLibraryDto);
     }
 
     /**
@@ -323,4 +345,5 @@ public class MemberServiceImpl implements MemberService {
     public ResponseLoginTokenDto registerLogin(RequestLoginDto requestLoginDto) {
         return authServiceClient.login(requestLoginDto);
     }
+
 }

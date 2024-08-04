@@ -1,5 +1,7 @@
 package com.ssafy.bookkoo.memberservice.service;
 
+import com.ssafy.bookkoo.memberservice.dto.request.RequestMemberSettingDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdateMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberProfileDto;
@@ -10,8 +12,6 @@ import java.util.List;
 public interface MemberInfoService {
 
     void updatePassword(Long id, RequestUpdatePasswordDto requestUpdatePasswordDto);
-
-    void updateProfileImg(Long id, MultipartFile profileImg);
 
     ResponseMemberProfileDto getMemberProfileInfo(String memberId);
 
@@ -24,4 +24,8 @@ public interface MemberInfoService {
     List<Long> getRandomMemberInfo(List<Long> followers);
 
     Long getMemberIdByNickName(String nickName);
+
+    void updateMemberSetting(Long id, RequestMemberSettingDto memberSettingDto);
+
+    void updateMemberInfo(Long id, RequestUpdateMemberInfoDto memberInfoUpdateDto, MultipartFile profileImg);
 }

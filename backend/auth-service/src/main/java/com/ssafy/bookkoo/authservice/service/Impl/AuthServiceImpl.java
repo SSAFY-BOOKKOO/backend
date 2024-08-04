@@ -14,6 +14,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +34,7 @@ public class AuthServiceImpl implements AuthService {
      * @param requestLoginDto
      */
     @Override
+    @Transactional
     public ResponseLoginTokenDto login(RequestLoginDto requestLoginDto) {
         Member member = memberRepository.findByEmail(requestLoginDto.email())
                                         .orElseThrow(() -> new MemberNotFoundException(
@@ -52,6 +54,7 @@ public class AuthServiceImpl implements AuthService {
      * @return
      */
     @Override
+    @Transactional
     public ResponseLoginTokenDto login(String email) {
         Member member = memberRepository.findByEmail(email)
                                         .orElseThrow(() -> new MemberNotFoundException(email));
@@ -70,6 +73,7 @@ public class AuthServiceImpl implements AuthService {
      * @return
      */
     @Override
+    @Transactional
     public ResponseLoginTokenDto getTokenDto(String refreshToken) {
         String memberId = tokenService.getMemberIdByRefreshToken(refreshToken);
         Member member = memberRepository.findByMemberId(memberId)
@@ -78,6 +82,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Member> getMemberByEmail(String email) {
         return memberRepository.findByEmail(email);
     }
@@ -89,6 +94,7 @@ public class AuthServiceImpl implements AuthService {
      * @return
      */
     @Override
+    @Transactional
     public ResponseLoginTokenDto getResponseLoginTokenDto(Member member) {
         String refreshToken = tokenService.updateRefreshToken(member);
         String accessToken = tokenService.createAccessToken(member.getMemberId());
@@ -122,5 +128,17 @@ public class AuthServiceImpl implements AuthService {
         return getResponseLoginTokenDto(member);
     }
 
-
+    /**
+     * 멤버 로그아웃
+     * Redis의 리프레시 토큰 제거
+     * @param id
+     */
+    @Override
+    @Transactional
+    public void logout(Long id) {
+        Member member = memberRepository.findById(id)
+                                        .orElseThrow(MemberNotFoundException::new);
+        String memberId = member.getMemberId();
+        tokenService.deleteRefreshToken(memberId);
+    }
 }

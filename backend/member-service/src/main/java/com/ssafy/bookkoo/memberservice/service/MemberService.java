@@ -1,9 +1,9 @@
 package com.ssafy.bookkoo.memberservice.service;
 
 import com.ssafy.bookkoo.memberservice.dto.request.RequestCertificationDto;
-import com.ssafy.bookkoo.memberservice.dto.request.RequestLoginDto;
+import com.ssafy.bookkoo.memberservice.client.dto.request.RequestLoginDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterMemberDto;
-import com.ssafy.bookkoo.memberservice.dto.response.ResponseLoginTokenDto;
+import com.ssafy.bookkoo.memberservice.client.dto.response.ResponseLoginTokenDto;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface MemberService {
