@@ -303,11 +303,6 @@ services:
     networks:
       - bookkoo-net
     restart: on-failure
-    environment:
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://member-db:5432/bookkoo
-      - SPRING_DATASOURCE_USERNAME=magumagu
-      - SPRING_DATASOURCE_PASSWORD=magumagu
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8081/actuator/health || exit 1"]
       interval: 10s
