@@ -71,6 +71,9 @@ dependencies {
 
     //openfeign
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    // spring configuration processor
+    implementation 'org.springframework.boot:spring-boot-configuration-processor:3.3.2'
 }
 
 dependencyManagement {
