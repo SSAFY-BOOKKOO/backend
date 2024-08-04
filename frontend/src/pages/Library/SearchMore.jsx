@@ -44,7 +44,6 @@ const SearchMore = () => {
   useEffect(() => {
     if (inView && hasNextPage) {
       fetchNextPage();
-      console.log(hasNextPage, data?.pages?.length, data);
     }
   }, [inView, hasNextPage, fetchNextPage]);
 
