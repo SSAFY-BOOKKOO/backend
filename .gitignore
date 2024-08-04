@@ -600,4 +600,5 @@ gradle-app.setting
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij,visualstudiocode,windows,macos,linux,git,react,node,gradle,python
 
 # application 설정 정보
-*.yml
+backend/**/*.yml
+backend/**/*.csv 
