@@ -143,7 +143,7 @@ public class LibraryController {
     }
 
     @GetMapping("/{libraryId}/books/{bookId}")
-    @Operation(summary = "서재 내 책 단일 조회", description = "서재 내 책 단일 조회 API")
+    @Operation(summary = "서재 내 책 단일 조회(프론트에서 서재 내 책 단일 조회 시 사용)", description = "서재 내 책 단일 조회 API (한줄평도 같이 들어있음)")
     public ResponseEntity<ResponseBookOfLibraryDto> getBookOfLibrary(
         @RequestHeader HttpHeaders headers,
         @PathVariable Long libraryId,
@@ -199,7 +199,37 @@ public class LibraryController {
      * @return 사용자가 본인 서재에 등록한 책 목록 응답 DTO 리스트
      */
     @PostMapping("/me/books/search")
-    @Operation(summary = "사용자가 등록한 책 반환", description = "사용자가 본인 서재에 등록한 책 대상 ")
+    @Operation(
+        summary = "사용자가 등록한 책 반환(프론트에서 서재 내 책검색 시 사용)",
+        description = """
+            사용자가 서재에 등록한 책 조회(필터링 포함)시 사용하는 API(conditions 를 빈 리스트로 보내면 조건 없는 필터링)
+
+
+            <b>Input</b>:
+            | Name | Type  | Description |
+            |-----|-----|-------|
+            | conditions | RequestSearchBookMultiFieldDto | 조건 데이터 구조 |
+            | limit | int | 한 번의 요청에 나올 최대 데이터 개수 |
+            | offset | int | 페이지 넘버 |
+
+            <br>
+            <br>
+
+            <b>RequestSearchBookMultiFieldDto</b>:
+            | Name | Type  | Description |
+            |-----|-----|-------|
+            | field | string | 검색할 컬럼 이름(title, author, publisher, id, ... 등) |
+            | values | List(string) | 검색할 값 ex) ["어린왕자","냠냠",...] |
+
+            <b>Output</b>:
+            <br>
+                type: _description_
+
+            | Var | Type | Description |
+            |-----|-----|-------|
+            |  |  |  |
+            """
+    )
     public ResponseEntity<List<ResponseBookDto>> getMyBooks(
         @RequestHeader HttpHeaders headers,
         @RequestBody RequestSearchBookMultiFieldDto searchDto
