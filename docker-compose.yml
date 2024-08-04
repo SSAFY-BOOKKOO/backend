@@ -173,8 +173,6 @@ services:
         condition: service_healthy
     networks:
       - bookkoo-net
-    environment:
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
     restart: on-failure
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8086/actuator/health || exit 1"]
