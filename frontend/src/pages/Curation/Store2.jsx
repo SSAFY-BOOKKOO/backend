@@ -37,7 +37,7 @@ const initialLetters = [
 const CurationStore = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [storedLetters, setStoredLetters] = useState([]);
+  const [storedLetters, setStoredLetters] = useState(initialLetters);
   const [page, setPage] = useState(0);
 
   // 레터 상세보기
@@ -45,21 +45,21 @@ const CurationStore = () => {
     navigate(`/curation/letter/${letter.id}`, { state: { letter } });
   };
 
-  useEffect(() => {
-    authAxiosInstance
-      .get('/curations/store', {
-        params: {
-          page: page,
-        },
-      })
-      .then(res => {
-        setStoredLetters(res.data);
-        console.log(res);
-      })
-      .catch(err => {
-        console.log('error:', err);
-      });
-  }, [page]);
+//   useEffect(() => {
+//     authAxiosInstance
+//       .get('/curations/store', {
+//         params: {
+//           page: page,
+//         },
+//       })
+//       .then(res => {
+//         setStoredLetters(res.data);
+//         console.log(res);
+//       })
+//       .catch(err => {
+//         console.log('error:', err);
+//       });
+//   }, [page]);
 
 
 
@@ -67,7 +67,7 @@ const CurationStore = () => {
     <div className='flex flex-col'>
       <CurationTab />
       <p className='font-bold text-green-400 pl-6 pr-4 py-3'>
-        보관한 레터 수: {storedLetters.length}
+        레터 수: {storedLetters.length}
       </p>
         {storedLetters.length > 0 ? (
           <div className='flex-1 overflow-y-auto px-4'>
@@ -99,12 +99,10 @@ const CurationStore = () => {
           ))}
           </div>
         ) : (
-          <div className='bg-gray-200 p-4 mx-4 rounded-lg'>
-          <p className='text-center text-lg font-bold'>보관함이 비었습니다.</p>
-          </div>
+          <p>보관함이 비었습니다.</p>
         )}
 
-      <div className='flex justify-center space-x-4 pt-4'>
+      <div className='flex justify-center space-x-4'>
         <IoIosArrowBack
           onClick={() => setPage(prevPage => Math.max(prevPage - 1, 0))}
           className='cursor-pointer text-xl'

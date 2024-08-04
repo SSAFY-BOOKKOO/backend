@@ -70,25 +70,41 @@ const CurationSend = () => {
   return (
     <div className='flex flex-col'>
       <CurationTab />
-      <div className='flex flex-col items-center bg-gray-100 space-y-4 p-4 m-4 rounded'>
-        {sendLetters.length > 0 ? (
-          sendLetters.map(letter => (
-            <div
-              key={letter.id}
-              className='p-2 bg-white shadow rounded cursor-pointer'
+      <p className='font-bold text-green-400 pl-6 pr-4 py-3'>
+          보낸 레터 수: {sendLetters.length}
+        </p>
+        {sendLetters.length>0?(<div className='flex-1 overflow-y-auto px-4'>
+        {sendLetters.map(letter => (
+          <div className='flex flex-grow'>
+          <div 
+            key={letter.id} 
+            className={'relative flex items-center mb-6 bg-green-50 rounded-lg shadow w-full h-40'}
+          >
+            <img
+              src={letter.image}
+              alt='Letter'
+              className='w-16 h-24 mx-4 rounded-lg'
               onClick={() => handleLetterClick(letter)}
-            >
-              <p>Letter ID: {letter.id}</p>
-              <p>Title: {letter.title}</p>
-              <p>Content: {letter.content}</p>
+            />
+            <div className='flex-1 pb-7'>
+              <h2 className='text-lg font-bold'>{letter.title}</h2>
+              <p>{letter.content}</p>
+              <p>{letter.date}</p>
             </div>
-          ))
-        ) : (
-          <p className='text-center'>
-            보낸 레터가 없습니다. <br /> 지금 바로 작성해 보세요!
-          </p>
+            
+            <p className='absolute bottom-2 right-4 text-sm text-gray-600'>
+              FROM. {letter.from}
+            </p>
+            
+          </div>
+          
+          </div>
+        ))}
+        </div>):(
+          <p>레터를 작성해 주세요!</p>
         )}
-      </div>
+        
+      
       <div className='flex justify-center space-x-4'>
         <IoIosArrowBack
           onClick={() => setPage(prevPage => Math.max(prevPage - 1, 1))}

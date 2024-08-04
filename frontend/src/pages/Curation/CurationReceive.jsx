@@ -9,6 +9,8 @@ import { BsTrash3 } from 'react-icons/bs';
 import { AiFillAlert } from 'react-icons/ai';
 import { IoIosArrowBack } from 'react-icons/io';
 import { IoIosArrowForward } from 'react-icons/io';
+import { FaTrashCan } from "react-icons/fa6";
+
 // 연동
 import axios from 'axios';
 import { axiosInstance, authAxiosInstance } from '../../services/axiosInstance';
@@ -45,15 +47,10 @@ import { axiosInstance, authAxiosInstance } from '../../services/axiosInstance';
 // 받은 편지들 보여주기
 const CurationReceive = () => {
   const navigate = useNavigate();
-  const [letters, setLetters] = useState('');
+  const [letters, setLetters] = useState([]);
   const [page, setPage] = useState(0); // 페이지 상태 추가
 
-   // letters 데이터 콘솔에 출력
-   useEffect(() => {
-    console.log('Letters:', letters);
-  }, [letters[0]]);
-
-  // /////목록 조회//////
+  /////목록 조회//////
   useEffect(
     () => {
       authAxiosInstance
@@ -78,11 +75,12 @@ const CurationReceive = () => {
     [page]
   );
 
+
   // ////보관함/////
 
   // 보관함 관리 위한 useState
   const [storedLetters, setStoredLetters] = useState([]);
-  const [slideId, setSlideId] = useState(null);
+  // const [slideId, setSlideId] = useState(null);
   const navigateToStore = () => {
     navigate('/curation/store', { state: { storedLetters } });
   };
@@ -112,19 +110,44 @@ const CurationReceive = () => {
     }
   };
 
-  const handleSlide = id => {
-    setSlideId(slideId === id ? null : id);
+  //삭제 로직
+  const [selectedLetters, setSelectedLetters] = useState([]);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // 삭제 함수
+  // 선택한 레터 연동해서 삭제
+  const handleDeleteSelected = () => {
+    const deleteRequests = selectedLetters.map(id => 
+      authAxiosInstance.delete(`/curations/${id}`)
+    );
+    // 다 삭제 되면 필터로 삭제된 거 제외
+    Promise.all(deleteRequests)
+      .then(responses => {
+        // console 추후 삭제
+        console.log('Letters deleted successfully:', responses);
+        setLetters(letters.filter(letter => !selectedLetters.includes(letter.id)));
+        setSelectedLetters([]);
+      })
+      .catch(err => {
+        console.log('Error deleting letters:', err);
+      });
   };
 
-  const handleDelete = id => {
-    setLetters(letters.filter(letter => letter.id !== id));
+  // 삭제를 위한 레터 선택
+  const handleSelectLetter = (id) => {
+    if (selectedLetters.includes(id)) {
+      setSelectedLetters(selectedLetters.filter(letterId => letterId !== id));
+    } else {
+      setSelectedLetters([...selectedLetters, id]);
+    }
+    
   };
 
   // 레터 상세보기
   const handleLetterClick = letter => {
     navigate(`/curation/letter/${letter.id}`, { state: { letter } });
   };
-
+  
   return (
     <div className='flex flex-col'>
       <CurationTab />
@@ -134,71 +157,73 @@ const CurationReceive = () => {
           받은 날부터 15일 후 자동 삭제됩니다!
         </p>
       </div>
-      <p className='pl-6 pt-3 font-bold text-green-400'>
-        받은 레터 수: {letters.length}
-      </p>
+      <div className='flex justify-between items-center pl-6 pr-4 py-3'>
+        <p className='font-bold text-green-400'>
+          받은 레터 수: {letters.length}
+        </p>
+        <FaTrashCan 
+          className='text-xl cursor-pointer'
+          onClick={() => setIsDeleting(!isDeleting)}
+        />
+      </div>
+      {/* 편지들 css */}
       <div className='flex-1 overflow-y-auto px-4'>
-        {/* 레터 보기 */}
         {letters.map(letter => (
-          <Swiper
-            key={letter.id}
-            onSlideChange={() => handleSlide(letter.id)}
-            className='relative flex items-center mb-4 cursor-pointer'
-            slidesPerView={1}
+          <div className='flex flex-grow'>
+          <div 
+            key={letter.id} 
+            className={`relative flex items-center mb-6 bg-green-50 rounded-lg shadow w-full h-40 transition-transform duration-300 ${isDeleting ? 'transform -translate-x-1/5' : ''}`}
           >
-            {/* 레터 */}
-            <SwiperSlide>
-              <div
-                className={`relative flex items-center bg-green-50 rounded-lg px-4 shadow w-full h-40 transition-transform duration-300 ease-in-out ${
-                  slideId === letter.id ? 'transform translate-x-2/3' : ''
-                }`}
-                onClick={() => handleLetterClick(letter)}
-              >
-                <img
-                  src={letter.coverImgUrl}
-                  alt='Letter'
-                  className='w-16 h-24 mr-4 rounded-lg'
+            <img
+              src={letter.image}
+              alt='Letter'
+              className='w-16 h-24 mx-4 rounded-lg'
+              onClick={() => handleLetterClick(letter)}
+            />
+            <div className='flex-1 pb-7'>
+              <h2 className='text-lg font-bold'>{letter.title}</h2>
+              <p>{letter.content}</p>
+              <p>{letter.date}</p>
+            </div>
+            {storedLetters.includes(letter.id) ? (
+              <BsBookmarkStarFill
+                onClick={event => onStore(event, letter)}
+                className='absolute top-7 right-3 cursor-pointer size-7'
+              />
+            ) : (
+              <BsBookmarkStar
+                className='absolute top-7 right-3 cursor-pointer size-7'
+                onClick={event => onStore(event, letter)}
+              />
+            )}
+            <p className='absolute bottom-2 right-4 text-sm text-gray-600'>
+              FROM. {letter.from}
+            </p>
+            
+          </div>
+          {isDeleting && (
+              <div className='w-16 h-full flex items-center justify-center  bg-white'>
+                <input 
+                  type="checkbox" 
+                  className="form-checkbox h-6 w-6 mt-14 ml-3"
+                  checked={selectedLetters.includes(letter.id)}
+                  onChange={() => handleSelectLetter(letter.id)}
                 />
-                <div className='flex-1 pb-7'>
-                  <h2 className='text-lg font-bold'>{letter.title}</h2>
-                  <p>책 제목</p>
-                  <p>2024.07.26</p>
-                </div>
-                {/* 보관x: 빈 아이콘 보관o: 꽉찬 아이콘 */}
-                {storedLetters.includes(letter.id) ? (
-                  <BsBookmarkStarFill
-                    key={letter.id}
-                    onClick={event => onStore(event, letter)}
-                    className='absolute top-7 right-3 cursor-pointer size-7'
-                  />
-                ) : (
-                  <BsBookmarkStar
-                    key={letter.id}
-                    className='absolute top-7 right-3 cursor-pointer size-7'
-                    onClick={event => onStore(event, letter)}
-                  />
-                )}
-                <p className='absolute bottom-2 right-4 text-sm text-gray-600'>
-                  FROM. {letter.writer}
-                </p>
               </div>
-            </SwiperSlide>
-
-            {/* 삭제 영역 */}
-            <SwiperSlide>
-              <div
-                className={`flex justify-center items-center w-1/3 h-40 bg-pink-500 rounded-r-lg ml-44 transition-transform duration-300 ease-in-out ${
-                  slideId === letter.id ? 'transform translate-x-2/3' : ''
-                }`}
-                onClick={() => handleDelete(letter.id)}
-              >
-                <BsTrash3 className='text-black text-2xl' />
-              </div>
-            </SwiperSlide>
-          </Swiper>
+            )}
+          </div>
         ))}
       </div>
-
+      {isDeleting && (
+        <div className='flex justify-center pb-6 px-4'>
+          <button 
+            className='bg-pink-500 text-white px-4 p-2 w-full rounded-lg'
+            onClick={handleDeleteSelected}
+          >
+            선택한 레터 삭제
+          </button>
+        </div>
+      )}
       <div className='flex justify-center space-x-4'>
         <IoIosArrowBack
           onClick={() => setPage(prevPage => Math.max(prevPage - 1, 1))}
@@ -210,7 +235,7 @@ const CurationReceive = () => {
         />
       </div>
     </div>
-  );
+  ); 
 };
 
 export default CurationReceive;

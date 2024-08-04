@@ -12,11 +12,10 @@ import Statistics from './pages/Mypage/Statistics.jsx';
 import Friend from './pages/Mypage/Friend.jsx';
 import Notification from './pages/Member/Notification.jsx';
 import Profile from './pages/Mypage/Profile.jsx';
-// import CurationReceive from './pages/Curation/CurationReceive.jsx';
-import Receive2 from './pages/Curation/Receive2.jsx';
+import CurationReceive from './pages/Curation/CurationReceive.jsx';
 import CurationSend from './pages/Curation/CurationSend.jsx';
-import Send2 from './pages/Curation/Send2.jsx';
 import CurationStore from './pages/Curation/CurationStore.jsx';
+import Store2 from './pages/Curation/Store2.jsx';
 import Login from './pages/Member/Login.jsx';
 import CurationChatBot from './pages/Curation/CurationChatBot.jsx';
 import CurationLetterCreate from './pages/Curation/CurationLetterCreate.jsx';
@@ -72,8 +71,8 @@ const router = createBrowserRouter([
           { path: 'book/detail/:bookId', element: <SearchBookDetail /> },
 
           // curation
-          { path: 'curation/receive', element: <Receive2 /> },
-          { path: 'curation/send', element: <Send2 /> },
+          { path: 'curation/receive', element: <CurationReceive /> },
+          { path: 'curation/send', element: <CurationSend /> },
           { path: 'curation/store', element: <CurationStore /> },
           { path: 'curation/chatbot', element: <CurationChatBot /> },
           { path: 'curation/letter-create', element: <CurationLetterCreate /> },
