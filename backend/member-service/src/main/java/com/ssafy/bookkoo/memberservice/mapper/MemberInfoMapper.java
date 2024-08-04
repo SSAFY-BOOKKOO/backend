@@ -25,6 +25,7 @@ public interface MemberInfoMapper {
     @Mapping(source = "memberInfo.nickName", target = "nickName")
     @Mapping(source = "memberInfo.profileImgUrl", target = "profileImgUrl")
     @Mapping(source = "memberInfo.introduction", target = "introduction")
+    @Mapping(source = "memberInfo.memberId", target = "memberId")
     @Mapping(source = "memberInfo.categories", target = "categories", qualifiedByName = "mapCategories")
     ResponseMemberProfileDto toResponseProfileDto(String email, MemberInfo memberInfo);
 
