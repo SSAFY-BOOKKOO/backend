@@ -39,7 +39,8 @@ const SearchMore = () => {
     }
   };
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = getQuery();
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    getQuery();
   const { ref, inView } = useInView();
 
   useEffect(() => {
@@ -106,6 +107,7 @@ const SearchMore = () => {
 
   return (
     <WrapContainer className='mt-4'>
+      {isLoading && <Spinner />}
       <h1 className='text-2xl font-bold mb-4'>{getTitle()}</h1>
       {data?.pages?.map((page, index) => (
         <div key={index}>{page.data?.map(renderBookItem)}</div>
