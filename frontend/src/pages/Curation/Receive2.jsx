@@ -50,6 +50,31 @@ const CurationReceive = () => {
   const [letters, setLetters] = useState(initialLetters);
   const [page, setPage] = useState(0); // 페이지 상태 추가
 
+  /////목록 조회//////
+  useEffect(
+    () => {
+      authAxiosInstance
+        // axios로 get요청 보내기
+        .get('/curations', {
+          params: {
+            page: page,
+          },
+        })
+        // 요청 성공하면 받아와서 letters에 할당
+        .then(res => {
+          setLetters(res.data);
+          console.log(res);
+        })
+
+        // 요청 실패하면 오류 일단 console에
+        .catch(err => {
+          console.log('error:', err);
+        });
+    },
+    // 화면에 처음 렌더링될 때만 실행
+    [page]
+  );
+
 
   // ////보관함/////
 
@@ -141,6 +166,7 @@ const CurationReceive = () => {
           onClick={() => setIsDeleting(!isDeleting)}
         />
       </div>
+      {/* 편지들 css */}
       <div className='flex-1 overflow-y-auto px-4'>
         {letters.map(letter => (
           <div className='flex flex-grow'>

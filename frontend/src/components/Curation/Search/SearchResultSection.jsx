@@ -4,7 +4,7 @@ import BookItem from '../../Curation/Search/BookItem';
 const SearchResultSection = ({
   title,
   books,
-  onItemClick,
+  // onItemClick,
   onSeeMore,
   type,
 }) => {
@@ -26,8 +26,8 @@ const SearchResultSection = ({
           ))}
         </div>
       )}
-
-      {books?.length > 10 && (
+      <p>{books.length}</p>
+      {books?.length > 0 && (
         <div className='flex justify-end text-sm cursor-pointer'>
           <button className='text-gray-500' onClick={onSeeMore}>
             더보기

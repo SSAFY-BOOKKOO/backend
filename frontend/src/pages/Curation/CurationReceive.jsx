@@ -14,38 +14,38 @@ import axios from 'axios';
 import { axiosInstance, authAxiosInstance } from '../../services/axiosInstance';
 
 // 임시 레터 데이터
-const initialLetters = [
-  {
-    id: 1,
-    title: '레터1',
-    content: '너무 유익했다!',
-    from: '양귀자',
-    date: '2024-07-19',
-    image: 'https://image.yes24.com/momo/TopCate249/MidCate003/24823257.jpg',
-  },
-  {
-    id: 2,
-    title: '키움 우승',
-    from: '홍원기',
-    content: '영웅질주',
-    date: '2024-07-19',
-    image:
-      'https://yt3.googleusercontent.com/HmU-cGuNTGaoyJ2dSCW7CrdNMLVXq8xgKQ2Tsri543dTS7RMSgcseDb8p9w-g2amOoNJkXxT=s900-c-k-c0x00ffffff-no-rj',
-  },
-  {
-    id: 3,
-    title: '레터2',
-    content: '너무 재밌당',
-    from: '에이미',
-    date: '2024-07-19',
-    image: 'https://image.yes24.com/goods/123400303/L',
-  },
-];
+// const initialLetters = [
+//   {
+//     id: 1,
+//     title: '레터1',
+//     content: '너무 유익했다!',
+//     from: '양귀자',
+//     date: '2024-07-19',
+//     image: 'https://image.yes24.com/momo/TopCate249/MidCate003/24823257.jpg',
+//   },
+//   {
+//     id: 2,
+//     title: '키움 우승',
+//     from: '홍원기',
+//     content: '영웅질주',
+//     date: '2024-07-19',
+//     image:
+//       'https://yt3.googleusercontent.com/HmU-cGuNTGaoyJ2dSCW7CrdNMLVXq8xgKQ2Tsri543dTS7RMSgcseDb8p9w-g2amOoNJkXxT=s900-c-k-c0x00ffffff-no-rj',
+//   },
+//   {
+//     id: 3,
+//     title: '레터2',
+//     content: '너무 재밌당',
+//     from: '에이미',
+//     date: '2024-07-19',
+//     image: 'https://image.yes24.com/goods/123400303/L',
+//   },
+// ];
 
 // 받은 편지들 보여주기
 const CurationReceive = () => {
   const navigate = useNavigate();
-  const [letters, setLetters] = useState(initialLetters);
+  const [letters, setLetters] = useState('');
   const [page, setPage] = useState(0); // 페이지 상태 추가
 
    // letters 데이터 콘솔에 출력
@@ -54,29 +54,29 @@ const CurationReceive = () => {
   }, [letters[0]]);
 
   // /////목록 조회//////
-  // useEffect(
-  //   () => {ㄴ
-  //     authAxiosInstance
-  //       // axios로 get요청 보내기
-  //       .get('/curations', {
-  //         params: {
-  //           page: page,
-  //         },
-  //       })
-  //       // 요청 성공하면 받아와서 letters에 할당
-  //       .then(res => {
-  //         setLetters(res.data);
-  //         console.log(res);
-  //       })
+  useEffect(
+    () => {
+      authAxiosInstance
+        // axios로 get요청 보내기
+        .get('/curations', {
+          params: {
+            page: page,
+          },
+        })
+        // 요청 성공하면 받아와서 letters에 할당
+        .then(res => {
+          setLetters(res.data);
+          console.log(res);
+        })
 
-  //       // 요청 실패하면 오류 일단 console에
-  //       .catch(err => {
-  //         console.log('error:', err);
-  //       });
-  //   },
-  //   // 화면에 처음 렌더링될 때만 실행
-  //   [page]
-  // );
+        // 요청 실패하면 오류 일단 console에
+        .catch(err => {
+          console.log('error:', err);
+        });
+    },
+    // 화면에 처음 렌더링될 때만 실행
+    [page]
+  );
 
   // ////보관함/////
 
@@ -120,6 +120,7 @@ const CurationReceive = () => {
     setLetters(letters.filter(letter => letter.id !== id));
   };
 
+  // 레터 상세보기
   const handleLetterClick = letter => {
     navigate(`/curation/letter/${letter.id}`, { state: { letter } });
   };

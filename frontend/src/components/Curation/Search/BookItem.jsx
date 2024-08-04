@@ -26,7 +26,7 @@ const BookItem = ({ book, onClic, onCreateClick }) => {
   return (
     <div
       className='flex items-start space-x-4 p-3 mb-2 bg-white cursor-pointer'
-      onClick={onClick}
+      onClick={handleButtonClick}
     >
       <div className='w-36 h-36 flex'>
         <img
