@@ -41,7 +41,7 @@ const SearchBookDetail = () => {
             alt={book?.title}
           />
         </div>
-        <p className='text-overflow text-xl font-semibold'>{book?.title}</p>
+        <p className='text-overflow-2 text-xl font-semibold'>{book?.title}</p>
         <p className='text-base text-gray-600'>{book?.author}</p>
         <p className='text-base text-gray-600'>
           {book?.publisher} | {book?.publishedAt}
