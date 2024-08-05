@@ -61,10 +61,7 @@ const LibraryMain = () => {
           authAxiosInstance.get(`/libraries/${library.id}`)
         );
         const librariesDetails = await Promise.all(libraryDetailsPromises);
-        const detailedLibraries = librariesDetails.map(
-          response => response.data
-        );
-        setLibraries(detailedLibraries);
+        setLibraries(librariesDetails.map(response => response.data));
       } catch (error) {
         console.error(error);
       }
@@ -118,33 +115,68 @@ const LibraryMain = () => {
     });
   };
 
-  const changeLibraryName = () => {
-    if (newLibraryName.trim() && newLibraryName.length <= 10) {
+  const changeLibraryName = async (libraryId, newName) => {
+    try {
+      const existingLibraryResponse = await authAxiosInstance.get(
+        `/libraries/${libraryId}`
+      );
+      const existingLibrary = existingLibraryResponse.data;
+
+      await authAxiosInstance.patch(`/libraries/${libraryId}`, {
+        name: newName,
+        libraryOrder: existingLibrary.libraryOrder,
+        libraryStyleDto: {
+          libraryColor: existingLibrary.libraryStyleDto.libraryColor,
+        },
+      });
+
       setLibraries(prev => {
         const newLibraries = [...prev];
-        newLibraries[activeLibrary].name = newLibraryName;
+        const libraryIndex = newLibraries.findIndex(
+          lib => lib.id === libraryId
+        );
+        if (libraryIndex !== -1) {
+          newLibraries[libraryIndex].name = newName;
+        }
         return newLibraries;
       });
-      setNewLibraryName('');
-    } else {
+
       setAlert({
         isOpen: true,
         confirmOnly: true,
-        message: '서재 이름은 1자 이상 10자 이하로 설정해야 합니다.',
+        message: '서재명이 성공적으로 변경되었습니다.',
       });
+    } catch (error) {
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '서재명 변경에 실패했습니다. 다시 시도해 주세요.',
+      });
+      console.error(error);
     }
   };
 
-  const deleteLibrary = () => {
-    setLibraries(prev => {
-      const newLibraries = prev.filter((_, index) => index !== activeLibrary);
-      return newLibraries;
-    });
-    setActiveLibrary(0);
-    setShowMenu(false);
+  const deleteLibrary = async () => {
+    try {
+      const libraryId = libraries[activeLibrary].id;
+      await authAxiosInstance.delete(`/libraries/${libraryId}`);
+      setLibraries(prev => {
+        const newLibraries = prev.filter((_, index) => index !== activeLibrary);
+        return newLibraries;
+      });
+      setActiveLibrary(0);
+      setShowMenu(false);
+    } catch (error) {
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '서재 삭제에 실패했습니다. 다시 시도해 주세요.',
+      });
+      console.error(error);
+    }
   };
 
-  const createLibrary = () => {
+  const createLibrary = async () => {
     if (createLibraryName.trim()) {
       if (createLibraryName.length > 10) {
         setAlert({
@@ -153,9 +185,32 @@ const LibraryMain = () => {
           message: '서재 이름은 10자 이내로 설정해야 합니다.',
         });
       } else {
-        setLibraries([...libraries, { name: createLibraryName, books: [] }]);
-        setActiveLibrary(libraries.length);
-        setCreateLibraryName('');
+        try {
+          const response = await authAxiosInstance.post('/libraries', {
+            name: createLibraryName,
+            libraryOrder: libraries.length + 1,
+            libraryStyleDto: {
+              libraryColor: '#FFFFFF',
+            },
+          });
+
+          setLibraries([...libraries, response.data]);
+
+          setAlert({
+            isOpen: true,
+            confirmOnly: true,
+            message: '서재가 성공적으로 생성되었습니다.',
+          });
+          setCreateLibraryName('');
+          setActiveLibrary(libraries.length);
+        } catch (error) {
+          setAlert({
+            isOpen: true,
+            confirmOnly: true,
+            message: '서재 생성에 실패했습니다. 다시 시도해 주세요.',
+          });
+          console.error(error);
+        }
       }
     }
   };
