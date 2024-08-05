@@ -49,7 +49,7 @@ const BookSearch = () => {
     setSelectedBook(book);
     console.log({ book });
     // //////////////////////등록으로 넘기자
-    <CurationLetterCreate key={book.isbn} book={book} />;
+    // <CurationLetterCreate key={book.isbn} book={book} />;
     // toggleModal();
   };
 

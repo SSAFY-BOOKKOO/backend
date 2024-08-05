@@ -18,7 +18,9 @@ const BookItem = ({ book, onClick, onCreateClick }) => {
       : book.author;
 
   const navigateToCreate = () => {
-    navigate('/curation/letter-create');
+    navigate('/curation/letter-create', {
+      state: { book: `${book}` },
+    });
   };
 
   const handleButtonClick = e => {
