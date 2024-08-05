@@ -18,7 +18,7 @@ public class CookieUtils {
 
     public static Cookie secureCookieGenerate(String key, String value, Duration expiration) {
         Cookie cookie = new Cookie(key, value);
-        cookie.setPath("/");
+        cookie.setPath(".ssafy.io");
         cookie.setHttpOnly(true);
         cookie.setMaxAge((int) expiration.getSeconds());
         return cookie;
