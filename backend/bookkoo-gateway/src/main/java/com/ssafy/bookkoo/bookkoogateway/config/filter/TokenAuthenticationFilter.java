@@ -38,6 +38,7 @@ public class TokenAuthenticationFilter implements GlobalFilter {
         "/library-service",
         "/member-service",
         "/notification-service",
+        "/booktalk-service",
         "/api-docs",
         "/swagger-ui.html",
         "/swagger-ui",
@@ -122,6 +123,7 @@ public class TokenAuthenticationFilter implements GlobalFilter {
 
     /**
      * 필터를 스킵해야하는 URI가 패턴으로 체크되어야 하는 경우
+     *
      * @param path
      * @return
      */
