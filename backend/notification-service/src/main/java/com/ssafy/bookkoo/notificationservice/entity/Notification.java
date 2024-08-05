@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.notificationservice.entity;
 
 import com.ssafy.bookkoo.notificationservice.enums.NotificationType;
+import com.ssafy.bookkoo.notificationservice.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public abstract class Notification {
+public abstract class Notification extends BaseEntity {
 
     @Id
     @Column(name = "id")
