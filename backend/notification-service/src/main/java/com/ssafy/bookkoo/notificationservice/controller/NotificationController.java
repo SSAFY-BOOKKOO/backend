@@ -22,7 +22,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/notification")
+@RequestMapping("/notifications")
 public class NotificationController {
 
     private final NotificationService notificationService;
