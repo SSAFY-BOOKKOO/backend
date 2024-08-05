@@ -40,22 +40,14 @@ const LibraryMain = () => {
   const [libraries, setLibraries] = useState([]);
 
   useEffect(() => {
-    const fetchMemberInfo = async () => {
-      try {
-        const response = await authAxiosInstance.get('/members/info');
-        setMember(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchMemberInfo();
-  }, []);
-
-  useEffect(() => {
+    console.log(location);
+    const nickname = location.state;
+    console.log('Received nickname:', nickname);
     const fetchLibraries = async () => {
       try {
-        const response = await authAxiosInstance.get('/libraries/me');
+        const response = nickname
+          ? await authAxiosInstance.get(`/libraries`, { params: { nickname } })
+          : await authAxiosInstance.get(`/libraries/me`);
         const libraries = response.data;
         const libraryDetailsPromises = libraries.map(library =>
           authAxiosInstance.get(`/libraries/${library.id}`)
@@ -68,6 +60,19 @@ const LibraryMain = () => {
     };
 
     fetchLibraries();
+  }, [location.state?.nickname]);
+
+  useEffect(() => {
+    const fetchMemberInfo = async () => {
+      try {
+        const response = await authAxiosInstance.get('/members/info');
+        setMember(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchMemberInfo();
   }, []);
 
   useEffect(() => {
@@ -202,21 +207,18 @@ const LibraryMain = () => {
   };
 
   const createLibrary = async () => {
-    if (libraries.length > 3) {
-      setAlert({
-        isOpen: true,
-        confirmOnly: true,
-        message: '서재는 최대 3개까지 생성할 수 있습니다.',
-      });
-      return;
-    }
-
     if (createLibraryName.trim()) {
       if (createLibraryName.length > 10) {
         setAlert({
           isOpen: true,
           confirmOnly: true,
           message: '서재 이름은 10자 이내로 설정해야 합니다.',
+        });
+      } else if (libraries.length >= 3) {
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '서재는 최대 3개까지만 생성할 수 있습니다.',
         });
       } else {
         try {
