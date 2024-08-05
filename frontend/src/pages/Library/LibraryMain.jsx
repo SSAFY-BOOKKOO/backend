@@ -8,10 +8,9 @@ import { useAtom } from 'jotai';
 import MemberProfile from '@components/Library/Main/MemberProfile';
 import LibraryOptions from '@components/Library/Main/LibraryOptions';
 import BookShelf from '@components/Library/Main/BookShelf';
-import { books as initialBooks } from '@mocks/BookData';
-import profileImgSample from '@assets/images/profile_img_sample.png';
 import Alert from '@components/@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
+import { libraries as mockLibraries } from '@mocks/Libraries';
 import { authAxiosInstance } from '@services/axiosInstance';
 
 const HTML5toTouch = {
@@ -39,7 +38,7 @@ const LibraryMain = () => {
   const location = useLocation();
   const [, setAlert] = useAtom(alertAtom);
   const [member, setMember] = useState(null);
-  const [testLibrary, setTestLibrary] = useState(null);
+  const [libraries, setLibraries] = useState([]);
 
   useEffect(() => {
     const fetchMemberInfo = async () => {
@@ -57,9 +56,13 @@ const LibraryMain = () => {
   useEffect(() => {
     const fetchLibraries = async () => {
       try {
-        const response = await authAxiosInstance.get('/libraries/me/');
-        setTestLibrary(response.data);
-        console.log(response.data); // Fetch한 데이터를 콘솔에 출력
+        // Assuming we fetch libraries from an API
+        // const response = await authAxiosInstance.get('/libraries/me');
+        // setLibraries(response.data);
+
+        // For testing purposes, using mock data
+        setLibraries(mockLibraries);
+        console.log(mockLibraries);
       } catch (error) {
         console.error(error);
       }
@@ -68,26 +71,13 @@ const LibraryMain = () => {
     fetchLibraries();
   }, []);
 
-  const [libraries, setLibraries] = useState([
-    {
-      name: '서재 1',
-      id: 1,
-      books: initialBooks.filter(book => book.libraryId === 1),
-    },
-    {
-      name: '서재 2',
-      id: 2,
-      books: initialBooks.filter(book => book.libraryId === 2),
-    },
-  ]);
-
   useEffect(() => {
     if (location.state && location.state.deleteBookId) {
       const deleteBookId = location.state.deleteBookId;
       setLibraries(prevLibraries => {
         return prevLibraries.map(library => ({
           ...library,
-          books: library.books.filter(book => book.bookId !== deleteBookId),
+          books: library.books.filter(book => book.book.id !== deleteBookId),
         }));
       });
     }
@@ -98,21 +88,26 @@ const LibraryMain = () => {
       const newLibraries = prevLibraries.map(library => {
         if (library.id === libraries[activeLibrary].id) {
           const newBooks = [...library.books];
-          const movedBook = newBooks.find(book => book.slotId === fromIndex);
+          const movedBook = newBooks.find(
+            book => book.bookOrder === fromIndex + 1
+          );
 
           if (movedBook) {
-            movedBook.slotId = toIndex;
+            movedBook.bookOrder = toIndex + 1;
           }
 
           newBooks.forEach(book => {
-            if (book.slotId === toIndex && book.bookId !== movedBook.bookId) {
-              book.slotId = fromIndex;
+            if (
+              book.bookOrder === toIndex + 1 &&
+              book.book.id !== movedBook.book.id
+            ) {
+              book.bookOrder = fromIndex + 1;
             }
           });
 
           return {
             ...library,
-            books: newBooks,
+            books: newBooks.sort((a, b) => a.bookOrder - b.bookOrder),
           };
         }
         return library;
@@ -133,7 +128,7 @@ const LibraryMain = () => {
       setAlert({
         isOpen: true,
         confirmOnly: true,
-        message: '서재 이름은 1자이상 10자 이하로 설정해야 합니다.',
+        message: '서재 이름은 1자 이상 10자 이하로 설정해야 합니다.',
       });
     }
   };
@@ -164,13 +159,13 @@ const LibraryMain = () => {
   };
 
   const handleBookClick = book => {
-    navigate(`/library/detail/${book.bookId}`, { state: { book } });
+    navigate(`/library/detail/${book.book.id}`, { state: { book } });
   };
 
   return (
     <DndProvider backend={MultiBackend} options={HTML5toTouch}>
       <div className='bg-white min-h-screen'>
-        <MemberProfile member={member} />
+        {member && <MemberProfile member={member} />}
 
         <LibraryOptions
           activeLibrary={activeLibrary}

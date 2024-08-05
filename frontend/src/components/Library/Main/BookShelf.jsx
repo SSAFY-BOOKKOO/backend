@@ -6,10 +6,10 @@ import './BookShelf.css';
 const BookShelf = ({ books, moveBook, onBookClick }) => {
   const totalSlots = 21; // 3층에 7개의 슬롯
   const allSlots = Array.from({ length: totalSlots }, (_, index) => {
-    const book = books.find(book => book.slotId === index);
+    const book = books.find(book => book.bookOrder - 1 === index);
     return book ? (
       <Book
-        key={book.bookId}
+        key={book.book.id}
         item={book}
         index={index}
         moveBook={moveBook}
@@ -22,7 +22,6 @@ const BookShelf = ({ books, moveBook, onBookClick }) => {
 
   const renderShelf = (start, end) => (
     <div className='flex justify-center mb-2'>
-      {' '}
       <div className='flex flex-nowrap px-1 justify-center w-full rounded-xl shadow-lg shelf-bg'>
         {allSlots.slice(start, end)}
       </div>
