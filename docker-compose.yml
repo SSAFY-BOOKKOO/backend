@@ -378,6 +378,26 @@ services:
       retries: 3
     volumes:
       - ./logs/member-service:/app/logs
+  
+  booktalk-service:
+    container_name: booktalk-service
+    build:
+      context: ./backend/booktalk-service
+    ports:
+      - "8087:8087"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bookkoo-net
+    restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8087/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - ./logs/booktalk-service:/app/logs
 
   notification-service:
     container_name: notification-service
