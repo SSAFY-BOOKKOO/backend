@@ -24,7 +24,7 @@ public interface CurationService {
     List<ResponseCurationDto> getSentCurations(Long writer, Pageable pageable);
 
     // 큐레이션 보관하기
-    void storeCuration(Long id, Long receiver);
+    void changeCurationStoredStatus(Long id, Long receiver);
 
     // 큐레이션 삭제 (지정삭제)
     void deleteCuration(Long id, Long receiver);

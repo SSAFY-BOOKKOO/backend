@@ -10,7 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CurationSendRepository extends JpaRepository<CurationSend, Long> {
 
-    List<CurationSend> findCurationSendsByReceiver(Long receiverId);
+    List<CurationSend> findCurationSendsByReceiverOrderByCreatedAtDesc(Long receiverId,
+        Pageable pageable);
 
     Optional<CurationSend> findCurationSendsByCurationAndReceiver(Curation curation,
         Long receiver);
