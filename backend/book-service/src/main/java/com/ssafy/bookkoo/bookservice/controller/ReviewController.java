@@ -5,6 +5,7 @@ import com.ssafy.bookkoo.bookservice.dto.review.ResponseReviewDto;
 import com.ssafy.bookkoo.bookservice.dto.review.ResponseSurfingReviewDto;
 import com.ssafy.bookkoo.bookservice.service.review.ReviewService;
 import com.ssafy.bookkoo.bookservice.util.CommonUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -25,12 +26,14 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
+    @Operation(summary = "책 리뷰 조회", description = "특정 책의 모든 리뷰를 조회합니다.")
     @GetMapping("/{bookId}/reviews")
     public ResponseEntity<List<ResponseReviewDto>> getReviewsByBookId(@PathVariable Long bookId) {
         List<ResponseReviewDto> reviews = reviewService.getReviewByBookId(bookId);
         return ResponseEntity.ok(reviews);
     }
 
+    @Operation(summary = "특정 리뷰 조회", description = "책 ID와 리뷰 ID를 통해 특정 리뷰를 조회합니다.")
     @GetMapping("/{bookId}/reviews/{reviewId}")
     public ResponseEntity<ResponseReviewDto> getReviewById(
         @PathVariable Long bookId,
@@ -40,6 +43,7 @@ public class ReviewController {
         return ResponseEntity.ok(review);
     }
 
+    @Operation(summary = "리뷰 작성", description = "특정 책에 대한 리뷰를 작성합니다.")
     @PostMapping("/{bookId}/reviews")
     public ResponseEntity<ResponseReviewDto> createReview(
         @RequestHeader HttpHeaders headers,
@@ -53,6 +57,7 @@ public class ReviewController {
                              .body(createdReview);
     }
 
+    @Operation(summary = "리뷰 좋아요 토글", description = "특정 책의 특정 리뷰에 좋아요를 토글합니다.")
     @PostMapping("/{bookId}/reviews/{reviewId}/like")
     public ResponseEntity<Boolean> toggleLikeReviewById(
         @RequestHeader HttpHeaders headers,
@@ -64,6 +69,7 @@ public class ReviewController {
                              .body(reviewService.toggleLikeReview(memberId, bookId, reviewId));
     }
 
+    @Operation(summary = "리뷰 파도타기 조회", description = "특정 책의 리뷰 중 자신의 리뷰를 제외한 랜덤 리뷰를 조회합니다.")
     @GetMapping("/{bookId}/reviews/surfing")
     public ResponseEntity<List<ResponseSurfingReviewDto>> getSurfingReviewsByBookId(
         @RequestHeader HttpHeaders headers,
