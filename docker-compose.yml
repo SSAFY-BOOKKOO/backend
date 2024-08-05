@@ -148,6 +148,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: magumagu
       MONGO_INITDB_ROOT_PASSWORD: magumagu
+    networks:
+      - bookkoo-net
 
   notification-db:
     image: postgres:latest
