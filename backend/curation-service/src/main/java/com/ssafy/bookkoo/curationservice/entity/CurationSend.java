@@ -39,8 +39,8 @@ public class CurationSend extends BaseEntity {
         isRead = true;
     }
 
-    public void store() {
-        isStored = true;
+    public void changeStoredStatus() {
+        isStored = !isStored;
     }
 
     @Builder
