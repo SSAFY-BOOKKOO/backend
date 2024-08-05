@@ -42,7 +42,7 @@ public class Library {
     @Setter
     private LibraryStyle libraryStyle;
 
-    @OneToMany(mappedBy = "library")
+    @OneToMany(mappedBy = "library", cascade = CascadeType.REMOVE)
     private List<LibraryBookMapper> books = new ArrayList<>();
 
     @Builder
