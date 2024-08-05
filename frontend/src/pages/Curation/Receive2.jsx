@@ -14,7 +14,6 @@ import { FaTrashCan } from 'react-icons/fa6';
 import axios from 'axios';
 import { axiosInstance, authAxiosInstance } from '../../services/axiosInstance';
 
-// 받은 편지들 보여주기
 const CurationReceive = () => {
   const navigate = useNavigate();
   const [letters, setLetters] = useState([]);
@@ -37,57 +36,48 @@ const CurationReceive = () => {
       });
   }, [page]);
 
-  // 보관함 관리 위한 useState
-  const [storedLetters, setStoredLetters] = useState([]);
-  // const [slideId, setSlideId] = useState(null);
-  const navigateToStore = () => {
-    navigate('/curation/store', { state: { storedLetters } });
-  };
+  // ///////////////////////////////////삭제
 
-  // 보관함 등록 로직
-  const onStore = (event, letter) => {
-    event.stopPropagation();
-    if (storedLetters.includes(letter.id)) {
-      setStoredLetters(storedLetters.filter(id => id !== letter.id));
-    } else {
-      setStoredLetters([...storedLetters, letter.id]);
-      authAxiosInstance
-        .post(`/curations/store/${letter.curationId}`, {
-          curationId: letter.curationId,
-        })
-        .then(res => {
-          console.log('Letter stored successfully:', res);
-        })
-        .catch(err => {
-          console.log('error:', err);
-        });
-    }
-  };
+  // 변수 설정
+  const [selectedLetters, setSelectedLetters] = useState([]); // 삭제할 레터 선택
+  const [isDeleting, setIsDeleting] = useState(false); // 삭제 모드 플래그
 
-  // 삭제 로직
-  const [selectedLetters, setSelectedLetters] = useState([]);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  // 삭제를 위한 레터 선택
-  const handleSelectLetter = id => {
-    if (selectedLetters.includes(id)) {
+  // 함수: 삭제할 레터 선택
+  // 레터를 객체로 받아서 레터 아이디로 식별
+  const handleSelectLetter = letter => {
+    if (selectedLetters.includes(letter)) {
       setSelectedLetters(
-        selectedLetters.filter(selectedId => selectedId !== id)
+        selectedLetters.filter(selectedId => selectedId !== letter)
       );
     } else {
-      setSelectedLetters([...selectedLetters, id]);
+      setSelectedLetters([...selectedLetters, letter]);
+      console.log([...selectedLetters]);
     }
   };
 
-  // 삭제 함수
-  // 선택한 레터 연동해서 삭제
+  // const handleSelectLetter = letter => {
+  //   setSelectedLetters(prevSelectedLetters => {
+  //     const updatedSelectedLetters = prevSelectedLetters.includes(id)
+  //       ? prevSelectedLetters.filter(selectedId => selectedId !== id)
+  //       : [...prevSelectedLetters, id];
+  //     console.log('Updated selectedLetters:', updatedSelectedLetters);
+  //     return updatedSelectedLetters;
+  //   });
+  // };
+
+  // 함수: 레터 삭제
   const handleDeleteSelected = () => {
     if (selectedLetters.length === 0) {
       return; // 선택된 레터가 없으면 아무 작업도 하지 않음
     }
+
     console.log('Selected letters for deletion:', selectedLetters);
-    const deleteRequests = selectedLetters.map(id =>
-      authAxiosInstance.delete(`/curations/${id}`)
+
+    // 선택한 레터 삭제 기능
+    const deleteRequests = selectedLetters.map(letter =>
+      authAxiosInstance.delete(`/curations/${letter.curationId}`, {
+        curationId: letter.curationId,
+      })
     );
 
     Promise.all(deleteRequests)
@@ -144,17 +134,7 @@ const CurationReceive = () => {
                 <p>{letter.content}</p>
                 <p>{letter.date}</p>
               </div>
-              {storedLetters.includes(letter.id) ? (
-                <BsBookmarkStarFill
-                  onClick={event => onStore(event, letter)}
-                  className='absolute top-7 right-3 cursor-pointer size-7'
-                />
-              ) : (
-                <BsBookmarkStar
-                  className='absolute top-7 right-3 cursor-pointer size-7'
-                  onClick={event => onStore(event, letter)}
-                />
-              )}
+
               <p className='absolute bottom-2 right-4 text-sm text-gray-600'>
                 FROM. {letter.from}
               </p>
@@ -164,8 +144,8 @@ const CurationReceive = () => {
                 <input
                   type='checkbox'
                   className='form-checkbox h-6 w-6 mt-14 ml-3'
-                  checked={selectedLetters.includes(letter.id)}
-                  onChange={() => handleSelectLetter(letter.id)}
+                  checked={selectedLetters.includes(letter)}
+                  onChange={() => handleSelectLetter(letter)}
                 />
               </div>
             )}
@@ -182,16 +162,6 @@ const CurationReceive = () => {
           </button>
         </div>
       )}
-      <div className='flex justify-center space-x-4'>
-        <IoIosArrowBack
-          onClick={() => setPage(prevPage => Math.max(prevPage - 1, 1))}
-          className='cursor-pointer text-xl'
-        />
-        <IoIosArrowForward
-          onClick={() => setPage(prevPage => prevPage + 1)}
-          className='cursor-pointer text-xl'
-        />
-      </div>
     </div>
   );
 };

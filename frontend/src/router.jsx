@@ -2,7 +2,7 @@ import React from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import App from './App.jsx';
 import LibraryHome from './pages/Library/LibraryHome.jsx';
-// import LibraryDetail from './pages/Library/LibraryDetail.jsx';
+import LibraryDetail from './pages/Library/LibraryDetail.jsx';
 import Detail2 from './pages/Library/Detail2.jsx';
 import LibrarySearch from './pages/Library/LibrarySearch.jsx';
 import SearchBookDetail from './pages/Library/SearchBookDetail.jsx';
@@ -13,7 +13,8 @@ import Statistics from './pages/Mypage/Statistics.jsx';
 import Friend from './pages/Mypage/Friend.jsx';
 import Notification from './pages/Member/Notification.jsx';
 import Profile from './pages/Mypage/Profile.jsx';
-import CurationReceive from './pages/Curation/CurationReceive.jsx';
+// import CurationReceive from './pages/Curation/CurationReceive.jsx';
+import Receive3 from './pages/Curation/Receive3.jsx';
 import CurationSend from './pages/Curation/CurationSend.jsx';
 import CurationStore from './pages/Curation/CurationStore.jsx';
 import Store2 from './pages/Curation/Store2.jsx';
@@ -60,7 +61,7 @@ const router = createBrowserRouter([
           { path: '', element: <LibraryMain /> },
 
           // book in library detail
-          { path: 'library/detail/:bookId', element: <Detail2 /> },
+          { path: 'library/detail/:bookId', element: <LibraryDetail /> },
 
           // search
           { path: 'search', element: <LibrarySearch /> },
@@ -72,7 +73,7 @@ const router = createBrowserRouter([
           { path: 'book/detail/:bookId', element: <SearchBookDetail /> },
 
           // curation
-          { path: 'curation/receive', element: <CurationReceive /> },
+          { path: 'curation/receive', element: <Receive3 /> },
           { path: 'curation/send', element: <CurationSend /> },
           { path: 'curation/store', element: <CurationStore /> },
           { path: 'curation/chatbot', element: <CurationChatBot /> },
