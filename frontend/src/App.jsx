@@ -6,7 +6,7 @@ import Main from './components/Layout/Main';
 
 const App = () => {
   const location = useLocation();
-  const isSearchPage = location.pathname === '/search';
+  const isSearchPage = ['/search', '/notification'].includes(location.pathname);
 
   return (
     <Main>
