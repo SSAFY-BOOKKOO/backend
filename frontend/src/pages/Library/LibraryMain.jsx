@@ -10,7 +10,6 @@ import LibraryOptions from '@components/Library/Main/LibraryOptions';
 import BookShelf from '@components/Library/Main/BookShelf';
 import Alert from '@components/@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
-import { libraries as mockLibraries } from '@mocks/Libraries';
 import { authAxiosInstance } from '@services/axiosInstance';
 
 const HTML5toTouch = {
@@ -56,13 +55,16 @@ const LibraryMain = () => {
   useEffect(() => {
     const fetchLibraries = async () => {
       try {
-        // Assuming we fetch libraries from an API
-        // const response = await authAxiosInstance.get('/libraries/me');
-        // setLibraries(response.data);
-
-        // For testing purposes, using mock data
-        setLibraries(mockLibraries);
-        console.log(mockLibraries);
+        const response = await authAxiosInstance.get('/libraries/me');
+        const libraries = response.data;
+        const libraryDetailsPromises = libraries.map(library =>
+          authAxiosInstance.get(`/libraries/${library.id}`)
+        );
+        const librariesDetails = await Promise.all(libraryDetailsPromises);
+        const detailedLibraries = librariesDetails.map(
+          response => response.data
+        );
+        setLibraries(detailedLibraries);
       } catch (error) {
         console.error(error);
       }

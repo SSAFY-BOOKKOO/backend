@@ -6,8 +6,8 @@ import './BookShelf.css';
 const BookShelf = ({ books, moveBook, onBookClick }) => {
   const totalSlots = 21; // 3층에 7개의 슬롯
   const allSlots = Array.from({ length: totalSlots }, (_, index) => {
-    const book = books.find(book => book.bookOrder - 1 === index);
-    return book ? (
+    const book = books.find(book => book.bookOrder === index + 1);
+    return book && book.book ? (
       <Book
         key={book.book.id}
         item={book}
