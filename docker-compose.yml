@@ -125,6 +125,29 @@ services:
       - member_postgres_data:/var/lib/postgresql/data
     networks:
       - bookkoo-net
+  
+  booktalk-db:
+    image: postgres:latest
+    container_name: booktalk-postgres
+    environment:
+      POSTGRES_USER: magumagu
+      POSTGRES_PASSWORD: magumagu
+      POSTGRES_DB: bookkoo
+    ports:
+      - "5437:5432"
+    volumes:
+      - booktalk_postgres_data:/var/lib/postgresql/data
+    networks:
+      - bookkoo-net
+
+  booktalk-mongo:
+    image: mongo
+    container_name: booktalk-mongo
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: magumagu
+      MONGO_INITDB_ROOT_PASSWORD: magumagu
 
   notification-db:
     image: postgres:latest
@@ -387,3 +410,4 @@ volumes:
   member_postgres_data:
   auth_postgres_data:
   notification_postgres_data:
+  booktalk_postgres_data:
