@@ -4,7 +4,7 @@ import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import { useAtom } from 'jotai';
 import useModal from '@hooks/useModal';
-import ReviewCom from '@components/Library/Detail/ReviewCom';
+import ReviewCom2 from '@components/Library/Detail/ReviewCom2';
 import ColorPicker from '@components/Library/BookCreate/ColorPicker';
 import ShelfSelectStep from '@components/Library/BookCreate/ShelfSelectStep';
 import SettingsModal from '@components/@common/SettingsModal';
@@ -82,65 +82,71 @@ const LibraryDetail = () => {
           classNames='fade'
         >
           {showReview ? (
-            <ReviewCom
+            <ReviewCom2
               bookId={id}
               onBackClick={() => setShowReview(false)}
               book={state.book}
             />
           ) : (
-            // 책 큰 틀
-            <div className='relative bg-zinc-300 rounded-lg w-10/12 max-w-md h-full flex flex-col justify-between overflow-auto'>
-              {/* 모달 */}
+            // 앞면
 
-              <SettingsModal
-                isOpen={isOpen}
-                onClose={closeModal}
-                onToggle={toggleModal}
-                actions={actions}
-                className='z-20'
-              />
-              {/* 하드커버 선 */}
-              <div className='absolute left-6 top-0 bottom-0 shadow-2xl w-1 bg-gray-500 shadow-2xl z-10'></div>
-              {/* 회색 영역 */}
-              <div className='relative flex flex-col items-center pb-4'>
-                <img
-                  src={cover_img_url}
-                  alt={title}
-                  className='w-10/12 h-5/6 pt-6 pr-7 pl-12 cursor-pointer rounded-lg mt-[2rem] '
-                  onClick={() => setShowReview(true)}
+            <div className='w-10/12 max-w-md h-full flex flex-col'>
+              {/* 1. 회색 영역 */}
+              <div className='relative bg-zinc-300 rounded-t-lg w-3/2 max-w-md h-2/3 flex flex-col justify-between overflow-auto'>
+                {/* 모달 */}
+                {/* 하드커버 선 */}
+                <div className='absolute left-6 top-0 bottom-0 shadow-2xl w-1 bg-gray-500 shadow-2xl z-10'></div>
+                <SettingsModal
+                  isOpen={isOpen}
+                  onClose={closeModal}
+                  onToggle={toggleModal}
+                  actions={actions}
+                  className='z-20'
                 />
-                {/* <IoBookmarkSharp className='absolute top-[3.7rem] right-[4rem] text-6xl text-blue-500' /> */}
-                <div className='absolute top-5 right-16 flex items-center justify-center w-16 h-32 text-blue-500'>
-                  <IoBookmarkSharp className='h-full w-full' />
-                  <span
-                    className='absolute text-black text-xs mb-5 font-bold'
-                    style={{
-                      writingMode: 'vertical-rl',
-                      textOrientation: 'upright',
-                      letterSpacing: '-0.23em',
-                    }}
-                  >
-                    읽는중
-                  </span>
+                <div className='relative flex flex-col items-center pb-4'>
+                  <img
+                    src={cover_img_url}
+                    alt={title}
+                    className='w-10/12 h-5/6 pt-6 pr-7 pl-12 cursor-pointer rounded-lg mt-[2rem] '
+                    onClick={() => setShowReview(true)}
+                  />
+                  {/* <IoBookmarkSharp className='absolute top-[3.7rem] right-[4rem] text-6xl text-blue-500' /> */}
+                  <div className='absolute top-5 right-16 flex items-center justify-center w-16 h-32 text-blue-500'>
+                    <IoBookmarkSharp className='h-full w-full' />
+                    <span
+                      className='absolute text-black text-xs mb-5 font-bold'
+                      style={{
+                        writingMode: 'vertical-rl',
+                        textOrientation: 'upright',
+                        letterSpacing: '-0.23em',
+                      }}
+                    >
+                      읽는중
+                    </span>
+                  </div>
+                  {/* 읽은 기간 로직 (수정예정) */}
+                  <p className='m-2 pl-3'>2024.07.19-2024.07-24</p>
                 </div>
-                {/* 읽은 기간 로직 (수정예정) */}
-                <p className='m-2 pl-3'>2024.07.19-2024.07-24</p>
               </div>
 
-              {/* 띠지 부분 */}
-              <div className='p-4 pl-14 pt-5 bg-pink-500 rounded-b-md opacity-70 w-full h-[215px]'>
-                <div className='flex flex-grow'>
-                  <h2 className='text-2xl text-black font-bold'>{title}</h2>
-                </div>
-                <div className='flex space-x-1 mt-1'>
-                  {Array(5).fill(<AiFillStar className='text-amber-300' />)}
-                </div>
-                {/* 읽은 기간 */}
+              {/* 2. 핑크 영역 (띠지) */}
 
-                {/* 읽은 상태 */}
-                <p className='text-lg text-black'>{author}</p>
-                <p className='text-sm text-black'>{publisher} | 2022-07-14</p>
-                <p className='mt-2 text-sm text-black'>{displaySummary}</p>
+              <div className='relative bg-pink-500 rounded-b-md opacity-70 w-full h-[215px]'>
+                <div className='absolute left-6 top-0 bottom-0 w-1 bg-gray-800 z-10'></div>
+                <div className='p-4 pl-14 pt-5'>
+                  {' '}
+                  <div className='flex flex-grow'>
+                    <h2 className='text-2xl text-black font-bold'>{title}</h2>
+                  </div>
+                  <div className='flex space-x-1 mt-1'>
+                    {Array(5).fill(<AiFillStar className='text-amber-300' />)}
+                  </div>
+                  {/* 읽은 기간 */}
+                  {/* 읽은 상태 */}
+                  <p className='text-lg text-black'>{author}</p>
+                  <p className='text-sm text-black'>{publisher} | 2022-07-14</p>
+                  <p className='mt-2 text-sm text-black'>{displaySummary}</p>
+                </div>
               </div>
             </div>
           )}
