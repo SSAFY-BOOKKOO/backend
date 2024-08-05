@@ -125,6 +125,31 @@ services:
       - member_postgres_data:/var/lib/postgresql/data
     networks:
       - bookkoo-net
+  
+  booktalk-db:
+    image: postgres:latest
+    container_name: booktalk-postgres
+    environment:
+      POSTGRES_USER: magumagu
+      POSTGRES_PASSWORD: magumagu
+      POSTGRES_DB: bookkoo
+    ports:
+      - "5437:5432"
+    volumes:
+      - booktalk_postgres_data:/var/lib/postgresql/data
+    networks:
+      - bookkoo-net
+
+  booktalk-mongo:
+    image: mongo
+    container_name: booktalk-mongo
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: magumagu
+      MONGO_INITDB_ROOT_PASSWORD: magumagu
+    networks:
+      - bookkoo-net
 
   notification-db:
     image: postgres:latest
@@ -355,6 +380,26 @@ services:
       retries: 3
     volumes:
       - ./logs/member-service:/app/logs
+  
+  booktalk-service:
+    container_name: booktalk-service
+    build:
+      context: ./backend/booktalk-service
+    ports:
+      - "8087:8087"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bookkoo-net
+    restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8087/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - ./logs/booktalk-service:/app/logs
 
   notification-service:
     container_name: notification-service
@@ -387,3 +432,4 @@ volumes:
   member_postgres_data:
   auth_postgres_data:
   notification_postgres_data:
+  booktalk_postgres_data:
