@@ -1,5 +1,7 @@
 package com.ssafy.bookkoo.memberservice.service.Impl;
 
+import com.ssafy.bookkoo.memberservice.client.NotificationServiceClient;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestCreateFollowNotificationDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseFollowShipDto;
 import com.ssafy.bookkoo.memberservice.entity.FollowShip;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
@@ -8,22 +10,19 @@ import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.memberservice.repository.FollowShipRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberInfoRepository;
 import com.ssafy.bookkoo.memberservice.service.FollowShipService;
-import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class FollowShipServiceImpl implements FollowShipService {
 
-    private static final Logger log = LoggerFactory.getLogger(FollowShipServiceImpl.class);
     private final FollowShipRepository followShipRepository;
     private final MemberInfoRepository memberInfoRepository;
+    private final NotificationServiceClient notificationServiceClient;
 
     /**
      * 팔로잉 관계를 추가합니다.
@@ -45,20 +44,17 @@ public class FollowShipServiceImpl implements FollowShipService {
         followShipRepository.save(followShip);
         //팔로우 요청
         //1.요청자는 팔로워 대상의 팔로워에 들어간다.
-        log.info("follower : {}", followerInfo.getId());
-        log.info("follower add Followed: {}", followeeInfo.getId());
         followerInfo.addFollowees(followShip, followeeInfo);
-        for (FollowShip followee : followerInfo.getFollowees()) {
-            log.info("follower's followee List : {}", followee.getId());
-        }
-
         //2.팔로워 대상은 요청자를 팔로워에 추가한다.
-        log.info("followee : {}", followeeInfo.getId());
-        log.info("followee add Follower: {}", followerInfo.getId());
         followeeInfo.addFollowers(followShip, followerInfo);
-        for (FollowShip follower : followeeInfo.getFollowers()) {
-            log.info("followee's follower List : {}", follower.getId());
-        }
+
+        //팔로우 대상에게 알림을 전송
+        RequestCreateFollowNotificationDto createFollowNotificationDto
+            = RequestCreateFollowNotificationDto.builder()
+                                                .followerId(followerInfo.getMemberId())
+                                                .memberId(followeeInfo.getMemberId())
+                                                .build();
+        notificationServiceClient.createFollowNotification(createFollowNotificationDto);
     }
 
 
@@ -72,14 +68,11 @@ public class FollowShipServiceImpl implements FollowShipService {
     public void unFollow(Long followerId, Long followeeId) {
         MemberInfo followeeInfo = getMemberInfo(followeeId);
         MemberInfo followerInfo = getMemberInfo(followerId);
-        log.info("follower : {}", followerInfo.getId());
-        log.info("followee : {}", followeeInfo.getId());
         FollowShip followShip = followShipRepository.findByFollowerAndFollowee(followerInfo, followeeInfo);
         if (followShip == null) {
             throw new FollowShipNotFoundException();
         }
         //언팔로우 요청
-        //TODO: 검증 필요
         //1. 언팔로우 요청자의 팔로잉 목록에서 삭제
         followeeInfo.removeFollowee(followShip);
         //2. 언팔로우 대상자의 팔로워 목록에서 삭제
