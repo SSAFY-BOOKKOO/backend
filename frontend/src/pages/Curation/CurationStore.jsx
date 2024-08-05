@@ -70,7 +70,7 @@ const CurationStore = () => {
       {storedLetters.length > 0 ? (
         <div className='flex-1 overflow-y-auto px-4'>
           {storedLetters.map(letter => (
-            <div className='flex flex-grow'>
+            <div key={letter.id} className='flex flex-grow'>
               <div
                 key={letter.id}
                 className={
@@ -98,7 +98,7 @@ const CurationStore = () => {
         </div>
       ) : (
         <div className='bg-gray-200 p-4 mx-4 rounded-lg'>
-          <p className='text-center text-lg font-bold'>보관함이 비었습니다.</p>
+          <p className='text-center text-md font-bold'>보관함이 비었습니다.</p>
         </div>
       )}
 

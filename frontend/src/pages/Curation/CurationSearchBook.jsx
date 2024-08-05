@@ -1,50 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams,useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { BiSearch } from 'react-icons/bi';
-import { getAladinBooks } from '@services/Book';
-import SearchResultSection from '@components/Curation/Search/SearchResultSection';
+import { useInView } from 'react-intersection-observer';
+import SearchBookItem from '@components/Curation/Search/BookItem';
+import useBookInfiniteScroll from '@hooks/useBookInfiniteScroll';
+import WrapContainer from '@components/Layout/WrapContainer';
+import useModal from '@hooks/useModal';
+import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
 
 const BookSearch = () => {
-  const navigate = useNavigate();
-  // 찾을 키워드
   const [searchTerm, setSearchTerm] = useState('');
-  // 검색 카테고리
-  const [searchTag, setSearchTag] = useState('Title');
-  // 검색 여부
   const [isSearched, setIsSearched] = useState(false);
-  // 로딩 여부
-  const [loading, setLoading] = useState(false);
-  // 검색 결과
-  const [searchResults, setSearchResults] = useState({
-    bookStore: [],
-  });
-
   const [searchParams] = useSearchParams();
+  const { isOpen, toggleModal } = useModal();
+  const [selectedBook, setSelectedBook] = useState(null);
+
+  const text = searchParams.get('text') || '';
 
   useEffect(() => {
-    const text = searchParams.get('text') || '';
-    const tag = searchParams.get('tag') || '';
-    if (text && tag) {
+    if (text) {
       setSearchTerm(text);
-      setSearchTag(tag);
-      handleSearch(text, tag);
+      setIsSearched(true);
     }
-  }, [searchParams]);
+  }, [text]);
 
-  const handleSearch = async (text, tag) => {
-    setIsSearched(true);
-    setLoading(true);
-    try {
-      const aladinBooksData = await getAladinBooks(text, tag);
-      setSearchResults({
-        bookStore: aladinBooksData.item || [],
-      });
-    } catch (error) {
-      console.error('error', error);
-    } finally {
-      setLoading(false);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useBookInfiniteScroll(searchTerm, null);
+
+  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
     }
-  };
+  }, [inView, hasNextPage, fetchNextPage]);
 
   const handleSearchChange = event => {
     setSearchTerm(event.target.value);
@@ -52,13 +41,21 @@ const BookSearch = () => {
 
   const handleSearchSubmit = event => {
     event.preventDefault();
-    handleSearch(searchTerm, searchTag);
+    setIsSearched(true);
   };
 
-   // 더보기
-   const handleSeeMore = type => {
-    navigate(`/search/more?text=${searchTerm}&tag=${searchTag}`);
+  const handleBookCreateButton = book => {
+    setSelectedBook(book);
+    toggleModal();
   };
+
+  const renderBookItem = book => (
+    <SearchBookItem
+      key={book.book_id}
+      book={book}
+      onCreateClick={() => handleBookCreateButton(book)}
+    />
+  );
 
   return (
     <div className='flex flex-col items-center p-4'>
@@ -82,21 +79,23 @@ const BookSearch = () => {
           </button>
         </div>
       </form>
+
       {isSearched && (
-        <div>
-          {console.log(
-            'books being passed to SearchResultSection:',
-            searchResults.bookStore
+        <WrapContainer className='mt-4'>
+          {data?.pages?.map((page, index) => (
+            <div key={index}>{page.data?.map(renderBookItem)}</div>
+          ))}
+          {isFetchingNextPage && <p className='text-center'>로딩중...</p>}
+          {!hasNextPage && data?.pages?.length > 0 && (
+            <p className='text-center'>더 이상 결과가 없습니다.</p>
           )}
-          {/* SearchBook -> SearchResultSection ->  commond=-book-bookItem*/}
-          <SearchResultSection
-            title='도서 검색 결과'
-            books={searchResults.bookStore}
-            // onItemClick={handleItemClick}
-            onSeeMore={() => handleSeeMore('book')}
-            type='book'
+          <div ref={ref}></div>
+          <BookCreateModal
+            isCreateModalOpen={isOpen}
+            toggleCreateModal={toggleModal}
+            selectedBook={selectedBook}
           />
-        </div>
+        </WrapContainer>
       )}
     </div>
   );
