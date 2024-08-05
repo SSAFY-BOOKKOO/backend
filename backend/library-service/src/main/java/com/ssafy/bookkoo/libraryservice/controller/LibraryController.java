@@ -18,6 +18,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -118,6 +119,21 @@ public class LibraryController {
     ) {
         return ResponseEntity.ok()
                              .body(libraryService.updateLibrary(libraryId, libraryDto));
+    }
+
+    /**
+     * 서재를 삭제합니다
+     *
+     * @param libraryId 서재 ID
+     * @return true / false
+     */
+    @DeleteMapping("/{libraryId}")
+    @Operation(summary = "서재 삭제", description = "서재 삭제 API")
+    public ResponseEntity<Boolean> deleteLibrary(
+        @PathVariable Long libraryId
+    ) {
+        return ResponseEntity.ok()
+                             .body(libraryService.deleteLibrary(libraryId));
     }
 
     /**

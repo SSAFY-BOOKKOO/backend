@@ -24,7 +24,10 @@ public interface LibraryService {
      * @param memberId 멤버 ID
      * @return 생성된 서재 응답 DTO
      */
-    ResponseLibraryDto addLibrary(RequestCreateLibraryDto library, Long memberId);
+    ResponseLibraryDto addLibrary(
+        RequestCreateLibraryDto library,
+        Long memberId
+    );
 
     /**
      * 특정 사용자의 서재 목록을 조회합니다.
@@ -41,7 +44,10 @@ public interface LibraryService {
      * @param filter    상태 필터
      * @return 조회된 서재 응답 DTO
      */
-    ResponseLibraryDto getLibrary(Long libraryId, Status filter);
+    ResponseLibraryDto getLibrary(
+        Long libraryId,
+        Status filter
+    );
 
     /**
      * 서재를 수정합니다.
@@ -50,7 +56,10 @@ public interface LibraryService {
      * @param library   서재 수정 요청 DTO
      * @return 수정된 서재 응답 DTO
      */
-    ResponseLibraryDto updateLibrary(Long libraryId, RequestUpdateLibraryDto library);
+    ResponseLibraryDto updateLibrary(
+        Long libraryId,
+        RequestUpdateLibraryDto library
+    );
 
     /**
      * 서재에 책을 추가합니다.
@@ -80,7 +89,10 @@ public interface LibraryService {
      * @param searchDto 책 검색 요청 DTO
      * @return 조회된 책 응답 DTO 리스트
      */
-    List<ResponseBookDto> getMyBooks(Long memberId, RequestSearchBookMultiFieldDto searchDto);
+    List<ResponseBookDto> getMyBooks(
+        Long memberId,
+        RequestSearchBookMultiFieldDto searchDto
+    );
 
     /**
      * 서재 내 책 매핑을 수정합니다.
@@ -111,7 +123,10 @@ public interface LibraryService {
      * @param bookIds  bookId 리스트
      * @return Map<BookId, boolean>
      */
-    Map<Long, Boolean> areBooksInLibrary(Long memberId, List<Long> bookIds);
+    Map<Long, Boolean> areBooksInLibrary(
+        Long memberId,
+        List<Long> bookIds
+    );
 
     /**
      * 사용자 서재 내 책 단일 조회
@@ -121,5 +136,17 @@ public interface LibraryService {
      * @param bookId    book id
      * @return ResponseBookOfLibraryDto
      */
-    ResponseBookOfLibraryDto getBookOfLibrary(Long memberId, Long libraryId, Long bookId);
+    ResponseBookOfLibraryDto getBookOfLibrary(
+        Long memberId,
+        Long libraryId,
+        Long bookId
+    );
+
+    /**
+     * 서재 삭제 : libraryBookMapper 도 cascade 삭제 필요
+     *
+     * @param libraryId 서재 ID
+     * @return true / false
+     */
+    Boolean deleteLibrary(Long libraryId);
 }
