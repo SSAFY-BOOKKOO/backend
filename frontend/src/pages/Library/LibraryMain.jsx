@@ -82,37 +82,62 @@ const LibraryMain = () => {
     }
   }, [location.state]);
 
-  const moveBook = (fromIndex, toIndex) => {
-    setLibraries(prevLibraries => {
-      const newLibraries = prevLibraries.map(library => {
-        if (library.id === libraries[activeLibrary].id) {
-          const newBooks = [...library.books];
-          const movedBook = newBooks.find(
-            book => book.bookOrder === fromIndex + 1
-          );
+  const moveBook = async (fromIndex, toIndex) => {
+    const libraryId = libraries[activeLibrary].id;
+    const movedBook = libraries[activeLibrary].books.find(
+      book => book.bookOrder === fromIndex + 1
+    );
 
-          if (movedBook) {
-            movedBook.bookOrder = toIndex + 1;
-          }
+    if (movedBook) {
+      try {
+        await authAxiosInstance.put(`/libraries/${libraryId}/books`, [
+          {
+            bookOrder: toIndex + 1,
+            bookColor: movedBook.bookColor,
+            startAt: movedBook.startAt,
+            endAt: movedBook.endAt,
+            status: movedBook.status,
+            rating: movedBook.rating,
+            bookId: movedBook.book.id,
+          },
+        ]);
 
-          newBooks.forEach(book => {
-            if (
-              book.bookOrder === toIndex + 1 &&
-              book.book.id !== movedBook.book.id
-            ) {
-              book.bookOrder = fromIndex + 1;
+        setLibraries(prevLibraries => {
+          const newLibraries = prevLibraries.map(library => {
+            if (library.id === libraryId) {
+              const newBooks = [...library.books];
+              const movedBookIndex = newBooks.findIndex(
+                book => book.bookOrder === fromIndex + 1
+              );
+              newBooks[movedBookIndex].bookOrder = toIndex + 1;
+
+              newBooks.forEach(book => {
+                if (
+                  book.bookOrder === toIndex + 1 &&
+                  book.book.id !== newBooks[movedBookIndex].book.id
+                ) {
+                  book.bookOrder = fromIndex + 1;
+                }
+              });
+
+              return {
+                ...library,
+                books: newBooks.sort((a, b) => a.bookOrder - b.bookOrder),
+              };
             }
+            return library;
           });
-
-          return {
-            ...library,
-            books: newBooks.sort((a, b) => a.bookOrder - b.bookOrder),
-          };
-        }
-        return library;
-      });
-      return newLibraries;
-    });
+          return newLibraries;
+        });
+      } catch (error) {
+        console.error('책 순서 변경에 실패했습니다:', error);
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '책 순서 변경에 실패했습니다. 다시 시도해 주세요.',
+        });
+      }
+    }
   };
 
   const changeLibraryName = async (libraryId, newName) => {
@@ -177,6 +202,15 @@ const LibraryMain = () => {
   };
 
   const createLibrary = async () => {
+    if (libraries.length > 3) {
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '서재는 최대 3개까지 생성할 수 있습니다.',
+      });
+      return;
+    }
+
     if (createLibraryName.trim()) {
       if (createLibraryName.length > 10) {
         setAlert({

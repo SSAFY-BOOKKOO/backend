@@ -19,6 +19,7 @@ const LibraryOptions = ({
   createLibrary,
   newLibraryName,
   setNewLibraryName,
+  changeLibraryName, // 추가된 prop
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -36,52 +37,6 @@ const LibraryOptions = ({
       });
     } else {
       setShowDeleteModal(true);
-    }
-  };
-
-  const changeLibraryName = async (libraryId, newName) => {
-    try {
-      // 기존 서재 데이터를 먼저 가져옵니다.
-      const existingLibraryResponse = await authAxiosInstance.get(
-        `/libraries/${libraryId}`
-      );
-      const existingLibrary = existingLibraryResponse.data;
-
-      // 새로운 이름으로 서재를 업데이트 합니다.
-      await authAxiosInstance.put(`/libraries/${libraryId}`, {
-        name: newName,
-        libraryOrder: existingLibrary.libraryOrder,
-        libraryStyleDto: {
-          libraryColor: existingLibrary.libraryStyleDto.libraryColor,
-        },
-      });
-
-      // 로컬 상태를 업데이트 합니다.
-      setLibraries(prev => {
-        const newLibraries = [...prev];
-        const libraryIndex = newLibraries.findIndex(
-          lib => lib.id === libraryId
-        );
-        if (libraryIndex !== -1) {
-          newLibraries[libraryIndex].name = newName;
-        }
-        return newLibraries;
-      });
-
-      // 성공 알림을 표시합니다.
-      setAlert({
-        isOpen: true,
-        confirmOnly: true,
-        message: '서재명이 성공적으로 변경되었습니다.',
-      });
-    } catch (error) {
-      // 오류 알림을 표시합니다.
-      setAlert({
-        isOpen: true,
-        confirmOnly: true,
-        message: '서재명 변경에 실패했습니다. 다시 시도해 주세요.',
-      });
-      console.error(error);
     }
   };
 

@@ -5,7 +5,11 @@ const MemberProfile = ({ member }) => (
   <div className='text-center pb-4 relative'>
     <div className='flex items-center justify-center flex-row space-x-12'>
       <img
-        src={member.profileImgUrl || profileImgSample}
+        src={
+          member.profileImgUrl === 'string'
+            ? profileImgSample
+            : profileImgSample
+        }
         alt={member.nickName}
         className='rounded-full w-24 h-24 sm:w-32 sm:h-32'
       />
