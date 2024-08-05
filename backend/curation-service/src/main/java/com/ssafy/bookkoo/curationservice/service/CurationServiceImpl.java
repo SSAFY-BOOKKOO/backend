@@ -117,8 +117,7 @@ public class CurationServiceImpl implements CurationService {
      */
     @Override
     public List<ResponseCurationDto> getCurationList(Long receiver, Pageable pageable) {
-        List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByIsStoredAndReceiverOrderByCreatedAtDesc(
-            false,
+        List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByReceiverOrderByCreatedAtDesc(
             receiver, pageable);
         List<Curation> curationList = curationSendByReceiver.stream()
                                                             .map(
@@ -134,7 +133,7 @@ public class CurationServiceImpl implements CurationService {
      */
     @Transactional
     @Override
-    public void storeCuration(Long id, Long receiver) {
+    public void changeCurationStoredStatus(Long id, Long receiver) {
         Curation curation = curationRepository.findById(id)
                                               .orElseThrow(
                                                   () -> new CurationNotFoundException(
@@ -145,7 +144,7 @@ public class CurationServiceImpl implements CurationService {
                                                               // 자신이 받은 큐레이션이 아닐경우 권한 Exception 던져야함
                                                               () -> new CurationNotFoundException(
                                                                   id));
-        curationSend.store();
+        curationSend.changeStoredStatus();
     }
 
     /**

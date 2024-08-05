@@ -79,14 +79,14 @@ public class CurationController {
     }
 
     @PostMapping("/store/{curationId}")
-    @Operation(summary = "큐레이션 보관하기", description = "큐레이션 보관하기")
-    public ResponseEntity<List<ResponseCurationDto>> storeCuration(
+    @Operation(summary = "큐레이션 보관상태 변경", description = "큐레이션 보관상태를 변경합니다 true -> false, false -> true")
+    public ResponseEntity<List<ResponseCurationDto>> changeCurationStoredStatus(
         @RequestHeader HttpHeaders headers,
         @PathVariable Long curationId
     ) {
         // Passport 에서 receiver 가져오기
         Long memberId = CommonUtil.getMemberId(headers);
-        curationService.storeCuration(curationId, memberId);
+        curationService.changeCurationStoredStatus(curationId, memberId);
         return ResponseEntity.ok()
                              .build();
 
