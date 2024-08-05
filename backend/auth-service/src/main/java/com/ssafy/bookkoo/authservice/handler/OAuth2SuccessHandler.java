@@ -71,6 +71,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             ResponseLoginTokenDto tokenDto = authService.login(member.getEmail());
             Cookie cookie = CookieUtils.secureCookieGenerate(REFRESH_TOKEN_NAME,
                 tokenDto.refreshToken(), CookieUtils.REFRESH_TOKEN_EXPIRATION);
+            cookie.setDomain(".ssafy.io");
             response.addCookie(cookie);
             //토큰 관련 정보를 추가하여 로그인 처리
             String targetURl = UriComponentsBuilder.fromUriString(FRONTEND_URL + "/library")
