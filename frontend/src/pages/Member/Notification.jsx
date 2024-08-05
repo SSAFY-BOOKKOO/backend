@@ -1,32 +1,51 @@
-import React from 'react';
-
-const notifications = [
-  '유저3 님이 댓글을 작성했습니다.',
-  '댓글을 작성한 유저1님이 한줄평을 남기셨습니다.',
-];
+import React, { useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
+import useNotificationInfiniteScroll from '@hooks/useNotificationInfiniteScroll';
+import Spinner from '@components/@common/Spinner';
+import WrapContainer from '@components/Layout/WrapContainer';
+import IconButton from '@components/@common/IconButton';
+import { IoArrowBack, IoSettingsSharp } from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom';
+import NotificationItem from '@components/Notification/NotificationItem';
 
 const Notification = () => {
+  const navigate = useNavigate();
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useNotificationInfiniteScroll();
+  const { ref, inView } = useInView();
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage]);
+
   return (
-    <div className='max-w-md mx-auto mt-10'>
-      <div className='flex items-center justify-between mb-4'>
-        <h1 className='text-2xl font-bold'>알림 목록</h1>
-        <div className='relative'>
-          <button className='relative w-8 h-8 bg-gray-200 rounded-full'>
-            <img src='@assets\icons\notification.png' alt='notification' />
-          </button>
-          <span className='absolute top-0 right-0 inline-block w-5 h-5 bg-red-600 text-white text-xs font-medium text-center rounded-full'>
-            {notifications.length}
-          </span>
-        </div>
+    <WrapContainer>
+      <div className='max-w-md mx-auto mt-4'>
+        <header className='bg-white flex items-center pb-3 justify-between'>
+          <IconButton onClick={handleBack} icon={IoArrowBack} />
+          <h1 className='text-lg font-semibold'>알림</h1>
+          <IconButton onClick={() => {}} icon={IoSettingsSharp} />
+        </header>
+        <ul className='bg-white divide-y divide-gray-100'>
+          {data?.pages.map((page, pageIndex) =>
+            page.map(notification => (
+              <NotificationItem
+                key={`${pageIndex}-${notification.notificationId}`}
+                notification={notification}
+              />
+            ))
+          )}
+        </ul>
+        {isFetchingNextPage && <Spinner infiniteScroll />}
+        <div ref={ref}></div>
       </div>
-      <ul className='bg-white shadow rounded-lg divide-y divide-gray-200'>
-        {notifications.map((notification, index) => (
-          <li key={index} className='p-4'>
-            {notification}
-          </li>
-        ))}
-      </ul>
-    </div>
+    </WrapContainer>
   );
 };
 
