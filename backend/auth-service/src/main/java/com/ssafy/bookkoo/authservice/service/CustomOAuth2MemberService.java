@@ -62,7 +62,7 @@ public class CustomOAuth2MemberService extends DefaultOAuth2UserService {
                                            .profileImgUrl(oAuth2UserInfo.getProfileImgUrl())
                                            .build();
 
-        Optional<Member> optionalMember = memberRepository.findByMemberId(email);
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
         if (optionalMember.isPresent()) {
             user = optionalMember.get();
         }
