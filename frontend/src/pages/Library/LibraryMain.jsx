@@ -215,8 +215,10 @@ const LibraryMain = () => {
     }
   };
 
-  const handleBookClick = book => {
-    navigate(`/library/detail/${book.book.id}`, { state: { book } });
+  const handleBookClick = item => {
+    navigate(`/library/${libraries[activeLibrary].id}/detail/${item.book.id}`, {
+      state: { book: item.book, libraryId: libraries[activeLibrary].id },
+    });
   };
 
   return (
