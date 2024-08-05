@@ -1,11 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import WrapContainer from '@components/Layout/WrapContainer';
 import SearchBookItem from '@components/Library/Search/SearchBookItem';
 import SearchLibraryItem from '@components/Library/Search/SearchLibraryItem';
 import BookTalkItem from '@components/@common/Book/BookTalkItem';
 import useBookInfiniteScroll from '@hooks/useBookInfiniteScroll';
+import useLibraryInfiniteScroll from '@hooks/useLibraryInfiniteScroll';
 import { useInView } from 'react-intersection-observer';
+import useModal from '@hooks/useModal';
+import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
+import { getAladinBookByIsbn } from '@services/Book';
+import Spinner from '@components/@common/Spinner';
 
 const SearchMore = () => {
   const { type } = useParams();
@@ -13,12 +18,15 @@ const SearchMore = () => {
   const navigate = useNavigate();
   const searchText = searchParams.get('text');
   const selectedTag = searchParams.get('tag');
+  const { isOpen, toggleModal } = useModal();
+  const [selectedBook, setSelectedBook] = useState(null);
 
   const getQuery = () => {
     switch (type) {
       case 'book':
         return useBookInfiniteScroll(searchText, selectedTag);
       case 'library':
+        return useLibraryInfiniteScroll(searchText, selectedTag);
       case 'booktalk':
         return {
           data: null,
@@ -31,7 +39,8 @@ const SearchMore = () => {
     }
   };
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = getQuery();
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    getQuery();
   const { ref, inView } = useInView();
 
   useEffect(() => {
@@ -41,23 +50,50 @@ const SearchMore = () => {
   }, [inView, hasNextPage, fetchNextPage]);
 
   const handleBookClick = book => {
-    navigate(`/${type}/detail/${book.book_id}`, { state: { book } });
+    navigate(`/${type}/detail/${book.isbn}`, { state: { book } });
+  };
+
+  const handleBookCreateButton = async book => {
+    try {
+      const bookData = await getAladinBookByIsbn(book.isbn);
+      setSelectedBook(bookData);
+    } catch (error) {
+      console.error('error', error);
+    }
+
+    toggleModal();
   };
 
   const renderBookItem = book => {
-    const components = {
-      library: SearchLibraryItem,
-      book: SearchBookItem,
-      booktalk: BookTalkItem,
-    };
-    const Component = components[type];
-    return Component ? (
-      <Component
-        key={book.book_id}
-        book={book}
-        onClick={() => handleBookClick(book)}
-      />
-    ) : null;
+    switch (type) {
+      case 'library':
+        return (
+          <SearchLibraryItem
+            key={book.id}
+            book={book}
+            onClick={() => handleBookClick(book)}
+          />
+        );
+      case 'book':
+        return (
+          <SearchBookItem
+            key={book.isbn}
+            book={book}
+            onClick={() => handleBookClick(book)}
+            onCreateClick={() => handleBookCreateButton(book)}
+          />
+        );
+      case 'booktalk':
+        return (
+          <BookTalkItem
+            key={book.book_id}
+            book={book}
+            onClick={() => handleBookClick(book)}
+          />
+        );
+      default:
+        return null;
+    }
   };
 
   const getTitle = () => {
@@ -71,15 +107,18 @@ const SearchMore = () => {
 
   return (
     <WrapContainer className='mt-4'>
+      {isLoading && <Spinner />}
       <h1 className='text-2xl font-bold mb-4'>{getTitle()}</h1>
       {data?.pages?.map((page, index) => (
         <div key={index}>{page.data?.map(renderBookItem)}</div>
       ))}
-      {isFetchingNextPage && <p className='text-center'>로딩중...</p>}
-      {!hasNextPage && data?.pages?.length > 0 && (
-        <p className='text-center'>더 이상 결과가 없습니다.</p>
-      )}
+      {isFetchingNextPage && <Spinner infiniteScroll />}
       <div ref={ref}></div>
+      <BookCreateModal
+        isCreateModalOpen={isOpen}
+        toggleCreateModal={toggleModal}
+        selectedBook={selectedBook}
+      />
     </WrapContainer>
   );
 };

@@ -1,26 +1,41 @@
+import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
 import { bookDataAtom } from '@atoms/bookCreateAtom';
 import CreateSelectButton from './CreateSelectButton';
+import { getLibraryList } from '@services/Library';
 
 const ShelfSelectStep = () => {
   const [bookData, setBookData] = useAtom(bookDataAtom);
+  const [libraries, setLibraries] = useState([]);
 
-  const handleLibraryChange = library => {
-    setBookData(prev => ({ ...prev, library }));
+  const handleLibraryGet = async () => {
+    try {
+      const libraryData = await getLibraryList();
+      const shelves = libraryData.map(library => ({
+        index: library.id,
+        value: library.id,
+        text: library.name,
+      }));
+      setLibraries(shelves);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const shelves = [
-    { index: 1, value: 'library1', text: '서재1' },
-    { index: 2, value: 'library2', text: '서재2' },
-    { index: 3, value: 'library3', text: '서재3' },
-  ];
+  useEffect(() => {
+    handleLibraryGet();
+  }, []);
+
+  const handleLibraryChange = libraryId => {
+    setBookData(prev => ({ ...prev, libraryId }));
+  };
 
   return (
     <div>
       <h2 className='mb-3 text-lg'>서재</h2>
       <CreateSelectButton
-        options={shelves}
-        selected={bookData.library}
+        options={libraries}
+        selected={bookData.libraryId}
         setSelected={handleLibraryChange}
       />
     </div>

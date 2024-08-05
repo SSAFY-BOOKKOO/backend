@@ -1,67 +1,62 @@
 import axios from 'axios';
+import { getDefaultStore } from 'jotai';
+import { loadingAtom } from '@atoms/loadingAtom';
 
 const { MODE } = import.meta.env;
 
 const baseURL = MODE === 'production' ? 'https://api.i11a506.ssafy.io' : '/api';
 
-// 기본 인스턴스
-const axiosInstance = axios.create({
-  baseURL,
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+const createAxiosInstance = (useAuth = false) => {
+  const instance = axios.create({
+    baseURL,
+    timeout: 10000,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 
-// 인증이 필요한 인스턴스
-const authAxiosInstance = axios.create({
-  baseURL,
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// 요청 인터셉터
-authAxiosInstance.interceptors.request.use(
-  config => {
-    // 요청이 전달되기 전 작업
-    const accessToken = localStorage.getItem('ACCESS_TOKEN');
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+  // 요청 인터셉터
+  instance.interceptors.request.use(
+    config => {
+      getDefaultStore().set(loadingAtom, prev => prev + 1);
+      if (useAuth) {
+        const accessToken = localStorage.getItem('ACCESS_TOKEN');
+        if (accessToken) {
+          config.headers.Authorization = `Bearer ${accessToken}`;
+        }
+      }
+      return config;
+    },
+    error => {
+      getDefaultStore().set(loadingAtom, prev => Math.max(0, prev - 1));
+      return Promise.reject(error);
     }
-    return config;
-  },
-  error => {
-    // 요청 오류가 있는 작업
-    return Promise.reject(error);
-  }
-);
+  );
 
-// 응답 인터셉터
-const applyResponseInterceptor = instance => {
+  // 응답 인터셉터
   instance.interceptors.response.use(
-    // 2xx 범위에서 응답 데이터가 있는 작업
-    response => response,
+    response => {
+      getDefaultStore().set(loadingAtom, prev => Math.max(0, prev - 1));
+      return response;
+    },
     async error => {
-      // 2xx 외의 범위 응답 오류가 있는 작업
-      // 토큰 만료
-      if (error.response && error.response?.status === 401) {
+      getDefaultStore().set(loadingAtom, prev => Math.max(0, prev - 1));
+      if (useAuth && error.response && error.response?.status === 401) {
         try {
-          const { accessToken } = error.response.data.data;
+          const { accessToken: newAccessToken } = error.response.data.data;
 
-          localStorage.setItem('ACCESS_TOKEN', accessToken);
+          localStorage.setItem('ACCESS_TOKEN', newAccessToken);
 
           // 원래 요청을 재시도
           const retryConfig = {
             ...error.config,
             headers: {
               ...error.config.headers,
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${newAccessToken}`,
             },
           };
 
-          return authAxiosInstance(retryConfig);
+          return instance(retryConfig);
         } catch (refreshError) {
           localStorage.removeItem('ACCESS_TOKEN');
           window.location.href = '/login';
@@ -71,12 +66,13 @@ const applyResponseInterceptor = instance => {
       return Promise.reject(error);
     }
   );
+
+  instance.defaults.withCredentials = true;
+
+  return instance;
 };
 
-applyResponseInterceptor(axiosInstance);
-applyResponseInterceptor(authAxiosInstance);
-
-axiosInstance.defaults.withCredentials = true;
-authAxiosInstance.defaults.withCredentials = true;
+const axiosInstance = createAxiosInstance(false);
+const authAxiosInstance = createAxiosInstance(true);
 
 export { axiosInstance, authAxiosInstance };
