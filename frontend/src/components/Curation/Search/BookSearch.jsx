@@ -1,35 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import Modal from 'react-modal';
 import { BiSearch } from 'react-icons/bi';
 import { getAladinBooks } from '@services/Book';
 import SearchResultSection from '@components/Curation/Search/SearchResultSection';
 
-const BookSearch = () => {
+const BookSearch = ({ isOpen, onRequestClose, text, tag }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchTag, setSearchTag] = useState('');
+  const [searchTag, setSearchTag] = useState(tag || '');
   const [isSearched, setIsSearched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchResults, setSearchResults] = useState({
-    library: [],
     bookStore: [],
   });
 
-  const [searchParams] = useSearchParams();
-
   useEffect(() => {
-    const text = searchParams.get('text') || '';
-    const tag = searchParams.get('tag') || '';
     if (text && tag) {
       setSearchTerm(text);
       setSearchTag(tag);
       handleSearch(text, tag);
     }
-  }, [searchParams]);
+  }, [text, tag]);
 
   const handleSearch = async (text, tag) => {
     setIsSearched(true);
     setLoading(true);
     try {
+      // 도서
       const aladinBooksData = await getAladinBooks(text, tag);
       setSearchResults({
         library: [], // 필요에 따라 업데이트
@@ -48,14 +44,21 @@ const BookSearch = () => {
 
   const handleSearchSubmit = event => {
     event.preventDefault();
+    // submit 작동 확인 // 왜 handleSearch에 안들어가냐구
+    console.log('검색어:', searchTerm);
     handleSearch(searchTerm, searchTag);
   };
 
   return (
-    <div className='flex flex-col items-center p-4'>
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      className='flex items-center justify-center'
+      overlayClassName='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center'
+    >
       <form
         onSubmit={handleSearchSubmit}
-        className='bg-white rounded-lg p-6 w-full max-w-md'
+        className='bg-white rounded-lg p-6 shadow-lg w-80'
       >
         <div className='flex items-center'>
           <input
@@ -69,27 +72,23 @@ const BookSearch = () => {
             type='submit'
             className='ml-2 p-2 bg-transparent border-none cursor-pointer'
           >
-            <BiSearch className='text-2xl' />
+            <BiSearch />
           </button>
         </div>
+        {/* 검색 결과를 보여주는 섹션 */}
+        {console.log(
+          'books being passed to SearchResultSection:',
+          searchResults.bookStore
+        )}
+        <SearchResultSection
+          title='도서 검색 결과'
+          books={searchResults.bookStore}
+          // onItemClick={handleItemClick}
+          // onSeeMore={handleSeeMore}
+          type='book'
+        />
       </form>
-      {isSearched && (
-        <div>
-          {console.log(
-            'books being passed to SearchResultSection:',
-            searchResults.bookStore
-          )}
-          {/* 도서 검색 결과 */}
-          <SearchResultSection
-            title='도서 검색 결과'
-            books={searchResults.bookStore}
-            // onItemClick={handleItemClick}
-            // onSeeMore={handleSeeMore}
-            type='book'
-          />
-        </div>
-      )}
-    </div>
+    </Modal>
   );
 };
 

@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { BiSearch } from 'react-icons/bi';
 import { useInView } from 'react-intersection-observer';
-import SearchBookItem from '@components/Curation/Search/BookItem';
+import BookItem from '@components/Curation/Search/BookItem';
 import useBookInfiniteScroll from '@hooks/useBookInfiniteScroll';
 import WrapContainer from '@components/Layout/WrapContainer';
 import useModal from '@hooks/useModal';
-import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
+import CurationLetterCreate from './CurationLetterCreate';
+// import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
 
 const BookSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -46,11 +47,15 @@ const BookSearch = () => {
 
   const handleBookCreateButton = book => {
     setSelectedBook(book);
-    toggleModal();
+    console.log({ book });
+    // //////////////////////등록으로 넘기자
+    <CurationLetterCreate key={book.isbn} book={book} />;
+    // toggleModal();
   };
 
   const renderBookItem = book => (
-    <SearchBookItem
+    // BookItem으로 클릭 버튼 넘기기
+    <BookItem
       key={book.book_id}
       book={book}
       onCreateClick={() => handleBookCreateButton(book)}
@@ -90,11 +95,11 @@ const BookSearch = () => {
             <p className='text-center'>더 이상 결과가 없습니다.</p>
           )}
           <div ref={ref}></div>
-          <BookCreateModal
+          {/* <BookCreateModal
             isCreateModalOpen={isOpen}
             toggleCreateModal={toggleModal}
             selectedBook={selectedBook}
-          />
+          /> */}
         </WrapContainer>
       )}
     </div>

@@ -105,9 +105,9 @@ const LibraryDetail = () => {
             <div className='w-10/12 max-w-md h-10/12 flex flex-col'>
               {/* 1. 회색 영역 */}
               <div className='relative bg-zinc-300 rounded-t-lg w-3/2 max-w-md h-4/5 flex flex-col justify-between overflow-auto'>
-                {/* 모달 */}
                 {/* 하드커버 선 */}
-                <div className='absolute left-6 top-0 bottom-0 shadow-2xl w-1 bg-gray-500 shadow-2xl z-10'></div>
+                <div className='absolute left-6 top-0 bottom-0 shadow-2xl w-1 bg-gray-500 shadow-2xl z-30'></div>
+                {/* 모달 */}
                 <SettingsModal
                   isOpen={isOpen}
                   onClose={closeModal}
@@ -115,29 +115,31 @@ const LibraryDetail = () => {
                   actions={actions}
                   className='z-20'
                 />
-                <div className='relative flex flex-col items-center'>
-                  <img
-                    src='https://marketplace.canva.com/EAF9gve36_w/1/0/1003w/canva-%EB%85%B8%EB%9E%80%EC%83%89-%ED%95%98%EB%8A%98%EC%83%89-%EA%B3%A0%EC%96%91%EC%9D%B4-%EB%B2%A0%EC%8A%A4%ED%8A%B8%EC%85%80%EB%9F%AC-%EC%B1%85%ED%91%9C%EC%A7%80-u-BROyrLSjI.jpg'
-                    alt={title}
-                    className='w-10/12 h-4/5 pt-6 pr-7 pl-12 cursor-pointer rounded-lg mt-[2rem] '
-                    onClick={() => setShowReview(true)}
-                  />
-                  {/* <IoBookmarkSharp className='absolute top-[3.7rem] right-[4rem] text-6xl text-blue-500' /> */}
-                  <div className='absolute top-5 right-16 flex items-center justify-center w-16 h-32 text-blue-500'>
-                    <IoBookmarkSharp className='h-full w-full' />
-                    <span
-                      className='absolute text-black text-xs mb-5 font-bold'
-                      style={{
-                        writingMode: 'vertical-rl',
-                        textOrientation: 'upright',
-                        letterSpacing: '-0.23em',
-                      }}
-                    >
-                      읽는중
-                    </span>
+                <div>
+                  <div className='relative flex flex-col items-center'>
+                    <img
+                      src='https://marketplace.canva.com/EAF9gve36_w/1/0/1003w/canva-%EB%85%B8%EB%9E%80%EC%83%89-%ED%95%98%EB%8A%98%EC%83%89-%EA%B3%A0%EC%96%91%EC%9D%B4-%EB%B2%A0%EC%8A%A4%ED%8A%B8%EC%85%80%EB%9F%AC-%EC%B1%85%ED%91%9C%EC%A7%80-u-BROyrLSjI.jpg'
+                      alt={title}
+                      className='w-10/12 h-4/5 pt-6 pr-7 pl-12 cursor-pointer rounded-lg mt-[2rem] z-0'
+                      onClick={() => setShowReview(true)}
+                    />
+                    {/* <IoBookmarkSharp className='absolute top-[3.7rem] right-[4rem] text-6xl text-blue-500' /> */}
+                    <div className='absolute top-5 right-16 flex items-center justify-center w-16 h-32 text-blue-500'>
+                      <IoBookmarkSharp className='h-full w-full' />
+                      <span
+                        className='absolute text-black text-xs mb-5 font-bold'
+                        style={{
+                          writingMode: 'vertical-rl',
+                          textOrientation: 'upright',
+                          letterSpacing: '-0.23em',
+                        }}
+                      >
+                        읽는중
+                      </span>
+                    </div>
+                    {/* 읽은 기간 로직 (수정예정) */}
+                    <p className='m-2 pl-3'>2024.07.19-2024.07-24</p>
                   </div>
-                  {/* 읽은 기간 로직 (수정예정) */}
-                  <p className='m-2 pl-3'>2024.07.19-2024.07-24</p>
                 </div>
               </div>
 

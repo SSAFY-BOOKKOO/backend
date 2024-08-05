@@ -107,6 +107,7 @@ const CurationReceive = () => {
       setStoredLetters(storedLetters.filter(storeId => storeId !== letter));
     } else {
       setStoredLetters([...storedLetters, letter]);
+      console.log('보관함으로 슝');
       authAxiosInstance
         .post(`/curations/store/${letter.curationId}`, {
           curationId: letter.curationId,

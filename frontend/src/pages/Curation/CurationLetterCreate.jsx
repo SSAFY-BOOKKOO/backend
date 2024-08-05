@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Input from '@components/@common/Input';
 import Button from '@components/@common/Button';
-// import BookSearch from '@components/Curation/BookSearch';
 import { useNavigate } from 'react-router-dom';
 
-const CreateLetter = () => {
+const CreateLetter = ({ book }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  // const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
-
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log('Book object:', book);
+  }, [book]);
 
   const handleTitleChange = e => {
     setTitle(e.target.value);
@@ -19,17 +20,9 @@ const CreateLetter = () => {
     setContent(e.target.value);
   };
 
-  // const handleSearchButtonClick = () => {
-  //   setIsSearchModalOpen(true);
-  // };
-
   const handleSearchButtonClick = () => {
     navigate('/curation/letter-create/book-search');
   };
-
-  // const handleSearchModalClose = () => {
-  //   setIsSearchModalOpen(false);
-  // };
 
   const handleLetterCreate = () => {
     navigate('send');
@@ -40,8 +33,18 @@ const CreateLetter = () => {
       <div className='w-full max-w-md'>
         <div className='bg-gray-100 p-4 rounded-lg mb-4'>
           <div className='flex items-center justify-between'>
-            <form className='text-gray-700'>책을 등록해 주세요!</form>
-            {/* 검색 버튼 누르면 SearchBook 연결 */}
+            {book ? (
+              <div className='flex items-center'>
+                <img
+                  src={book.coverImgUrl}
+                  alt={book.title}
+                  className='w-12 h-16 rounded-md shadow-lg'
+                />
+                <div className='ml-4 text-gray-700'>{book.title}</div>
+              </div>
+            ) : (
+              <div className='text-gray-700'>책을 등록해 주세요!</div>
+            )}
             <button
               className='px-4 py-2 bg-gray-300 rounded-lg text-gray-700'
               onClick={handleSearchButtonClick}
@@ -71,10 +74,6 @@ const CreateLetter = () => {
           onClick={handleLetterCreate}
         />
       </div>
-      {/* <BookSearch
-        isOpen={isSearchModalOpen}
-        onRequestClose={handleSearchModalClose}
-      /> */}
     </div>
   );
 };

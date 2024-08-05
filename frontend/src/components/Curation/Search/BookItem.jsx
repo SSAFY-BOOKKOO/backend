@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import Button from '../../@common/Button';
+import { useNavigate } from 'react-router-dom';
 
-const BookItem = ({ book, onClic, onCreateClick }) => {
+const BookItem = ({ book, onClick, onCreateClick }) => {
   const titleMaxLength = 10;
   const authorMaxLength = 24;
+  const navigate = useNavigate();
 
   const displayTitle =
     book.title.length > titleMaxLength
@@ -15,9 +17,15 @@ const BookItem = ({ book, onClic, onCreateClick }) => {
       ? book.author.substring(0, authorMaxLength - 1) + '...'
       : book.author;
 
+  const navigateToCreate = () => {
+    navigate('/curation/letter-create');
+  };
+
   const handleButtonClick = e => {
     e.stopPropagation();
     onCreateClick();
+    navigateToCreate();
+    console.log('눌렀음');
   };
 
   // useEffect(() => {

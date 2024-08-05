@@ -50,15 +50,15 @@ const CurationLetterDetail = () => {
   return (
     <div className='flex flex-col items-center justify-start p-4  scrollbar-none'>
       <div className='relative bg-white rounded-lg shadow-lg w-full max-w-md mx-auto mt-32 scrollbar-none'>
-        <div className='absolute -top-28 w-full flex justify-center'>
+        <div className='absolute -top-28 w-full flex justify-center z-20'>
           <img
             src={letter.image}
             alt={letter.title}
-            className='w-48 h-64 rounded-md shadow-lg'
+            className='w-48 h-64 rounded-md shadow-lg z-10'
           />
         </div>
         {/* 설정 모달 */}
-        <div className='relative flex flex-col items-center p-6 pt-32'>
+        <div className='relative flex flex-col items-center p-6 pt-32 z-30'>
           <SettingsModal
             isOpen={isOpen}
             onClose={closeModal}
