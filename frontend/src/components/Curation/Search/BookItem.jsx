@@ -27,6 +27,13 @@ const BookItem = ({ book, onClick, onCreateClick }) => {
     navigateToCreate();
     console.log('눌렀음');
   };
+  // const handleSubmitBook=({book})=>{
+  //   navigate('/curation/letter-create');
+  //   state:{
+  //     coverImg:`${book.coverImgUrl}`
+  //     title:`${book.title}`
+  //   }
+  // }
 
   // useEffect(() => {
   //   console.log('Book object:', book);

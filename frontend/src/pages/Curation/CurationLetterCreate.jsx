@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import Input from '@components/@common/Input';
 import Button from '@components/@common/Button';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
+import { curationBookAtom } from '@atoms/curationBookAtom';
 
-const CreateLetter = ({ book }) => {
+
+const CreateLetter = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const navigate = useNavigate();
+  // const location = useLocation();
+  // const book = location.state;
+  const [book]=useAtom(curationBookAtom)
+
 
   useEffect(() => {
     console.log('Book object:', book);
@@ -36,7 +43,7 @@ const CreateLetter = ({ book }) => {
             {book ? (
               <div className='flex items-center'>
                 <img
-                  src={book.coverImgUrl}
+                  src={book.coverImg}
                   alt={book.title}
                   className='w-12 h-16 rounded-md shadow-lg'
                 />

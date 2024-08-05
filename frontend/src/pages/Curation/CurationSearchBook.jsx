@@ -1,22 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams,useNavigate } from 'react-router-dom';
 import { BiSearch } from 'react-icons/bi';
 import { useInView } from 'react-intersection-observer';
 import BookItem from '@components/Curation/Search/BookItem';
 import useBookInfiniteScroll from '@hooks/useBookInfiniteScroll';
 import WrapContainer from '@components/Layout/WrapContainer';
 import useModal from '@hooks/useModal';
-import CurationLetterCreate from './CurationLetterCreate';
+import { useSetAtom } from 'jotai';
+import { curationBookAtom } from '../../atoms/curationBookAtom';
+// import CurationLetterCreate from './CurationLetterCreate';
 // import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
 
 const BookSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearched, setIsSearched] = useState(false);
   const [searchParams] = useSearchParams();
-  const { isOpen, toggleModal } = useModal();
+  // const { isOpen, toggleModal } = useModal();
   const [selectedBook, setSelectedBook] = useState(null);
+  // jotai 활용
+  const setBook = useSetAtom(curationBookAtom);
+
 
   const text = searchParams.get('text') || '';
+  const navigate=useNavigate()
 
   useEffect(() => {
     if (text) {
@@ -25,6 +31,7 @@ const BookSearch = () => {
     }
   }, [text]);
 
+  // 무한 스크롤
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useBookInfiniteScroll(searchTerm, null);
 
@@ -48,9 +55,9 @@ const BookSearch = () => {
   const handleBookCreateButton = book => {
     setSelectedBook(book);
     console.log({ book });
-    // //////////////////////등록으로 넘기자
-    <CurationLetterCreate key={book.isbn} book={book} />;
-    // toggleModal();
+    // jotai 활용
+    setBook(book)
+    navigate('/curation/letter-create')
   };
 
   const renderBookItem = book => (
@@ -95,11 +102,6 @@ const BookSearch = () => {
             <p className='text-center'>더 이상 결과가 없습니다.</p>
           )}
           <div ref={ref}></div>
-          {/* <BookCreateModal
-            isCreateModalOpen={isOpen}
-            toggleCreateModal={toggleModal}
-            selectedBook={selectedBook}
-          /> */}
         </WrapContainer>
       )}
     </div>
