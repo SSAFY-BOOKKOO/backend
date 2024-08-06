@@ -13,7 +13,6 @@ import Friend from './pages/Mypage/Friend.jsx';
 import Notification from './pages/Member/Notification.jsx';
 import Profile from './pages/Mypage/Profile.jsx';
 import CurationReceive from './pages/Curation/CurationReceive.jsx';
-import Receive2 from './pages/Curation/Receive2.jsx';
 import CurationSend from './pages/Curation/CurationSend.jsx';
 import CurationStore from './pages/Curation/CurationStore.jsx';
 import Login from './pages/Member/Login.jsx';
@@ -70,7 +69,7 @@ const router = createBrowserRouter([
           { path: 'book/detail/:bookId', element: <SearchBookDetail /> },
 
           // curation
-          { path: 'curation/receive', element: <Receive2 /> },
+          { path: 'curation/receive', element: <CurationReceive /> },
           { path: 'curation/send', element: <CurationSend /> },
           { path: 'curation/store', element: <CurationStore /> },
           { path: 'curation/chatbot', element: <CurationChatBot /> },

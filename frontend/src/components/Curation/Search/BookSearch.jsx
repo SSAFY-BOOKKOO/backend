@@ -35,6 +35,7 @@ const BookSearch = ({ isOpen, onRequestClose, text, tag }) => {
       console.error('error', error);
     } finally {
       setLoading(false);
+      console.log(`결과: ${searchResults}`);
     }
   };
 

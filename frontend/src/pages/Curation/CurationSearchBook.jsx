@@ -8,6 +8,7 @@ import WrapContainer from '@components/Layout/WrapContainer';
 import useModal from '@hooks/useModal';
 import { useSetAtom } from 'jotai';
 import { curationBookAtom } from '../../atoms/curationBookAtom';
+// import { getAladinBooks } from '@services/Book';
 // import CurationLetterCreate from './CurationLetterCreate';
 // import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
 
@@ -51,6 +52,7 @@ const BookSearch = () => {
     setIsSearched(true);
   };
 
+  /////////////////도서 등록
   const handleBookCreateButton = book => {
     setSelectedBook(book);
     console.log({ book });
@@ -59,14 +61,29 @@ const BookSearch = () => {
     navigate('/curation/letter-create');
   };
 
-  const renderBookItem = book => (
-    // BookItem으로 클릭 버튼 넘기기
-    <BookItem
-      key={book.book_id}
-      book={book}
-      onCreateClick={() => handleBookCreateButton(book)}
-    />
-  );
+  // const renderBookItem = book => (
+  //   // BookItem으로 클릭 버튼 넘기기
+
+  //   <BookItem
+  //     key={book.book_id}
+  //     book={book}
+  //     onCreateClick={() => handleBookCreateButton(book)}
+  //   />
+  // );
+
+  //////////////////검색 결과
+
+  const renderBookItem = book => {
+    console.log('Book ID:', book.book_id); // Log book_id to the console
+    return (
+      // BookItem으로 클릭 버튼 넘기기
+      <BookItem
+        key={book.book_id}
+        book={book}
+        onCreateClick={() => handleBookCreateButton(book)}
+      />
+    );
+  };
 
   return (
     <div className='flex flex-col items-center p-4'>
@@ -84,7 +101,7 @@ const BookSearch = () => {
           />
           <button
             type='submit'
-            className='ml-2 p-2 bg-transparent border-none cursor-pointer'
+            className='ml-2 p-2 bg-transparent border cursor-pointer'
           >
             <BiSearch className='text-2xl' />
           </button>
