@@ -104,7 +104,7 @@ const Notification = () => {
                       <div className='flex items-center justify-center bg-white pl-4 pr-1'>
                         <input
                           type='checkbox'
-                          className='form-checkbox h-6 w-6'
+                          className='accent-pink-500 form-checkbox h-6 w-6'
                           checked={selectedNotifications.includes(notification)}
                           onChange={() =>
                             handleSelectNotification(notification)
