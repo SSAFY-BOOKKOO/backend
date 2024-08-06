@@ -82,7 +82,13 @@ const RegisterStep2 = ({
         <div className='flex flex-wrap mt-2 justify-center'>
           {categoriesList.map(category => (
             <div key={category} className='mr-2 mb-2'>
-              <label className='flex items-center border px-2 py-1 rounded-lg cursor-pointer'>
+              <label
+                className={`flex items-center border px-2 py-1 rounded-lg cursor-pointer ${
+                  formData.categories.includes(category)
+                    ? 'bg-green-500 text-white'
+                    : 'bg-gray-200 text-gray-700'
+                }`}
+              >
                 <input
                   type='checkbox'
                   name='categories'
@@ -91,15 +97,7 @@ const RegisterStep2 = ({
                   onChange={() => handleCategoryChange(category)}
                   className='hidden'
                 />
-                <span
-                  className={`ml-2 ${
-                    formData.categories.includes(category)
-                      ? 'text-green-500'
-                      : 'text-gray-700'
-                  }`}
-                >
-                  {category}
-                </span>
+                <span>{category}</span>
               </label>
             </div>
           ))}

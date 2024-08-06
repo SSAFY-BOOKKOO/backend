@@ -19,7 +19,7 @@ const LibraryOptions = ({
   createLibrary,
   newLibraryName,
   setNewLibraryName,
-  changeLibraryName, // 추가된 prop
+  changeLibraryName,
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
