@@ -3,7 +3,7 @@ import { DndProvider } from 'react-dnd';
 import { MultiBackend, TouchTransition } from 'react-dnd-multi-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import MemberProfile from '@components/Library/Main/MemberProfile';
 import LibraryOptions from '@components/Library/Main/LibraryOptions';
@@ -34,18 +34,14 @@ const LibraryMain = () => {
   const [createLibraryName, setCreateLibraryName] = useState('');
   const [activeLibrary, setActiveLibrary] = useState(0);
   const navigate = useNavigate();
-  const location = useLocation();
   const [, setAlert] = useAtom(alertAtom);
   const [member, setMember] = useState(null);
   const [libraries, setLibraries] = useState([]);
 
   useEffect(() => {
-    const nickname = location.state;
     const fetchLibraries = async () => {
       try {
-        const response = nickname
-          ? await authAxiosInstance.get(`/libraries`, { params: { nickname } })
-          : await authAxiosInstance.get(`/libraries/me`);
+        const response = await authAxiosInstance.get(`/libraries/me`);
         const libraries = response.data;
         const libraryDetailsPromises = libraries.map(library =>
           authAxiosInstance.get(`/libraries/${library.id}`)
@@ -58,7 +54,7 @@ const LibraryMain = () => {
     };
 
     fetchLibraries();
-  }, [location.state?.nickname]);
+  }, []);
 
   useEffect(() => {
     const fetchMemberInfo = async () => {

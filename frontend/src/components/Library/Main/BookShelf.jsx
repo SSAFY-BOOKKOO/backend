@@ -3,7 +3,7 @@ import Book from './Book';
 import EmptySlot from './EmptySlot';
 import './BookShelf.css';
 
-const BookShelf = ({ books, moveBook, onBookClick }) => {
+const BookShelf = ({ books, moveBook, onBookClick, viewOnly }) => {
   const totalSlots = 21; // 3층에 7개의 슬롯
   const allSlots = Array.from({ length: totalSlots }, (_, index) => {
     const book = books.find(book => book.bookOrder === index + 1);
@@ -14,9 +14,15 @@ const BookShelf = ({ books, moveBook, onBookClick }) => {
         index={index}
         moveBook={moveBook}
         onBookClick={onBookClick}
+        viewOnly={viewOnly}
       />
     ) : (
-      <EmptySlot key={`empty-${index}`} index={index} moveBook={moveBook} />
+      <EmptySlot
+        key={`empty-${index}`}
+        index={index}
+        moveBook={moveBook}
+        viewOnly={viewOnly}
+      />
     );
   });
 

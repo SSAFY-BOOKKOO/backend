@@ -20,6 +20,7 @@ const LibraryOptions = ({
   newLibraryName,
   setNewLibraryName,
   changeLibraryName,
+  viewOnly = false, // 추가된 viewOnly prop
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -77,12 +78,14 @@ const LibraryOptions = ({
           ))}
         </select>
       </div>
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        onToggle={() => setIsSettingsOpen(!isSettingsOpen)}
-        actions={actions}
-      />
+      {!viewOnly && (
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          onToggle={() => setIsSettingsOpen(!isSettingsOpen)}
+          actions={actions}
+        />
+      )}
       <DeleteLibraryModal
         showDeleteModal={showDeleteModal}
         deleteLibrary={deleteLibrary}

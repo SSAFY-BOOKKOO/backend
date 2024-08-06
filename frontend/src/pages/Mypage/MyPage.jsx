@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FaCalendarDays, FaClipboardList } from 'react-icons/fa6';
 import { MdPeopleAlt } from 'react-icons/md';
 import { BsChatSquareQuoteFill } from 'react-icons/bs';
@@ -13,7 +13,6 @@ const MyPage = () => {
   const [member, setMember] = useState(null);
   const [categories, setCategories] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMemberInfo = async () => {
@@ -48,10 +47,6 @@ const MyPage = () => {
 
   const handleProfileClick = () => {
     setIsModalOpen(true);
-  };
-
-  const handleLibraryNavigation = () => {
-    navigate('/', { state: { nickname: member.nickName } });
   };
 
   const closeModal = () => {
@@ -132,7 +127,6 @@ const MyPage = () => {
         profileImgUrl={member.profileImgUrl || profileImgSample}
         nickname={member.nickName}
         introduction={member.introduction}
-        onNavigate={handleLibraryNavigation}
       />
     </div>
   );

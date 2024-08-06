@@ -1,7 +1,8 @@
 import React from 'react';
 import Modal from 'react-modal';
+import { useNavigate } from 'react-router-dom';
 
-Modal.setAppElement('#root'); // Set the app element for accessibility
+Modal.setAppElement('#root');
 
 const ProfileModal = ({
   isOpen,
@@ -9,13 +10,18 @@ const ProfileModal = ({
   profileImgUrl,
   nickname,
   introduction,
-  onNavigate,
 }) => {
+  const navigate = useNavigate();
+
+  const handleLibraryNavigation = () => {
+    navigate('/library', { state: { nickname } });
+  };
+
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      shouldCloseOnOverlayClick={true} // This ensures the modal closes when clicking outside the modal
+      shouldCloseOnOverlayClick={true}
       contentLabel='Profile Modal'
       className='flex items-center justify-center fixed inset-0 z-50'
       overlayClassName='fixed inset-0 bg-black bg-opacity-50 z-50'
@@ -29,7 +35,7 @@ const ProfileModal = ({
         <p className='text-lg font-semibold'>{nickname}</p>
         <p className='text-sm text-gray-600 mb-4 text-center'>{introduction}</p>
         <button
-          onClick={onNavigate}
+          onClick={handleLibraryNavigation}
           className='mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
         >
           서재 구경하러가기

@@ -28,6 +28,7 @@ import SearchMore from './pages/Library/SearchMore.jsx';
 import BookTalkMore from './pages/BookTalk/BookTalkMore.jsx';
 import PasswordFind from './pages/Member/PasswordFind.jsx';
 import AdditionalInfo from './pages/Member/AdditionalInfo.jsx';
+import LibraryOthers from './pages/Library/LibraryOthers.jsx';
 
 const isAuthenticated = true; // 로그인 상태를 확인하는 로직 추가 필요
 
@@ -53,6 +54,7 @@ const router = createBrowserRouter([
         children: [
           // library
           { path: '', element: <LibraryMain /> },
+          { path: 'library', element: <LibraryOthers /> },
 
           // book in library detail
           {
