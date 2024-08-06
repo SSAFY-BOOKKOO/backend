@@ -76,7 +76,7 @@ public class LibraryExceptionHandler {
      */
     @ExceptionHandler(LibraryBookNotFoundException.class)
     public ResponseEntity<String> handleLibraryBookNotFoundException(LibraryBookNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                              .body(e.getMessage());
     }
 

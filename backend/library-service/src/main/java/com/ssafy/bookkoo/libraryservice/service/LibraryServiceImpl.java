@@ -38,7 +38,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -413,19 +412,33 @@ public class LibraryServiceImpl implements LibraryService {
     /**
      * 사용자 서재 내 책 단일 조회
      *
-     * @param headers   토큰을 위한 헤더
      * @param libraryId 서재 id
      * @param bookId    book id
+     * @param nickname  닉네임
      * @return ResponseBookOfLibraryDto
      */
     @Override
     public ResponseLibraryBookDto getBookOfLibrary(
-        HttpHeaders headers,
         Long libraryId,
-        Long bookId
+        Long bookId,
+        String nickname
     ) {
+        // member 정보 가져오기
+        Long memberId = memberServiceClient.getMemberIdByNickName(nickname);
+
+        // 만약 libraryId에 memberId가 없으면 null
+        Library library = libraryRepository.findById(libraryId)
+                                           .orElseThrow(
+                                               () -> new LibraryNotFoundException(libraryId)
+                                           );
+        // 내 서재가 아니면 에러
+        if (!library.getMemberId()
+                    .equals(memberId)) {
+            throw new LibraryIsNotYoursException();
+        }
+
         // book 정보 가져오기
-        ResponseBookOfLibraryDto book = bookServiceClient.getBookOfLibrary(headers, bookId);
+        ResponseBookOfLibraryDto book = bookServiceClient.getBookOfLibrary(bookId, memberId);
 
         // mapper key
         MapperKey key = new MapperKey();

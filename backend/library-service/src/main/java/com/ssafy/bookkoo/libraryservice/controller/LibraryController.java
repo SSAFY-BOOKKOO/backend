@@ -163,15 +163,58 @@ public class LibraryController {
                              .body(true);
     }
 
+    /**
+     * 서재 안의 책 단일 조회(프론트에서 서재 내 책 단일 조회시 사용)
+     *
+     * @param libraryId libraryId
+     * @param bookId    bookId
+     * @param nickname  사용자 닉네임
+     * @return ResponseLibraryBookDto
+     */
     @GetMapping("/{libraryId}/books/{bookId}")
-    @Operation(summary = "서재 내 책 단일 조회(프론트에서 서재 내 책 단일 조회 시 사용)", description = "서재 내 책 단일 조회 API (한줄평도 같이 들어있음)")
+    @Operation(
+        summary = "서재 내 책 단일 조회(프론트에서 서재 내 책 단일 조회 시 사용)",
+        description = """
+            서재 내 책 단일 조회(프론트에서 서재 내 책 단일 조회 시 사용)
+
+
+            <b>Input</b>:
+            | Name | Type  | Description |
+            |-----|-----|-------|
+            | libraryId | number | 서재 ID |
+            | bookId | number | 책 ID |
+            | nickname | string | 조회하려는 서재 주인의 닉네임 |
+
+            <br>
+            <br>
+
+            <b>Exception</b>:
+            | Name | status_code  | Description |
+            |-----|-----|-------|
+            | LibraryNotFoundException | 404 | 서재 ID에 해당하는 서재를 찾을 수 없음 |
+            | LibraryIsNotYoursException | 400 | 이 서재가 해당 닉네임 사용자에 해당하는 서재가 아님 |
+            | LibraryBookNotFoundException | 404 | 조회하려는 서재 책 매퍼가 없음 |
+
+            <br>
+            <br>
+
+            <b>Output</b>:
+            <br>
+                type: _description_
+
+            | Var | Type | Description |
+            |-----|-----|-------|
+            |  |  |  |
+            """
+    )
     public ResponseEntity<ResponseLibraryBookDto> getBookOfLibrary(
-        @RequestHeader HttpHeaders headers,
         @PathVariable Long libraryId,
-        @PathVariable Long bookId
+        @PathVariable Long bookId,
+        // 다른사람인 경우도 해야되니까 nickname 으로 통일하기 그거에 대해 memberId로 변환하는 로직 하기
+        @RequestParam String nickname
     ) {
         return ResponseEntity.ok()
-                             .body(libraryService.getBookOfLibrary(headers, libraryId, bookId));
+                             .body(libraryService.getBookOfLibrary(libraryId, bookId, nickname));
     }
 
     /**
