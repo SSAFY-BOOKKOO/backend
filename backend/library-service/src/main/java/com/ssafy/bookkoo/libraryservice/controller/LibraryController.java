@@ -130,10 +130,12 @@ public class LibraryController {
     @DeleteMapping("/{libraryId}")
     @Operation(summary = "서재 삭제", description = "서재 삭제 API")
     public ResponseEntity<Boolean> deleteLibrary(
+        @RequestHeader HttpHeaders headers,
         @PathVariable Long libraryId
     ) {
+        Long memberId = CommonUtil.getMemberId(headers);
         return ResponseEntity.ok()
-                             .body(libraryService.deleteLibrary(libraryId));
+                             .body(libraryService.deleteLibrary(memberId, libraryId));
     }
 
     /**
