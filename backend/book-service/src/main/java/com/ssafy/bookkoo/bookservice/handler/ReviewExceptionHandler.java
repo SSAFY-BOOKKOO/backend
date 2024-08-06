@@ -1,5 +1,6 @@
 package com.ssafy.bookkoo.bookservice.handler;
 
+import com.ssafy.bookkoo.bookservice.exception.ReviewHasWrittenException;
 import com.ssafy.bookkoo.bookservice.exception.ReviewNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,18 @@ public class ReviewExceptionHandler {
     @ExceptionHandler(ReviewNotFoundException.class)
     public ResponseEntity<String> handleReviewNotFoundException(ReviewNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * 이미 작성된 리뷰가 있을 때 작성 시도 시 발생
+     *
+     * @param e ReviewHasWrittenException
+     * @return status 코드 + 설명
+     */
+    @ExceptionHandler(ReviewHasWrittenException.class)
+    public ResponseEntity<String> handleReviewHasWrittenException(ReviewHasWrittenException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body(e.getMessage());
     }
 }
