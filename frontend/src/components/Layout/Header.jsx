@@ -19,7 +19,7 @@ const Header = ({}) => {
 
   return (
     <header className='flex items-center justify-between p-4 w-full'>
-      <span>북꾸북꾸</span>
+      <span>부끄부끄</span>
       <div>
         <IconButton onClick={handleSearchPage} icon={IoSearchSharp} />
         <IconButton onClick={handleNotificationPage} icon={FaBell} />

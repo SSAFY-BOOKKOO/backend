@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AiFillStar } from 'react-icons/ai';
-import Button from '../../../@common/Button';
+import Button from '../../@common/Button';
 import { MdOutlineRefresh } from 'react-icons/md';
 import { CgProfile } from 'react-icons/cg';
 
@@ -8,6 +8,7 @@ const ReviewCom = ({ onBackClick, book }) => {
   const { title, author, publisher, summary, cover_img_url } = book;
   const [editReview, setEditingReview] = useState(false);
   const [reviewText, setReviewText] = useState('');
+  const titleMaxLength = 10;
 
   // 리뷰 받기+새로 고침
   const [reviews, setReviews] = useState([
@@ -38,6 +39,11 @@ const ReviewCom = ({ onBackClick, book }) => {
     }
   };
 
+  const displayTitleSummary =
+    title.length > titleMaxLength
+      ? title.substring(0, titleMaxLength - 1) + '...'
+      : title;
+
   return (
     // 전체 담는 틀
     <div className='relative bg-zinc-300 rounded-lg w-10/12 max-w-md h-full overflow-auto'>
@@ -46,7 +52,7 @@ const ReviewCom = ({ onBackClick, book }) => {
       {/* 회색 영역 */}
       <div className='flex flex-col items-center p-4'>
         <h1 className='text-2xl font-bold m-4 pb-12 w-10/12 h-4 text-center'>
-          {title}
+          {displayTitleSummary}
         </h1>
 
         <div className='flex justify-between items-center w-10/12 pb-4 pr-2'>

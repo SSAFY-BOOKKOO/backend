@@ -22,7 +22,6 @@ const BottomTab = () => {
           key={index}
           to={item.path}
           className='flex flex-col items-center cursor-pointer'
-          activeClassName='text-green-500'
         >
           <div className='w-6 h-6 ml-2 text-xl'>{item.component}</div>
           <span className='text-xs'>{item.label}</span>
