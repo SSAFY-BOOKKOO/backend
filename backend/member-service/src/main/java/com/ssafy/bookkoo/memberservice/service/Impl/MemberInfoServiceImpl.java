@@ -134,8 +134,8 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         MemberSetting memberSetting = memberSettingRepository.findById(id)
                                                              .orElseThrow(
                                                                  MemberNotFoundException::new);
-        memberSetting.setIsLetterReceive(memberSetting.getIsLetterReceive());
-        memberSetting.setReviewVisibility(memberSetting.getReviewVisibility());
+        memberSetting.setIsLetterReceive(memberSettingDto.isLetterReceive());
+        memberSetting.setReviewVisibility(memberSettingDto.reviewVisibility());
         memberSettingRepository.save(memberSetting);
         memberSettingRepository.flush();
     }

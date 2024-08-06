@@ -6,6 +6,7 @@ import com.ssafy.bookkoo.memberservice.client.LibraryServiceClient;
 import com.ssafy.bookkoo.memberservice.client.dto.request.LibraryStyleDto;
 import com.ssafy.bookkoo.memberservice.client.dto.request.RequestCreateLibraryDto;
 import com.ssafy.bookkoo.memberservice.client.dto.request.RequestLoginDto;
+import com.ssafy.bookkoo.memberservice.client.dto.request.RequestLoginDto.RequestLoginDtoBuilder;
 import com.ssafy.bookkoo.memberservice.dto.request.*;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterDto.RequestRegisterDtoBuilder;
 import com.ssafy.bookkoo.memberservice.client.dto.response.ResponseLoginTokenDto;
@@ -62,10 +63,11 @@ public class MemberServiceImpl implements MemberService {
      * 회원가입에 필요한 모든 정보를 받아 회원가입하는 서비스
      *
      * @param registerMemberDto
+     * @return
      */
     @Override
     @Transactional
-    public void register(RequestRegisterMemberDto registerMemberDto, MultipartFile profileImg) {
+    public RequestLoginDto register(RequestRegisterMemberDto registerMemberDto, MultipartFile profileImg) {
         //회원 정보 저장을 위한 DTO
         RequestRegisterDtoBuilder registerDtoBuilder
             = RequestRegisterDto.builder()
@@ -76,19 +78,28 @@ public class MemberServiceImpl implements MemberService {
         checkDuplEmail(registerMemberDto.email());
         //닉네임 중복 확인
         checkDuplNickName(registerMemberDto.nickName());
+
+        //회원가입시 사용한 정보를 통해 로그인 요청
+        RequestLoginDtoBuilder loginDtoBuilder = RequestLoginDto.builder()
+                                                                .email(registerMemberDto.email());
+
         //비밀번호 유효성 검증 (bookkoo 도메인인 경우 : 이메일 가입)
         if (registerMemberDto.socialType() == SocialType.bookkoo) {
             if (registerMemberDto.password()
                                         .matches(passwordRegex)) {
                 registerDtoBuilder.password(registerMemberDto.password());
-
+                loginDtoBuilder.password(registerMemberDto.password());
             } else {
                 throw new PasswordNotValidException();
             }
         } else { //소셜 정보를 통해 가입한 경우 랜덤 비밀번호를 추가
-            registerDtoBuilder.password(UUID.randomUUID()
-                                            .toString());
+            //소셜 로그인에 넣어줄 랜덤 패스워드 생성
+            String randomPassword = UUID.randomUUID()
+                                        .toString();
+            registerDtoBuilder.password(randomPassword);
+            loginDtoBuilder.password(randomPassword);
         }
+
 
         //회원정보 등록
         Member member = registerMember(registerDtoBuilder.build());
@@ -112,11 +123,7 @@ public class MemberServiceImpl implements MemberService {
         //추가정보 등록
         MemberInfo memberInfo = registerAdditionalInfo(member, memberSetting, additionalInfo, profileImg);
 
-        //회원가입시 사용한 정보를 통해 로그인 요청
-        RequestLoginDto loginDto = RequestLoginDto.builder()
-                                                  .email(registerMemberDto.email())
-                                                  .password(registerMemberDto.password())
-                                                  .build();
+        return loginDtoBuilder.build();
     }
 
     /**
@@ -130,15 +137,12 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     protected Member registerMember(RequestRegisterDto registerDto) {
         MemberBuilder memberBuilder = Member.builder()
-                                     .memberId(UUID.randomUUID()
-                                                   .toString())
-                                     .email(registerDto.email())
-                                     .socialType(registerDto.socialType());
-        String password = registerDto.password();
-        //password가 null이 아니면 추가 (소셜 로그인인 경우 추가하지 않기 위해)
-        if (password != null) {
-            memberBuilder.password(passwordEncoder.encode(password));
-        }
+                                            .memberId(UUID.randomUUID()
+                                                          .toString())
+                                            .email(registerDto.email())
+                                            .password(
+                                                passwordEncoder.encode(registerDto.password()))
+                                            .socialType(registerDto.socialType());
         Member member = memberBuilder.build();
         return memberRepository.save(member);
     }
