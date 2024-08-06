@@ -2,6 +2,7 @@ package com.ssafy.bookkoo.libraryservice.handler;
 
 import com.ssafy.bookkoo.libraryservice.exception.BookAlreadyMappedException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryBookNotFoundException;
+import com.ssafy.bookkoo.libraryservice.exception.LibraryLimitExceededException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.MemberNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -74,6 +75,18 @@ public class LibraryExceptionHandler {
      */
     @ExceptionHandler(LibraryBookNotFoundException.class)
     public ResponseEntity<String> handleLibraryBookNotFoundException(LibraryBookNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * 서재 개수 한계에 도달했는데 추가하려고 할때 최대 한도를
+     *
+     * @param e LibraryLimitExceededException 예외 객체
+     * @return 에러 메시지와 상태 코드
+     */
+    @ExceptionHandler(LibraryLimitExceededException.class)
+    public ResponseEntity<String> handleLibraryLimitExceededException(LibraryLimitExceededException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body(e.getMessage());
     }
