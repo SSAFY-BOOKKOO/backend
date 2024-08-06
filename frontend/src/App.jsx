@@ -6,15 +6,18 @@ import Main from './components/Layout/Main';
 
 const App = () => {
   const location = useLocation();
-  const isSearchPage = ['/search', '/notification'].includes(location.pathname);
+  const isHeader = ['/search', '/notification', '/intro'].includes(
+    location.pathname
+  );
+  const isBottomTab = ['/intro'].includes(location.pathname);
 
   return (
     <Main>
-      {!isSearchPage && <Header />}
+      {!isHeader && <Header />}
       <div className='flex-1 overflow-y-auto'>
         <Outlet />
       </div>
-      <BottomTab />
+      {!isBottomTab && <BottomTab />}
     </Main>
   );
 };
