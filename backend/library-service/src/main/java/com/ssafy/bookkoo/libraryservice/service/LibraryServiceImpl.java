@@ -7,6 +7,7 @@ import com.ssafy.bookkoo.libraryservice.dto.library.RequestUpdateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.library.ResponseLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMapperCreateDto;
 import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMapperUpdateDto;
+import com.ssafy.bookkoo.libraryservice.dto.library_book.ResponseLibraryBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.library_book.ResponseLibraryBookMapperDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookDto;
@@ -18,6 +19,7 @@ import com.ssafy.bookkoo.libraryservice.entity.LibraryStyle;
 import com.ssafy.bookkoo.libraryservice.entity.MapperKey;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import com.ssafy.bookkoo.libraryservice.exception.BookAlreadyMappedException;
+import com.ssafy.bookkoo.libraryservice.exception.LibraryBookNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.libraryservice.mapper.LibraryBookMapperMapper;
@@ -28,9 +30,11 @@ import com.ssafy.bookkoo.libraryservice.repository.LibraryStyleRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -386,18 +390,35 @@ public class LibraryServiceImpl implements LibraryService {
     /**
      * 사용자 서재 내 책 단일 조회
      *
-     * @param memberId  토큰을 위한 헤더
+     * @param headers   토큰을 위한 헤더
      * @param libraryId 서재 id
      * @param bookId    book id
      * @return ResponseBookOfLibraryDto
      */
     @Override
-    public ResponseBookOfLibraryDto getBookOfLibrary(
-        Long memberId,
+    public ResponseLibraryBookDto getBookOfLibrary(
+        HttpHeaders headers,
         Long libraryId,
         Long bookId
     ) {
-        return bookServiceClient.getBookOfLibrary(bookId, memberId);
+        // book 정보 가져오기
+        ResponseBookOfLibraryDto book = bookServiceClient.getBookOfLibrary(headers, bookId);
+
+        // mapper key
+        MapperKey key = new MapperKey();
+        key.setLibraryId(libraryId);
+        key.setBookId(bookId);
+
+        // library Book Mapper 가져오기
+        Optional<LibraryBookMapper> libraryBookMapper = libraryBookMapperRepository.findById(key);
+        if (libraryBookMapper.isEmpty()) {
+            throw new LibraryBookNotFoundException(
+                "(libraryId, bookId) not found: (" + libraryId + " , " + bookId + ")");
+        }
+        LibraryBookMapper lbMapper = libraryBookMapper.get();
+
+        // ResponseLibraryBookDto 생성 및 반환
+        return libraryBookMapperMapper.entityBooktoDto(lbMapper, book);
     }
 
     /**
