@@ -27,4 +27,25 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                            .where(predicate)
                            .fetch();
     }
+
+    /**
+     * 책에 대해 내가 작성할 수 있는 리뷰는 한 개 이기 떄문에 이거에 대해 작성한 리뷰가 있는지 여부를 확인하는 쿼리
+     *
+     * @param memberId 회원 ID
+     * @param bookId   책 ID
+     * @return true/false
+     */
+    @Override
+    public Boolean existsByBookIdAndMine(Long memberId, Long bookId) {
+        BooleanBuilder predicate = new BooleanBuilder();
+        predicate.and(review.book.id.eq(bookId));
+        predicate.and(review.memberId.eq(memberId));
+        
+        Integer fetchOne = queryFactory.selectOne()
+                                       .from(review)
+                                       .where(predicate)
+                                       .fetchFirst();
+
+        return fetchOne != null;
+    }
 }
