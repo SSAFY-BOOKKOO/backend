@@ -20,6 +20,7 @@ import com.ssafy.bookkoo.libraryservice.entity.MapperKey;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import com.ssafy.bookkoo.libraryservice.exception.BookAlreadyMappedException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryBookNotFoundException;
+import com.ssafy.bookkoo.libraryservice.exception.LibraryIsNotYoursException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryLimitExceededException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.MemberNotFoundException;
@@ -431,23 +432,45 @@ public class LibraryServiceImpl implements LibraryService {
     /**
      * 서재 삭제 : libraryBookMapper 도 cascade 삭제 필요
      *
+     * @param memberId  사용자 ID
      * @param libraryId 서재 ID
      * @return true / false
      */
     @Override
-    public Boolean deleteLibrary(Long libraryId) {
+    public Boolean deleteLibrary(Long memberId, Long libraryId) {
+        Optional<Library> libraryOpt = libraryRepository.findById(libraryId);
+
+        // 서재가 없을 때
+        if (libraryOpt.isEmpty()) {
+            throw new LibraryNotFoundException(libraryId);
+        }
+
+        // 서재가 내게 아닐 때
+        if (!isLibraryOwnedByUser(libraryOpt.get(), memberId)) {
+            throw new LibraryIsNotYoursException();
+        }
+
+        // 서재가 존재하면서, 소유자가 확실하다면, 삭제
         try {
-            // 있을 경우 삭제
-            if (libraryRepository.existsById(libraryId)) {
-                libraryRepository.deleteById(libraryId);
-                return true;
-            }
-            // 없을 경우 삭제 못함 : false
-            return false;
+            libraryRepository.deleteById(libraryId);
+            return true;
         } catch (Exception e) {
-            // 에러날경우 false
+            // 삭제 중 에러 발생
             return false;
         }
+
+    }
+
+    /**
+     * 해당 서재가 해당 사용자의 서재인지 확인
+     *
+     * @param library  서재 ID
+     * @param memberId 사용자 ID
+     * @return true/false
+     */
+    private boolean isLibraryOwnedByUser(Library library, Long memberId) {
+        return library.getMemberId()
+                      .equals(memberId);
     }
 
     /**

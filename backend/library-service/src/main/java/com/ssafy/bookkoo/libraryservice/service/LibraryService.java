@@ -146,8 +146,9 @@ public interface LibraryService {
     /**
      * 서재 삭제 : libraryBookMapper 도 cascade 삭제 필요
      *
+     * @param memberId
      * @param libraryId 서재 ID
      * @return true / false
      */
-    Boolean deleteLibrary(Long libraryId);
+    Boolean deleteLibrary(Long memberId, Long libraryId);
 }
