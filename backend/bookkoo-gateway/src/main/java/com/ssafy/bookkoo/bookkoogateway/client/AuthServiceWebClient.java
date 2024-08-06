@@ -12,8 +12,8 @@ import reactor.core.publisher.Mono;
 public class AuthServiceWebClient {
 
     private final WebClient.Builder webClientBuilder;
-    private final String BASE_URL = "http://auth-service:8085/auth";
-//    private final String BASE_URL = "http://localhost:8085/auth";
+    @Value("${config.base-url.auth}")
+    private String BASE_URL;
 
     @Value("${jwt.refreshToken}")
     private String REFRESH_TOKEN;

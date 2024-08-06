@@ -28,14 +28,9 @@ public class S3Controller {
 
     @PostMapping
     public ResponseEntity<String> uploadFile(
-        @RequestHeader HttpHeaders headers,
         @RequestPart("file") MultipartFile file,
-        @RequestPart(value = "bucket", required = false) String bucket
+        @RequestPart("bucket") String bucket
     ) {
-        for (String s : headers.keySet()) {
-            log.info("headers[{}] : {}", s, headers.get(s));
-        }
-
         String fileKey = s3Service.saveToBucket(file, bucket);
         return ResponseEntity.ok(fileKey);
     }
@@ -43,18 +38,9 @@ public class S3Controller {
     @DeleteMapping
     public ResponseEntity<HttpStatus> deleteFile(
         @RequestParam("file") String file,
-        @RequestParam(value = "bucket", required = false) String bucket
+        @RequestParam("bucket") String bucket
     ) {
         s3Service.deleteToBucket(file, bucket);
-        return ResponseEntity.ok()
-                             .build();
-    }
-
-    @GetMapping("/profile/{fileName}")
-    public ResponseEntity<Byte[]> getProfileImg(
-        @PathVariable(value = "fileName") String fileName
-    ) {
-        //TODO: S3에서 파일 가져와서 이미지 출력 API개발
         return ResponseEntity.ok()
                              .build();
     }
