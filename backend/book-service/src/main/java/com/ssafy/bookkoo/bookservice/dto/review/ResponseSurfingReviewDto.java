@@ -14,9 +14,6 @@ public record ResponseSurfingReviewDto(
     @Schema(description = "책 ID", example = "101")
     Long bookId,
 
-    @Schema(description = "회원 ID", example = "202")
-    Long memberId,
-
     @Schema(description = "리뷰 내용", example = "This book provides great insights into modern programming practices.")
     String content,
 

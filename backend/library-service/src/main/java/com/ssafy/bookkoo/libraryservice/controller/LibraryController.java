@@ -5,9 +5,10 @@ import com.ssafy.bookkoo.libraryservice.dto.library.RequestUpdateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.library.ResponseLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMapperCreateDto;
 import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMapperUpdateDto;
+import com.ssafy.bookkoo.libraryservice.dto.library_book.ResponseLibraryBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookDto;
-import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookOfLibraryDto;
+import com.ssafy.bookkoo.libraryservice.dto.other.ResponseRecentFiveBookDto;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import com.ssafy.bookkoo.libraryservice.service.LibraryService;
 import com.ssafy.bookkoo.libraryservice.util.CommonUtil;
@@ -114,11 +115,13 @@ public class LibraryController {
     @PatchMapping("/{libraryId}")
     @Operation(summary = "서재 수정", description = "서재 수정 API")
     public ResponseEntity<ResponseLibraryDto> updateLibrary(
+        @RequestHeader HttpHeaders headers,
         @PathVariable Long libraryId,
         @RequestBody RequestUpdateLibraryDto libraryDto
     ) {
+        Long memberId = CommonUtil.getMemberId(headers);
         return ResponseEntity.ok()
-                             .body(libraryService.updateLibrary(libraryId, libraryDto));
+                             .body(libraryService.updateLibrary(memberId, libraryId, libraryDto));
     }
 
     /**
@@ -130,10 +133,12 @@ public class LibraryController {
     @DeleteMapping("/{libraryId}")
     @Operation(summary = "서재 삭제", description = "서재 삭제 API")
     public ResponseEntity<Boolean> deleteLibrary(
+        @RequestHeader HttpHeaders headers,
         @PathVariable Long libraryId
     ) {
+        Long memberId = CommonUtil.getMemberId(headers);
         return ResponseEntity.ok()
-                             .body(libraryService.deleteLibrary(libraryId));
+                             .body(libraryService.deleteLibrary(memberId, libraryId));
     }
 
     /**
@@ -160,14 +165,13 @@ public class LibraryController {
 
     @GetMapping("/{libraryId}/books/{bookId}")
     @Operation(summary = "서재 내 책 단일 조회(프론트에서 서재 내 책 단일 조회 시 사용)", description = "서재 내 책 단일 조회 API (한줄평도 같이 들어있음)")
-    public ResponseEntity<ResponseBookOfLibraryDto> getBookOfLibrary(
+    public ResponseEntity<ResponseLibraryBookDto> getBookOfLibrary(
         @RequestHeader HttpHeaders headers,
         @PathVariable Long libraryId,
         @PathVariable Long bookId
     ) {
-        Long memberId = CommonUtil.getMemberId(headers);
         return ResponseEntity.ok()
-                             .body(libraryService.getBookOfLibrary(memberId, libraryId, bookId));
+                             .body(libraryService.getBookOfLibrary(headers, libraryId, bookId));
     }
 
     /**
@@ -256,6 +260,13 @@ public class LibraryController {
                              .body(libraryService.getMyBooks(memberId, searchDto));
     }
 
+    /**
+     * 사용자 서재에 해당 책들이 등록되었는지 여부 판단
+     *
+     * @param memberId : 사용자 ID
+     * @param bookIds  : 책 ID 리스트
+     * @return Map<Long, Boolean>
+     */
     @GetMapping("/books/check")
     @Operation(summary = "책 등록 여부 확인", description = "사용자의 서재에 여러 책이 등록되어 있는지 여부를 확인하는 API")
     public ResponseEntity<Map<Long, Boolean>> areBooksInLibrary(
@@ -264,5 +275,15 @@ public class LibraryController {
     ) {
         Map<Long, Boolean> booksInLibrary = libraryService.areBooksInLibrary(memberId, bookIds);
         return ResponseEntity.ok(booksInLibrary);
+    }
+
+    @GetMapping("/books/recent")
+    @Operation(summary = "최근에 서재에 추가한 책 다섯개 반환", description = "사용자가 최근에 서재에 추가한 책 다섯개 반환하는 API")
+    public ResponseEntity<List<ResponseRecentFiveBookDto>> getRecentFiveBooks(
+        @RequestHeader HttpHeaders headers
+    ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+        return ResponseEntity.ok()
+                             .body(libraryService.getMyRecentBooks(memberId));
     }
 }

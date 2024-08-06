@@ -55,6 +55,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Value("${config.default-img-url}")
     private String DEFAULT_IMG_URL;
+
+    @Value("${config.member-bucket-name}")
+    private String BUCKET;
     /**
      * 회원가입에 필요한 모든 정보를 받아 회원가입하는 서비스
      *
@@ -157,7 +160,7 @@ public class MemberServiceImpl implements MemberService {
         //기본 프로필 이미지 or 소셜 로그인의 경우 profileImgUrl
         String imgUrl = profileImgUrl == null ? DEFAULT_IMG_URL : profileImgUrl;
         if (profileImg != null) {
-            imgUrl = commonServiceClient.saveProfileImg(profileImg, null);
+            imgUrl = commonServiceClient.saveProfileImg(profileImg, BUCKET);
         }
         MemberInfo memberInfo = MemberInfo.builder()
                                           .id(additionalInfo.id())

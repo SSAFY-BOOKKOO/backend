@@ -5,12 +5,14 @@ import com.ssafy.bookkoo.libraryservice.dto.library.RequestUpdateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.library.ResponseLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMapperCreateDto;
 import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMapperUpdateDto;
+import com.ssafy.bookkoo.libraryservice.dto.library_book.ResponseLibraryBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookDto;
-import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookOfLibraryDto;
+import com.ssafy.bookkoo.libraryservice.dto.other.ResponseRecentFiveBookDto;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import java.util.List;
 import java.util.Map;
+import org.springframework.http.HttpHeaders;
 
 /**
  * 서재 관련 서비스 인터페이스입니다.
@@ -52,12 +54,13 @@ public interface LibraryService {
     /**
      * 서재를 수정합니다.
      *
+     * @param memberId
      * @param libraryId 서재 ID
      * @param library   서재 수정 요청 DTO
      * @return 수정된 서재 응답 DTO
      */
     ResponseLibraryDto updateLibrary(
-        Long libraryId,
+        Long memberId, Long libraryId,
         RequestUpdateLibraryDto library
     );
 
@@ -131,13 +134,13 @@ public interface LibraryService {
     /**
      * 사용자 서재 내 책 단일 조회
      *
-     * @param memberId  토큰을 위한 헤더
+     * @param headers   토큰을 위한 헤더
      * @param libraryId 서재 id
      * @param bookId    book id
      * @return ResponseBookOfLibraryDto
      */
-    ResponseBookOfLibraryDto getBookOfLibrary(
-        Long memberId,
+    ResponseLibraryBookDto getBookOfLibrary(
+        HttpHeaders headers,
         Long libraryId,
         Long bookId
     );
@@ -145,8 +148,17 @@ public interface LibraryService {
     /**
      * 서재 삭제 : libraryBookMapper 도 cascade 삭제 필요
      *
+     * @param memberId
      * @param libraryId 서재 ID
      * @return true / false
      */
-    Boolean deleteLibrary(Long libraryId);
+    Boolean deleteLibrary(Long memberId, Long libraryId);
+
+    /**
+     * 내가 최근에 추가한 책 다섯권
+     *
+     * @param memberId 사용자 ID
+     * @return List<ResponseRecentFiveBookDto>
+     */
+    List<ResponseRecentFiveBookDto> getMyRecentBooks(Long memberId);
 }

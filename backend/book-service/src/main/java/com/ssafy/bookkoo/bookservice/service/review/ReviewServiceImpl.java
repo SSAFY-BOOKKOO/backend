@@ -11,6 +11,7 @@ import com.ssafy.bookkoo.bookservice.entity.Review;
 import com.ssafy.bookkoo.bookservice.entity.ReviewLike;
 import com.ssafy.bookkoo.bookservice.entity.ReviewMemberId;
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
+import com.ssafy.bookkoo.bookservice.exception.ReviewHasWrittenException;
 import com.ssafy.bookkoo.bookservice.exception.ReviewNotFoundException;
 import com.ssafy.bookkoo.bookservice.mapper.ReviewMapper;
 import com.ssafy.bookkoo.bookservice.repository.book.BookRepository;
@@ -77,6 +78,12 @@ public class ReviewServiceImpl implements ReviewService {
     ) {
         Book book = bookRepository.findById(bookId)
                                   .orElseThrow(BookNotFoundException::new);
+
+        // 만약 이미 만들어진 게 있다면 못 만들게 하기
+        if (reviewRepository.existsByBookIdAndMine(memberId, bookId)) {
+            throw new ReviewHasWrittenException();
+        }
+
         Review review = Review.builder()
                               .book(book)
                               .memberId(memberId)
@@ -132,7 +139,7 @@ public class ReviewServiceImpl implements ReviewService {
         List<Review> reviewsExceptMine = reviewRepository.findByBookIdExceptMine(memberId, bookId);
 
         // 2. 리뷰가 2개 미만인 경우 모든 리뷰 반환
-        if (reviewsExceptMine.size() <= 2) {
+        if (reviewsExceptMine.size() <= 3) {
             return reviewsExceptMine.stream()
                                     .map(this::mapToSurfingReviewDto)
                                     .collect(Collectors.toList());
@@ -140,7 +147,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         // 3. 리뷰가 2개 이상일 경우 무작위 두개 선택 후 반환
         Collections.shuffle(reviewsExceptMine);
-        List<Review> randomReviews = reviewsExceptMine.subList(0, 2);
+        List<Review> randomReviews = reviewsExceptMine.subList(0, 3);
 
         return randomReviews.stream()
                             .map(this::mapToSurfingReviewDto)
@@ -170,7 +177,6 @@ public class ReviewServiceImpl implements ReviewService {
                                        .id(review.getId())
                                        .bookId(review.getBook()
                                                      .getId())
-                                       .memberId(review.getMemberId())
                                        .content(review.getContent())
                                        .rating(review.getRating())
                                        .likeCount(review.getLikes()

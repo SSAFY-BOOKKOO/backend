@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface LibraryRepository extends JpaRepository<Library, Long> {
 
     List<Library> findByMemberId(Long memberId);
+
+    int countByMemberId(Long memberId);
 }

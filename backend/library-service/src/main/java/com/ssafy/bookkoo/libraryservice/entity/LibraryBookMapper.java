@@ -1,5 +1,6 @@
 package com.ssafy.bookkoo.libraryservice.entity;
 
+import com.ssafy.bookkoo.libraryservice.global.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -18,7 +19,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LibraryBookMapper {
+public class LibraryBookMapper extends BaseEntity {
 
     @EmbeddedId
     private MapperKey id;

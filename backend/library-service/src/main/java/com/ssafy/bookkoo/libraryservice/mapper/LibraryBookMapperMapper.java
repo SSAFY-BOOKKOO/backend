@@ -2,6 +2,8 @@ package com.ssafy.bookkoo.libraryservice.mapper;
 
 import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMapperCreateDto;
 import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMapperUpdateDto;
+import com.ssafy.bookkoo.libraryservice.dto.library_book.ResponseLibraryBookDto;
+import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookOfLibraryDto;
 import com.ssafy.bookkoo.libraryservice.entity.LibraryBookMapper;
 import com.ssafy.bookkoo.libraryservice.entity.MapperKey;
 import org.mapstruct.BeanMapping;
@@ -34,6 +36,15 @@ public interface LibraryBookMapperMapper {
         RequestLibraryBookMapperUpdateDto dto,
         @MappingTarget LibraryBookMapper entity
     );
+
+    @Mapping(source = "entity.bookOrder", target = "bookOrder")
+    @Mapping(source = "entity.bookColor", target = "bookColor")
+    @Mapping(source = "entity.startAt", target = "startAt")
+    @Mapping(source = "entity.endAt", target = "endAt")
+    @Mapping(source = "entity.status", target = "status")
+    @Mapping(source = "entity.rating", target = "rating")
+    @Mapping(source = "book", target = "book")
+    ResponseLibraryBookDto entityBooktoDto(LibraryBookMapper entity, ResponseBookOfLibraryDto book);
 
     /**
      * RequestLibraryBookMapperCreateDto와 MapperKey를 사용하여 LibraryBookMapper 엔티티를 생성합니다.
