@@ -6,7 +6,7 @@ import Button from '@components/@common/Button';
 import { books } from '@mocks/BookData';
 import { useNavigate } from 'react-router-dom';
 import useModal from '@hooks/useModal';
-import BookSearch from '@components/Curation/BookSearch';
+import BookSearch from '@components/Curation/Search/BookSearch';
 
 const BookTalkMain = () => {
   const navigate = useNavigate();

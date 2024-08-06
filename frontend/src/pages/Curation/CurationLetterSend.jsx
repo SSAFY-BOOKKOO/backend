@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import { MultiBackend, TouchTransition } from 'react-dnd-multi-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -7,10 +7,33 @@ import { useDrag, useDrop } from 'react-dnd';
 import mailBoxEmptyImg from '@assets/icons/mailbox_empty.png';
 import mailBoxFullImg from '@assets/icons/mailbox_full.png';
 import letterImg from '@assets/icons/letter.png';
+import { axiosInstance } from '../../services/axiosInstance';
 
 const ItemTypes = {
   LETTER: 'letter',
 };
+
+// const [sendLetters, setSendLetters] = useState([]);
+
+// useEffect(
+//   () => {
+//     axiosInstance
+//       // axios로 get요청 보내기
+//       .get('/curations/mycuration')
+//       // 요청 성공하면 받아와서 letters에 할당
+//       .then(res => {
+//         setSendLetters(res.data);
+//         console.log(res);
+//       })
+
+//       // 요청 실패하면 오류 일단 console에
+//       .catch(err => {
+//         console.log(err);
+//       });
+//   },
+//   // 화면에 처음 렌더링될 때만 실행
+//   []
+// );
 
 const Letter = () => {
   const [{ isDragging }, dragRef] = useDrag({

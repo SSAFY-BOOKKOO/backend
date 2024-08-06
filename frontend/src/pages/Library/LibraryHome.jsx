@@ -1,4 +1,6 @@
 // src/pages/Home.jsx
+import axios from 'axios';
+
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -40,9 +42,31 @@ const Home = () => {
     },
   ]);
 
+  // // 정보 받을 빈 객체 생성
+  // const [books, setBooks] = useState([]);
+  // // api받을 axios
+  // useEffect(() => {
+  //   const apiUrl = 'https://api.i11a506.ssafy.io';
+  //   const endpoint = '/libraries';
+
+  //   axios
+  //     .get(apiUrl + endpoint, {
+  //       params: {
+  //         memberId: memberId,
+  //       },
+  //     })
+  //     .then(res => {
+  //       setBooks(res.data);
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //     });
+  // }, [memberId]);
+
   const navigate = useNavigate();
   const location = useLocation();
 
+  // 삭제 로직
   useEffect(() => {
     if (location.state?.deleteBookId) {
       // 삭제될 bookId
@@ -62,6 +86,7 @@ const Home = () => {
     setBooks(prevBooks => prevBooks.filter(book => book.id !== bookId));
   };
 
+  // 상세 페이지 이동
   const handleBookClick = book => {
     navigate(`/detail/${book.id}`, { state: { book } });
   };
