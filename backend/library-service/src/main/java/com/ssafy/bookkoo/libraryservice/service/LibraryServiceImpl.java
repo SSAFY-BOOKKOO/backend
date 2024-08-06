@@ -12,6 +12,7 @@ import com.ssafy.bookkoo.libraryservice.dto.library_book.ResponseLibraryBookMapp
 import com.ssafy.bookkoo.libraryservice.dto.other.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookOfLibraryDto;
+import com.ssafy.bookkoo.libraryservice.dto.other.ResponseRecentFiveBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.SearchBookConditionDto;
 import com.ssafy.bookkoo.libraryservice.entity.Library;
 import com.ssafy.bookkoo.libraryservice.entity.LibraryBookMapper;
@@ -24,6 +25,7 @@ import com.ssafy.bookkoo.libraryservice.exception.LibraryIsNotYoursException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryLimitExceededException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.MemberNotFoundException;
+import com.ssafy.bookkoo.libraryservice.mapper.ClientBookMapper;
 import com.ssafy.bookkoo.libraryservice.mapper.LibraryBookMapperMapper;
 import com.ssafy.bookkoo.libraryservice.mapper.LibraryMapper;
 import com.ssafy.bookkoo.libraryservice.repository.LibraryBookMapperRepository;
@@ -51,6 +53,7 @@ public class LibraryServiceImpl implements LibraryService {
 
     private final LibraryMapper libraryMapper;
     private final LibraryBookMapperMapper libraryBookMapperMapper;
+    private final ClientBookMapper bookMapper;
 
     private final BookServiceClient bookServiceClient;
     private final MemberServiceClient memberServiceClient;
@@ -459,6 +462,43 @@ public class LibraryServiceImpl implements LibraryService {
             return false;
         }
 
+    }
+
+    /**
+     * 내가 최근에 추가한 책 다섯권
+     *
+     * @param memberId 사용자 ID
+     * @return List<ResponseRecentFiveBookDto>
+     */
+    @Override
+    public List<ResponseRecentFiveBookDto> getMyRecentBooks(Long memberId) {
+        // 내가 최근에 추가한 bookId 조회
+        List<Long> bookIds = libraryBookMapperRepository.findBookIdsByMemberIdLimitFive(memberId);
+        // string 으로 변환
+        List<String> stringBookIds = bookIds.stream()
+                                            .map(String::valueOf)
+                                            .toList();
+        // condition 만들기
+        List<SearchBookConditionDto> conditions = new ArrayList<>();
+
+        // id로 condition 만들기
+        conditions.add(
+            SearchBookConditionDto.builder()
+                                  .field("id")
+                                  .values(stringBookIds)
+                                  .build()
+        );
+
+        // condition 으로 searchField 만들기
+        RequestSearchBookMultiFieldDto searchField = RequestSearchBookMultiFieldDto.builder()
+                                                                                   .conditions(
+                                                                                       conditions)
+                                                                                   .limit(5)
+                                                                                   .offset(0)
+                                                                                   .build();
+        List<ResponseBookDto> books = bookServiceClient.getBooksByCondition(searchField);
+
+        return bookMapper.responseDtoToCustomDto(books);
     }
 
     /**

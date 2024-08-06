@@ -8,6 +8,7 @@ import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMappe
 import com.ssafy.bookkoo.libraryservice.dto.library_book.ResponseLibraryBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookDto;
+import com.ssafy.bookkoo.libraryservice.dto.other.ResponseRecentFiveBookDto;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import java.util.List;
 import java.util.Map;
@@ -151,4 +152,12 @@ public interface LibraryService {
      * @return true / false
      */
     Boolean deleteLibrary(Long memberId, Long libraryId);
+
+    /**
+     * 내가 최근에 추가한 책 다섯권
+     *
+     * @param memberId 사용자 ID
+     * @return List<ResponseRecentFiveBookDto>
+     */
+    List<ResponseRecentFiveBookDto> getMyRecentBooks(Long memberId);
 }
