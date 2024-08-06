@@ -14,10 +14,9 @@ const PullToRefresh = ({ onRefresh, children }) => {
   const handleTouchMove = useCallback(e => {
     const currentY = e.touches[0].clientY;
     const diff = currentY - startY.current;
-
     if (diff > 0 && contentRef.current.scrollTop === 0) {
       setIsPulling(true);
-      setPullDistance(diff);
+      setPullDistance(Math.min(diff, 140)); // 최대 풀 거리를 140px로 제한
     }
   }, []);
 
@@ -32,15 +31,12 @@ const PullToRefresh = ({ onRefresh, children }) => {
   useEffect(() => {
     const currentRef = contentRef.current;
     const options = { passive: false };
-
     const touchMoveHandler = e => {
       if (isPulling) {
         e.preventDefault();
       }
     };
-
     currentRef.addEventListener('touchmove', touchMoveHandler, options);
-
     return () => {
       currentRef.removeEventListener('touchmove', touchMoveHandler, options);
     };
@@ -52,14 +48,18 @@ const PullToRefresh = ({ onRefresh, children }) => {
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      style={{ overscrollBehavior: 'contain' }}
+      className='overscroll-contain'
     >
       {isPulling && (
         <div
-          className='text-center py-2'
-          style={{ transform: `translateY(${pullDistance / 2}px)` }}
+          className='overflow-hidden transition-height duration-100'
+          style={{
+            height: `${pullDistance / 2}px`,
+          }}
         >
-          <Spinner pullToRefresh={true} />
+          <div className='flex justify-center items-center h-full'>
+            <Spinner pullToRefresh={true} />
+          </div>
         </div>
       )}
       {children}
