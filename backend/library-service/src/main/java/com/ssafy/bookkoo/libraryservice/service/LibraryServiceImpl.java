@@ -360,7 +360,12 @@ public class LibraryServiceImpl implements LibraryService {
                                                                     .orElseThrow(
                                                                         () -> new IllegalArgumentException(
                                                                             "Invalid book ID or library ID"));
-
+            // 만약 내꺼가 아니면 수정 못함
+            if (!lbMapper.getLibrary()
+                         .getMemberId()
+                         .equals(memberId)) {
+                throw new LibraryIsNotYoursException();
+            }
             libraryBookMapperMapper.updateLibraryBookMapperFromDto(dto, lbMapper);
             libraryBookMapperRepository.save(lbMapper);
         }
