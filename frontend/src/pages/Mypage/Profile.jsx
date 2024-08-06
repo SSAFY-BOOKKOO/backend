@@ -4,6 +4,9 @@ import ProfileView from '@components/MyPage/Profile/ProfileView.jsx';
 import PasswordUpdate from '@components/MyPage/Profile/PasswordUpdate.jsx';
 import AdditionalSetting from '@components/MyPage/Profile/AdditionalSetting.jsx';
 import { authAxiosInstance } from '@services/axiosInstance';
+import { useAtom } from 'jotai';
+import { alertAtom } from '@atoms/alertAtom';
+import Alert from '@components/@common/Alert';
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -12,6 +15,7 @@ const ProfilePage = () => {
   const [member, setMember] = useState(null);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [, setAlert] = useAtom(alertAtom);
 
   const fetchMemberInfo = async () => {
     try {
@@ -35,7 +39,11 @@ const ProfilePage = () => {
   const handleCancelEdit = () => setIsEditing(false);
 
   const handleSave = updatedInfo => {
-    setMember(updatedInfo);
+    setMember(prevMember => ({
+      ...prevMember,
+      ...updatedInfo,
+      categories: updatedInfo.categories ?? prevMember.categories,
+    }));
     setIsEditing(false);
   };
 
@@ -46,6 +54,18 @@ const ProfilePage = () => {
     setActiveTab(tab);
     setIsEditing(false);
     setIsChangingPassword(false);
+  };
+
+  const handleAdditionalSettingSave = updatedInfo => {
+    setMember(prevMember => ({
+      ...prevMember,
+      ...updatedInfo,
+    }));
+    setAlert({
+      isOpen: true,
+      confirmOnly: true,
+      message: '설정이 성공적으로 저장되었습니다.',
+    });
   };
 
   if (loading) {
@@ -95,8 +115,12 @@ const ProfilePage = () => {
           />
         )
       ) : (
-        <AdditionalSetting member={member} onSave={handleSave} />
+        <AdditionalSetting
+          userInfo={member}
+          onSave={handleAdditionalSettingSave}
+        />
       )}
+      <Alert />
     </div>
   );
 };
