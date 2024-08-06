@@ -16,4 +16,13 @@ public interface ReviewCustomRepository {
      * @return 특정 회원의 리뷰를 제외한 리뷰 리스트
      */
     List<Review> findByBookIdExceptMine(Long memberId, Long bookId);
+
+    /**
+     * 책에 대해 내가 작성할 수 있는 리뷰는 한 개 이기 떄문에 이거에 대해 작성한 리뷰가 있는지 여부를 확인하는 쿼리
+     *
+     * @param memberId 회원 ID
+     * @param bookId   책 ID
+     * @return true/false
+     */
+    Boolean existsByBookIdAndMine(Long memberId, Long bookId);
 }
