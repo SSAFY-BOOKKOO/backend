@@ -5,7 +5,12 @@ import lombok.Builder;
 @Builder
 public record ResponseBookTalkDto(
     Long bookTalkId,
-    String title
+    String title,
+    String author,
+    String[] categories,
+    String coverImgUrl,
+    String createdAt,
+    Long comments
 ) {
 
 }
