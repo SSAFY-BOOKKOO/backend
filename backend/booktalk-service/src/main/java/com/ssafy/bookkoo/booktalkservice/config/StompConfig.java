@@ -1,6 +1,5 @@
 package com.ssafy.bookkoo.booktalkservice.config;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -15,15 +14,17 @@ public class StompConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes(
-            "/ws/booktalks/pub");      //해당 주소를 구독하고 있는 클라이언트들에게 메세지 전달
-        registry.enableSimpleBroker("/ws/booktalks/sub");    //해당 주소를 구독
+        // 메세지를 발행할 URL prefix
+        registry.setApplicationDestinationPrefixes("/booktalks/pub");
+        // 메세지를 구독할 URL prefix
+        registry.enableSimpleBroker("/booktalks/sub");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws/booktalks/connect")
-                .setAllowedOriginPatterns("*"); // 모든 도메인 허용
-//                .withSockJS(); // 버전 낮은 브라우저에서도 적용 가능
+        // ws 연결을 위한 엔드포인트
+        registry.addEndpoint("/booktalks/connect")
+                .setAllowedOriginPatterns("*")
+                .withSockJS();
     }
 }
