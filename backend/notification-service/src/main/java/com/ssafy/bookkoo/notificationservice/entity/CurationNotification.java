@@ -18,12 +18,12 @@ public class CurationNotification extends Notification {
     private Long curationId;
 
     @Column(name = "from_member_id")
-    private Long writer;
+    private Long writerId;
 
     @Builder
-    public CurationNotification(Long id, Long memberId, Long curationId, Long writer) {
+    public CurationNotification(Long id, Long memberId, Long curationId, Long writerId) {
         super(id, memberId);
         this.curationId = curationId;
-        this.writer = writer;
+        this.writerId = this.writerId;
     }
 }
