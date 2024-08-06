@@ -32,7 +32,8 @@ const CreateLetter = () => {
   // 전송 로직
   const handleLetterCreate = () => {
     const letter = {
-      bookId: book ? book.id : null,
+      // bookId: book ? book.id : null,
+      bookId:book.id,
       title,
       content,
     };

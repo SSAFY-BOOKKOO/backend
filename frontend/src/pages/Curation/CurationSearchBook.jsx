@@ -61,15 +61,7 @@ const BookSearch = () => {
     navigate('/curation/letter-create');
   };
 
-  // const renderBookItem = book => (
-  //   // BookItem으로 클릭 버튼 넘기기
 
-  //   <BookItem
-  //     key={book.book_id}
-  //     book={book}
-  //     onCreateClick={() => handleBookCreateButton(book)}
-  //   />
-  // );
 
   //////////////////검색 결과
 
@@ -78,7 +70,7 @@ const BookSearch = () => {
     return (
       // BookItem으로 클릭 버튼 넘기기
       <BookItem
-        key={book.book_id}
+        key={book.id}
         book={book}
         onCreateClick={() => handleBookCreateButton(book)}
       />

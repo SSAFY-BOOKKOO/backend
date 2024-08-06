@@ -53,12 +53,9 @@ const BookItem = ({ book, onClick, onCreateClick }) => {
       .post('/books', bookData)
       .then(res => {
         console.log('ID 받아라!!:', res.data.id);
-        // 기존 book에 id를 추가
-        // const updateBook = { ...book, book_id: res.data.id };
-        // setBook(updateBook);
-        // console.log(idBook);
-        // onCreateClick();
-        // navigateToCreate(book);
+        book.id=res.data.id
+        console.log('book 객체!!:', book)
+
       })
       .catch(err => {
         console.log('error:', err);
@@ -69,9 +66,7 @@ const BookItem = ({ book, onClick, onCreateClick }) => {
     console.log('눌렀음');
   };
 
-  // useEffect(() => {
-  //   console.log('Book object:', book);
-  // }, [book]);
+
   return (
     <div
       className='flex items-start space-x-4 p-3 mb-2 bg-white cursor-pointer'
