@@ -4,9 +4,8 @@ import Button from '@components/@common/Button';
 import Alert from '@components/@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
 import { validateForm } from '@utils/ValidateForm';
-import { categoriesList, getCategoryNumber } from '@mocks/Categories';
 
-const ProfileUpdate = ({ member, onSave, onCancel }) => {
+const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
     email: '',
     nickname: '',
@@ -41,19 +40,18 @@ const ProfileUpdate = ({ member, onSave, onCancel }) => {
     }));
   };
 
-  const handleCategoryChange = category => {
+  const handleCategoryChange = categoryId => {
     setFormData(prevState => {
-      const categoryNumber = getCategoryNumber(category);
       const { categories } = prevState;
-      if (categories.includes(categoryNumber)) {
+      if (categories.includes(categoryId)) {
         return {
           ...prevState,
-          categories: categories.filter(c => c !== categoryNumber),
+          categories: categories.filter(c => c !== categoryId),
         };
       } else {
         return {
           ...prevState,
-          categories: [...categories, categoryNumber],
+          categories: [...categories, categoryId],
         };
       }
     });
@@ -170,17 +168,17 @@ const ProfileUpdate = ({ member, onSave, onCancel }) => {
             선호 카테고리
           </label>
           <div className='flex flex-wrap'>
-            {categoriesList.map(category => (
+            {categories.map(category => (
               <span
-                key={category}
+                key={category.id}
                 className={`mr-2 mb-2 px-2 py-1 border rounded-lg cursor-pointer text-gray-700 ${
-                  formData.categories.includes(getCategoryNumber(category))
+                  formData.categories.includes(category.id)
                     ? 'bg-pink-100'
                     : 'bg-gray-100'
                 }`}
-                onClick={() => handleCategoryChange(category)}
+                onClick={() => handleCategoryChange(category.id)}
               >
-                {category}
+                {category.name}
               </span>
             ))}
           </div>

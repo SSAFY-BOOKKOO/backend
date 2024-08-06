@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import RegisterStep1 from '@components/Register/RegisterStep1';
@@ -16,9 +16,8 @@ import {
   checkEmailDuplicate,
   checkNicknameDuplicate,
 } from '@utils/RegisterCheck';
-import { axiosInstance } from '@services/axiosInstance';
+import { axiosInstance, authAxiosInstance } from '@services/axiosInstance';
 import { validateForm } from '@utils/ValidateForm';
-import { categoriesList, getCategoryNumber } from '@mocks/Categories';
 
 const RegisterPage = () => {
   const [step, setStep] = useState(1);
@@ -46,7 +45,20 @@ const RegisterPage = () => {
   );
   const [error, setError] = useAtom(errorAtom);
   const [, setAlert] = useAtom(alertAtom);
+  const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await authAxiosInstance.post('/categories/search');
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Failed to fetch categories', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
@@ -87,14 +99,13 @@ const RegisterPage = () => {
   const handleCategoryChange = category => {
     setFormData(prevFormData => {
       const categories = [...prevFormData.categories];
-      const categoryNumber = getCategoryNumber(category);
-      if (categories.includes(categoryNumber)) {
+      if (categories.includes(category.id)) {
         return {
           ...prevFormData,
-          categories: categories.filter(cat => cat !== categoryNumber),
+          categories: categories.filter(cat => cat !== category.id),
         };
       } else {
-        return { ...prevFormData, categories: [...categories, categoryNumber] };
+        return { ...prevFormData, categories: [...categories, category.id] };
       }
     });
   };
@@ -245,7 +256,7 @@ const RegisterPage = () => {
               errors={errors}
               handleChange={handleChange}
               handleCategoryChange={handleCategoryChange}
-              categoriesList={categoriesList}
+              categoriesList={categories}
               handlePrevStep={handlePrevStep}
               handleNextStep={() => setStep(3)}
             />

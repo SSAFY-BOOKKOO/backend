@@ -1,9 +1,13 @@
 import React from 'react';
 import Button from '@components/@common/Button';
 import profileImgSample from '@assets/images/profile_img_sample.png';
-import { getCategoryName } from '@mocks/Categories';
 
-const ProfileView = ({ member, onEdit, onChangePassword }) => {
+const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
+  const getCategoryName = categoryId => {
+    const category = categories.find(cat => cat.id === categoryId);
+    return category ? category.name : '';
+  };
+
   return (
     <div className='space-y-4 mb-16'>
       <div className='max-w-md mx-4 mt-10 p-4 bg-white border border-gray-300 rounded-lg'>

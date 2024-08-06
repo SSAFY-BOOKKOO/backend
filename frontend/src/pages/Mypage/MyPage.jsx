@@ -6,17 +6,21 @@ import { BsChatSquareQuoteFill } from 'react-icons/bs';
 import profileImgSample from '@assets/images/profile_img_sample.png';
 import settingIcon from '@assets/icons/setting.png';
 import { authAxiosInstance } from '@services/axiosInstance';
-import { getCategoryName } from '@mocks/Categories';
 import IconButton from '@components/@common/IconButton';
 
 const MyPage = () => {
   const [member, setMember] = useState(null);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     const fetchMemberInfo = async () => {
       try {
-        const response = await authAxiosInstance.get('/members/info');
-        setMember(response.data);
+        const memberResponse = await authAxiosInstance.get('/members/info');
+        setMember(memberResponse.data);
+
+        const categoriesResponse =
+          await authAxiosInstance.post('/categories/search');
+        setCategories(categoriesResponse.data);
       } catch (error) {
         console.error(error);
       }
@@ -28,6 +32,11 @@ const MyPage = () => {
   if (!member) {
     return <div>Loading...</div>;
   }
+
+  const getCategoryName = categoryId => {
+    const category = categories.find(cat => cat.id === categoryId);
+    return category ? category.name : '';
+  };
 
   const displayCategories =
     member.categories.length > 4

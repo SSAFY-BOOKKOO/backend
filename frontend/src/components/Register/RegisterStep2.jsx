@@ -11,6 +11,11 @@ const RegisterStep2 = ({
   handlePrevStep,
   handleNextStep,
 }) => {
+  const getCategoryName = categoryId => {
+    const category = categoriesList.find(cat => cat.id === categoryId);
+    return category ? category.name : '';
+  };
+
   return (
     <>
       <h3 className='text-xl font-bold mb-4 text-center'>
@@ -81,10 +86,10 @@ const RegisterStep2 = ({
         선호 카테고리
         <div className='flex flex-wrap mt-2 justify-center'>
           {categoriesList.map(category => (
-            <div key={category} className='mr-2 mb-2'>
+            <div key={category.id} className='mr-2 mb-2'>
               <label
                 className={`flex items-center border px-2 py-1 rounded-lg cursor-pointer ${
-                  formData.categories.includes(category)
+                  formData.categories.includes(category.id)
                     ? 'bg-green-500 text-white'
                     : 'bg-gray-200 text-gray-700'
                 }`}
@@ -92,12 +97,12 @@ const RegisterStep2 = ({
                 <input
                   type='checkbox'
                   name='categories'
-                  value={category}
-                  checked={formData.categories.includes(category)}
+                  value={category.id}
+                  checked={formData.categories.includes(category.id)}
                   onChange={() => handleCategoryChange(category)}
                   className='hidden'
                 />
-                <span>{category}</span>
+                <span>{category.name}</span>
               </label>
             </div>
           ))}

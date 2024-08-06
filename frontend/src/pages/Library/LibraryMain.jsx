@@ -40,9 +40,7 @@ const LibraryMain = () => {
   const [libraries, setLibraries] = useState([]);
 
   useEffect(() => {
-    console.log(location);
     const nickname = location.state;
-    console.log('Received nickname:', nickname);
     const fetchLibraries = async () => {
       try {
         const response = nickname

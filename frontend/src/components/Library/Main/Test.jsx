@@ -5,7 +5,7 @@ import { authAxiosInstance } from '@services/axiosInstance';
 const TestPage = () => {
   const [profileImgUrl, setProfileImgUrl] = useState('');
   const [nickname, setNickname] = useState('');
-  const memberId = '4c05b246-4b7f-4f4d-83f1-29e8b972c191';
+  const memberId = '5c0bf9bf-f323-495b-9866-1684e2293e77';
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,6 +32,7 @@ const TestPage = () => {
 
   return (
     <div className='flex justify-center items-center min-h-screen bg-gray-100'>
+      <p>{profileImgUrl}</p>;
       {profileImgUrl ? (
         <img
           src={profileImgUrl}

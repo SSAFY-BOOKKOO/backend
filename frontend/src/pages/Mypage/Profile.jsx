@@ -10,12 +10,16 @@ const ProfilePage = () => {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
   const [member, setMember] = useState(null);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchMemberInfo = async () => {
     try {
-      const response = await authAxiosInstance.get('/members/info');
-      setMember(response.data);
+      const memberResponse = await authAxiosInstance.get('/members/info');
+      setMember(memberResponse.data);
+      const categoriesResponse =
+        await authAxiosInstance.post('/categories/search');
+      setCategories(categoriesResponse.data);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -76,6 +80,7 @@ const ProfilePage = () => {
         isEditing ? (
           <ProfileUpdate
             member={member}
+            categories={categories}
             onSave={handleSave}
             onCancel={handleCancelEdit}
           />
@@ -84,6 +89,7 @@ const ProfilePage = () => {
         ) : (
           <ProfileView
             member={member}
+            categories={categories}
             onEdit={handleEdit}
             onChangePassword={handleChangePassword}
           />
