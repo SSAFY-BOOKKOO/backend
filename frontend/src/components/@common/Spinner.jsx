@@ -2,14 +2,15 @@ import React from 'react';
 import { useAtomValue } from 'jotai';
 import { isLoadingAtom } from '@atoms/loadingAtom';
 
-const Spinner = ({ infiniteScroll = false }) => {
+const Spinner = ({ infiniteScroll = false, pullToRefresh = false }) => {
   const isLoading = useAtomValue(isLoadingAtom);
 
-  if (!infiniteScroll && !isLoading) return null;
+  if (!infiniteScroll && !pullToRefresh && !isLoading) return null;
 
-  const positionClasses = infiniteScroll
-    ? 'w-full py-4 flex justify-center'
-    : 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-10 z-50';
+  const positionClasses =
+    infiniteScroll || pullToRefresh
+      ? 'w-full py-4 flex justify-center'
+      : 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-10 z-50';
 
   return (
     <div className={positionClasses}>
