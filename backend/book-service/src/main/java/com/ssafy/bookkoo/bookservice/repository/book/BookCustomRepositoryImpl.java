@@ -211,7 +211,6 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
                                                       constructor(ResponseReviewDto.class,
                                                           review.id,
                                                           review.book.id,
-                                                          review.memberId,
                                                           review.content,
                                                           review.rating,
                                                           reviewLike.id.count()

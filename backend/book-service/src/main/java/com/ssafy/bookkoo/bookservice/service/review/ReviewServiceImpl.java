@@ -132,7 +132,7 @@ public class ReviewServiceImpl implements ReviewService {
         List<Review> reviewsExceptMine = reviewRepository.findByBookIdExceptMine(memberId, bookId);
 
         // 2. 리뷰가 2개 미만인 경우 모든 리뷰 반환
-        if (reviewsExceptMine.size() <= 2) {
+        if (reviewsExceptMine.size() <= 3) {
             return reviewsExceptMine.stream()
                                     .map(this::mapToSurfingReviewDto)
                                     .collect(Collectors.toList());
@@ -140,7 +140,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         // 3. 리뷰가 2개 이상일 경우 무작위 두개 선택 후 반환
         Collections.shuffle(reviewsExceptMine);
-        List<Review> randomReviews = reviewsExceptMine.subList(0, 2);
+        List<Review> randomReviews = reviewsExceptMine.subList(0, 3);
 
         return randomReviews.stream()
                             .map(this::mapToSurfingReviewDto)
@@ -170,7 +170,6 @@ public class ReviewServiceImpl implements ReviewService {
                                        .id(review.getId())
                                        .bookId(review.getBook()
                                                      .getId())
-                                       .memberId(review.getMemberId())
                                        .content(review.getContent())
                                        .rating(review.getRating())
                                        .likeCount(review.getLikes()

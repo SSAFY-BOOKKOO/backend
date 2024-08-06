@@ -7,10 +7,12 @@ import com.ssafy.bookkoo.libraryservice.dto.library.RequestUpdateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.library.ResponseLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMapperCreateDto;
 import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMapperUpdateDto;
+import com.ssafy.bookkoo.libraryservice.dto.library_book.ResponseLibraryBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.library_book.ResponseLibraryBookMapperDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookOfLibraryDto;
+import com.ssafy.bookkoo.libraryservice.dto.other.ResponseRecentFiveBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.SearchBookConditionDto;
 import com.ssafy.bookkoo.libraryservice.entity.Library;
 import com.ssafy.bookkoo.libraryservice.entity.LibraryBookMapper;
@@ -18,8 +20,12 @@ import com.ssafy.bookkoo.libraryservice.entity.LibraryStyle;
 import com.ssafy.bookkoo.libraryservice.entity.MapperKey;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import com.ssafy.bookkoo.libraryservice.exception.BookAlreadyMappedException;
+import com.ssafy.bookkoo.libraryservice.exception.LibraryBookNotFoundException;
+import com.ssafy.bookkoo.libraryservice.exception.LibraryIsNotYoursException;
+import com.ssafy.bookkoo.libraryservice.exception.LibraryLimitExceededException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.MemberNotFoundException;
+import com.ssafy.bookkoo.libraryservice.mapper.ClientBookMapper;
 import com.ssafy.bookkoo.libraryservice.mapper.LibraryBookMapperMapper;
 import com.ssafy.bookkoo.libraryservice.mapper.LibraryMapper;
 import com.ssafy.bookkoo.libraryservice.repository.LibraryBookMapperRepository;
@@ -28,9 +34,11 @@ import com.ssafy.bookkoo.libraryservice.repository.LibraryStyleRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +53,7 @@ public class LibraryServiceImpl implements LibraryService {
 
     private final LibraryMapper libraryMapper;
     private final LibraryBookMapperMapper libraryBookMapperMapper;
+    private final ClientBookMapper bookMapper;
 
     private final BookServiceClient bookServiceClient;
     private final MemberServiceClient memberServiceClient;
@@ -62,6 +71,12 @@ public class LibraryServiceImpl implements LibraryService {
         RequestCreateLibraryDto libraryDto,
         Long memberId
     ) {
+        // 현재 사용자 서재 개수 확인
+        int currentLibraryCount = libraryRepository.countByMemberId(memberId);
+
+        if (currentLibraryCount >= 3) { // 세개 이상일 경우 예외처리
+            throw new LibraryLimitExceededException();
+        }
         // library 엔티티 만들기
         Library library = libraryMapper.toEntity(libraryDto, memberId);
 
@@ -209,6 +224,7 @@ public class LibraryServiceImpl implements LibraryService {
     /**
      * 서재 수정
      *
+     * @param memberId
      * @param libraryId  수정할 서재 ID
      * @param libraryDto 수정할 서재 데이터
      * @return ResponseLibraryDto
@@ -216,11 +232,17 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     @Transactional
     public ResponseLibraryDto updateLibrary(
-        Long libraryId,
+        Long memberId, Long libraryId,
         RequestUpdateLibraryDto libraryDto
     ) {
         // 서재 찾기
         Library libraryToUpdate = findLibraryByIdWithException(libraryId);
+
+        // 내 서재가 아닐경우 에러 처리
+        if (!libraryToUpdate.getMemberId()
+                            .equals(memberId)) {
+            throw new LibraryIsNotYoursException();
+        }
 
         // 서재 업데이트
         libraryMapper.updateLibraryFromDto(libraryDto, libraryToUpdate);
@@ -345,7 +367,12 @@ public class LibraryServiceImpl implements LibraryService {
                                                                     .orElseThrow(
                                                                         () -> new IllegalArgumentException(
                                                                             "Invalid book ID or library ID"));
-
+            // 만약 내꺼가 아니면 수정 못함
+            if (!lbMapper.getLibrary()
+                         .getMemberId()
+                         .equals(memberId)) {
+                throw new LibraryIsNotYoursException();
+            }
             libraryBookMapperMapper.updateLibraryBookMapperFromDto(dto, lbMapper);
             libraryBookMapperRepository.save(lbMapper);
         }
@@ -386,40 +413,116 @@ public class LibraryServiceImpl implements LibraryService {
     /**
      * 사용자 서재 내 책 단일 조회
      *
-     * @param memberId  토큰을 위한 헤더
+     * @param headers   토큰을 위한 헤더
      * @param libraryId 서재 id
      * @param bookId    book id
      * @return ResponseBookOfLibraryDto
      */
     @Override
-    public ResponseBookOfLibraryDto getBookOfLibrary(
-        Long memberId,
+    public ResponseLibraryBookDto getBookOfLibrary(
+        HttpHeaders headers,
         Long libraryId,
         Long bookId
     ) {
-        return bookServiceClient.getBookOfLibrary(bookId, memberId);
+        // book 정보 가져오기
+        ResponseBookOfLibraryDto book = bookServiceClient.getBookOfLibrary(headers, bookId);
+
+        // mapper key
+        MapperKey key = new MapperKey();
+        key.setLibraryId(libraryId);
+        key.setBookId(bookId);
+
+        // library Book Mapper 가져오기
+        Optional<LibraryBookMapper> libraryBookMapper = libraryBookMapperRepository.findById(key);
+        if (libraryBookMapper.isEmpty()) {
+            throw new LibraryBookNotFoundException(
+                "(libraryId, bookId) not found: (" + libraryId + " , " + bookId + ")");
+        }
+        LibraryBookMapper lbMapper = libraryBookMapper.get();
+
+        // ResponseLibraryBookDto 생성 및 반환
+        return libraryBookMapperMapper.entityBooktoDto(lbMapper, book);
     }
 
     /**
      * 서재 삭제 : libraryBookMapper 도 cascade 삭제 필요
      *
+     * @param memberId  사용자 ID
      * @param libraryId 서재 ID
      * @return true / false
      */
     @Override
-    public Boolean deleteLibrary(Long libraryId) {
+    public Boolean deleteLibrary(Long memberId, Long libraryId) {
+        Optional<Library> libraryOpt = libraryRepository.findById(libraryId);
+
+        // 서재가 없을 때
+        if (libraryOpt.isEmpty()) {
+            throw new LibraryNotFoundException(libraryId);
+        }
+
+        // 서재가 내게 아닐 때
+        if (!isLibraryOwnedByUser(libraryOpt.get(), memberId)) {
+            throw new LibraryIsNotYoursException();
+        }
+
+        // 서재가 존재하면서, 소유자가 확실하다면, 삭제
         try {
-            // 있을 경우 삭제
-            if (libraryRepository.existsById(libraryId)) {
-                libraryRepository.deleteById(libraryId);
-                return true;
-            }
-            // 없을 경우 삭제 못함 : false
-            return false;
+            libraryRepository.deleteById(libraryId);
+            return true;
         } catch (Exception e) {
-            // 에러날경우 false
+            // 삭제 중 에러 발생
             return false;
         }
+
+    }
+
+    /**
+     * 내가 최근에 추가한 책 다섯권
+     *
+     * @param memberId 사용자 ID
+     * @return List<ResponseRecentFiveBookDto>
+     */
+    @Override
+    public List<ResponseRecentFiveBookDto> getMyRecentBooks(Long memberId) {
+        // 내가 최근에 추가한 bookId 조회
+        List<Long> bookIds = libraryBookMapperRepository.findBookIdsByMemberIdLimitFive(memberId);
+        // string 으로 변환
+        List<String> stringBookIds = bookIds.stream()
+                                            .map(String::valueOf)
+                                            .toList();
+        // condition 만들기
+        List<SearchBookConditionDto> conditions = new ArrayList<>();
+
+        // id로 condition 만들기
+        conditions.add(
+            SearchBookConditionDto.builder()
+                                  .field("id")
+                                  .values(stringBookIds)
+                                  .build()
+        );
+
+        // condition 으로 searchField 만들기
+        RequestSearchBookMultiFieldDto searchField = RequestSearchBookMultiFieldDto.builder()
+                                                                                   .conditions(
+                                                                                       conditions)
+                                                                                   .limit(5)
+                                                                                   .offset(0)
+                                                                                   .build();
+        List<ResponseBookDto> books = bookServiceClient.getBooksByCondition(searchField);
+
+        return bookMapper.responseDtoToCustomDto(books);
+    }
+
+    /**
+     * 해당 서재가 해당 사용자의 서재인지 확인
+     *
+     * @param library  서재 ID
+     * @param memberId 사용자 ID
+     * @return true/false
+     */
+    private boolean isLibraryOwnedByUser(Library library, Long memberId) {
+        return library.getMemberId()
+                      .equals(memberId);
     }
 
     /**

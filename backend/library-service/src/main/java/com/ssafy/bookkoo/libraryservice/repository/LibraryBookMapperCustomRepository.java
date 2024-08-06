@@ -58,4 +58,12 @@ public interface LibraryBookMapperCustomRepository {
      * @return 가장 큰 Book Order
      */
     Integer findMaxBookOrderByLibraryId(Long libraryId);
+
+    /**
+     * 내가 서재에 추가한 최신 책 다섯권 id 반환
+     *
+     * @param memberId 사용자 ID
+     * @return List(책 ID)
+     */
+    List<Long> findBookIdsByMemberIdLimitFive(Long memberId);
 }

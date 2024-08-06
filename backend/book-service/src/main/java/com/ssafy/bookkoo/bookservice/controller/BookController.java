@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -116,16 +115,16 @@ public class BookController {
     /**
      * 서재 내 책 단일 조회
      *
-     * @param memberId memberId
-     * @param bookId   book id
+     * @param bookId book id
      * @return ResponseBookOfLibraryDto (book + review)
      */
     @GetMapping("/{bookId}/me")
     @Operation(summary = "서재 내 책 단일 조회", description = "서재 내 책 단일 조회 시 사용하는 API(내가 쓴 한줄평도 포함)")
     public ResponseEntity<ResponseBookOfLibraryDto> getBookByIsbn(
-        @PathVariable("bookId") Long bookId,
-        @RequestParam("memberId") Long memberId
+        @RequestHeader HttpHeaders headers,
+        @PathVariable("bookId") Long bookId
     ) {
+        Long memberId = CommonUtil.getMemberId(headers);
         return ResponseEntity.ok()
                              .body(bookService.getBookOfLibrary(bookId, memberId));
     }
