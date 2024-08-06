@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AiFillStar } from 'react-icons/ai';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
@@ -22,11 +22,15 @@ const LibraryDetail = () => {
   const [bookData, setBookData] = useAtom(bookDataAtom);
   const navigate = useNavigate();
   const maxLength = 80;
-  const authorMaxLength = 14;
-  const titleMaxLength = 10;
+  // const authorMaxLength = 14;
+  // const titleMaxLength = 10;
 
   // book 정보 받기
-  const { title, author, publisher, summary, cover_img_url } = state.book;
+  const { title, author, publisher, summary, coverImgUrl } = state.book;
+
+  useEffect(() => {
+    console.log(state.book);
+  }, []);
 
   // 삭제 로직
   const handleDelete = bookId => {
@@ -72,16 +76,6 @@ const LibraryDetail = () => {
       ? summary.substring(0, maxLength - 1) + '...'
       : summary;
 
-  const displayTitleSummary =
-    title.length > titleMaxLength
-      ? title.substring(0, titleMaxLength - 1) + '...'
-      : title;
-
-  const displayAuthorSummary =
-    author.length > authorMaxLength
-      ? author.substring(0, authorMaxLength - 1) + '...'
-      : author;
-
   return (
     <div className='flex flex-col items-center h-[43rem] mt-4 overflow-hidden scrollbar-none'>
       <SwitchTransition>
@@ -116,13 +110,15 @@ const LibraryDetail = () => {
                   className='z-20'
                 />
                 <div>
-                  <div className='relative flex flex-col items-center'>
-                    <img
-                      src='https://marketplace.canva.com/EAF9gve36_w/1/0/1003w/canva-%EB%85%B8%EB%9E%80%EC%83%89-%ED%95%98%EB%8A%98%EC%83%89-%EA%B3%A0%EC%96%91%EC%9D%B4-%EB%B2%A0%EC%8A%A4%ED%8A%B8%EC%85%80%EB%9F%AC-%EC%B1%85%ED%91%9C%EC%A7%80-u-BROyrLSjI.jpg'
-                      alt={title}
-                      className='w-10/12 h-4/5 pt-6 pr-7 pl-12 cursor-pointer rounded-lg mt-[2rem] z-0'
-                      onClick={() => setShowReview(true)}
-                    />
+                  <div className='flex flex-col items-center'>
+                    <div className='relative w-11/12 h-96 pt-6 pr-7 pl-12 cursor-pointer rounded-lg mt-[2rem] z-0 flex justify-center'>
+                      <img
+                        src={coverImgUrl}
+                        alt={title}
+                        onClick={() => setShowReview(true)}
+                        className='w-full h-full'
+                      />
+                    </div>
                     {/* <IoBookmarkSharp className='absolute top-[3.7rem] right-[4rem] text-6xl text-blue-500' /> */}
                     <div className='absolute top-5 right-16 flex items-center justify-center w-16 h-32 text-blue-500'>
                       <IoBookmarkSharp className='h-full w-full' />
@@ -150,8 +146,8 @@ const LibraryDetail = () => {
                 <div className='p-4 pl-14 pt-5'>
                   {' '}
                   <div className='flex flex-grow'>
-                    <h2 className='text-2xl text-black font-bold'>
-                      {displayTitleSummary}
+                    <h2 className='text-2xl text-black font-bold text-overflow-1'>
+                      {title}
                     </h2>
                   </div>
                   <div className='flex space-x-1 mt-1'>
@@ -159,7 +155,7 @@ const LibraryDetail = () => {
                   </div>
                   {/* 읽은 기간 */}
                   {/* 읽은 상태 */}
-                  <p className='text-lg text-black'>{displayAuthorSummary}</p>
+                  <p className='text-lg text-black text-overflow-1'>{author}</p>
                   <p className='text-sm text-black'>{publisher} | 2022-07-14</p>
                   <p className='mt-2 text-sm text-black'>{displaySummary}</p>
                 </div>

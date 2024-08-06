@@ -12,25 +12,25 @@ const CurationLetterDetail = () => {
 
   const [Letter, setShowLetter] = useState([]);
 
-  // useEffect(
-  //   ({ curationId }) => {
-  //     axiosInstance
-  //       // axios로 get요청 보내기
-  //       .get('/curations/detail', { params: { curationId } })
-  //       // 요청 성공하면 받아와서 letters에 할당
-  //       .then(res => {
-  //         setShowLetter(res.data);
-  //         console.log(res);
-  //       })
+  useEffect(
+    ({ curationId }) => {
+      axiosInstance
+        // axios로 get요청 보내기
+        .get('/curations/detail', { params: { curationId } })
+        // 요청 성공하면 받아와서 letters에 할당
+        .then(res => {
+          setShowLetter(res.data);
+          console.log(res);
+        })
 
-  //       // 요청 실패하면 오류 일단 console에
-  //       .catch(err => {
-  //         console.log(err);
-  //       });
-  //   },
-  //   // 화면에 처음 렌더링될 때만 실행
-  //   []
-  // );
+        // 요청 실패하면 오류 일단 console에
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    // 화면에 처음 렌더링될 때만 실행
+    []
+  );
 
   // 레터 보관
   const handleLetterStore = () => {

@@ -97,7 +97,7 @@ const CurationReceive = () => {
   // 보관함 관리 위한 useState
   const [storedLetters, setStoredLetters] = useState([]);
   const navigateToStore = () => {
-    navigate('/curation/store', { state: { storedLetters } });
+    navigate('/curations/store', { state: { storedLetters } });
   };
 
   // 보관함 등록 로직
