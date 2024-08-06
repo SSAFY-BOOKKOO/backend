@@ -20,6 +20,7 @@ import com.ssafy.bookkoo.libraryservice.entity.MapperKey;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import com.ssafy.bookkoo.libraryservice.exception.BookAlreadyMappedException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryBookNotFoundException;
+import com.ssafy.bookkoo.libraryservice.exception.LibraryLimitExceededException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.libraryservice.mapper.LibraryBookMapperMapper;
@@ -66,6 +67,12 @@ public class LibraryServiceImpl implements LibraryService {
         RequestCreateLibraryDto libraryDto,
         Long memberId
     ) {
+        // 현재 사용자 서재 개수 확인
+        int currentLibraryCount = libraryRepository.countByMemberId(memberId);
+
+        if (currentLibraryCount >= 3) { // 세개 이상일 경우 예외처리
+            throw new LibraryLimitExceededException();
+        }
         // library 엔티티 만들기
         Library library = libraryMapper.toEntity(libraryDto, memberId);
 
