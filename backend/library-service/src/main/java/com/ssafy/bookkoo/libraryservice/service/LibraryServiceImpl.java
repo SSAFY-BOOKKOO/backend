@@ -224,6 +224,7 @@ public class LibraryServiceImpl implements LibraryService {
     /**
      * 서재 수정
      *
+     * @param memberId
      * @param libraryId  수정할 서재 ID
      * @param libraryDto 수정할 서재 데이터
      * @return ResponseLibraryDto
@@ -231,11 +232,17 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     @Transactional
     public ResponseLibraryDto updateLibrary(
-        Long libraryId,
+        Long memberId, Long libraryId,
         RequestUpdateLibraryDto libraryDto
     ) {
         // 서재 찾기
         Library libraryToUpdate = findLibraryByIdWithException(libraryId);
+
+        // 내 서재가 아닐경우 에러 처리
+        if (!libraryToUpdate.getMemberId()
+                            .equals(memberId)) {
+            throw new LibraryIsNotYoursException();
+        }
 
         // 서재 업데이트
         libraryMapper.updateLibraryFromDto(libraryDto, libraryToUpdate);

@@ -54,12 +54,13 @@ public interface LibraryService {
     /**
      * 서재를 수정합니다.
      *
+     * @param memberId
      * @param libraryId 서재 ID
      * @param library   서재 수정 요청 DTO
      * @return 수정된 서재 응답 DTO
      */
     ResponseLibraryDto updateLibrary(
-        Long libraryId,
+        Long memberId, Long libraryId,
         RequestUpdateLibraryDto library
     );
 

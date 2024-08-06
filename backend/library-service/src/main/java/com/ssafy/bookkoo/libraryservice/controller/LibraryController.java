@@ -115,11 +115,13 @@ public class LibraryController {
     @PatchMapping("/{libraryId}")
     @Operation(summary = "서재 수정", description = "서재 수정 API")
     public ResponseEntity<ResponseLibraryDto> updateLibrary(
+        @RequestHeader HttpHeaders headers,
         @PathVariable Long libraryId,
         @RequestBody RequestUpdateLibraryDto libraryDto
     ) {
+        Long memberId = CommonUtil.getMemberId(headers);
         return ResponseEntity.ok()
-                             .body(libraryService.updateLibrary(libraryId, libraryDto));
+                             .body(libraryService.updateLibrary(memberId, libraryId, libraryDto));
     }
 
     /**
