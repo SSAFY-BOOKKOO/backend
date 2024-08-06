@@ -5,9 +5,9 @@ import com.ssafy.bookkoo.libraryservice.dto.library.RequestUpdateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.library.ResponseLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMapperCreateDto;
 import com.ssafy.bookkoo.libraryservice.dto.library_book.RequestLibraryBookMapperUpdateDto;
+import com.ssafy.bookkoo.libraryservice.dto.library_book.ResponseLibraryBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookDto;
-import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookOfLibraryDto;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import com.ssafy.bookkoo.libraryservice.service.LibraryService;
 import com.ssafy.bookkoo.libraryservice.util.CommonUtil;
@@ -160,14 +160,13 @@ public class LibraryController {
 
     @GetMapping("/{libraryId}/books/{bookId}")
     @Operation(summary = "서재 내 책 단일 조회(프론트에서 서재 내 책 단일 조회 시 사용)", description = "서재 내 책 단일 조회 API (한줄평도 같이 들어있음)")
-    public ResponseEntity<ResponseBookOfLibraryDto> getBookOfLibrary(
+    public ResponseEntity<ResponseLibraryBookDto> getBookOfLibrary(
         @RequestHeader HttpHeaders headers,
         @PathVariable Long libraryId,
         @PathVariable Long bookId
     ) {
-        Long memberId = CommonUtil.getMemberId(headers);
         return ResponseEntity.ok()
-                             .body(libraryService.getBookOfLibrary(memberId, libraryId, bookId));
+                             .body(libraryService.getBookOfLibrary(headers, libraryId, bookId));
     }
 
     /**
