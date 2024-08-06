@@ -22,7 +22,7 @@ public class StompConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws/booktalks/ws")
+        registry.addEndpoint("/ws/booktalks/connect")
                 .setAllowedOriginPatterns("*"); // 모든 도메인 허용
 //                .withSockJS(); // 버전 낮은 브라우저에서도 적용 가능
     }

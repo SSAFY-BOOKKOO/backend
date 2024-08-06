@@ -23,12 +23,13 @@ public class ChatController {
         log.info("Received a new web socket connection with {}", event.getUser());
     }
 
+    // subscribe url = /ws/booktalks/sub/chat/1
     @MessageMapping("/chat/{booktalkId}")
     public void sendMessage(@DestinationVariable(value = "booktalkId") Long booktalkId,
         Message<RequestChatMessageDto> message) {
         log.info("Sending message  id : {} msg : {}", booktalkId, message.getPayload()
                                                                          .content());
-        simpleMessageSendingOperations.convertAndSend("/booktalks/sub/chat/" + booktalkId,
+        simpleMessageSendingOperations.convertAndSend("/ws/booktalks/sub/chat/" + booktalkId,
             message.getPayload()
                    .content());
     }
