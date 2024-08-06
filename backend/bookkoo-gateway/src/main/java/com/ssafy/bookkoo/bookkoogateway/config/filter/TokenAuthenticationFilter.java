@@ -52,7 +52,8 @@ public class TokenAuthenticationFilter implements GlobalFilter {
         "/auth",
         "/actuator",
         "/categories",
-        "/books"
+        "/books",
+        "/ws"
     );
 
     @Override
