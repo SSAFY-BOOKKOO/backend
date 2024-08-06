@@ -2,6 +2,7 @@ package com.ssafy.bookkoo.libraryservice.handler;
 
 import com.ssafy.bookkoo.libraryservice.exception.BookAlreadyMappedException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryBookNotFoundException;
+import com.ssafy.bookkoo.libraryservice.exception.LibraryIsNotYoursException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryLimitExceededException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.MemberNotFoundException;
@@ -87,6 +88,18 @@ public class LibraryExceptionHandler {
      */
     @ExceptionHandler(LibraryLimitExceededException.class)
     public ResponseEntity<String> handleLibraryLimitExceededException(LibraryLimitExceededException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * 서재가 내 게 아닌데 삭제하려고 할 때
+     *
+     * @param e LibraryIsNotYoursException
+     * @return 에러 메시지 + 상태 코드
+     */
+    @ExceptionHandler(LibraryIsNotYoursException.class)
+    public ResponseEntity<String> handleLibraryIsNotYoursException(LibraryIsNotYoursException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body(e.getMessage());
     }
