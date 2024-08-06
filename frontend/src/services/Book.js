@@ -32,3 +32,15 @@ export const getAladinBookByIsbn = async isbn => {
     throw error;
   }
 };
+
+// 책 카테고리 조회
+export const postCategories = async () => {
+  try {
+    const response = await authAxiosInstance.post('/categories/search');
+
+    return response.data;
+  } catch (error) {
+    console.error('postCategories failed:', error);
+    throw error;
+  }
+};
