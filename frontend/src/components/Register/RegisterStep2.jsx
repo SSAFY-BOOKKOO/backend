@@ -7,9 +7,14 @@ const RegisterStep2 = ({
   errors,
   handleChange,
   handleCategoryChange,
+  categoriesList,
   handlePrevStep,
-  handleSubmit,
+  handleNextStep,
 }) => {
+  const getCategoryName = categoryId => {
+    const category = categoriesList.find(cat => cat.id === categoryId);
+    return category ? category.name : '';
+  };
   return (
     <>
       <h3 className='text-xl font-bold mb-4 text-center'>
@@ -79,26 +84,24 @@ const RegisterStep2 = ({
       <label className='block mb-2 text-sm font-medium text-gray-700'>
         선호 카테고리
         <div className='flex flex-wrap mt-2 justify-center'>
-          {[1, 2, 3, 4, 5].map(category => (
-            <div key={category} className='mr-2 mb-2'>
-              <label className='flex items-center border px-2 py-1 rounded-lg cursor-pointer'>
+          {categoriesList.map(category => (
+            <div key={category.id} className='mr-2 mb-2'>
+              <label
+                className={`flex items-center border px-2 py-1 rounded-lg cursor-pointer ${
+                  formData.categories.includes(category.id)
+                    ? 'bg-green-400 text-white'
+                    : 'bg-gray-200 text-gray-700'
+                }`}
+              >
                 <input
                   type='checkbox'
                   name='categories'
-                  value={category}
-                  checked={formData.categories.includes(category)}
+                  value={category.id}
+                  checked={formData.categories.includes(category.id)}
                   onChange={() => handleCategoryChange(category)}
                   className='hidden'
                 />
-                <span
-                  className={`ml-2 ${
-                    formData.categories.includes(category)
-                      ? 'text-green-500'
-                      : 'text-gray-700'
-                  }`}
-                >
-                  {category}
-                </span>
+                <span>{category.name}</span>
               </label>
             </div>
           ))}
@@ -114,12 +117,12 @@ const RegisterStep2 = ({
           onClick={handlePrevStep}
         />
         <Button
-          text='가입 완료'
+          text='다음'
           type='button'
           color='text-white bg-green-400 active:bg-green-600'
           size='large'
           full={false}
-          onClick={handleSubmit}
+          onClick={handleNextStep}
         />
       </div>
     </>

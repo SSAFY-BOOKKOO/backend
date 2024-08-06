@@ -15,9 +15,9 @@ const RegisterStep3 = ({ formData, errors, handleChange, handleSubmit }) => {
         <div className='mt-2'>
           <input
             type='checkbox'
-            id='is_receive_letter_email'
-            name='is_receive_letter_email'
-            checked={formData.is_receive_letter_email}
+            id='isLetterReceive'
+            name='isLetterReceive'
+            checked={formData.isLetterReceive}
             onChange={handleChange}
             className='mr-2'
           />
@@ -30,10 +30,10 @@ const RegisterStep3 = ({ formData, errors, handleChange, handleSubmit }) => {
           <label className='flex items-center'>
             <input
               type='radio'
-              id='one_line_review_privacy-0'
-              name='one_line_review_privacy'
-              value='public_reveal'
-              checked={formData?.one_line_review_privacy === 'public_reveal'}
+              id='reviewVisibility-public'
+              name='reviewVisibility'
+              value='PUBLIC'
+              checked={formData.reviewVisibility === 'PUBLIC'}
               onChange={handleChange}
             />
             <span className='ml-2'>전체 공개</span>
@@ -41,10 +41,10 @@ const RegisterStep3 = ({ formData, errors, handleChange, handleSubmit }) => {
           <label className='flex items-center'>
             <input
               type='radio'
-              id='one_line_review_privacy-1'
-              name='one_line_review_privacy'
-              value='follower_reveal'
-              checked={formData?.one_line_review_privacy === 'follower_reveal'}
+              id='reviewVisibility-follower_public'
+              name='reviewVisibility'
+              value='FOLLOWER_PUBLIC'
+              checked={formData.reviewVisibility === 'FOLLOWER_PUBLIC'}
               onChange={handleChange}
             />
             <span className='ml-2'>팔로워 공개</span>
@@ -52,19 +52,17 @@ const RegisterStep3 = ({ formData, errors, handleChange, handleSubmit }) => {
           <label className='flex items-center'>
             <input
               type='radio'
-              id='one_line_review_privacy-2'
-              name='one_line_review_privacy'
-              value='private_reveal'
-              checked={formData?.one_line_review_privacy === 'private_reveal'}
+              id='reviewVisibility-private'
+              name='reviewVisibility'
+              value='PRIVATE'
+              checked={formData.reviewVisibility === 'PRIVATE'}
               onChange={handleChange}
             />
             <span className='ml-2'>비공개</span>
           </label>
         </div>
-        {errors?.one_line_review_privacy && (
-          <p className='text-red-500 text-sm'>
-            {errors?.one_line_review_privacy}
-          </p>
+        {errors.reviewVisibility && (
+          <p className='text-red-500 text-sm'>{errors.reviewVisibility}</p>
         )}
       </label>
       <div className='flex justify-end mt-6'>
