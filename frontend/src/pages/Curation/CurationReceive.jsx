@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Swiper, SwiperSlide } from 'swiper/react';
+// import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import CurationTab from '@components/Curation/CurationTab';
 import { BsBookmarkStar, BsBookmarkStarFill } from 'react-icons/bs';
-import { BsTrash3 } from 'react-icons/bs';
 import { AiFillAlert } from 'react-icons/ai';
 import { IoIosArrowBack } from 'react-icons/io';
 import { IoIosArrowForward } from 'react-icons/io';
 import { FaTrashCan } from 'react-icons/fa6';
 
 // 연동
-import axios from 'axios';
-import { axiosInstance, authAxiosInstance } from '../../services/axiosInstance';
+import { authAxiosInstance } from '../../services/axiosInstance';
 
 const CurationReceive = () => {
   const navigate = useNavigate();
@@ -55,16 +53,6 @@ const CurationReceive = () => {
     }
   };
 
-  // const handleSelectLetter = letter => {
-  //   setSelectedLetters(prevSelectedLetters => {
-  //     const updatedSelectedLetters = prevSelectedLetters.includes(id)
-  //       ? prevSelectedLetters.filter(selectedId => selectedId !== id)
-  //       : [...prevSelectedLetters, id];
-  //     console.log('Updated selectedLetters:', updatedSelectedLetters);
-  //     return updatedSelectedLetters;
-  //   });
-  // };
-
   // 함수: 레터 삭제
   const handleDeleteSelected = () => {
     if (selectedLetters.length === 0) {
@@ -96,9 +84,9 @@ const CurationReceive = () => {
   ///////////// 보관
   // 보관함 관리 위한 useState
   const [storedLetters, setStoredLetters] = useState([]);
-  const navigateToStore = () => {
-    navigate('/curations/store', { state: { storedLetters } });
-  };
+  // const navigateToStore = () => {
+  //   navigate('/curation/store', { state: { storedLetters } });
+  // };
 
   // 보관함 등록 로직
   const onStore = (event, letter) => {
@@ -108,6 +96,7 @@ const CurationReceive = () => {
     } else {
       setStoredLetters([...storedLetters, letter]);
       console.log('보관함으로 슝');
+      // navigateToStore();
       authAxiosInstance
         .post(`/curations/store/${letter.curationId}`, {
           curationId: letter.curationId,
@@ -123,7 +112,20 @@ const CurationReceive = () => {
 
   // 레터 상세보기
   const handleLetterClick = letter => {
-    navigate(`/curation/letter/${letter.id}`, { state: { letter } });
+    // navigate(`/curations/detail/${letter.id}`, { state: { letter } });
+    authAxiosInstance
+      .get(`/curations/detail/${letter.curationId}`, {
+        curationId: letter.curationId,
+      })
+      .then(res => {
+        console.log('Letter Detail:', res);
+        navigate(`/curation/letter/${letter.curationId}`, {
+          state: { letter },
+        });
+      })
+      .catch(err => {
+        console.log('error:', err);
+      });
   };
 
   return (
@@ -150,12 +152,13 @@ const CurationReceive = () => {
           <div key={letter.id} className='flex flex-grow'>
             <div
               className={`relative flex items-center mb-6 bg-green-50 rounded-lg shadow w-full h-40 transition-transform duration-300 ${isDeleting ? 'transform -translate-x-1/5' : ''}`}
+              onClick={() => handleLetterClick(letter)}
             >
               <img
                 src={letter.image}
                 alt='Letter'
                 className='w-16 h-24 mx-4 rounded-lg'
-                onClick={() => handleLetterClick(letter)}
+                // onClick={() => handleLetterClick(letter)}
               />
               <div className='flex-1 pb-7'>
                 <h2 className='text-lg font-bold'>{letter.title}</h2>
