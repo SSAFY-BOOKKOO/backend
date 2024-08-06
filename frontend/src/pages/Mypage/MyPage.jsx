@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaCalendarDays, FaClipboardList } from 'react-icons/fa6';
 import { MdPeopleAlt } from 'react-icons/md';
 import { BsChatSquareQuoteFill } from 'react-icons/bs';
@@ -7,10 +7,13 @@ import profileImgSample from '@assets/images/profile_img_sample.png';
 import settingIcon from '@assets/icons/setting.png';
 import { authAxiosInstance } from '@services/axiosInstance';
 import IconButton from '@components/@common/IconButton';
+import ProfileModal from '@components/MyPage/Profile/ProfileModal.jsx';
 
 const MyPage = () => {
   const [member, setMember] = useState(null);
   const [categories, setCategories] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMemberInfo = async () => {
@@ -43,6 +46,18 @@ const MyPage = () => {
       ? member.categories.slice(0, 2).concat(['...'])
       : member.categories;
 
+  const handleProfileClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleLibraryNavigation = () => {
+    navigate('/', { state: { nickname: member.nickName } });
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className='p-4 min-h-[43rem]'>
       <div className='flex items-start justify-between mb-8'>
@@ -50,7 +65,8 @@ const MyPage = () => {
           <img
             src={member.profileImgUrl || profileImgSample}
             alt='profile'
-            className='w-32 h-32 rounded-full'
+            className='w-32 h-32 rounded-full cursor-pointer'
+            onClick={handleProfileClick}
           />
           <div className='flex flex-col flex-grow space-y-4'>
             <div className='flex items-center justify-between'>
@@ -110,6 +126,14 @@ const MyPage = () => {
           <p className='text-lg'>친구</p>
         </div>
       </div>
+      <ProfileModal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        profileImgUrl={member.profileImgUrl || profileImgSample}
+        nickname={member.nickName}
+        introduction={member.introduction}
+        onNavigate={handleLibraryNavigation}
+      />
     </div>
   );
 };
