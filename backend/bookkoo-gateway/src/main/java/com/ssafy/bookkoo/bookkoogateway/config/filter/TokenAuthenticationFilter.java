@@ -53,7 +53,8 @@ public class TokenAuthenticationFilter implements GlobalFilter {
         "/actuator",
         "/categories",
         "/books",
-        "/ws"
+        // 채팅 연결을 위한 URL
+        "/booktalks/connect"
     );
 
     @Override
