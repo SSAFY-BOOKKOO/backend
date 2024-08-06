@@ -46,9 +46,7 @@ public class MemberExceptionHandler {
     }
 
     /**
-     * 멤버가 존재하지 않을 때
-     * (찾지 못했을 떄)
-     * 발생하는 예외입니다.
+     * 멤버가 존재하지 않을 때 (찾지 못했을 떄) 발생하는 예외입니다.
      *
      * @param e
      * @return
@@ -86,6 +84,7 @@ public class MemberExceptionHandler {
 
     /**
      * 멤버가 아직 추가 정보를 입력하지 않았을 때 발생하는 예외입니다.
+     *
      * @param e
      * @return
      */
@@ -103,6 +102,17 @@ public class MemberExceptionHandler {
      */
     @ExceptionHandler(PasswordNotValidException.class)
     public ResponseEntity<String> handlePasswordNotValidException(PasswordNotValidException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * 이미 팔로우한 상태에서 다시 요청했을 때 발생하는 예외
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(AlreadyFollowedException.class)
+    public ResponseEntity<String> handleAlreadyFollowedException(AlreadyFollowedException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                              .body(e.getMessage());
     }
