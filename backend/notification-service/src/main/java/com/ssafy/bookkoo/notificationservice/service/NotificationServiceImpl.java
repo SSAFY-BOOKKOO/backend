@@ -74,11 +74,10 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public void deleteNotification(Long memberId, Long notificationId) {
-        ResponseMemberInfoDto memberInfo = memberServiceClient.getMemberInfo(memberId);
         Notification notification = notificationRepository.findById(notificationId)
                                                           .orElseThrow(NotificationNotFoundException::new);
-        String notificationMemberId = notification.getMemberId();
-        if (!notificationMemberId.equals(memberInfo.memberId())) {
+        Long notificationMemberId = notification.getMemberId();
+        if (!notificationMemberId.equals(memberId)) {
             throw new UnAuthorizationException();
         }
         notificationRepository.delete(notification);
@@ -94,9 +93,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional(readOnly = true)
     public List<ResponseNotificationDto> getNotifications(Long id, Pageable pageable) {
-        String memberId = memberServiceClient.getMemberInfo(id)
-                                             .memberId();
-        List<Notification> notifications = notificationRepository.findByMemberIdAndCondition(memberId, pageable);
+        List<Notification> notifications = notificationRepository.findByMemberIdAndCondition(id, pageable);
         return notifications.stream()
                             .map(notification -> {
                                 if (notification instanceof CommunityNotification communityNotification) {
