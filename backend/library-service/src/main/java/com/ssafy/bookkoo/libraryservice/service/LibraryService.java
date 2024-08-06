@@ -12,7 +12,6 @@ import com.ssafy.bookkoo.libraryservice.dto.other.ResponseRecentFiveBookDto;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import java.util.List;
 import java.util.Map;
-import org.springframework.http.HttpHeaders;
 
 /**
  * 서재 관련 서비스 인터페이스입니다.
@@ -134,15 +133,15 @@ public interface LibraryService {
     /**
      * 사용자 서재 내 책 단일 조회
      *
-     * @param headers   토큰을 위한 헤더
      * @param libraryId 서재 id
      * @param bookId    book id
+     * @param nickname  닉네임
      * @return ResponseBookOfLibraryDto
      */
     ResponseLibraryBookDto getBookOfLibrary(
-        HttpHeaders headers,
         Long libraryId,
-        Long bookId
+        Long bookId,
+        String nickname
     );
 
     /**
