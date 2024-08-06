@@ -5,8 +5,10 @@ import lombok.Builder;
 
 @Builder
 public record RequestCreateFollowNotificationDto(
-    @NotNull(message = "Member ID can not be null") String memberId,
-    @NotNull(message = "Follower ID can not be null") String followerId
+    @NotNull(message = "Member ID can not be null")
+    Long memberId,
+    @NotNull(message = "Follower ID can not be null")
+    Long followerId
 ) {
 
 }
