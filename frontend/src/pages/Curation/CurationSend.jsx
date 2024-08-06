@@ -6,35 +6,6 @@ import { authAxiosInstance } from '../../services/axiosInstance';
 import { IoIosArrowBack } from 'react-icons/io';
 import { IoIosArrowForward } from 'react-icons/io';
 
-// 임시 레터 데이터
-// const initialLetters = [
-//   {
-//     id: 1,
-//     title: '레터1',
-//     content: '너무 유익했다!',
-//     from: '양귀자',
-//     date: '2024-07-19',
-//     image: 'https://image.yes24.com/momo/TopCate249/MidCate003/24823257.jpg',
-//   },
-//   {
-//     id: 2,
-//     title: '키움 우승',
-//     from: '홍원기',
-//     content: '영웅질주',
-//     date: '2024-07-19',
-//     image:
-//       'https://yt3.googleusercontent.com/HmU-cGuNTGaoyJ2dSCW7CrdNMLVXq8xgKQ2Tsri543dTS7RMSgcseDb8p9w-g2amOoNJkXxT=s900-c-k-c0x00ffffff-no-rj',
-//   },
-//   {
-//     id: 3,
-//     title: '레터2',
-//     content: '너무 재밌당',
-//     from: '에이미',
-//     date: '2024-07-19',
-//     image: 'https://image.yes24.com/goods/123400303/L',
-//   },
-// ];
-
 const CurationSend = () => {
   const location = useLocation();
   const navigate = useNavigate();

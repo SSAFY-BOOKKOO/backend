@@ -17,9 +17,12 @@ const BookItem = ({ book, onClick, onCreateClick }) => {
       ? book.author.substring(0, authorMaxLength - 1) + '...'
       : book.author;
 
-  const navigateToCreate = () => {
+  const navigateToCreate = ({ book }) => {
     navigate('/curation/letter-create', {
-      state: { book: `${book}` },
+      state: {
+        image: `${book.coverImgUrl}`,
+        title: { title: `${book.title}` },
+      },
     });
   };
 

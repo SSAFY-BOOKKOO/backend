@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import Input from '@components/@common/Input';
 import Button from '@components/@common/Button';
 import { useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
+import { curationBookAtom } from '@atoms/curationBookAtom';
+import { authAxiosInstance } from '../../services/axiosInstance';
 
-const CreateLetter = ({ book }) => {
+const CreateLetter = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const navigate = useNavigate();
+  const [book] = useAtom(curationBookAtom);
 
   useEffect(() => {
     console.log('Book object:', book);
@@ -24,8 +28,23 @@ const CreateLetter = ({ book }) => {
     navigate('/curation/letter-create/book-search');
   };
 
+  // 전송 로직
   const handleLetterCreate = () => {
-    navigate('send');
+    const letter = {
+      title,
+      content,
+      bookId: book ? book.id : null,
+    };
+
+    authAxiosInstance
+      .post('/curations', letter)
+      .then(res => {
+        console.log('Letter send successfully:', res);
+        navigate('/curation/send');
+      })
+      .catch(err => {
+        console.log('error:', err);
+      });
   };
 
   return (
@@ -40,7 +59,9 @@ const CreateLetter = ({ book }) => {
                   alt={book.title}
                   className='w-12 h-16 rounded-md shadow-lg'
                 />
-                <div className='ml-4 text-gray-700'>{book.title}</div>
+                <div className='ml-4 text-gray-700 text-ellipsis'>
+                  {book.title}
+                </div>
               </div>
             ) : (
               <div className='text-gray-700'>책을 등록해 주세요!</div>
