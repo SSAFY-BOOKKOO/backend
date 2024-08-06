@@ -18,6 +18,7 @@ import {
 } from '@utils/RegisterCheck';
 import { axiosInstance } from '@services/axiosInstance';
 import { validateForm } from '@utils/ValidateForm';
+import { postCategories } from '@services/Book';
 
 const RegisterPage = () => {
   const [step, setStep] = useState(1);
@@ -52,7 +53,6 @@ const RegisterPage = () => {
 
   // 소셜 로그인의 경우 사용자 정보 가져오기
   useEffect(() => {
-    console.log('location' + location);
     const searchParams = new URLSearchParams(location.search);
     const email = searchParams.get('email');
     const socialType = searchParams.get('socialType');
@@ -68,12 +68,35 @@ const RegisterPage = () => {
     }
   }, [location]);
 
+  const handlePostCategories = async () => {
+    try {
+      const data = await postCategories();
+      setCategories(data);
+    } catch (error) {
+      console.error('Failed to fetch categories', error);
+    }
+  };
+
+  useEffect(() => {
+    handlePostCategories();
+  }, []);
+
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    if (name in formData.memberSettingDto) {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        memberSettingDto: {
+          ...prevFormData.memberSettingDto,
+          [name]: type === 'checkbox' ? checked : value,
+        },
+      }));
+    } else {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        [name]: type === 'checkbox' ? checked : value,
+      }));
+    }
     setErrors(prevErrors => ({
       ...prevErrors,
       [name]: '',
@@ -162,14 +185,16 @@ const RegisterPage = () => {
 
   const handleSubmit = async () => {
     const validationConfig = {
-      email: true,
-      password: true,
-      confirmPassword: true,
       nickname: true,
       year: true,
       gender: true,
       categories: true,
       introduction: true,
+      ...(!isSocial && {
+        email: true,
+        password: true,
+        confirmPassword: true,
+      }),
     };
 
     const newErrors = validateForm(formData, validationConfig);
