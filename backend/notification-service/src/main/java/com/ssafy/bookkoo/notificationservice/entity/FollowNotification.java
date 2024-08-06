@@ -16,10 +16,10 @@ import lombok.experimental.SuperBuilder;
 public class FollowNotification extends Notification {
 
     @Column(name = "from_member_id")
-    private String followerId;
+    private Long followerId;
 
     @Builder
-    public FollowNotification(Long id, String memberId, String followerId) {
+    public FollowNotification(Long id, Long memberId, Long followerId) {
         super(id, memberId);
         this.followerId = followerId;
     }

@@ -11,13 +11,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.io.IOException;
 
 /**
  * OAuth2 인증 완료 시 동작하는 SuccessHandler
@@ -25,7 +27,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
+public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private static final String REFRESH_TOKEN_NAME = "refresh_token";
     private final AuthService authService;
@@ -35,7 +37,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private String FRONTEND_URL;
 
     /**
-     *
      * @param request
      * @param response
      * @param authentication
@@ -44,7 +45,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
      */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-        Authentication authentication) throws IOException, ServletException {
+                                        Authentication authentication) throws IOException, ServletException {
 
         //이메일
         String email = authentication.getName();
@@ -57,26 +58,33 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             ResponseSocialRegisterDto registerDto
                 = toResponseSocialRegisterDto(socialRegisterDto);
             log.info("socialRegisterDto : {}", socialRegisterDto);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
             //소셜 로그인 정보를 클라이언트로 전송하고 추가정보를 입력받아 회원가입 완료
-            response.getWriter().write(objectMapper.writeValueAsString(registerDto));
+            String targetURl = UriComponentsBuilder.fromUriString(FRONTEND_URL + "/register")
+                                                   .queryParam("email", registerDto.email())
+                                                   .queryParam("socialType", registerDto.socialType())
+                                                   .build()
+                                                   .toUriString();
+            getRedirectStrategy().sendRedirect(request, response, targetURl);
         } else { //Member이면 ROLE_USER (로그인 처리 토큰 전송)
             Member member = (Member) principal;
             log.info("Member : {}", member);
             ResponseLoginTokenDto tokenDto = authService.login(member.getEmail());
             Cookie cookie = CookieUtils.secureCookieGenerate(REFRESH_TOKEN_NAME,
                 tokenDto.refreshToken(), CookieUtils.REFRESH_TOKEN_EXPIRATION);
+            cookie.setDomain("ssafy.io");
             response.addCookie(cookie);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
             //토큰 관련 정보를 추가하여 로그인 처리
-            response.getWriter().write(objectMapper.writeValueAsString(tokenDto));
+            String targetURl = UriComponentsBuilder.fromUriString(FRONTEND_URL + "/library")
+                                                   .queryParam("token", tokenDto.accessToken())
+                                                   .build()
+                                                   .toUriString();
+            getRedirectStrategy().sendRedirect(request, response, targetURl);
         }
     }
 
     /**
      * 클라이언트로 반환하기 위해 소셜 멤버 정보를 컨버팅
+     *
      * @param socialRegisterDto
      * @return
      */

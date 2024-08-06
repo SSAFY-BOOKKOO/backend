@@ -18,7 +18,7 @@ public class CommunityNotification extends Notification {
     private Long communityId;
 
     @Builder
-    public CommunityNotification(Long id, String memberId, Long communityId) {
+    public CommunityNotification(Long id, Long memberId, Long communityId) {
         super(id, memberId);
         this.communityId = communityId;
     }

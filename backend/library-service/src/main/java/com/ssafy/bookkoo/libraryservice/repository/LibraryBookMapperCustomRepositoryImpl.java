@@ -151,4 +151,23 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
 
         return maxBookOrder != null ? maxBookOrder : 0; // null인 경우 0반환
     }
+
+    /**
+     * 내가 서재에 추가한 최신 책 다섯권 id 반환
+     *
+     * @param memberId 사용자 ID
+     * @return List(책 ID)
+     */
+    @Override
+    public List<Long> findBookIdsByMemberIdLimitFive(Long memberId) {
+        QLibraryBookMapper libraryBookMapper = QLibraryBookMapper.libraryBookMapper;
+        BooleanBuilder predicate = new BooleanBuilder();
+        predicate.and(library.memberId.eq(memberId));
+        return queryFactory.select(libraryBookMapper.id.bookId)
+                           .from(libraryBookMapper)
+                           .where(predicate)
+                           .orderBy(libraryBookMapper.createdAt.desc())
+                           .limit(5)
+                           .fetch();
+    }
 }

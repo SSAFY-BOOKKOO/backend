@@ -19,13 +19,13 @@ public abstract class Notification extends BaseEntity {
     private Long id;
 
     @Column(name = "member_id")
-    private String memberId;
+    private Long memberId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "dtype", insertable = false, updatable = false)
     private NotificationType dtype;
 
-    public Notification(Long id, String memberId) {
+    public Notification(Long id, Long memberId) {
         this.id = id;
         this.memberId = memberId;
     }

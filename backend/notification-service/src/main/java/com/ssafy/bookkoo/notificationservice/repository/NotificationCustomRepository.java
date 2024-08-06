@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface NotificationCustomRepository {
 
-    List<Notification> findByMemberIdAndCondition(String memberId, Pageable pageable);
+    List<Notification> findByMemberIdAndCondition(Long memberId, Pageable pageable);
 }
