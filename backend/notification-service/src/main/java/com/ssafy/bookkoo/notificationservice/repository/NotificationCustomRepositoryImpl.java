@@ -21,7 +21,7 @@ public class NotificationCustomRepositoryImpl implements NotificationCustomRepos
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Notification> findByMemberIdAndCondition(String memberId, Pageable pageable) {
+    public List<Notification> findByMemberIdAndCondition(Long memberId, Pageable pageable) {
         log.info("pageSize = {}", pageable.getPageSize());
         log.info("offset = {}", pageable.getOffset());
 
@@ -29,6 +29,7 @@ public class NotificationCustomRepositoryImpl implements NotificationCustomRepos
                            .where(notification.memberId.eq(memberId))
                            .offset(pageable.getOffset())
                            .limit(pageable.getPageSize())
+                           .orderBy(notification.createdAt.desc())
                            .fetch();
     }
 }
