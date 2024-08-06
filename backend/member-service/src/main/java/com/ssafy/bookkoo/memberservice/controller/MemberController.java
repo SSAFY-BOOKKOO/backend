@@ -41,12 +41,7 @@ public class MemberController {
         @RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
         HttpServletResponse response
     ) {
-        memberService.register(requestRegisterMemberDto, profileImg);
-        RequestLoginDto loginDto = RequestLoginDto.builder()
-                                                  .email(requestRegisterMemberDto.email())
-                                                  .password(requestRegisterMemberDto.password())
-                                                  .build();
-
+        RequestLoginDto loginDto = memberService.register(requestRegisterMemberDto, profileImg);
         ResponseLoginTokenDto tokenDto = memberService.registerLogin(loginDto);
         Cookie cookie = new Cookie("refresh_token", tokenDto.refreshToken());
         cookie.setHttpOnly(true);
