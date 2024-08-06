@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.libraryservice.handler;
 
 import com.ssafy.bookkoo.libraryservice.exception.BookAlreadyMappedException;
+import com.ssafy.bookkoo.libraryservice.exception.LibraryBookNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.MemberNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -63,5 +64,17 @@ public class LibraryExceptionHandler {
             ex.getName());
         return ResponseEntity.badRequest()
                              .body(message);
+    }
+
+    /**
+     * 서재 ID, Book ID 매퍼에 없을 때
+     *
+     * @param e LibraryBookNotFoundException 예외 객체
+     * @return 에러 메시지와 상태 코드
+     */
+    @ExceptionHandler(LibraryBookNotFoundException.class)
+    public ResponseEntity<String> handleLibraryBookNotFoundException(LibraryBookNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(e.getMessage());
     }
 }
