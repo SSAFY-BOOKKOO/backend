@@ -5,6 +5,7 @@ import com.ssafy.bookkoo.memberservice.dto.request.RequestCreateFollowNotificati
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseFollowShipDto;
 import com.ssafy.bookkoo.memberservice.entity.FollowShip;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
+import com.ssafy.bookkoo.memberservice.exception.AlreadyFollowedException;
 import com.ssafy.bookkoo.memberservice.exception.FollowShipNotFoundException;
 import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.memberservice.repository.FollowShipRepository;
@@ -40,7 +41,13 @@ public class FollowShipServiceImpl implements FollowShipService {
                                           .follower(followerInfo)
                                           .followee(followeeInfo)
                                           .build();
+        FollowShip findFollowShip = followShipRepository.findByFollowerAndFollowee(
+            followerInfo, followeeInfo);
 
+        //동일 팔로우가 요청되면 예외 발생
+        if (findFollowShip != null) {
+            throw new AlreadyFollowedException();
+        }
         followShipRepository.save(followShip);
         //팔로우 요청
         //1.요청자는 팔로워 대상의 팔로워에 들어간다.
@@ -51,8 +58,8 @@ public class FollowShipServiceImpl implements FollowShipService {
         //팔로우 대상에게 알림을 전송
         RequestCreateFollowNotificationDto createFollowNotificationDto
             = RequestCreateFollowNotificationDto.builder()
-                                                .followerId(followerInfo.getMemberId())
-                                                .memberId(followeeInfo.getMemberId())
+                                                .followerId(followerId)
+                                                .memberId(followeeId)
                                                 .build();
         notificationServiceClient.createFollowNotification(createFollowNotificationDto);
     }
