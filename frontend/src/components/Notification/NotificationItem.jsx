@@ -1,6 +1,7 @@
 import React from 'react';
 import { FaRegBell } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
+import { formatRelativeTime } from '@utils/formatTime';
 
 const NotificationItem = ({ notification }) => {
   const navigate = useNavigate();
@@ -64,7 +65,11 @@ const NotificationItem = ({ notification }) => {
       </div>
       <div className='flex-1'>
         <p className='text-base text-gray-600'>{renderNotification()}</p>
-        <p className='text-xs text-gray-400 mt-1'>{notification?.createdAt}</p>
+        <p className='text-xs text-gray-400 mt-1'>
+          {notification?.createdAt === undefined
+            ? ''
+            : formatRelativeTime(notification?.createdAt)}
+        </p>
       </div>
     </li>
   );
