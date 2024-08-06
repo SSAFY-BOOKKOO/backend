@@ -11,6 +11,7 @@ import com.ssafy.bookkoo.bookservice.entity.Review;
 import com.ssafy.bookkoo.bookservice.entity.ReviewLike;
 import com.ssafy.bookkoo.bookservice.entity.ReviewMemberId;
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
+import com.ssafy.bookkoo.bookservice.exception.ReviewHasWrittenException;
 import com.ssafy.bookkoo.bookservice.exception.ReviewNotFoundException;
 import com.ssafy.bookkoo.bookservice.mapper.ReviewMapper;
 import com.ssafy.bookkoo.bookservice.repository.book.BookRepository;
@@ -77,6 +78,12 @@ public class ReviewServiceImpl implements ReviewService {
     ) {
         Book book = bookRepository.findById(bookId)
                                   .orElseThrow(BookNotFoundException::new);
+
+        // 만약 이미 만들어진 게 있다면 못 만들게 하기
+        if (reviewRepository.existsByBookIdAndMine(memberId, bookId)) {
+            throw new ReviewHasWrittenException();
+        }
+
         Review review = Review.builder()
                               .book(book)
                               .memberId(memberId)
