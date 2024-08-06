@@ -7,5 +7,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface BookTalkRepository extends JpaRepository<BookTalk, Long> {
 
     Optional<BookTalk> findByBook(Long book);
-
 }

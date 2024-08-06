@@ -10,8 +10,8 @@ import reactor.core.publisher.Mono;
 public class MemberServiceWebClient {
 
     private final WebClient.Builder webClientBuilder;
-    private final String BASE_URL = "http://member-service:8081/members";
-//    private final String BASE_URL = "http://localhost:8081/members";
+    //    private final String BASE_URL = "http://member-service:8081/members";
+    private final String BASE_URL = "http://localhost:8081/members";
 
     public Mono<Long> getMemberId(String memberId) {
         return webClientBuilder.build()
