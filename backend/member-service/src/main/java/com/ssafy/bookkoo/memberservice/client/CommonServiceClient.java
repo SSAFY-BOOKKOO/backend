@@ -14,10 +14,10 @@ public interface CommonServiceClient {
     @PostMapping(value = "/commons/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     String saveProfileImg(
         @RequestPart(name = "file") MultipartFile profileImg,
-        @RequestPart(name = "buekct", required = false) String bucket);
+        @RequestPart(name = "buekct") String bucket);
 
     @DeleteMapping(value = "/commons/file")
     void deleteProfileImg(
         @RequestParam(name = "file") String file,
-        @RequestParam(name = "bucket", required = false) String bucket);
+        @RequestParam(name = "bucket") String bucket);
 }
