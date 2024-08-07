@@ -185,7 +185,7 @@ public class ReviewServiceImpl implements ReviewService {
                                                                                      .nickName(
                                                                                          memberInfo.nickName())
                                                                                      .profilImgUrl(
-                                                                                         memberInfo.profilImgUrl())
+                                                                                         memberInfo.profileImgUrl())
                                                                                      .build();
 
         return ResponseSurfingReviewDto.builder()
