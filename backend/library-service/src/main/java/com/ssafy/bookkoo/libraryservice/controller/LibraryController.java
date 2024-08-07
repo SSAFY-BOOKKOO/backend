@@ -350,6 +350,12 @@ public class LibraryController {
         return ResponseEntity.ok(booksInLibrary);
     }
 
+    /**
+     * 최근 서재 추가한 책 다섯개 반환
+     *
+     * @param headers 헤더
+     * @return List<ResponseRecentFiveBookDto>
+     */
     @GetMapping("/books/recent")
     @Operation(summary = "최근에 서재에 추가한 책 다섯개 반환", description = "사용자가 최근에 서재에 추가한 책 다섯개 반환하는 API")
     public ResponseEntity<List<ResponseRecentFiveBookDto>> getRecentFiveBooks(
@@ -359,4 +365,6 @@ public class LibraryController {
         return ResponseEntity.ok()
                              .body(libraryService.getMyRecentBooks(memberId));
     }
+
+
 }
