@@ -1,4 +1,4 @@
-package com.ssafy.bookkoo.libraryservice.service;
+package com.ssafy.bookkoo.libraryservice.service.library;
 
 import com.ssafy.bookkoo.libraryservice.dto.library.RequestCreateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.library.RequestUpdateLibraryDto;
