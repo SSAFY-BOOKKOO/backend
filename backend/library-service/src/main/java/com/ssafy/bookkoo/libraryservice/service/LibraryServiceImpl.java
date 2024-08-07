@@ -403,6 +403,7 @@ public class LibraryServiceImpl implements LibraryService {
      * @return Map<BookId, boolean>
      */
     @Override
+    @Transactional(readOnly = true)
     public Map<Long, Boolean> areBooksInLibrary(
         Long memberId,
         List<Long> bookIds
@@ -469,6 +470,7 @@ public class LibraryServiceImpl implements LibraryService {
      * @return true / false
      */
     @Override
+    @Transactional
     public Boolean deleteLibrary(Long memberId, Long libraryId) {
         Optional<Library> libraryOpt = libraryRepository.findById(libraryId);
 
@@ -528,6 +530,17 @@ public class LibraryServiceImpl implements LibraryService {
         List<ResponseBookDto> books = bookServiceClient.getBooksByCondition(searchField);
 
         return bookMapper.responseDtoToCustomDto(books);
+    }
+
+    /**
+     * 사용자 탈퇴시 서재 데이터 날리기
+     *
+     * @param memberId 멤버 ID
+     */
+    @Override
+    @Transactional
+    public void deleteLibrariesByMemberId(Long memberId) {
+        libraryRepository.deleteByMemberId(memberId);
     }
 
     /**
