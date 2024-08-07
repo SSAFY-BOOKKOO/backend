@@ -32,8 +32,6 @@ import AdditionalInfo from './pages/Member/AdditionalInfo.jsx';
 import LibraryOthers from './pages/Library/LibraryOthers.jsx';
 import SocialLoginCallback from './components/Login/SocialLoginCallback.jsx';
 
-const isAuthenticated = true; // 로그인 상태를 확인하는 로직 추가 필요
-
 const router = createBrowserRouter([
   {
     path: '/',
@@ -41,18 +39,9 @@ const router = createBrowserRouter([
     children: [
       { path: 'intro', element: <Intro /> },
 
-      { path: 'booktalk', element: <BookTalkMain /> },
-      { path: 'booktalk/detail/:bookId', element: <BookTalkDetail /> },
-      { path: 'booktalk/more', element: <BookTalkMore /> },
-
       // 인증이 필요한 페이지
       {
-        element: (
-          <PrivateRoute
-            userAuthentication={true}
-            isAuthenticated={isAuthenticated}
-          />
-        ),
+        element: <PrivateRoute />,
         children: [
           // library
           { path: '', element: <LibraryMain /> },
@@ -89,6 +78,11 @@ const router = createBrowserRouter([
             path: 'curation/letter-create/send',
             element: <CurationLetterSend />,
           },
+
+          //booktalk
+          { path: 'booktalk', element: <BookTalkMain /> },
+          { path: 'booktalk/detail/:bookId', element: <BookTalkDetail /> },
+          { path: 'booktalk/more', element: <BookTalkMore /> },
 
           // mypage
           { path: 'mypage/friend', element: <Friend /> },

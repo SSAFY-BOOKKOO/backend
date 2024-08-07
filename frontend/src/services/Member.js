@@ -11,21 +11,6 @@ export const postLogin = async info => {
   }
 };
 
-// 소셜 로그인
-export const socialLogin = async provider => {
-  try {
-    const response = await axiosInstance.get(
-      `/auth/login/oauth2/authorization/${provider}`
-    );
-    throw new Error('No redirect URL provided');
-  } catch (error) {
-    window.location.href = `https://api.i11a506.ssafy.io/auth/login/oauth2/authorization/${provider}`;
-
-    console.error('Login failed:', error);
-    throw error;
-  }
-};
-
 // 사용자 알림 가져오기
 export const getNotifications = async (page = 0, size = 10) => {
   try {
