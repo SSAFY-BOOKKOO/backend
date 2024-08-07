@@ -14,6 +14,7 @@ const CreateLetter = () => {
 
   useEffect(() => {
     console.log('Book object:', book);
+    // console.log(`Book Id: ${book.id}`);
   }, [book]);
 
   const handleTitleChange = e => {
@@ -31,9 +32,10 @@ const CreateLetter = () => {
   // 전송 로직
   const handleLetterCreate = () => {
     const letter = {
+      // bookId: book ? book.id : null,
+      bookId:book.id,
       title,
       content,
-      bookId: book ? book.id : null,
     };
 
     authAxiosInstance
@@ -60,7 +62,7 @@ const CreateLetter = () => {
                   className='w-12 h-16 rounded-md shadow-lg'
                 />
                 <div className='ml-4 text-gray-700 text-ellipsis'>
-                  {book.title}
+                  {book.title}|{book.id}
                 </div>
               </div>
             ) : (
