@@ -75,14 +75,7 @@ public class TokenAuthenticationFilter implements GlobalFilter {
         for (String excludedPath : excludedPaths) {
             if (path.startsWith(excludedPath)) {
                 // /books/{bookId}/reviews~ 경로는 필터링 필요
-                if (excludedPath.equals("/books") && (path.matches("^/books/\\d+/reviews(/.*)?$")
-                    || path.matches("^/books/reviews/me"))) {
-                    break; // 필터를 거쳐야 함
-                } else if (path.matches("^/books/aladin(/.*)?$")) { // aladin 검색도 필요
-                    break;
-                } else if (path.matches("^/books/\\d+/me")) { // 서재 내 책 단일 조회 시 필요
-                    break;
-                } else if (path.startsWith("/auth/logout")) { //로그아웃은 토큰 필요
+                if (isNotSkip(excludedPath, path)) {
                     break;
                 }
                 return chain.filter(exchange);
@@ -124,6 +117,20 @@ public class TokenAuthenticationFilter implements GlobalFilter {
                                      .doOnError(error -> {
                                          log.error("토큰 필터 에러 {}", error.getMessage());
                                      });
+    }
+
+    private static boolean isNotSkip(String excludedPath, String path) {
+        if (excludedPath.equals("/books") && (path.matches("^/books/\\d+/reviews(/.*)?$")
+            || path.matches("^/books/reviews/me"))) {
+            return true;
+        } else if (path.matches("^/books/aladin(/.*)?$")) { // aladin 검색도 필요
+            return true;
+        } else if (path.matches("^/books/\\d+/me")) { // 서재 내 책 단일 조회 시 필요
+            return true;
+        } else if (path.startsWith("/auth/logout")) { //로그아웃은 토큰 필요
+            return true;
+        }
+        return false;
     }
 
     /**
