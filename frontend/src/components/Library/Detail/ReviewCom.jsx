@@ -5,13 +5,42 @@ import { MdOutlineRefresh } from 'react-icons/md';
 import { CgProfile } from 'react-icons/cg';
 import { authAxiosInstance } from '@services/axiosInstance';
 
+// 모달
+const Modal = ({ show, onClose, review }) => {
+  if (!show) {
+    return null;
+  }
+
+  return (
+    <div className='fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50'>
+      <div className='bg-white p-4 rounded shadow-lg w-10/12 max-w-md'>
+        <h2 className='text-xl font-bold mb-4'>{review.member.nickName}</h2>
+        <p>{review.content}</p>
+        <Button
+          text='Close'
+          size='small'
+          color='text-black bg-rose-300'
+          onClick={onClose}
+        />
+      </div>
+    </div>
+  );
+};
+
 const ReviewCom = ({ onBackClick, book }) => {
   const { id, title, author, publisher, summary, coverImgUrl } = book;
   const [editReview, setEditingReview] = useState(false);
   const [reviewText, setReviewText] = useState('');
   const [surfingReviews, setSurfingReviews] = useState([]);
+  const [rating, setRating] = useState(5); // Default rating, adjust as necessary
+  const [reviewId, setReviewId] = useState(null); // Store the review ID
+  const [showModal, setShowModal] = useState(false);
+  const [currentReview, setCurrentReview] = useState(null);
 
-  ///////////////////////////// 파도타기
+  useEffect(() => {
+    console.log(surfingReviews);
+  }, []);
+
   useEffect(() => {
     const bookId = id;
     authAxiosInstance
@@ -23,7 +52,7 @@ const ReviewCom = ({ onBackClick, book }) => {
       .catch(err => {
         console.log(err);
       });
-  }, []);
+  }, [id]);
 
   // 새로고침
   const handleReviewRefresh = () => {
@@ -31,11 +60,12 @@ const ReviewCom = ({ onBackClick, book }) => {
     authAxiosInstance
       .get(`/books/${bookId}/reviews/surfing`, { params: { bookId } })
       .then(res => {
-        setSurfingReviews(Array.isArray(res.data) ? res.data : []);
+        setSurfingReviews(Array.isArray(res.data.book) ? res.data.book : []);
         console.log(res);
       })
       .catch(err => {
         console.log(err);
+        console.log(bookId);
       });
   };
 
@@ -50,15 +80,56 @@ const ReviewCom = ({ onBackClick, book }) => {
 
   // 내 한줄평 작성
   const handleSaveReview = () => {
+    if (reviewText.length > 70) {
+      alert('70자 이내로 작성해 주세요!');
+      return;
+    }
+
     setEditingReview(false);
     const bookId = id;
     authAxiosInstance
-      .post(`/books/${bookId}/reviews`, { bookId, text: reviewText })
+      .post(`/books/${bookId}/reviews`, { content: reviewText, rating: rating })
       .then(res => {
         console.log(res);
+        setReviewId(res.data.id);
       })
       .catch(err => {
         console.log(err);
+        console.log(bookId);
+      });
+  };
+
+  // 특정 리뷰 보기
+  // const handleMoreReview = reviewId => {
+  //   const bookId = id;
+  //   authAxiosInstance
+  //     .get(`/books/${bookId}/reviews/${reviewId}`)
+  //     .then(res => {
+  //       setCurrentReview(res.data);
+  //       setShowModal(true);
+  //       console.log(res);
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //       console.log(bookId);
+  //     });
+  // };
+
+  const handleMoreReview = () => {
+    const bookId = id;
+    authAxiosInstance
+      .get(`/books/${bookId}/reviews/${reviewId}`, {
+        bookId: id,
+        reviewId: reviewId,
+      })
+      .then(res => {
+        console.log(res);
+        setCurrentReview(res.data);
+        setShowModal(true);
+      })
+      .catch(err => {
+        console.log(err);
+        console.log(bookId);
       });
   };
 
@@ -90,16 +161,16 @@ const ReviewCom = ({ onBackClick, book }) => {
         {surfingReviews.map((review, index) => (
           <div key={index} className='flex items-center pb-2 pr-1 mr-4 w-10/12'>
             <div className='flex justify-between bg-white w-full p-2 mb-4 h-auto rounded-lg opacity-70'>
-              <div className='flex items-center space-x-3'>
-                {/* <CgProfile className='text-2xl mb-5' /> */}
+              <div className='flex items-center space-x-3 cursor-pointer'>
                 <img
                   src={review.member.profilImgUrl}
                   alt='Profile'
                   className='w-11 h-11 rounded-full mr-2'
+                  onClick={handleMoreReview()}
                 />
                 <div>
                   <p className='font-bold'>{review.member.nickName}</p>
-                  <p>{review.content}</p>
+                  <p className='text-overflow-2'>{review.content}</p>
                 </div>
               </div>
             </div>
@@ -115,6 +186,7 @@ const ReviewCom = ({ onBackClick, book }) => {
               value={reviewText}
               onChange={e => setReviewText(e.target.value)}
               onClick={e => e.stopPropagation()}
+              maxLength={70}
             ></textarea>
           ) : (
             <p className='w-full h-44 p-2 pb-4 border border-gray-400 rounded resize-none'>
@@ -138,6 +210,12 @@ const ReviewCom = ({ onBackClick, book }) => {
         </div>
         <div className='absolute right-6 top-0 bottom-0 shadow-2xl w-1 bg-gray-700 z-10'></div>
       </div>
+
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        review={currentReview}
+      />
     </div>
   );
 };

@@ -23,8 +23,8 @@ const LibraryDetail = () => {
   const [bookData, setBookData] = useAtom(bookDataAtom);
   const navigate = useNavigate();
   const maxLength = 80;
-  const authorMaxLength = 14;
-  const titleMaxLength = 10;
+  // const authorMaxLength = 14;
+  // const titleMaxLength = 10;
   const [book, setBook] = useState(null);
   const { isOpen, closeModal, toggleModal } = useModal();
 
@@ -34,7 +34,8 @@ const LibraryDetail = () => {
         const response = await authAxiosInstance.get(
           `/libraries/${libraryId}/books/${bookId}?nickname=${location.state.nickname}`
         );
-        setBook(response.data);
+        setBook(response.data.book);
+        console.log(book);
       } catch (error) {
         console.log(location.state);
         console.error('Failed to fetch book data:', error);
