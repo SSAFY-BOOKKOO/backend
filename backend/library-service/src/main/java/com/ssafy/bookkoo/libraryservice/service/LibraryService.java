@@ -47,7 +47,9 @@ public interface LibraryService {
      */
     ResponseLibraryDto getLibrary(
         Long libraryId,
-        Status filter
+        Status filter,
+        int page,
+        int size
     );
 
     /**
