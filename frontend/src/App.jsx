@@ -13,11 +13,13 @@ const App = () => {
 
   return (
     <Main>
-      {!isHeader && <Header />}
-      <div className='flex-1 overflow-y-auto'>
-        <Outlet />
+      <div className='flex flex-col h-full'>
+        {!isHeader && <Header />}
+        <div className='flex-1 overflow-y-auto'>
+          <Outlet />
+        </div>
+        {!isBottomTab && <BottomTab />}
       </div>
-      {!isBottomTab && <BottomTab />}
     </Main>
   );
 };
