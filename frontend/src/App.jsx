@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Header from './components/Layout/Header';
 import BottomTab from './components/Layout/BottomTab';
 import Main from './components/Layout/Main';
+import ScrollToTop from './components/@common/ScrollToTop';
 
 const App = () => {
   const location = useLocation();
@@ -15,9 +16,9 @@ const App = () => {
     <Main>
       <div className='flex flex-col h-full'>
         {!isHeader && <Header />}
-        <div className='flex-1 overflow-y-auto'>
+        <ScrollToTop>
           <Outlet />
-        </div>
+        </ScrollToTop>
         {!isBottomTab && <BottomTab />}
       </div>
     </Main>
