@@ -5,8 +5,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.sql.Date;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -17,6 +19,9 @@ import lombok.Setter;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "book", indexes = {
+    @Index(name = "idx_isbn", columnList = "isbn") // index 추가(쿼리 성능 위해)
+})
 public class Book {
 
     @Id
