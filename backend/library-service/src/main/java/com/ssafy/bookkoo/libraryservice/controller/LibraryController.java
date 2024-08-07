@@ -17,6 +17,8 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -96,13 +98,41 @@ public class LibraryController {
      * @return 조회된 서재 응답 DTO
      */
     @GetMapping("/{libraryId}")
-    @Operation(summary = "서재 단일 조회", description = "서재 단일 조회 API")
+    @Operation(
+        summary = "서재 단일 조회",
+        description = """
+            서재 단일 조회(프론트에서 서재 조회 시 사용)
+
+
+            <b>Input</b>:
+            | Name | Type  | Description |
+            |-----|-----|-------|
+            | libraryId | number | 서재 ID |
+            | filter | Status(READ, READING, DIB) | 상태. 안 줄경우 ALL 로 간주 |
+            | page | number | page: 페이지 |
+            | size | number | size: 한페이지 내 들어갈 <b>책</b> 개수 |
+            | sort | list(string) | 생략하기
+
+            <br>
+            <br>
+
+            <b>Output</b>:
+            <br>
+                type: _description_
+
+            | Var | Type | Description |
+            |-----|-----|-------|
+            |  |  |  |
+            """
+    )
     public ResponseEntity<ResponseLibraryDto> getLibrary(
         @PathVariable Long libraryId,
-        @RequestParam(required = false) Status filter
+        @RequestParam(required = false) Status filter,
+        @PageableDefault
+        Pageable pageable
     ) {
         return ResponseEntity.ok()
-                             .body(libraryService.getLibrary(libraryId, filter));
+                             .body(libraryService.getLibrary(libraryId, filter, pageable));
     }
 
     /**
