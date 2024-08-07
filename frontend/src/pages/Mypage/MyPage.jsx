@@ -8,6 +8,7 @@ import settingIcon from '@assets/icons/setting.png';
 import { authAxiosInstance } from '@services/axiosInstance';
 import IconButton from '@components/@common/IconButton';
 import ProfileModal from '@components/MyPage/Profile/ProfileModal.jsx';
+import { postCategories } from '@services/Book';
 
 const MyPage = () => {
   const [member, setMember] = useState(null);
@@ -20,9 +21,8 @@ const MyPage = () => {
         const memberResponse = await authAxiosInstance.get('/members/info');
         setMember(memberResponse.data);
 
-        const categoriesResponse =
-          await authAxiosInstance.post('/categories/search');
-        setCategories(categoriesResponse.data);
+        const categoriesResponse = await postCategories();
+        setCategories(categoriesResponse);
       } catch (error) {
         console.error(error);
       }

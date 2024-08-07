@@ -11,10 +11,6 @@ const RegisterStep2 = ({
   handlePrevStep,
   handleNextStep,
 }) => {
-  const getCategoryName = categoryId => {
-    const category = categoriesList.find(cat => cat.id === categoryId);
-    return category ? category.name : '';
-  };
   return (
     <>
       <h3 className='text-xl font-bold mb-4 text-center'>
