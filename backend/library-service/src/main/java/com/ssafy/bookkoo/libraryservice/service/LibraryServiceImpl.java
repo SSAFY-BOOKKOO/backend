@@ -155,11 +155,13 @@ public class LibraryServiceImpl implements LibraryService {
                                                 Collectors.toList());
         // 책이 없으면 바로 반환
         if (stringBookIds.isEmpty()) {
-            libraryDto = ResponseLibraryDto.builder().
-                                           name(libraryDto.name())
+            libraryDto = ResponseLibraryDto.builder()
+                                           .id(libraryId)
+                                           .name(libraryDto.name())
                                            .libraryOrder(libraryDto.libraryOrder())
                                            .libraryStyleDto(libraryDto.libraryStyleDto())
                                            .books(List.of())
+                                           .bookCount(0)
                                            .build();
             return libraryDto;
         }
