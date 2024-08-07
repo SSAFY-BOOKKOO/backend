@@ -15,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Entity
@@ -33,9 +34,11 @@ public class Review {
     private Long memberId;
 
     @Column
+    @Setter
     private String content;
 
     @Column
+    @Setter
     private Integer rating;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.REMOVE)

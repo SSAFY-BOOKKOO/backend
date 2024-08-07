@@ -11,7 +11,9 @@ import com.ssafy.bookkoo.bookservice.entity.Review;
 import com.ssafy.bookkoo.bookservice.entity.ReviewLike;
 import com.ssafy.bookkoo.bookservice.entity.ReviewMemberId;
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
+import com.ssafy.bookkoo.bookservice.exception.ReviewDeleteFailedException;
 import com.ssafy.bookkoo.bookservice.exception.ReviewHasWrittenException;
+import com.ssafy.bookkoo.bookservice.exception.ReviewIsNotYoursException;
 import com.ssafy.bookkoo.bookservice.exception.ReviewNotFoundException;
 import com.ssafy.bookkoo.bookservice.mapper.ReviewMapper;
 import com.ssafy.bookkoo.bookservice.repository.book.BookRepository;
@@ -167,6 +169,67 @@ public class ReviewServiceImpl implements ReviewService {
         reviewRepository.deleteByMemberId(memberId);
         // member 와 연관된 reviewLike 삭제
         reviewLikeRepository.deleteByMemberId(memberId);
+    }
+
+    /**
+     * 한줄평 수정
+     *
+     * @param memberId 멤버 ID
+     * @param bookId   책 ID
+     * @param reviewId 한줄평 ID
+     * @param dto      바꿀 값
+     * @return ResponseReviewDto
+     */
+    @Override
+    @Transactional
+    public ResponseReviewDto updateReview(
+        Long memberId,
+        Long bookId,
+        Long reviewId,
+        RequestReviewDto dto
+    ) {
+        Review reviewToUpdate = findReviewByIdWithException(reviewId);
+        // 내 리뷰가 아닐 경우 예외처리
+        if (!reviewToUpdate.getMemberId()
+                           .equals(memberId)) {
+            throw new ReviewIsNotYoursException();
+        }
+        // 리뷰 업데이트
+        if (dto.content() != null) {
+            reviewToUpdate.setContent(dto.content());
+        }
+        if (dto.rating() != null) {
+            reviewToUpdate.setRating(dto.rating());
+        }
+
+        // 저장
+        reviewRepository.save(reviewToUpdate);
+
+        return reviewMapper.toDto(reviewToUpdate);
+    }
+
+    /**
+     * 리뷰 삭제
+     *
+     * @param memberId 멤버 ID
+     * @param bookId   책 ID
+     * @param reviewId 한줄평 ID
+     */
+    @Override
+    @Transactional
+    public void deleteReviewById(Long memberId, Long bookId, Long reviewId) {
+        Review reviewToDelete = findReviewByIdWithException(reviewId);
+        // 내 리뷰가 아닐 경우 예외처리
+        if (!reviewToDelete.getMemberId()
+                           .equals(memberId)) {
+            throw new ReviewIsNotYoursException();
+        }
+        // 삭제 시도
+        try {
+            reviewRepository.delete(reviewToDelete);
+        } catch (Exception e) {
+            throw new ReviewDeleteFailedException();
+        }
     }
 
     /**

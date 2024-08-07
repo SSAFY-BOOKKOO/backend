@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,6 +59,34 @@ public class ReviewController {
                              .body(createdReview);
     }
 
+    @PutMapping("/{bookId}/reviews/{reviewId}")
+    @Operation(summary = "리뷰 수정", description = "특정 책에 대한 리뷰를 수정합니다.")
+    public ResponseEntity<ResponseReviewDto> updateReview(
+        @RequestHeader HttpHeaders headers,
+        @PathVariable Long bookId,
+        @PathVariable Long reviewId,
+        @RequestBody RequestReviewDto dto
+    ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+        ResponseReviewDto updatedReview = reviewService.updateReview(memberId, bookId, reviewId,
+            dto);
+        return ResponseEntity.ok()
+                             .body(updatedReview);
+    }
+
+    @DeleteMapping("/{bookId}/reviews/{reviewId}")
+    @Operation(summary = "리뷰 삭제", description = "특정 책에 대한 리뷰를 삭제합니다.")
+    public ResponseEntity<HttpStatus> deleteReview(
+        @RequestHeader HttpHeaders headers,
+        @PathVariable Long bookId,
+        @PathVariable Long reviewId
+    ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+        reviewService.deleteReviewById(memberId, bookId, reviewId);
+        return ResponseEntity.noContent()
+                             .build();
+    }
+
     @Operation(summary = "리뷰 좋아요 토글", description = "특정 책의 특정 리뷰에 좋아요를 토글합니다.")
     @PostMapping("/{bookId}/reviews/{reviewId}/like")
     public ResponseEntity<Boolean> toggleLikeReviewById(
@@ -69,6 +98,7 @@ public class ReviewController {
         return ResponseEntity.ok()
                              .body(reviewService.toggleLikeReview(memberId, bookId, reviewId));
     }
+
 
     @Operation(summary = "리뷰 파도타기 조회", description = "특정 책의 리뷰 중 자신의 리뷰를 제외한 랜덤 리뷰를 조회합니다.")
     @GetMapping("/{bookId}/reviews/surfing")
