@@ -12,7 +12,4 @@ public interface MemberServiceClient {
 
     @GetMapping("/members/info")
     ResponseMemberInfoDto getMemberInfo(@RequestHeader(PASSPORT_HEADER) Long id);
-
-    @GetMapping("/members/info")
-    ResponseMemberInfoDto getMemberInfo(@RequestParam("memberId") String memberId);
 }
