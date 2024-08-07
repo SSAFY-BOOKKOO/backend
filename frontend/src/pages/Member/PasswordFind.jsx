@@ -6,6 +6,7 @@ import Input from '@components/@common/Input';
 import Alert from '@components/@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
 import { validateForm } from '@utils/ValidateForm';
+import { axiosInstance } from '@services/axiosInstance';
 
 const PasswordFind = () => {
   const [email, setEmail] = useState('');
@@ -21,7 +22,7 @@ const PasswordFind = () => {
     }));
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
     const validationConfig = { email: true };
     const formData = { email };
@@ -29,12 +30,28 @@ const PasswordFind = () => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      setAlert({
-        isOpen: true,
-        confirmOnly: true,
-        message: '비밀번호 재설정 이메일이 전송되었습니다.',
-        onConfirm: () => navigate('/login'),
-      });
+      try {
+        await axiosInstance.post('/members/register/password/reset', email, {
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+        });
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '비밀번호 재설정 이메일이 전송되었습니다.',
+          onConfirm: () => navigate('/login'),
+        });
+      } catch (error) {
+        const errorMessage =
+          error.response?.data ||
+          '이메일 전송에 실패했습니다. 다시 시도해주세요.';
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: errorMessage,
+        });
+      }
     }
   };
 

@@ -7,7 +7,7 @@ import profileImgSample from '@assets/images/profile_img_sample.png';
 import settingIcon from '@assets/icons/setting.png';
 import { authAxiosInstance } from '@services/axiosInstance';
 import IconButton from '@components/@common/IconButton';
-import ProfileModal from '@components/MyPage/Profile/ProfileModal.jsx';
+import ProfileModal from '@components/@common/ProfileModal.jsx';
 import { postCategories } from '@services/Book';
 
 const MyPage = () => {

@@ -6,7 +6,6 @@ import Alert from '@components/@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
 
 const PasswordUpdate = ({ onCancel }) => {
-  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -21,9 +20,8 @@ const PasswordUpdate = ({ onCancel }) => {
     }
 
     try {
-      await authAxiosInstance.post('/members/info/password', {
-        currentPassword,
-        newPassword,
+      await authAxiosInstance.patch('/members/info/password', {
+        password: newPassword,
       });
       setAlert({
         isOpen: true,
@@ -40,18 +38,6 @@ const PasswordUpdate = ({ onCancel }) => {
     <div className='max-w-md mx-4 mt-10 p-4 bg-white border border-gray-300 rounded-lg'>
       <h2 className='text-xl font-bold mb-4'>비밀번호 변경</h2>
       <form onSubmit={handleSubmit}>
-        <div className='mb-4'>
-          <label className='block text-gray-700 font-medium'>
-            현재 비밀번호
-          </label>
-          <input
-            type='password'
-            value={currentPassword}
-            onChange={e => setCurrentPassword(e.target.value)}
-            required
-            className='mt-1 p-2 block w-full border rounded-md'
-          />
-        </div>
         <div className='mb-4'>
           <label className='block text-gray-700 font-medium'>새 비밀번호</label>
           <input

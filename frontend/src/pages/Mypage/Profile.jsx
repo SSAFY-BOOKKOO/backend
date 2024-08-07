@@ -25,6 +25,7 @@ const ProfilePage = () => {
       const categoriesResponse = await postCategories();
       setCategories(categoriesResponse);
       setLoading(false);
+      console.log(memberResponse.data);
     } catch (error) {
       console.error(error);
       setLoading(false);

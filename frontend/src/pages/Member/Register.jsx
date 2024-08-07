@@ -16,9 +16,10 @@ import {
   checkEmailDuplicate,
   checkNicknameDuplicate,
 } from '@utils/RegisterCheck';
-import { axiosInstance, authAxiosInstance } from '@services/axiosInstance';
+import { axiosInstance } from '@services/axiosInstance';
 import { validateForm } from '@utils/ValidateForm';
 import { postCategories } from '@services/Book';
+import qs from 'qs';
 
 const RegisterPage = () => {
   const [step, setStep] = useState(1);
@@ -38,20 +39,18 @@ const RegisterPage = () => {
       reviewVisibility: 'PUBLIC',
     },
   });
-
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [errors, setErrors] = useState({});
   const [emailDuplicate, setEmailDuplicate] = useAtom(emailDuplicateAtom);
   const [nicknameDuplicate, setNicknameDuplicate] = useAtom(
     nicknameDuplicateAtom
   );
-  const [error, setError] = useAtom(errorAtom);
-  const [categories, setCategories] = useState([]);
-  const [isSocial, setIsSocial] = useState(false);
   const [, setAlert] = useAtom(alertAtom);
   const navigate = useNavigate();
   const location = useLocation();
+  const [categories, setCategories] = useState([]);
+  const [isSocial, setIsSocial] = useState(false);
 
-  // 소셜 로그인의 경우 사용자 정보 가져오기
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const email = searchParams.get('email');
@@ -63,29 +62,15 @@ const RegisterPage = () => {
         email,
         socialType,
       }));
-
       setIsSocial(true);
     }
   }, [location]);
 
-  const handlePostCategories = async () => {
-    try {
-      const data = await postCategories();
-      setCategories(data);
-    } catch (error) {
-      console.error('Failed to fetch categories', error);
-    }
-  };
-
-  useEffect(() => {
-    handlePostCategories();
-  }, []);
-
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await authAxiosInstance.post('/categories/search');
-        setCategories(response.data);
+        const response = await postCategories();
+        setCategories(response);
       } catch (error) {
         console.error('Failed to fetch categories', error);
       }
@@ -195,6 +180,48 @@ const RegisterPage = () => {
     setStep(step - 1);
   };
 
+  const handleSendVerificationCode = async () => {
+    try {
+      await axiosInstance.post('/members/register/validation', formData.email);
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '인증 코드가 이메일로 전송되었습니다.',
+      });
+    } catch (error) {
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '인증 코드 전송에 실패했습니다.',
+      });
+    }
+  };
+
+  const handleVerifyCode = async verificationCode => {
+    try {
+      await axiosInstance.get('/members/register/validation', {
+        params: {
+          email: formData.email,
+          certNum: verificationCode,
+        },
+        paramsSerializer: params => qs.stringify(params, { encode: false }),
+      });
+      setIsEmailVerified(true);
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '인증이 성공적으로 완료되었습니다.',
+      });
+    } catch (error) {
+      setIsEmailVerified(true);
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '인증 코드 확인에 실패했습니다.',
+      });
+    }
+  };
+
   const handleSubmit = async () => {
     const validationConfig = {
       nickname: true,
@@ -273,7 +300,6 @@ const RegisterPage = () => {
       }
     }
   };
-
   return (
     <WrapContainer>
       <div className='flex flex-col justify-center items-center min-h-screen px-4 w-full'>
@@ -286,7 +312,12 @@ const RegisterPage = () => {
               handleChange={handleChange}
               handleFileChange={handleFileChange}
               handleNextStep={handleNextStep}
+              handleSendVerificationCode={handleSendVerificationCode}
+              handleVerifyCode={handleVerifyCode}
               isSocialLogin={isSocial}
+              isEmailVerified={isEmailVerified}
+              setFormData={setFormData}
+              setIsEmailVerified={setIsEmailVerified}
             />
           )}
           {step === 2 && (
