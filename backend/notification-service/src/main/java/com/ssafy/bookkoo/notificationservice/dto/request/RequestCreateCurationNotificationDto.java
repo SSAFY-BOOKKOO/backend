@@ -5,9 +5,11 @@ import lombok.Builder;
 @Builder
 public record RequestCreateCurationNotificationDto(
     @NotNull(message = "Member ID can not be null")
-    Long memberId,
+    Long[] memberIds,
     @NotNull(message = "Curation ID can not be null")
-    Long curationId
+    Long curationId,
+    @NotNull(message = "Writer Id can not be null")
+    Long writerId
 ) {
 
 }

@@ -1,10 +1,11 @@
 package com.ssafy.bookkoo.notificationservice.dto.response;
 
+import com.ssafy.bookkoo.notificationservice.client.dto.ResponseMemberInfoDto;
+import com.ssafy.bookkoo.notificationservice.entity.CurationNotification;
 import com.ssafy.bookkoo.notificationservice.enums.NotificationType;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -28,5 +29,17 @@ public class ResponseCurationNotificationDto extends ResponseNotificationDto {
         this.memberId = memberId;
         this.nickName = nickName;
         this.curationId = curationId;
+    }
+
+    public static ResponseCurationNotificationDto toDto(
+        CurationNotification curationNotification,
+        ResponseMemberInfoDto memberInfoDto) {
+        return ResponseCurationNotificationDto.builder()
+                                              .notificationId(curationNotification.getId())
+                                              .notificationType(NotificationType.curation)
+                                              .memberId(memberInfoDto.memberId())
+                                              .nickName(memberInfoDto.nickName())
+                                              .createdAt(curationNotification.getCreatedAt())
+                                              .build();
     }
 }

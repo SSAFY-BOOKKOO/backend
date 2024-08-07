@@ -17,7 +17,10 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -96,13 +99,41 @@ public class LibraryController {
      * @return 조회된 서재 응답 DTO
      */
     @GetMapping("/{libraryId}")
-    @Operation(summary = "서재 단일 조회", description = "서재 단일 조회 API")
+    @Operation(
+        summary = "서재 단일 조회",
+        description = """
+            서재 단일 조회(프론트에서 서재 조회 시 사용)
+
+
+            <b>Input</b>:
+            | Name | Type  | Description |
+            |-----|-----|-------|
+            | libraryId | number | 서재 ID |
+            | filter | Status(READ, READING, DIB) | 상태. 안 줄경우 ALL 로 간주 |
+            | page | number | page: 페이지 |
+            | size | number | size: 한페이지 내 들어갈 <b>책</b> 개수 |
+            | sort | list(string) | 생략하기
+
+            <br>
+            <br>
+
+            <b>Output</b>:
+            <br>
+                type: _description_
+
+            | Var | Type | Description |
+            |-----|-----|-------|
+            |  |  |  |
+            """
+    )
     public ResponseEntity<ResponseLibraryDto> getLibrary(
         @PathVariable Long libraryId,
-        @RequestParam(required = false) Status filter
+        @RequestParam(required = false) Status filter,
+        @PageableDefault
+        Pageable pageable
     ) {
         return ResponseEntity.ok()
-                             .body(libraryService.getLibrary(libraryId, filter));
+                             .body(libraryService.getLibrary(libraryId, filter, pageable));
     }
 
     /**
@@ -320,6 +351,12 @@ public class LibraryController {
         return ResponseEntity.ok(booksInLibrary);
     }
 
+    /**
+     * 최근 서재 추가한 책 다섯개 반환
+     *
+     * @param headers 헤더
+     * @return List<ResponseRecentFiveBookDto>
+     */
     @GetMapping("/books/recent")
     @Operation(summary = "최근에 서재에 추가한 책 다섯개 반환", description = "사용자가 최근에 서재에 추가한 책 다섯개 반환하는 API")
     public ResponseEntity<List<ResponseRecentFiveBookDto>> getRecentFiveBooks(
@@ -328,5 +365,28 @@ public class LibraryController {
         Long memberId = CommonUtil.getMemberId(headers);
         return ResponseEntity.ok()
                              .body(libraryService.getMyRecentBooks(memberId));
+    }
+
+    @DeleteMapping
+    @Operation(
+        summary = "사용자 탈퇴시 사용할 API",
+        description = """
+            ### 사용자 탈퇴시 사용할 API
+            - 서재 정보, 서재 북 매퍼 정보 사라짐
+
+            ### status code : 204(No Content)
+
+            """
+    )
+    public ResponseEntity<HttpStatus> deleteLibraryOfMember(
+        @RequestHeader HttpHeaders headers
+    ) {
+        // memberId 가져오기
+        Long memberId = CommonUtil.getMemberId(headers);
+
+        libraryService.deleteLibrariesByMemberId(memberId);
+
+        return ResponseEntity.noContent()
+                             .build();
     }
 }

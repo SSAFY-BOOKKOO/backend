@@ -1,5 +1,6 @@
 package com.ssafy.bookkoo.bookservice.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,7 +38,7 @@ public class Review {
     @Column
     private Integer rating;
 
-    @OneToMany(mappedBy = "review")
+    @OneToMany(mappedBy = "review", cascade = CascadeType.REMOVE)
     private List<ReviewLike> likes = new ArrayList<>();
 
     @Builder
