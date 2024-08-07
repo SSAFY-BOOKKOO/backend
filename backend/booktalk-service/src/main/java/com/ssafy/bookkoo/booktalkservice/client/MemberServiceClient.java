@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface MemberServiceClient {
 
     @GetMapping("/members/info/id/{memberId}")
-    public ResponseMemberInfoDto getMemberInfoById(
+    ResponseMemberInfoDto getMemberInfoById(
         @PathVariable("memberId") Long memberId
     );
 }
