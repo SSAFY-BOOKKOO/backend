@@ -61,8 +61,6 @@ const BookSearch = () => {
     navigate('/curation/letter-create');
   };
 
-
-
   //////////////////검색 결과
 
   const renderBookItem = book => {
@@ -93,7 +91,7 @@ const BookSearch = () => {
           />
           <button
             type='submit'
-            className='ml-2 p-2 bg-transparent border cursor-pointer'
+            className='ml-2 p-2 bg-transparent cursor-pointer'
           >
             <BiSearch className='text-2xl' />
           </button>
