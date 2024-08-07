@@ -9,23 +9,28 @@ const Header = () => {
   const navigate = useNavigate();
 
   // 검색 페이지 이동
-  const handleSearchPage = () => {
+  const handleSearchPageMove = () => {
     navigate('/search');
   };
 
   // 알림 페이지 이동
-  const handleNotificationPage = () => {
+  const handleNotificationPageMove = () => {
     navigate('/notification');
+  };
+
+  // 메인 페이지 이동
+  const handleMainPageMove = () => {
+    navigate('/');
   };
 
   return (
     <header className='flex items-center justify-between p-3 w-full'>
-      <span className='w-14'>
+      <span className='w-12' onClick={handleMainPageMove}>
         <img src={bookkooMainIcon} />
       </span>
       <div>
-        <IconButton onClick={handleSearchPage} icon={IoSearchSharp} />
-        <IconButton onClick={handleNotificationPage} icon={FaBell} />
+        <IconButton onClick={handleSearchPageMove} icon={IoSearchSharp} />
+        <IconButton onClick={handleNotificationPageMove} icon={FaBell} />
       </div>
     </header>
   );
