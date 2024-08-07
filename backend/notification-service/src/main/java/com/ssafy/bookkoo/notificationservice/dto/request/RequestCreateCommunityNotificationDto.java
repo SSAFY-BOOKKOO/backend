@@ -6,9 +6,11 @@ import lombok.Builder;
 @Builder
 public record RequestCreateCommunityNotificationDto(
     @NotNull(message = "Member ID can not be null")
-    Long memberId,
+    Long[] memberIds,
     @NotNull(message = "Community ID can not be null")
-    Long communityId
+    Long communityId,
+    @NotNull(message = "Title can not be null")
+    String title
 ) {
 
 }

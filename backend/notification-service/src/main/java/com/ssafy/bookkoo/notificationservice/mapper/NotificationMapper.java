@@ -17,8 +17,12 @@ public interface NotificationMapper {
 
     @Mapping(target = "id", ignore = true)
     FollowNotification toFollowNotification(RequestCreateFollowNotificationDto followNotificationDto);
+
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "memberId", source = "memberIds", ignore = true)
     CurationNotification toCurationNotification(RequestCreateCurationNotificationDto curationNotificationDto);
+
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "memberId", source = "memberIds", ignore = true)
     CommunityNotification toCommunityNotification(RequestCreateCommunityNotificationDto communityNotificationDto);
 }
