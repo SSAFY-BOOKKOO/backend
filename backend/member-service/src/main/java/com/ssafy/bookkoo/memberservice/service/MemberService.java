@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface MemberService {
 
-    void register(RequestRegisterMemberDto requestRegisterMemberDto, MultipartFile profileImg);
+    RequestLoginDto register(RequestRegisterMemberDto requestRegisterMemberDto, MultipartFile profileImg);
 
     boolean checkDuplEmail(String email);
 

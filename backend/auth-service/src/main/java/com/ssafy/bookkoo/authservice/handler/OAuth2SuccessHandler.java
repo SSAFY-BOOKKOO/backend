@@ -74,7 +74,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             cookie.setDomain("ssafy.io");
             response.addCookie(cookie);
             //토큰 관련 정보를 추가하여 로그인 처리
-            String targetURl = UriComponentsBuilder.fromUriString(FRONTEND_URL + "/library")
+            String targetURl = UriComponentsBuilder.fromUriString(FRONTEND_URL + "/auth/callback")
                                                    .queryParam("token", tokenDto.accessToken())
                                                    .build()
                                                    .toUriString();
