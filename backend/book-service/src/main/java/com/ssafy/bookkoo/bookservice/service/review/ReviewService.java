@@ -55,4 +55,11 @@ public interface ReviewService {
      * @return 회원을 제외한 랜덤 리뷰 응답 DTO 리스트
      */
     List<ResponseSurfingReviewDto> getRandomReviewExceptMine(Long memberId, Long bookId);
+
+    /**
+     * 사용자 탈퇴시 사용자의 한줄평, 좋아요 삭제
+     *
+     * @param memberId 사용자 id
+     */
+    void deleteReviewsByMemberId(Long memberId);
 }
