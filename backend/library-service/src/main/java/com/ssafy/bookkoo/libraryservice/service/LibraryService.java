@@ -12,6 +12,7 @@ import com.ssafy.bookkoo.libraryservice.dto.other.ResponseRecentFiveBookDto;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 서재 관련 서비스 인터페이스입니다.
@@ -48,8 +49,7 @@ public interface LibraryService {
     ResponseLibraryDto getLibrary(
         Long libraryId,
         Status filter,
-        int page,
-        int size
+        Pageable pageable
     );
 
     /**

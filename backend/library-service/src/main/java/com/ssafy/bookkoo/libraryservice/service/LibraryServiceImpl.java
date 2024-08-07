@@ -38,7 +38,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -132,15 +131,13 @@ public class LibraryServiceImpl implements LibraryService {
     public ResponseLibraryDto getLibrary(
         Long libraryId,
         Status filter,
-        int page,
-        int size
+        Pageable pageable
     ) {
         // 라이브러리 ID로 라이브러리를 찾고 예외를 처리합니다.
         Library library = findLibraryByIdWithException(libraryId);
         // 라이브러리 엔티티를 DTO 로 변환합니다.
         ResponseLibraryDto libraryDto = libraryMapper.toResponseDto(library);
 
-        Pageable pageable = PageRequest.of(page, size);
         // 라이브러리 ID로 연결된 책 매퍼 목록을 가져옵니다.
         List<LibraryBookMapper> libraryBookMappers = libraryBookMapperRepository.findByLibraryIdWithFilter(
             libraryId, filter, pageable);
@@ -176,8 +173,9 @@ public class LibraryServiceImpl implements LibraryService {
                                                                                      List.of(
                                                                                          condition))
                                                                                  .limit(
-                                                                                     size) // 이건 바꿔야할듯
-                                                                                 .offset(page)
+                                                                                     pageable.getPageSize())
+                                                                                 .offset(
+                                                                                     (int) pageable.getOffset())
                                                                                  .build();
 
         // BookServiceClient를 통해 책 정보를 가져옵니다.
@@ -215,7 +213,7 @@ public class LibraryServiceImpl implements LibraryService {
                                                                             })
                                                                             .collect(
                                                                                 Collectors.toList());
-        
+
         return ResponseLibraryDto.builder()
                                  .id(libraryId)
                                  .libraryOrder(libraryDto.libraryOrder())
