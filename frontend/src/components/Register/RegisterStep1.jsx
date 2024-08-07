@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSetAtom } from 'jotai';
 import RegisterInput from './RegisterInput';
 import Button from '../@common/Button';
@@ -20,6 +20,7 @@ const RegisterStep1 = ({
   handleChange,
   handleFileChange,
   handleNextStep,
+  isSocialLogin,
 }) => {
   const setEmailDuplicate = useSetAtom(emailDuplicateAtom);
   const setNicknameDuplicate = useSetAtom(nicknameDuplicateAtom);
@@ -31,6 +32,12 @@ const RegisterStep1 = ({
 
   const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+
+  useEffect(() => {
+    if (isSocialLogin) {
+      setIsEmailChecked(true);
+    }
+  }, [isSocialLogin]);
 
   const handleEmailCheck = async () => {
     if (!formData.email) {
@@ -47,6 +54,7 @@ const RegisterStep1 = ({
         setEmailError('');
         setAlert({
           isOpen: true,
+          confirmOnly: true,
           message: '사용 가능한 이메일입니다.',
         });
       }
@@ -80,7 +88,7 @@ const RegisterStep1 = ({
   };
 
   const validateAndProceed = () => {
-    if (!isEmailChecked) {
+    if (!isSocialLogin && !isEmailChecked) {
       setAlert({
         isOpen: true,
         confirmOnly: true,
@@ -119,22 +127,25 @@ const RegisterStep1 = ({
             value={formData.email}
             onChange={e => {
               handleChange(e);
-              setIsEmailChecked(false);
+              if (!isSocialLogin) setIsEmailChecked(false);
             }}
             required
-            className={`mt-1 p-2 block w-full border rounded-md pr-24 ${
+            disabled={isSocialLogin}
+            className={`mt-1 p-2 block w-full border rounded-md ${isSocialLogin ? 'pr-2' : 'pr-24'} ${
               errors.email || emailError ? 'border-red-500' : ''
             }`}
           />
-          <Button
-            text='중복확인'
-            type='button'
-            color='text-white bg-blue-500 active:bg-blue-600'
-            size='small'
-            full={false}
-            onClick={handleEmailCheck}
-            className='absolute right-0 top-0 mt-2 mr-2'
-          />
+          {!isSocialLogin && (
+            <Button
+              text='중복확인'
+              type='button'
+              color='text-white bg-pink-500 active:bg-pink-600'
+              size='small'
+              full={false}
+              onClick={handleEmailCheck}
+              className='absolute right-0 top-0 mt-2 mr-2'
+            />
+          )}
         </div>
         {(errors.email || emailError) && (
           <p className='text-red-500 text-xs italic'>
@@ -162,7 +173,7 @@ const RegisterStep1 = ({
           <Button
             text='중복확인'
             type='button'
-            color='text-white bg-blue-500 active:bg-blue-600'
+            color='text-white bg-pink-500 active:bg-pink-600'
             size='small'
             full={false}
             onClick={handleNicknameCheck}
@@ -175,26 +186,30 @@ const RegisterStep1 = ({
           </p>
         )}
       </div>
-      <RegisterInput
-        labelText='비밀번호'
-        type='password'
-        id='password'
-        name='password'
-        value={formData.password}
-        onChange={handleChange}
-        required
-        error={errors.password}
-      />
-      <RegisterInput
-        labelText='비밀번호 확인'
-        type='password'
-        id='confirmPassword'
-        name='confirmPassword'
-        value={formData.confirmPassword}
-        onChange={handleChange}
-        required
-        error={errors.confirmPassword}
-      />
+      {!isSocialLogin && (
+        <>
+          <RegisterInput
+            labelText='비밀번호'
+            type='password'
+            id='password'
+            name='password'
+            value={formData.password}
+            onChange={handleChange}
+            required
+            error={errors.password}
+          />
+          <RegisterInput
+            labelText='비밀번호 확인'
+            type='password'
+            id='confirmPassword'
+            name='confirmPassword'
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+            error={errors.confirmPassword}
+          />
+        </>
+      )}
       <label className='block mb-2 text-sm font-medium text-gray-700'>
         프로필 이미지
         <div className='flex items-center mt-2'>

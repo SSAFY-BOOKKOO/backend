@@ -1,7 +1,6 @@
 import React from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import App from './App.jsx';
-import LibraryHome from './pages/Library/LibraryHome.jsx';
 import LibraryDetail from './pages/Library/LibraryDetail.jsx';
 import LibrarySearch from './pages/Library/LibrarySearch.jsx';
 import SearchBookDetail from './pages/Library/SearchBookDetail.jsx';
@@ -30,6 +29,8 @@ import SearchMore from './pages/Library/SearchMore.jsx';
 import BookTalkMore from './pages/BookTalk/BookTalkMore.jsx';
 import PasswordFind from './pages/Member/PasswordFind.jsx';
 import AdditionalInfo from './pages/Member/AdditionalInfo.jsx';
+import LibraryOthers from './pages/Library/LibraryOthers.jsx';
+import SocialLoginCallback from './components/Login/SocialLoginCallback.jsx';
 
 const isAuthenticated = true; // 로그인 상태를 확인하는 로직 추가 필요
 
@@ -55,9 +56,13 @@ const router = createBrowserRouter([
         children: [
           // library
           { path: '', element: <LibraryMain /> },
+          { path: 'library', element: <LibraryOthers /> },
 
           // book in library detail
-          { path: 'library/detail/:bookId', element: <LibraryDetail /> },
+          {
+            path: 'library/:libraryId/detail/:bookId',
+            element: <LibraryDetail />,
+          },
 
           // search
           { path: 'search', element: <LibrarySearch /> },
@@ -112,6 +117,10 @@ const router = createBrowserRouter([
   {
     path: 'login',
     element: <Login />,
+  },
+  {
+    path: 'auth/callback',
+    element: <SocialLoginCallback />,
   },
   {
     path: '*',

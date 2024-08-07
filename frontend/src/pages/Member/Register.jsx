@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import RegisterStep1 from '@components/Register/RegisterStep1';
 import RegisterStep2 from '@components/Register/RegisterStep2';
+import RegisterStep3 from '@components/Register/RegisterStep3';
 import WrapContainer from '@components/Layout/WrapContainer';
 import Alert from '@components/@common/Alert';
 import {
@@ -15,8 +16,9 @@ import {
   checkEmailDuplicate,
   checkNicknameDuplicate,
 } from '@utils/RegisterCheck';
-import { axiosInstance } from '@services/axiosInstance';
+import { axiosInstance, authAxiosInstance } from '@services/axiosInstance';
 import { validateForm } from '@utils/ValidateForm';
+import { postCategories } from '@services/Book';
 
 const RegisterPage = () => {
   const [step, setStep] = useState(1);
@@ -26,11 +28,15 @@ const RegisterPage = () => {
     password: '',
     confirmPassword: '',
     introduction: '',
-    profileImgUrl: null,
+    profileImgUrl: '',
     year: '',
     gender: '',
     categories: [],
     socialType: 'bookkoo',
+    memberSettingDto: {
+      isLetterReceive: false,
+      reviewVisibility: 'PUBLIC',
+    },
   });
 
   const [errors, setErrors] = useState({});
@@ -39,15 +45,70 @@ const RegisterPage = () => {
     nicknameDuplicateAtom
   );
   const [error, setError] = useAtom(errorAtom);
+  const [categories, setCategories] = useState([]);
+  const [isSocial, setIsSocial] = useState(false);
   const [, setAlert] = useAtom(alertAtom);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // 소셜 로그인의 경우 사용자 정보 가져오기
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const email = searchParams.get('email');
+    const socialType = searchParams.get('socialType');
+
+    if (email && socialType) {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        email,
+        socialType,
+      }));
+
+      setIsSocial(true);
+    }
+  }, [location]);
+
+  const handlePostCategories = async () => {
+    try {
+      const data = await postCategories();
+      setCategories(data);
+    } catch (error) {
+      console.error('Failed to fetch categories', error);
+    }
+  };
+
+  useEffect(() => {
+    handlePostCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await authAxiosInstance.post('/categories/search');
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Failed to fetch categories', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    if (name in formData.memberSettingDto) {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        memberSettingDto: {
+          ...prevFormData.memberSettingDto,
+          [name]: type === 'checkbox' ? checked : value,
+        },
+      }));
+    } else {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        [name]: type === 'checkbox' ? checked : value,
+      }));
+    }
     setErrors(prevErrors => ({
       ...prevErrors,
       [name]: '',
@@ -71,31 +132,34 @@ const RegisterPage = () => {
   const handleCategoryChange = category => {
     setFormData(prevFormData => {
       const categories = [...prevFormData.categories];
-      if (categories.includes(category)) {
+      if (categories.includes(category.id)) {
         return {
           ...prevFormData,
-          categories: categories.filter(cat => cat !== category),
+          categories: categories.filter(cat => cat !== category.id),
         };
       } else {
-        return { ...prevFormData, categories: [...categories, category] };
+        return { ...prevFormData, categories: [...categories, category.id] };
       }
     });
   };
 
   const handleNextStep = async () => {
     const validationConfig = {
-      email: true,
-      password: true,
-      confirmPassword: true,
       nickname: true,
+      ...(!isSocial && {
+        email: true,
+        password: true,
+        confirmPassword: true,
+      }),
     };
 
     const newErrors = validateForm(formData, validationConfig);
     setErrors(newErrors);
-
     if (Object.keys(newErrors).length === 0) {
       try {
-        const isEmailDuplicate = await checkEmailDuplicate(formData.email);
+        const isEmailDuplicate = isSocial
+          ? false
+          : await checkEmailDuplicate(formData.email);
         const isNicknameDuplicate = await checkNicknameDuplicate(
           formData.nickname
         );
@@ -133,14 +197,16 @@ const RegisterPage = () => {
 
   const handleSubmit = async () => {
     const validationConfig = {
-      email: true,
-      password: true,
-      confirmPassword: true,
       nickname: true,
       year: true,
       gender: true,
       categories: true,
       introduction: true,
+      ...(!isSocial && {
+        email: true,
+        password: true,
+        confirmPassword: true,
+      }),
     };
 
     const newErrors = validateForm(formData, validationConfig);
@@ -160,7 +226,8 @@ const RegisterPage = () => {
               gender: formData.gender,
               categories: formData.categories,
               introduction: formData.introduction,
-              socialType: formData.socialType,
+              socialType: formData?.socialType,
+              memberSettingDto: formData.memberSettingDto,
             }),
           ],
           {
@@ -219,6 +286,7 @@ const RegisterPage = () => {
               handleChange={handleChange}
               handleFileChange={handleFileChange}
               handleNextStep={handleNextStep}
+              isSocialLogin={isSocial}
             />
           )}
           {step === 2 && (
@@ -227,7 +295,16 @@ const RegisterPage = () => {
               errors={errors}
               handleChange={handleChange}
               handleCategoryChange={handleCategoryChange}
+              categoriesList={categories}
               handlePrevStep={handlePrevStep}
+              handleNextStep={() => setStep(3)}
+            />
+          )}
+          {step === 3 && (
+            <RegisterStep3
+              formData={formData.memberSettingDto}
+              errors={errors}
+              handleChange={handleChange}
               handleSubmit={handleSubmit}
             />
           )}

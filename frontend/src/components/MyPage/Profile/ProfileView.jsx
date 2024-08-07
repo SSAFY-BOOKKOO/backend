@@ -2,18 +2,17 @@ import React from 'react';
 import Button from '@components/@common/Button';
 import profileImgSample from '@assets/images/profile_img_sample.png';
 
-const ProfileView = ({ member, onEdit, onChangePassword }) => {
+const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
+  const getCategoryName = categoryId => {
+    const category = categories?.find(cat => cat.id === categoryId);
+    return category ? category.name : '';
+  };
+
   return (
     <div className='space-y-4 mb-16'>
       <div className='max-w-md mx-4 mt-10 p-4 bg-white border border-gray-300 rounded-lg'>
         <h2 className='text-xl font-bold mb-4'>회원 정보</h2>
         <div className='border-t border-gray-300 mb-4'></div>
-        <div className='mb-4 flex'>
-          <label className='text-gray-700 font-medium w-1/3'>이메일</label>
-          <p className='text-gray-700 font-medium w-2/3 text-right'>
-            {member.email}
-          </p>
-        </div>
         <div className='mb-4 flex'>
           <label className='text-gray-700 font-medium w-1/3'>닉네임</label>
           <p className='text-gray-700 font-medium w-2/3 text-right'>
@@ -43,12 +42,12 @@ const ProfileView = ({ member, onEdit, onChangePassword }) => {
             선호 카테고리
           </label>
           <div className='flex flex-wrap w-2/3 text-right justify-end'>
-            {member.categories.map(category => (
+            {member.categories?.map(category => (
               <span
                 key={category}
-                className='mr-2 mb-2 px-2 py-1 border rounded-lg text-gray-700 bg-gray-100'
+                className='mr-2 mb-2 px-2 py-1 border rounded-lg text-gray-700 bg-pink-100'
               >
-                {category}
+                {getCategoryName(category)}
               </span>
             ))}
           </div>
