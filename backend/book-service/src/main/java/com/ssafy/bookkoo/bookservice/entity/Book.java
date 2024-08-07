@@ -40,7 +40,7 @@ public class Book {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "isbn", nullable = false)
+    @Column(name = "isbn", nullable = false, unique = true)
     private String isbn;
 
     @Column
