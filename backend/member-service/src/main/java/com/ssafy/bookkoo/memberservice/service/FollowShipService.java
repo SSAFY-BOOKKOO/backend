@@ -10,6 +10,10 @@ public interface FollowShipService {
 
     void unFollow(Long followerId, Long followeeId);
 
+    List<Long> getFollowerIds(Long memberId);
+
+    List<Long> getFolloweeIds(Long memberId);
+
     List<ResponseFollowShipDto> getFollowers(Long memberId);
 
     List<ResponseFollowShipDto> getFollowees(Long memberId);

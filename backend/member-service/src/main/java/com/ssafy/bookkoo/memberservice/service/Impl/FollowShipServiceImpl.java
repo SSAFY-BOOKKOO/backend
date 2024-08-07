@@ -11,6 +11,7 @@ import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.memberservice.repository.FollowShipRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberInfoRepository;
 import com.ssafy.bookkoo.memberservice.service.FollowShipService;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -94,17 +95,15 @@ public class FollowShipServiceImpl implements FollowShipService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<ResponseFollowShipDto> getFollowers(Long memberId) {
+    public List<Long> getFollowerIds(Long memberId) {
         MemberInfo memberInfo = getMemberInfo(memberId);
+        List<Long> list = memberInfo.getFollowers()
+                                    .stream()
+                                    .map((followShip) -> followShip.getFollower()
+                                                                   .getId())
+                                    .collect(Collectors.toList());
 
-        return memberInfo.getFollowers()
-                         .stream()
-                         .map((followShip) -> ResponseFollowShipDto.builder()
-                                                                   .memberId(
-                                                                       followShip.getFollower()
-                                                                                 .getId())
-                                                                   .build())
-                         .toList();
+        return list.isEmpty() ? new ArrayList<>() : list;
     }
 
     /**
@@ -114,15 +113,35 @@ public class FollowShipServiceImpl implements FollowShipService {
      */
     @Override
     @Transactional(readOnly = true)
+    public List<Long> getFolloweeIds(Long memberId) {
+        MemberInfo memberInfo = getMemberInfo(memberId);
+
+        return memberInfo.getFollowees()
+                         .stream()
+                         .map((followShip) -> followShip.getFollowee()
+                                                        .getId())
+                         .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ResponseFollowShipDto> getFollowers(Long memberId) {
+        MemberInfo memberInfo = getMemberInfo(memberId);
+
+        return memberInfo.getFollowers()
+                         .stream()
+                         .map((followShip) -> ResponseFollowShipDto.toDto(followShip.getFollower()))
+                         .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<ResponseFollowShipDto> getFollowees(Long memberId) {
         MemberInfo memberInfo = getMemberInfo(memberId);
 
         return memberInfo.getFollowees()
                          .stream()
-                         .map((followShip) -> ResponseFollowShipDto.builder()
-                                                                   .memberId(followShip.getFollowee()
-                                                                                       .getId())
-                                                                   .build())
+                         .map((followShip) -> ResponseFollowShipDto.toDto(followShip.getFollowee()))
                          .collect(Collectors.toList());
     }
 
