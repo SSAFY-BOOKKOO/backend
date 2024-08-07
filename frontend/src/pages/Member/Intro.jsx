@@ -17,7 +17,7 @@ const Intro = () => {
           <img
             src={DecoIcon}
             alt='deco'
-            className='absolute top-0 right-0 -z-0 opacity-65'
+            className='absolute top-0 right-0 -z-0 opacity-65 w-24'
           />
           <Link
             to='/login'
