@@ -9,4 +9,6 @@ public interface LibraryRepository extends JpaRepository<Library, Long> {
     List<Library> findByMemberId(Long memberId);
 
     int countByMemberId(Long memberId);
+    
+    void deleteByMemberId(Long memberId);
 }
