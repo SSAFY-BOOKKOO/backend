@@ -75,7 +75,8 @@ public class TokenAuthenticationFilter implements GlobalFilter {
         for (String excludedPath : excludedPaths) {
             if (path.startsWith(excludedPath)) {
                 // /books/{bookId}/reviews~ 경로는 필터링 필요
-                if (excludedPath.equals("/books") && path.matches("^/books/\\d+/reviews(/.*)?$")) {
+                if (excludedPath.equals("/books") && (path.matches("^/books/\\d+/reviews(/.*)?$")
+                    || path.matches("^/books/reviews/me"))) {
                     break; // 필터를 거쳐야 함
                 } else if (path.matches("^/books/aladin(/.*)?$")) { // aladin 검색도 필요
                     break;
