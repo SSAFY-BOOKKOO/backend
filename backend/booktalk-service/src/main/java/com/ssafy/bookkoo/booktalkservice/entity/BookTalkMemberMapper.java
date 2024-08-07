@@ -12,6 +12,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 독서록과 회원을 연결하는 매퍼.
+ */
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,14 +28,14 @@ public class BookTalkMemberMapper extends BaseEntity {
     private Long memberId;
 
     @ManyToOne
-    @JoinColumn(name = "booktalkId")
-    private BookTalk booktalkId;
+    @JoinColumn(name = "booktalk")
+    private BookTalk booktalk;
 
 
     @Builder
-    public BookTalkMemberMapper(Long memberId, BookTalk booktalkId) {
+    public BookTalkMemberMapper(Long memberId, BookTalk booktalk) {
         this.memberId = memberId;
-        this.booktalkId = booktalkId;
+        this.booktalk = booktalk;
     }
 }
 
