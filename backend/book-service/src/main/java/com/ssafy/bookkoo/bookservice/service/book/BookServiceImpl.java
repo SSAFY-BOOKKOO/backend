@@ -57,35 +57,29 @@ public class BookServiceImpl implements BookService {
         // DTO를 엔티티로 변환
         Book book = bookMapper.toEntity(bookDto);
 
-        Category category = categoryRepository.findById(bookDto.category()
-                                                               .getId())
-                                              .orElseThrow(() -> new CategoryNotFoundException(
-                                                  "Category not found"));
+        Category category = categoryRepository.findById(bookDto
+                                                  .category()
+                                                  .getId()
+                                              )
+                                              .orElseThrow(
+                                                  () -> new CategoryNotFoundException(
+                                                      "category Not found")
+                                              );
 
         book.setCategory(category);
 
+        Book savedBook;
         try {
-            // 먼저 ISBN으로 책이 존재하는지 확인
-            Book existingBook = bookRepository.findByIsbn(bookDto.isbn());
-            if (existingBook != null) {
-                return bookMapper.toResponseDto(existingBook);
-            }
-
             // 책 저장
-            Book savedBook = bookRepository.save(book);
-            return bookMapper.toResponseDto(savedBook);
-
+            savedBook = bookRepository.save(book);
         } catch (DataIntegrityViolationException e) {
-            // 동시성 문제로 인해 저장 실패 시 다시 한 번 조회
-            Book bookByIsbn = bookRepository.findByIsbn(bookDto.isbn());
-            if (bookByIsbn != null) {
-                return bookMapper.toResponseDto(bookByIsbn);
-            }
-            throw new BookCreateFailedException(e.getMessage());
-        } catch (Exception e) {
             throw new BookCreateFailedException(e.getMessage());
         }
+
+        // 엔티티를 DTO로 변환
+        return bookMapper.toResponseDto(savedBook);
     }
+
 
     /**
      * 검색 조건을 기반으로 책 목록을 조회합니다.
@@ -162,7 +156,10 @@ public class BookServiceImpl implements BookService {
      * @throws URISyntaxException   URI 구문 예외
      */
     @Override
-    public ResponseAladinAPI searchBooksFromAladin(Long memberId, AladinAPISearchParams params)
+    public ResponseAladinAPI searchBooksFromAladin(
+        Long memberId,
+        AladinAPISearchParams params
+    )
         throws IOException, InterruptedException, URISyntaxException {
         return aladinAPIHandler.searchBooks(memberId, params);
     }
@@ -203,7 +200,10 @@ public class BookServiceImpl implements BookService {
      * @return ResponseBookOfLibraryDto
      */
     @Override
-    public ResponseBookOfLibraryDto getBookOfLibrary(Long bookId, Long memberId) {
+    public ResponseBookOfLibraryDto getBookOfLibrary(
+        Long bookId,
+        Long memberId
+    ) {
 
         return bookRepository.getBookOfLibrary(bookId, memberId);
     }
@@ -235,16 +235,24 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public ResponseBookDto getOrCreateBookByBookData(RequestCreateBookDto bookDto) {
-        // isbn으로 조회했을 때 결과
-        Book bookByIsbn = bookRepository.findByIsbn(bookDto.isbn());
+        try {
+            // isbn으로 조회했을 때 결과
+            Book bookByIsbn = bookRepository.findByIsbn(bookDto.isbn());
 
-        // 만약 결과가 존재하면 그대로 반환
-        if (bookByIsbn != null) {
-            return bookMapper.toResponseDto(bookByIsbn);
+            // 만약 결과가 존재하면 그대로 반환
+            if (bookByIsbn != null) {
+                return bookMapper.toResponseDto(bookByIsbn);
+            }
+            // 없으면 생성
+            return createBook(bookDto);
+        } catch (Exception e) {
+            // 중복된 ISBN으로 인한 예외 발생 시 다시 조회하여 반환
+            Book bookByIsbn = bookRepository.findByIsbn(bookDto.isbn());
+            if (bookByIsbn != null) {
+                return bookMapper.toResponseDto(bookByIsbn);
+            }
+            throw new BookCreateFailedException(e.getMessage()); // 다른 예외는 다시 던짐
         }
-
-        // 없으면 생성
-        return createBook(bookDto);
     }
 
     /**
