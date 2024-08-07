@@ -162,4 +162,11 @@ public interface LibraryService {
      * @return List<ResponseRecentFiveBookDto>
      */
     List<ResponseRecentFiveBookDto> getMyRecentBooks(Long memberId);
+
+    /**
+     * 사용자 탈퇴시 서재 데이터 날리기
+     *
+     * @param memberId 멤버 ID
+     */
+    void deleteLibrariesByMemberId(Long memberId);
 }

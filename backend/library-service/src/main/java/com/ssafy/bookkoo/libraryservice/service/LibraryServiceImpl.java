@@ -2,6 +2,7 @@ package com.ssafy.bookkoo.libraryservice.service;
 
 import com.ssafy.bookkoo.libraryservice.client.BookServiceClient;
 import com.ssafy.bookkoo.libraryservice.client.MemberServiceClient;
+import com.ssafy.bookkoo.libraryservice.dto.library.LibraryStyleDto;
 import com.ssafy.bookkoo.libraryservice.dto.library.RequestCreateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.library.RequestUpdateLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.library.ResponseLibraryDto;
@@ -154,11 +155,13 @@ public class LibraryServiceImpl implements LibraryService {
                                                 Collectors.toList());
         // 책이 없으면 바로 반환
         if (stringBookIds.isEmpty()) {
-            libraryDto = ResponseLibraryDto.builder().
-                                           name(libraryDto.name())
+            libraryDto = ResponseLibraryDto.builder()
+                                           .id(libraryId)
+                                           .name(libraryDto.name())
                                            .libraryOrder(libraryDto.libraryOrder())
                                            .libraryStyleDto(libraryDto.libraryStyleDto())
                                            .books(List.of())
+                                           .bookCount(0)
                                            .build();
             return libraryDto;
         }
@@ -384,15 +387,39 @@ public class LibraryServiceImpl implements LibraryService {
 
     /**
      * 내 서재 목록 불러오는 메서드
+     * <br>없을 경우 기본 서재 만들기
      *
      * @param memberId : member Id
      * @return : List ResponseLibraryDto
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<ResponseLibraryDto> getMyLibraries(Long memberId) {
-        return libraryMapper.toResponseDtoList(
-            libraryRepository.findByMemberId(memberId));
+        List<Library> libraries = libraryRepository.findByMemberId(memberId);
+        if (libraries.isEmpty()) {
+            // 기본 서재 세팅
+            RequestCreateLibraryDto createLibraryDto
+                = getDefaultLibrarySetting();
+            addLibrary(createLibraryDto, memberId);
+            libraries = libraryRepository.findByMemberId(memberId);
+        }
+
+        return libraryMapper.toResponseDtoList(libraries);
+    }
+
+    /**
+     * 기본 서재 세팅값
+     *
+     * @return RequestCreateLibraryDto
+     */
+    private RequestCreateLibraryDto getDefaultLibrarySetting() {
+        return RequestCreateLibraryDto.builder()
+                                      .name("기본 서재")
+                                      .libraryOrder(1)
+                                      .libraryStyleDto(LibraryStyleDto.builder()
+                                                                      .libraryColor("#FFFFFF")
+                                                                      .build())
+                                      .build();
     }
 
     /**
@@ -403,6 +430,7 @@ public class LibraryServiceImpl implements LibraryService {
      * @return Map<BookId, boolean>
      */
     @Override
+    @Transactional(readOnly = true)
     public Map<Long, Boolean> areBooksInLibrary(
         Long memberId,
         List<Long> bookIds
@@ -469,6 +497,7 @@ public class LibraryServiceImpl implements LibraryService {
      * @return true / false
      */
     @Override
+    @Transactional
     public Boolean deleteLibrary(Long memberId, Long libraryId) {
         Optional<Library> libraryOpt = libraryRepository.findById(libraryId);
 
@@ -528,6 +557,17 @@ public class LibraryServiceImpl implements LibraryService {
         List<ResponseBookDto> books = bookServiceClient.getBooksByCondition(searchField);
 
         return bookMapper.responseDtoToCustomDto(books);
+    }
+
+    /**
+     * 사용자 탈퇴시 서재 데이터 날리기
+     *
+     * @param memberId 멤버 ID
+     */
+    @Override
+    @Transactional
+    public void deleteLibrariesByMemberId(Long memberId) {
+        libraryRepository.deleteByMemberId(memberId);
     }
 
     /**

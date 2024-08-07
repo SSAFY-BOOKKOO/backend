@@ -11,6 +11,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 독서록 Entity
+ * <p>
+ * 채팅이 작성될때마다 MessageCount 를 올려준다. 매일 dayCount 는 0으로 초기화한다.
+ */
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,8 +28,21 @@ public class BookTalk extends BaseEntity {
     @Column(nullable = false, unique = true)
     private Long book;
 
+    @Column
+    private Long dayMessageCount;
+
+    @Column
+    private Long totalMessageCount;
+
     @Builder
     public BookTalk(Long book) {
         this.book = book;
+        this.dayMessageCount = 0L;
+        this.totalMessageCount = 0L;
+    }
+
+    public void chatCounting() {
+        dayMessageCount++;
+        totalMessageCount++;
     }
 }

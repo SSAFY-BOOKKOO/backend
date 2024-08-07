@@ -7,10 +7,10 @@ public record ResponseBookTalkDto(
     Long bookTalkId,
     String title,
     String author,
-    String[] categories,
+    String category,
     String coverImgUrl,
-    String createdAt,
-    Long comments
+    String lastChatTime,
+    Long chats
 ) {
 
 }

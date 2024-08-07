@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * ReviewService의 구현체로, 리뷰 관련 비즈니스 로직을 처리합니다.
@@ -155,6 +156,20 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     /**
+     * 사용자 탈퇴시 사용자의 한줄평, 좋아요 삭제
+     *
+     * @param memberId 사용자 id
+     */
+    @Override
+    @Transactional
+    public void deleteReviewsByMemberId(Long memberId) {
+        // review 삭제 + 해당 리뷰와 연관된 reviewLike 도 삭제
+        reviewRepository.deleteByMemberId(memberId);
+        // member 와 연관된 reviewLike 삭제
+        reviewLikeRepository.deleteByMemberId(memberId);
+    }
+
+    /**
      * 리뷰 엔티티를 서핑 리뷰 응답 DTO로 변환합니다.
      *
      * @param review 리뷰 엔티티
@@ -170,7 +185,7 @@ public class ReviewServiceImpl implements ReviewService {
                                                                                      .nickName(
                                                                                          memberInfo.nickName())
                                                                                      .profilImgUrl(
-                                                                                         memberInfo.profilImgUrl())
+                                                                                         memberInfo.profileImgUrl())
                                                                                      .build();
 
         return ResponseSurfingReviewDto.builder()

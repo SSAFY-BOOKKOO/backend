@@ -22,9 +22,9 @@ public class ResponseFollowNotificationDto extends ResponseNotificationDto {
     public ResponseFollowNotificationDto(
         Long notificationId,
         NotificationType notificationType,
-        LocalDateTime createAt,
+        LocalDateTime createdAt,
         String memberId, String nickName) {
-        super(notificationId, notificationType, createAt);
+        super(notificationId, notificationType, createdAt);
         this.memberId = memberId;
         this.nickName = nickName;
     }
@@ -37,6 +37,7 @@ public class ResponseFollowNotificationDto extends ResponseNotificationDto {
                                             .notificationType(NotificationType.follow)
                                             .memberId(memberInfoDto.memberId())
                                             .nickName(memberInfoDto.nickName())
+                                            .createdAt(followNotification.getCreatedAt())
                                             .build();
     }
 }

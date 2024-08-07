@@ -18,6 +18,7 @@ public abstract class Notification extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @Column(name = "member_id")
     private Long memberId;
 

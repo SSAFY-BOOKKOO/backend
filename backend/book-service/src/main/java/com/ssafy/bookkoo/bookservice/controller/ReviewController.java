@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -79,4 +80,27 @@ public class ReviewController {
         return ResponseEntity.ok()
                              .body(reviewService.getRandomReviewExceptMine(memberId, bookId));
     }
+
+    @DeleteMapping("/reviews/me")
+    @Operation(
+        summary = "사용자 탈퇴시 사용자의 한줄평 삭제",
+        description = """
+            ### 사용자 탈퇴시 사용할 API
+            - 한줄평, 한줄평 좋아요 정보 사라짐
+
+            ### status code : 204(No Content)
+
+            """
+    )
+    public ResponseEntity<HttpStatus> deleteReviewOfMember(
+        @RequestHeader HttpHeaders headers
+    ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+
+        reviewService.deleteReviewsByMemberId(memberId);
+
+        return ResponseEntity.noContent()
+                             .build();
+    }
+
 }
