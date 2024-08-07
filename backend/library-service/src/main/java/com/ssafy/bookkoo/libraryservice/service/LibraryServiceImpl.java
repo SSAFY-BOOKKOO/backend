@@ -38,6 +38,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -129,16 +130,17 @@ public class LibraryServiceImpl implements LibraryService {
     @Transactional(readOnly = true)
     public ResponseLibraryDto getLibrary(
         Long libraryId,
-        Status filter
+        Status filter,
+        Pageable pageable
     ) {
         // 라이브러리 ID로 라이브러리를 찾고 예외를 처리합니다.
         Library library = findLibraryByIdWithException(libraryId);
-        // 라이브러리 엔티티를 DTO로 변환합니다.
+        // 라이브러리 엔티티를 DTO 로 변환합니다.
         ResponseLibraryDto libraryDto = libraryMapper.toResponseDto(library);
 
         // 라이브러리 ID로 연결된 책 매퍼 목록을 가져옵니다.
         List<LibraryBookMapper> libraryBookMappers = libraryBookMapperRepository.findByLibraryIdWithFilter(
-            libraryId, filter);
+            libraryId, filter, pageable);
 
         // 라이브러리 ID로 연결된 책 ID 목록을 가져옵니다.
         List<Long> bookIds = libraryBookMappers.stream()
@@ -171,8 +173,9 @@ public class LibraryServiceImpl implements LibraryService {
                                                                                      List.of(
                                                                                          condition))
                                                                                  .limit(
-                                                                                     9) // 이건 바꿔야할듯
-                                                                                 .offset(0)
+                                                                                     pageable.getPageSize())
+                                                                                 .offset(
+                                                                                     (int) pageable.getOffset())
                                                                                  .build();
 
         // BookServiceClient를 통해 책 정보를 가져옵니다.
@@ -217,6 +220,7 @@ public class LibraryServiceImpl implements LibraryService {
                                  .libraryStyleDto(libraryDto.libraryStyleDto())
                                  .name(libraryDto.name())
                                  .books(libraryBooks)
+                                 .bookCount(library.getBookCount())
                                  .build();
     }
 

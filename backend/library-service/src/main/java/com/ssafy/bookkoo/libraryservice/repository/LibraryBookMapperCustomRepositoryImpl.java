@@ -9,6 +9,7 @@ import com.ssafy.bookkoo.libraryservice.entity.QLibraryBookMapper;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -65,7 +66,11 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
      * @return 필터링된 LibraryBookMapper 엔티티 리스트
      */
     @Override
-    public List<LibraryBookMapper> findByLibraryIdWithFilter(Long libraryId, Status filter) {
+    public List<LibraryBookMapper> findByLibraryIdWithFilter(
+        Long libraryId,
+        Status filter,
+        Pageable pageable
+    ) {
         QLibraryBookMapper libraryBookMapper = QLibraryBookMapper.libraryBookMapper;
         BooleanBuilder predicate = new BooleanBuilder();
 
@@ -81,6 +86,8 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
                            .from(libraryBookMapper)
                            .where(predicate)
                            .orderBy(libraryBookMapper.bookOrder.asc())
+                           .offset(pageable.getOffset())
+                           .limit(pageable.getPageSize())
                            .fetch();
     }
 
