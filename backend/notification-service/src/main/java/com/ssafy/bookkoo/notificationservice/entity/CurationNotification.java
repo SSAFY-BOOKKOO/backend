@@ -24,6 +24,6 @@ public class CurationNotification extends Notification {
     public CurationNotification(Long id, Long memberId, Long curationId, Long writerId) {
         super(id, memberId);
         this.curationId = curationId;
-        this.writerId = this.writerId;
+        this.writerId = writerId;
     }
 }
