@@ -182,7 +182,11 @@ const RegisterPage = () => {
 
   const handleSendVerificationCode = async () => {
     try {
-      await axiosInstance.post('/members/register/validation', formData.email);
+      await axiosInstance.post('/members/register/validation', formData.email, {
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+      });
       setAlert({
         isOpen: true,
         confirmOnly: true,
@@ -213,7 +217,7 @@ const RegisterPage = () => {
         message: '인증이 성공적으로 완료되었습니다.',
       });
     } catch (error) {
-      setIsEmailVerified(true);
+      setIsEmailVerified(false);
       setAlert({
         isOpen: true,
         confirmOnly: true,
