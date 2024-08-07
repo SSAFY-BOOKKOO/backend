@@ -15,7 +15,6 @@ const RegisterStep2 = ({
     const category = categoriesList.find(cat => cat.id === categoryId);
     return category ? category.name : '';
   };
-
   return (
     <>
       <h3 className='text-xl font-bold mb-4 text-center'>
@@ -90,7 +89,7 @@ const RegisterStep2 = ({
               <label
                 className={`flex items-center border px-2 py-1 rounded-lg cursor-pointer ${
                   formData.categories.includes(category.id)
-                    ? 'bg-green-500 text-white'
+                    ? 'bg-green-400 text-white'
                     : 'bg-gray-200 text-gray-700'
                 }`}
               >

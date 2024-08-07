@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import RegisterStep1 from '@components/Register/RegisterStep1';
 import RegisterStep2 from '@components/Register/RegisterStep2';
+import RegisterStep3 from '@components/Register/RegisterStep3';
 import RegisterStep3 from '@components/Register/RegisterStep3';
 import WrapContainer from '@components/Layout/WrapContainer';
 import Alert from '@components/@common/Alert';
@@ -18,6 +19,7 @@ import {
 } from '@utils/RegisterCheck';
 import { axiosInstance, authAxiosInstance } from '@services/axiosInstance';
 import { validateForm } from '@utils/ValidateForm';
+import { postCategories } from '@services/Book';
 
 const RegisterPage = () => {
   const [step, setStep] = useState(1);
@@ -36,6 +38,10 @@ const RegisterPage = () => {
       isLetterReceive: false,
       reviewVisibility: 'PUBLIC',
     },
+    memberSettingDto: {
+      isLetterReceive: false,
+      reviewVisibility: 'PUBLIC',
+    },
   });
 
   const [errors, setErrors] = useState({});
@@ -44,9 +50,41 @@ const RegisterPage = () => {
     nicknameDuplicateAtom
   );
   const [error, setError] = useAtom(errorAtom);
-  const [, setAlert] = useAtom(alertAtom);
   const [categories, setCategories] = useState([]);
+  const [isSocial, setIsSocial] = useState(false);
+  const [, setAlert] = useAtom(alertAtom);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // 소셜 로그인의 경우 사용자 정보 가져오기
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const email = searchParams.get('email');
+    const socialType = searchParams.get('socialType');
+
+    if (email && socialType) {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        email,
+        socialType,
+      }));
+
+      setIsSocial(true);
+    }
+  }, [location]);
+
+  const handlePostCategories = async () => {
+    try {
+      const data = await postCategories();
+      setCategories(data);
+    } catch (error) {
+      console.error('Failed to fetch categories', error);
+    }
+  };
+
+  useEffect(() => {
+    handlePostCategories();
+  }, []);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -112,18 +150,21 @@ const RegisterPage = () => {
 
   const handleNextStep = async () => {
     const validationConfig = {
-      email: true,
-      password: true,
-      confirmPassword: true,
       nickname: true,
+      ...(!isSocial && {
+        email: true,
+        password: true,
+        confirmPassword: true,
+      }),
     };
 
     const newErrors = validateForm(formData, validationConfig);
     setErrors(newErrors);
-
     if (Object.keys(newErrors).length === 0) {
       try {
-        const isEmailDuplicate = await checkEmailDuplicate(formData.email);
+        const isEmailDuplicate = isSocial
+          ? false
+          : await checkEmailDuplicate(formData.email);
         const isNicknameDuplicate = await checkNicknameDuplicate(
           formData.nickname
         );
@@ -161,14 +202,16 @@ const RegisterPage = () => {
 
   const handleSubmit = async () => {
     const validationConfig = {
-      email: true,
-      password: true,
-      confirmPassword: true,
       nickname: true,
       year: true,
       gender: true,
       categories: true,
       introduction: true,
+      ...(!isSocial && {
+        email: true,
+        password: true,
+        confirmPassword: true,
+      }),
     };
 
     const newErrors = validateForm(formData, validationConfig);
@@ -188,7 +231,7 @@ const RegisterPage = () => {
               gender: formData.gender,
               categories: formData.categories,
               introduction: formData.introduction,
-              socialType: formData.socialType,
+              socialType: formData?.socialType,
               memberSettingDto: formData.memberSettingDto,
             }),
           ],
@@ -248,6 +291,7 @@ const RegisterPage = () => {
               handleChange={handleChange}
               handleFileChange={handleFileChange}
               handleNextStep={handleNextStep}
+              isSocialLogin={isSocial}
             />
           )}
           {step === 2 && (

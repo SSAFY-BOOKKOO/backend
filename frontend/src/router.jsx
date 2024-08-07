@@ -17,6 +17,7 @@ import CurationStore from './pages/Curation/CurationStore.jsx';
 import Login from './pages/Member/Login.jsx';
 import CurationChatBot from './pages/Curation/CurationChatBot.jsx';
 import CurationLetterCreate from './pages/Curation/CurationLetterCreate.jsx';
+import CurationSearchBook from './pages/Curation/CurationSearchBook.jsx';
 import CurationLetterDetail from './pages/Curation/CurationLetterDetail.jsx';
 import BookTalkMain from './pages/BookTalk/BookTalkMain.jsx';
 import BookTalkDetail from './pages/BookTalk/BookTalkDetail.jsx';
@@ -29,6 +30,7 @@ import BookTalkMore from './pages/BookTalk/BookTalkMore.jsx';
 import PasswordFind from './pages/Member/PasswordFind.jsx';
 import AdditionalInfo from './pages/Member/AdditionalInfo.jsx';
 import LibraryOthers from './pages/Library/LibraryOthers.jsx';
+import SocialLoginCallback from './components/Login/SocialLoginCallback.jsx';
 
 const isAuthenticated = true; // 로그인 상태를 확인하는 로직 추가 필요
 
@@ -77,6 +79,11 @@ const router = createBrowserRouter([
           { path: 'curation/store', element: <CurationStore /> },
           { path: 'curation/chatbot', element: <CurationChatBot /> },
           { path: 'curation/letter-create', element: <CurationLetterCreate /> },
+          {
+            path: 'curation/letter-create/book-search',
+            element: <CurationSearchBook />,
+          },
+
           { path: 'curation/letter/:id', element: <CurationLetterDetail /> },
           {
             path: 'curation/letter-create/send',
@@ -110,6 +117,10 @@ const router = createBrowserRouter([
   {
     path: 'login',
     element: <Login />,
+  },
+  {
+    path: 'auth/callback',
+    element: <SocialLoginCallback />,
   },
   {
     path: '*',
