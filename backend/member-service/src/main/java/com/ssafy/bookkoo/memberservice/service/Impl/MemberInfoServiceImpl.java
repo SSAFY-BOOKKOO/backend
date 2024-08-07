@@ -7,22 +7,27 @@ import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberProfileDto;
 import com.ssafy.bookkoo.memberservice.entity.Member;
+import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapper;
+import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapperKey;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import com.ssafy.bookkoo.memberservice.entity.MemberSetting;
 import com.ssafy.bookkoo.memberservice.exception.MemberInfoNotExistException;
 import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.memberservice.mapper.MemberInfoMapper;
+import com.ssafy.bookkoo.memberservice.repository.MemberCategoryMapperRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberInfoRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberSettingRepository;
 import com.ssafy.bookkoo.memberservice.service.MemberInfoService;
+import com.ssafy.bookkoo.memberservice.service.MemberService;
+import java.util.Arrays;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +39,11 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     private final MemberInfoMapper memberInfoMapper;
     private final CommonServiceClient commonServiceClient;
     private final MemberSettingRepository memberSettingRepository;
+    private final MemberCategoryMapperRepository memberCategoryMapperRepository;
+    private final MemberService memberService;
+    
+    @Value("${config.member-bucket-name}")
+    private String BUCKET;
 
     /**
      * 비밀번호를 업데이트합니다.
@@ -46,7 +56,6 @@ public class MemberInfoServiceImpl implements MemberInfoService {
 
         member.setPassword(passwordEncoder.encode(requestUpdatePasswordDto.password()));
 
-        memberRepository.save(member);
         memberRepository.flush();
     }
 
@@ -136,7 +145,6 @@ public class MemberInfoServiceImpl implements MemberInfoService {
                                                                  MemberNotFoundException::new);
         memberSetting.setIsLetterReceive(memberSettingDto.isLetterReceive());
         memberSetting.setReviewVisibility(memberSettingDto.reviewVisibility());
-        memberSettingRepository.save(memberSetting);
         memberSettingRepository.flush();
     }
 
@@ -152,14 +160,75 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         MultipartFile profileImg) {
         MemberInfo memberInfo = memberInfoRepository.findById(id)
                                                     .orElseThrow(MemberInfoNotExistException::new);
-        //TODO: 닉네임 중복 체크 필요
+        checkDuplNickName(memberInfo.getNickName(), memberInfoUpdateDto.nickName());
         memberInfo.setNickName(memberInfoUpdateDto.nickName());
         if (profileImg != null) {
             updateProfileImg(id, profileImg);
         }
+        updateCategories(memberInfo, memberInfoUpdateDto.categories());
         memberInfo.setIntroduction(memberInfoUpdateDto.introduction());
-        memberInfoRepository.save(memberInfo);
         memberInfoRepository.flush();
+    }
+
+    /**
+     * 이전 닉네임과 같으면 중복체크 X
+     * 다르면 중복 체크
+     * @param oldNickName
+     * @param newNickName
+     */
+    private void checkDuplNickName(String oldNickName, String newNickName) {
+        if (!oldNickName.equals(newNickName)) {
+            memberService.checkDuplNickName(newNickName);
+        }
+    }
+
+    /**
+     * 전체 카테고리 삭제 및 새로운 카테고리 저장
+     * @param memberInfo
+     * @param categories
+     */
+    @Transactional
+    protected void updateCategories(MemberInfo memberInfo, Integer[] categories) {
+        deleteCategories(memberInfo);
+        saveCategories(memberInfo, categories);
+    }
+
+    /**
+     * 전체 카테고리 삭제
+     * @param memberInfo
+     */
+    private void deleteCategories(MemberInfo memberInfo) {
+        memberCategoryMapperRepository.deleteAll(memberInfo.getCategories());
+    }
+
+
+    /**
+     * 입력으로 들어온 카테고리를 저장
+     * @param memberInfo
+     * @param categories
+     */
+    private void saveCategories(MemberInfo memberInfo, Integer[] categories) {
+        Arrays.stream(categories)
+              .forEach((categoryId) -> {
+                  //멤버 매퍼 키를 생성
+                  MemberCategoryMapperKey memberCategoryMapperKey
+                      = MemberCategoryMapperKey.builder()
+                                               .categoryId(categoryId)
+                                               .memberInfoId(memberInfo.getId())
+                                               .build();
+                  //매퍼키를 통해 매퍼 엔티티 생성
+                  MemberCategoryMapper memberCategoryMapper
+                      = MemberCategoryMapper.builder()
+                                            .memberCategoryMapperKey(
+                                                memberCategoryMapperKey)
+                                            .memberInfo(memberInfo)
+                                            .build();
+                  //매퍼 테이블에 매퍼 정보 저장
+                  MemberCategoryMapper categoryMapper = memberCategoryMapperRepository.save(
+                      memberCategoryMapper);
+                  //멤버 정보에 카테고리 연관관계 추가
+                  memberInfo.addCategory(categoryMapper);
+              });
     }
 
     /**
@@ -173,11 +242,10 @@ public class MemberInfoServiceImpl implements MemberInfoService {
                                                     .orElseThrow(MemberNotFoundException::new);
         String profileImgUrl = memberInfo.getProfileImgUrl();
         if (!profileImgUrl.equals("Default.jpg")) {
-            commonServiceClient.deleteProfileImg(profileImgUrl, null);
+            commonServiceClient.deleteProfileImg(profileImgUrl, BUCKET);
         }
-        String fileName = commonServiceClient.saveProfileImg(profileImg, null);
+        String fileName = commonServiceClient.saveProfileImg(profileImg, BUCKET);
         memberInfo.setProfileImgUrl(fileName);
-        memberInfoRepository.save(memberInfo);
         memberInfoRepository.flush();
     }
 

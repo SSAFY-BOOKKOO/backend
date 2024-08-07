@@ -1,9 +1,8 @@
 package com.ssafy.bookkoo.memberservice.controller;
 
-import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdateMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestMemberSettingDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdateMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
-import com.ssafy.bookkoo.memberservice.dto.response.ResponseFollowShipDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberProfileDto;
 import com.ssafy.bookkoo.memberservice.service.FollowShipService;
@@ -11,7 +10,6 @@ import com.ssafy.bookkoo.memberservice.service.MemberInfoService;
 import com.ssafy.bookkoo.memberservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -95,11 +93,7 @@ public class MemberInfoController {
     public ResponseEntity<List<Long>> getLetterRecipients(
         @RequestParam("memberId") Long memberId
     ) {
-        List<ResponseFollowShipDto> followers = followShipService.getFollowers(memberId);
-        List<Long> followerIds = new ArrayList<>(followers.stream()
-                                                          .map(ResponseFollowShipDto::memberId)
-                                                          .toList());
-
+        List<Long> followerIds = followShipService.getFollowerIds(memberId);
         //자기 자신 ID 추가 (follwerIds의 마지막에 추가)
         followerIds.add(memberId);
         List<Long> recipientIds = memberInfoService.getRandomMemberInfo(followerIds);
