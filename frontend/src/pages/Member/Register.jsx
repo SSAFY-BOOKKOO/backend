@@ -19,7 +19,6 @@ import {
 import { axiosInstance } from '@services/axiosInstance';
 import { validateForm } from '@utils/ValidateForm';
 import { postCategories } from '@services/Book';
-import qs from 'qs';
 
 const RegisterPage = () => {
   const [step, setStep] = useState(1);
@@ -208,7 +207,6 @@ const RegisterPage = () => {
           email: formData.email,
           certNum: verificationCode,
         },
-        paramsSerializer: params => qs.stringify(params, { encode: false }),
       });
       setIsEmailVerified(true);
       setAlert({
