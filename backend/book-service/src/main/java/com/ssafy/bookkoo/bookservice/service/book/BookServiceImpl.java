@@ -18,8 +18,6 @@ import com.ssafy.bookkoo.bookservice.mapper.BookMapper;
 import com.ssafy.bookkoo.bookservice.repository.book.BookRepository;
 import com.ssafy.bookkoo.bookservice.repository.category.CategoryRepository;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPIHandler;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -36,9 +34,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
-
-    @PersistenceContext
-    private EntityManager em;
 
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
