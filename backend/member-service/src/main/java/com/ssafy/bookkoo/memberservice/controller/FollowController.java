@@ -55,7 +55,7 @@ public class FollowController {
     }
 
     @GetMapping("/followees")
-    @Operation(summary = "팔로워 목록을 반환합니다.", description = "멤버가 팔로우 하는 목록을 반환합니다.")
+    @Operation(summary = "팔로잉 목록을 반환합니다.", description = "멤버가 팔로우 하는 목록을 반환합니다.")
     public ResponseEntity<List<ResponseFollowShipDto>> getFollowees(
         @RequestHeader HttpHeaders headers,
         @RequestParam(required = false) RequestFollowShipDto requestFollowShipDto
