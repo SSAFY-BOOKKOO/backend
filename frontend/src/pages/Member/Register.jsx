@@ -16,7 +16,7 @@ import {
   checkEmailDuplicate,
   checkNicknameDuplicate,
 } from '@utils/RegisterCheck';
-import { axiosInstance } from '@services/axiosInstance';
+import { axiosInstance, authAxiosInstance } from '@services/axiosInstance';
 import { validateForm } from '@utils/ValidateForm';
 import { postCategories } from '@services/Book';
 
@@ -28,7 +28,7 @@ const RegisterPage = () => {
     password: '',
     confirmPassword: '',
     introduction: '',
-    profileImgUrl: null,
+    profileImgUrl: '',
     year: '',
     gender: '',
     categories: [],
@@ -79,6 +79,18 @@ const RegisterPage = () => {
 
   useEffect(() => {
     handlePostCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await authAxiosInstance.post('/categories/search');
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Failed to fetch categories', error);
+      }
+    };
+    fetchCategories();
   }, []);
 
   const handleChange = e => {

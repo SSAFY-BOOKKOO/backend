@@ -19,11 +19,11 @@ const ChatBubble = ({
       className={`flex ${role === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
     >
       {showProfile && role !== 'user' && (
-        <div className='flex justify-center items-center mr-2'>
+        <div className='flex-shrink-0 w-12 h-12 mr-3 flex items-center justify-center'>
           <img
             src={profileImage}
             alt='Profile'
-            className='w-11 h-11 rounded-full mr-2'
+            className='max-w-full max-h-full object-contain rounded-full'
           />
         </div>
       )}

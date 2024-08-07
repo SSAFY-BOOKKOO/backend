@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import settingIcon from '@assets/icons/setting.png';
-import { FaCalendarDays } from 'react-icons/fa6';
+import { FaCalendarDays, FaClipboardList } from 'react-icons/fa6';
 import { MdPeopleAlt } from 'react-icons/md';
 import { BsChatSquareQuoteFill } from 'react-icons/bs';
-import { FaClipboardList } from 'react-icons/fa6';
 import profileImgSample from '@assets/images/profile_img_sample.png';
-import { authAxiosInstance, axiosInstance } from '@services/axiosInstance';
+import settingIcon from '@assets/icons/setting.png';
+import { authAxiosInstance } from '@services/axiosInstance';
+import IconButton from '@components/@common/IconButton';
+import ProfileModal from '@components/MyPage/Profile/ProfileModal.jsx';
 
 const MyPage = () => {
   const [member, setMember] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchMemberInfo = async () => {
       try {
-        const response = await authAxiosInstance.get(
-          '/members/info?memberId=312c2435-d0b5-4607-808d-fc0e9c51b58d'
-        );
-        setMember(response.data);
+        const memberResponse = await authAxiosInstance.get('/members/info');
+        setMember(memberResponse.data);
+
+        const categoriesResponse =
+          await authAxiosInstance.post('/categories/search');
+        setCategories(categoriesResponse.data);
       } catch (error) {
         console.error(error);
       }
@@ -31,45 +35,61 @@ const MyPage = () => {
     return <div>Loading...</div>;
   }
 
+  const getCategoryName = categoryId => {
+    const category = categories.find(cat => cat.id === categoryId);
+    return category ? category.name : '';
+  };
+
   const displayCategories =
     member.categories.length > 4
       ? member.categories.slice(0, 2).concat(['...'])
       : member.categories;
 
+  const handleProfileClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className='p-4 min-h-[43rem]'>
-      <div className='flex items-start justify-between'>
-        <div className='flex items-start space-x-8'>
+      <div className='flex items-start justify-between mb-8'>
+        <div className='flex items-start space-x-8 w-full'>
           <img
             src={member.profileImgUrl || profileImgSample}
             alt='profile'
-            className='w-32 h-32 rounded-full'
+            className='w-32 h-32 rounded-full cursor-pointer'
+            onClick={handleProfileClick}
           />
-          <div className='flex flex-col'>
-            <h2 className='text-2xl font-bold'>{member.nickName}</h2>
+          <div className='flex flex-col flex-grow space-y-4'>
+            <div className='flex items-center justify-between'>
+              <h2 className='text-xl font-bold'>{member.nickName}</h2>
+              <Link to='/mypage/profile'>
+                <IconButton
+                  icon={() => (
+                    <img src={settingIcon} alt='setting' className='w-6 h-6' />
+                  )}
+                />
+              </Link>
+            </div>
             <p className='text-md'>{member.introduction}</p>
             <div className='flex flex-wrap mt-2'>
               {displayCategories.map((category, index) => (
                 <span
                   key={index}
-                  className='mr-2 mb-2 px-2 py-1 border rounded-lg text-gray-700 bg-gray-100'
+                  className='mr-2 mb-2 px-2 py-1 border rounded-lg text-gray-700 bg-pink-100'
                 >
-                  {category}
+                  {category === '...' ? '...' : getCategoryName(category)}
                 </span>
               ))}
             </div>
           </div>
         </div>
-        <div className='flex-none'>
-          <Link to='/mypage/profile'>
-            <button className='p-2 rounded'>
-              <img src={settingIcon} alt='setting' className='w-8 h-8' />
-            </button>
-          </Link>
-        </div>
       </div>
       <hr className='my-4' />
-      <div className='grid grid-cols-2 gap-x-8 gap-y-12 text-center'>
+      <div className='flex justify-around text-center'>
         <div className='flex flex-col items-center'>
           <Link to='/mypage/statistics'>
             <button className='p-4 rounded-full'>
@@ -101,6 +121,13 @@ const MyPage = () => {
           <p className='text-lg'>친구</p>
         </div>
       </div>
+      <ProfileModal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        profileImgUrl={member.profileImgUrl || profileImgSample}
+        nickname={member.nickName}
+        introduction={member.introduction}
+      />
     </div>
   );
 };

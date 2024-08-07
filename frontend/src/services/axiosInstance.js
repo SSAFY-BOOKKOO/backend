@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { getDefaultStore } from 'jotai';
 import { loadingAtom } from '@atoms/loadingAtom';
+import { isAuthenticatedAtom } from '@atoms/authAtom';
 
 const { MODE } = import.meta.env;
 
@@ -59,6 +60,7 @@ const createAxiosInstance = (useAuth = false) => {
           return instance(retryConfig);
         } catch (refreshError) {
           localStorage.removeItem('ACCESS_TOKEN');
+          getDefaultStore().set(isAuthenticatedAtom, false);
           window.location.href = '/login';
           return Promise.reject(refreshError);
         }

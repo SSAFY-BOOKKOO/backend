@@ -6,6 +6,7 @@ import Alert from '../../@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
 import CreateLibraryModal from './CreateLibraryModal';
 import ChangeLibraryNameModal from './ChangeLibraryNameModal';
+import { authAxiosInstance } from '@services/axiosInstance';
 
 const LibraryOptions = ({
   activeLibrary,
@@ -19,6 +20,7 @@ const LibraryOptions = ({
   newLibraryName,
   setNewLibraryName,
   changeLibraryName,
+  viewOnly = false, // 추가된 viewOnly prop
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -76,12 +78,14 @@ const LibraryOptions = ({
           ))}
         </select>
       </div>
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        onToggle={() => setIsSettingsOpen(!isSettingsOpen)}
-        actions={actions}
-      />
+      {!viewOnly && (
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          onToggle={() => setIsSettingsOpen(!isSettingsOpen)}
+          actions={actions}
+        />
+      )}
       <DeleteLibraryModal
         showDeleteModal={showDeleteModal}
         deleteLibrary={deleteLibrary}
@@ -98,7 +102,9 @@ const LibraryOptions = ({
         showModal={showChangeLibraryNameModal}
         newLibraryName={newLibraryName}
         setNewLibraryName={setNewLibraryName}
-        changeLibraryName={changeLibraryName}
+        changeLibraryName={() =>
+          changeLibraryName(libraries[activeLibrary].id, newLibraryName)
+        }
         setShowModal={setShowChangeLibraryNameModal}
       />
       <Alert />

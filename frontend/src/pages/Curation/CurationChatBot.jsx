@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import ChatBubble from '@components/@common/ChatBubble';
 import Input from '@components/@common/Input';
 import Button from '@components/@common/Button';
-import botImg from '@assets/icons/naver_login_icon.png';
+import bookkooBookIcon from '@assets/icons/bookkoo_book_icon.png';
+import { postChatbot } from '@services/Curation';
 
 const CurationChatBot = () => {
   const [messages, setMessages] = useState([]);
@@ -24,49 +25,48 @@ const CurationChatBot = () => {
     setMessages([
       {
         text: '안녕하세요! 저는 책을 추천해주는 북꾸입니다!',
-        role: 'bot',
+        role: 'assistant',
         time: new Date().toLocaleTimeString(),
-        profileImage: botImg,
+        profileImage: bookkooBookIcon,
         showProfile: true,
       },
     ]);
   }, []);
 
-  const handleSendMessage = e => {
+  const handleSendMessage = async e => {
     e.preventDefault();
 
     // 내용이 입력된 경우에만 전송
     if (inputMessage.trim() !== '') {
-      setMessages([
-        ...messages,
-        {
-          text: inputMessage,
-          role: 'user',
-          time: new Date().toLocaleTimeString(),
-        },
-      ]);
+      const newUserMessage = {
+        text: inputMessage,
+        role: 'user',
+        time: new Date().toLocaleTimeString(),
+      };
 
+      setMessages(prevMessages => [...prevMessages, newUserMessage]);
       setInputMessage('');
 
-      // API 연동 추가
+      try {
+        const data = await postChatbot(inputMessage);
+        const newBotMessage = {
+          text: data.content,
+          role: data.role,
+          time: new Date().toLocaleTimeString(),
+          profileImage: bookkooBookIcon,
+          showProfile: true,
+        };
 
-      setTimeout(() => {
-        setMessages(msgs => [
-          ...msgs,
-          {
-            text: '챗봇입니당',
-            role: 'bot',
-            time: new Date().toLocaleTimeString(),
-            profileImage: botImg,
-            showProfile: true,
-          },
-        ]);
-      }, 1000);
+        setMessages(prevMessages => [...prevMessages, newBotMessage]);
+      } catch (error) {
+        console.error('Error posting to chatbot:', error);
+        // 에러 처리 로직 추가
+      }
     }
   };
 
   return (
-    <div className='flex flex-col min-h-[calc(100vh-121px)] bg-gray-100'>
+    <div className='flex flex-col min-h-[calc(100vh-130px)] bg-gray-100'>
       <div className='flex-1 overflow-y-auto p-4 scrollbar-none'>
         {messages.map((message, index) => (
           <ChatBubble

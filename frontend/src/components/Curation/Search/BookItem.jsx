@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '../../@common/Button';
 import { useNavigate } from 'react-router-dom';
-
+import { authAxiosInstance } from '@services/axiosInstance';
 const BookItem = ({ book, onClick, onCreateClick }) => {
+  // const [idBook, setBook] = useState(book);
   const titleMaxLength = 10;
   const authorMaxLength = 24;
   const navigate = useNavigate();
@@ -28,14 +29,44 @@ const BookItem = ({ book, onClick, onCreateClick }) => {
 
   const handleButtonClick = e => {
     e.stopPropagation();
+    // axios 요청
+
+    const bookData = {
+      coverImgUrl: book.coverImgUrl,
+      author: book.author,
+      publisher: book.publisher,
+      summary: '...',
+      title: book.title,
+      isbn: book.isbn,
+      itemPage: 412,
+      sizeDepth: 20,
+      sizeHeight: 230,
+      sizeWidth: 150,
+      publishedAt: book.publishedAt,
+      category: {
+        id: 1,
+        name: 'string',
+      },
+    };
+
+    authAxiosInstance
+      .post('/books', bookData)
+      .then(res => {
+        console.log('ID 받아라!!:', res.data.id);
+        book.id=res.data.id
+        console.log('book 객체!!:', book)
+
+      })
+      .catch(err => {
+        console.log('error:', err);
+      });
+
     onCreateClick();
     navigateToCreate();
     console.log('눌렀음');
   };
 
-  // useEffect(() => {
-  //   console.log('Book object:', book);
-  // }, [book]);
+
   return (
     <div
       className='flex items-start space-x-4 p-3 mb-2 bg-white cursor-pointer'
@@ -51,6 +82,7 @@ const BookItem = ({ book, onClick, onCreateClick }) => {
 
       <div className='flex flex-col justify-between h-36 w-full'>
         <div className='flex flex-col space-y-1 overflow-hidden'>
+          {/* <p>{book}</p> */}
           <p className='text-overflow text-lg font-semibold'>{displayTitle}</p>
           <p className='text-sm text-gray-600'>{displayAuthor}</p>
           <p className='text-sm text-gray-600'>

@@ -51,9 +51,6 @@ const UserPage = () => {
 
   return (
     <div className='px-8'>
-      <h1 className='text-center text-2xl font-bold mb-2'>
-        {currentUser.username}
-      </h1>
       <div className='flex space-x-4 mb-2'>
         <button
           onClick={() => setView('following')}

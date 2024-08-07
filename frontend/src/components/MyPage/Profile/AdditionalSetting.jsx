@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
+import { useAtom } from 'jotai';
 import Button from '@components/@common/Button';
+import { authAxiosInstance } from '@services/axiosInstance';
+import { alertAtom } from '@atoms/alertAtom';
 
 const AdditionalSetting = ({ userInfo, onSave }) => {
-  const [formData, setFormData] = useState(userInfo);
+  const [formData, setFormData] = useState({
+    isLetterReceive: userInfo?.isLetterReceive ?? false,
+    reviewVisibility: userInfo?.reviewVisibility ?? 'PUBLIC',
+  });
+  const [, setAlert] = useAtom(alertAtom);
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
@@ -12,9 +19,28 @@ const AdditionalSetting = ({ userInfo, onSave }) => {
     });
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    onSave(formData);
+    try {
+      console.log(formData);
+      const response = await authAxiosInstance.put('/members/info/setting', {
+        isLetterReceive: formData.isLetterReceive,
+        reviewVisibility: formData.reviewVisibility,
+      });
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '설정이 성공적으로 저장되었습니다.',
+      });
+      onSave(response.data);
+    } catch (error) {
+      console.error('Failed to update settings:', error);
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '설정을 업데이트하는 중 오류가 발생했습니다.',
+      });
+    }
   };
 
   return (
@@ -27,10 +53,10 @@ const AdditionalSetting = ({ userInfo, onSave }) => {
             <label className='flex items-center'>
               <input
                 type='radio'
-                id='one_line_review_privacy-0'
-                name='one_line_review_privacy'
-                value='public_reveal'
-                checked={formData?.one_line_review_privacy === 'public_reveal'}
+                id='reviewVisibility-public'
+                name='reviewVisibility'
+                value='PUBLIC'
+                checked={formData.reviewVisibility === 'PUBLIC'}
                 onChange={handleChange}
               />
               <span className='ml-2'>모두에게</span>
@@ -38,12 +64,10 @@ const AdditionalSetting = ({ userInfo, onSave }) => {
             <label className='flex items-center'>
               <input
                 type='radio'
-                id='one_line_review_privacy-1'
-                name='one_line_review_privacy'
-                value='follower_reveal'
-                checked={
-                  formData?.one_line_review_privacy === 'follower_reveal'
-                }
+                id='reviewVisibility-follower_public'
+                name='reviewVisibility'
+                value='FOLLOWER_PUBLIC'
+                checked={formData.reviewVisibility === 'FOLLOWER_PUBLIC'}
                 onChange={handleChange}
               />
               <span className='ml-2'>팔로워에게만</span>
@@ -51,10 +75,10 @@ const AdditionalSetting = ({ userInfo, onSave }) => {
             <label className='flex items-center'>
               <input
                 type='radio'
-                id='one_line_review_privacy-2'
-                name='one_line_review_privacy'
-                value='private_reveal'
-                checked={formData?.one_line_review_privacy === 'private_reveal'}
+                id='reviewVisibility-private'
+                name='reviewVisibility'
+                value='PRIVATE'
+                checked={formData.reviewVisibility === 'PRIVATE'}
                 onChange={handleChange}
               />
               <span className='ml-2'>비공개</span>
@@ -70,8 +94,8 @@ const AdditionalSetting = ({ userInfo, onSave }) => {
           <div className='w-2/3 flex justify-end'>
             <input
               type='checkbox'
-              name='receiveLetters'
-              checked={formData?.receiveLetters}
+              name='isLetterReceive'
+              checked={formData.isLetterReceive}
               onChange={handleChange}
               className='h-6 w-6'
             />
