@@ -108,7 +108,7 @@ public class LibraryController {
             | Name | Type  | Description |
             |-----|-----|-------|
             | libraryId | number | 서재 ID |
-            | filter | Status(READ, READING, DIB) | 상태 |
+            | filter | Status(READ, READING, DIB) | 상태. 안 줄경우 ALL 로 간주 |
             | page | number | page: 페이지 |
             | size | number | size: 한페이지 내 들어갈 <b>책</b> 개수 |
             | sort | list(string) | 생략하기
