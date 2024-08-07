@@ -11,6 +11,7 @@ import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookOfLibraryDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import com.ssafy.bookkoo.bookservice.entity.Category;
+import com.ssafy.bookkoo.bookservice.exception.BookCreateFailedException;
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
 import com.ssafy.bookkoo.bookservice.exception.CategoryNotFoundException;
 import com.ssafy.bookkoo.bookservice.mapper.BookMapper;
@@ -23,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,9 +63,21 @@ public class BookServiceImpl implements BookService {
 
         book.setCategory(category);
 
-        // 책 저장
-        Book savedBook = bookRepository.save(book);
+        Book savedBook;
+        try {
+            // 책 저장
+            savedBook = bookRepository.save(book);
 
+        } catch (DataIntegrityViolationException e) {
+            // 중복된 ISBN으로 인한 예외 발생 시 다시 조회하여 반환
+            Book bookByIsbn = bookRepository.findByIsbn(bookDto.isbn());
+            if (bookByIsbn != null) {
+                return bookMapper.toResponseDto(bookByIsbn);
+            }
+            throw e; // 다른 예외는 다시 던짐
+        } catch (Exception e) {
+            throw new BookCreateFailedException(e.getMessage());
+        }
         // 엔티티를 DTO로 변환
         return bookMapper.toResponseDto(savedBook);
     }
@@ -185,7 +199,7 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     public ResponseBookOfLibraryDto getBookOfLibrary(Long bookId, Long memberId) {
-        
+
         return bookRepository.getBookOfLibrary(bookId, memberId);
     }
 
