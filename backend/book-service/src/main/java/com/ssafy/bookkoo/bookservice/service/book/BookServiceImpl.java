@@ -18,6 +18,8 @@ import com.ssafy.bookkoo.bookservice.mapper.BookMapper;
 import com.ssafy.bookkoo.bookservice.repository.book.BookRepository;
 import com.ssafy.bookkoo.bookservice.repository.category.CategoryRepository;
 import com.ssafy.bookkoo.bookservice.util.AladinAPI.AladinAPIHandler;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -34,6 +36,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
+
+    @PersistenceContext
+    private EntityManager em;
 
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
@@ -52,34 +57,34 @@ public class BookServiceImpl implements BookService {
         // DTO를 엔티티로 변환
         Book book = bookMapper.toEntity(bookDto);
 
-        Category category = categoryRepository.findById(bookDto
-                                                  .category()
-                                                  .getId()
-                                              )
-                                              .orElseThrow(
-                                                  () -> new CategoryNotFoundException(
-                                                      "category Not found")
-                                              );
+        Category category = categoryRepository.findById(bookDto.category()
+                                                               .getId())
+                                              .orElseThrow(() -> new CategoryNotFoundException(
+                                                  "Category not found"));
 
         book.setCategory(category);
 
-        Book savedBook;
         try {
+            // 먼저 ISBN으로 책이 존재하는지 확인
+            Book existingBook = bookRepository.findByIsbn(bookDto.isbn());
+            if (existingBook != null) {
+                return bookMapper.toResponseDto(existingBook);
+            }
+
             // 책 저장
-            savedBook = bookRepository.save(book);
+            Book savedBook = bookRepository.save(book);
+            return bookMapper.toResponseDto(savedBook);
 
         } catch (DataIntegrityViolationException e) {
-            // 중복된 ISBN으로 인한 예외 발생 시 다시 조회하여 반환
+            // 동시성 문제로 인해 저장 실패 시 다시 한 번 조회
             Book bookByIsbn = bookRepository.findByIsbn(bookDto.isbn());
             if (bookByIsbn != null) {
                 return bookMapper.toResponseDto(bookByIsbn);
             }
-            throw e; // 다른 예외는 다시 던짐
+            throw new BookCreateFailedException(e.getMessage());
         } catch (Exception e) {
             throw new BookCreateFailedException(e.getMessage());
         }
-        // 엔티티를 DTO로 변환
-        return bookMapper.toResponseDto(savedBook);
     }
 
     /**
