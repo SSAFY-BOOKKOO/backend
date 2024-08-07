@@ -99,10 +99,12 @@ public class LibraryController {
     @Operation(summary = "서재 단일 조회", description = "서재 단일 조회 API")
     public ResponseEntity<ResponseLibraryDto> getLibrary(
         @PathVariable Long libraryId,
-        @RequestParam(required = false) Status filter
+        @RequestParam(required = false) Status filter,
+        @RequestParam(defaultValue = "0") Integer page,
+        @RequestParam(defaultValue = "9") Integer size
     ) {
         return ResponseEntity.ok()
-                             .body(libraryService.getLibrary(libraryId, filter));
+                             .body(libraryService.getLibrary(libraryId, filter, page, size));
     }
 
     /**
