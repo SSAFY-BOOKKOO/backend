@@ -247,7 +247,7 @@ const LibraryMain = () => {
 
   const handleBookClick = item => {
     navigate(`/library/${libraries[activeLibrary].id}/detail/${item.book.id}`, {
-      state: { book: item.book, libraryId: libraries[activeLibrary].id },
+      state: { nickname: member.nickName },
     });
   };
 

@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import RegisterStep1 from '@components/Register/RegisterStep1';
 import RegisterStep2 from '@components/Register/RegisterStep2';
-import RegisterStep3 from '@components/Register/RegisterStep3';
 import RegisterStep3 from '@components/Register/RegisterStep3';
 import WrapContainer from '@components/Layout/WrapContainer';
 import Alert from '@components/@common/Alert';
@@ -34,10 +33,6 @@ const RegisterPage = () => {
     gender: '',
     categories: [],
     socialType: 'bookkoo',
-    memberSettingDto: {
-      isLetterReceive: false,
-      reviewVisibility: 'PUBLIC',
-    },
     memberSettingDto: {
       isLetterReceive: false,
       reviewVisibility: 'PUBLIC',

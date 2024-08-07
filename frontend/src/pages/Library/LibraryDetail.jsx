@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AiFillStar } from 'react-icons/ai';
-import { useLocation, useParams, useNavigate } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import { useAtom } from 'jotai';
 import useModal from '@hooks/useModal';
@@ -15,8 +15,8 @@ import { authAxiosInstance } from '@services/axiosInstance';
 import './LibraryDetail.css';
 
 const LibraryDetail = () => {
-  const { state } = useLocation();
-  const { id } = useParams();
+  const { libraryId, bookId } = useParams();
+  const location = useLocation();
   const [showReview, setShowReview] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showShelfSelect, setShowShelfSelect] = useState(false);
@@ -25,13 +25,38 @@ const LibraryDetail = () => {
   const maxLength = 80;
   const authorMaxLength = 14;
   const titleMaxLength = 10;
+  const [book, setBook] = useState(null);
+  const { isOpen, closeModal, toggleModal } = useModal();
 
-  // book 정보 받기
-  const { title, author, publisher, summary, cover_img_url } = state.book;
+  useEffect(() => {
+    const fetchBookData = async () => {
+      try {
+        const response = await authAxiosInstance.get(
+          `/libraries/${libraryId}/books/${bookId}?nickname=${location.state.nickname}`
+        );
+        setBook(response.data);
+      } catch (error) {
+        console.log(location.state);
+        console.error('Failed to fetch book data:', error);
+      }
+    };
+    fetchBookData();
+  }, [libraryId, bookId, location.state.nickname]);
 
-  // 삭제 로직
-  const handleDelete = bookId => {
-    console.log({ bookId });
+  if (!book) {
+    return <div>Loading...</div>;
+  }
+
+  const {
+    title = '',
+    author = '',
+    publisher = '',
+    summary = '',
+    coverImgUrl,
+    status,
+  } = book;
+
+  const handleDelete = () => {
     navigate('/library', { state: { deleteBookId: bookId } });
   };
 
@@ -95,7 +120,6 @@ const LibraryDetail = () => {
             />
           ) : (
             // 앞면
-
             <div className='w-10/12 max-w-md h-10/12 flex flex-col'>
               {/* 1. 회색 영역 */}
               <div className='relative bg-zinc-300 rounded-t-lg w-3/2 max-w-md h-4/5 flex flex-col justify-between overflow-auto'>
@@ -112,7 +136,10 @@ const LibraryDetail = () => {
                 <div>
                   <div className='relative flex flex-col items-center'>
                     <img
-                      src='https://marketplace.canva.com/EAF9gve36_w/1/0/1003w/canva-%EB%85%B8%EB%9E%80%EC%83%89-%ED%95%98%EB%8A%98%EC%83%89-%EA%B3%A0%EC%96%91%EC%9D%B4-%EB%B2%A0%EC%8A%A4%ED%8A%B8%EC%85%80%EB%9F%AC-%EC%B1%85%ED%91%9C%EC%A7%80-u-BROyrLSjI.jpg'
+                      src={
+                        coverImgUrl ||
+                        'https://marketplace.canva.com/EAF9gve36_w/1/0/1003w/canva-%EB%85%B8%EB%9E%80%EC%83%89-%ED%95%98%EB%8A%98%EC%83%89-%EA%B3%A0%EC%96%91%EC%9D%B4-%EB%B2%A0%EC%8A%A4%ED%8A%B8%EC%85%80%EB%9F%AC-%EC%B1%85%ED%91%9C%EC%A7%80-u-BROyrLSjI.jpg'
+                      }
                       alt={title}
                       className='w-10/12 h-4/5 pt-6 pr-7 pl-12 cursor-pointer rounded-lg mt-[2rem] z-0'
                       onClick={() => setShowReview(true)}
@@ -128,7 +155,7 @@ const LibraryDetail = () => {
                           letterSpacing: '-0.23em',
                         }}
                       >
-                        읽는중
+                        {status}
                       </span>
                     </div>
                     {/* 읽은 기간 로직 (수정예정) */}
@@ -142,7 +169,6 @@ const LibraryDetail = () => {
               <div className='relative bg-pink-500 rounded-b-md opacity-70 w-full h-[215px]'>
                 <div className='absolute left-6 top-0 bottom-0 w-1 bg-gray-800 z-10'></div>
                 <div className='p-4 pl-14 pt-5'>
-                  {' '}
                   <div className='flex flex-grow'>
                     <h2 className='text-2xl text-black font-bold'>
                       {displayTitleSummary}
@@ -151,8 +177,6 @@ const LibraryDetail = () => {
                   <div className='flex space-x-1 mt-1'>
                     {Array(5).fill(<AiFillStar className='text-amber-300' />)}
                   </div>
-                  {/* 읽은 기간 */}
-                  {/* 읽은 상태 */}
                   <p className='text-lg text-black'>{displayAuthorSummary}</p>
                   <p className='text-sm text-black'>{publisher} | 2022-07-14</p>
                   <p className='mt-2 text-sm text-black'>{displaySummary}</p>
