@@ -1,5 +1,6 @@
 package com.ssafy.bookkoo.bookservice.handler;
 
+import com.ssafy.bookkoo.bookservice.exception.BookCreateFailedException;
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
 import com.ssafy.bookkoo.bookservice.exception.CategoryNotFoundException;
 import com.ssafy.bookkoo.bookservice.exception.InvalidAttributeException;
@@ -75,5 +76,17 @@ public class BookExceptionHandler {
         WebRequest request
     ) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * 책 생성 중 에러 발생
+     *
+     * @param e BookCreateFailedException
+     * @return 에러코드 + 설명
+     */
+    @ExceptionHandler(BookCreateFailedException.class)
+    public ResponseEntity<String> handleBookCreateFailedException(BookCreateFailedException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(e.getMessage());
     }
 }

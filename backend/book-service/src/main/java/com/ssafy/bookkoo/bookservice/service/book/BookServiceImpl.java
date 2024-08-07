@@ -11,6 +11,7 @@ import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookOfLibraryDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseCheckBooksByIsbnDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import com.ssafy.bookkoo.bookservice.entity.Category;
+import com.ssafy.bookkoo.bookservice.exception.BookCreateFailedException;
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
 import com.ssafy.bookkoo.bookservice.exception.CategoryNotFoundException;
 import com.ssafy.bookkoo.bookservice.mapper.BookMapper;
@@ -23,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,12 +63,18 @@ public class BookServiceImpl implements BookService {
 
         book.setCategory(category);
 
-        // 책 저장
-        Book savedBook = bookRepository.save(book);
+        Book savedBook;
+        try {
+            // 책 저장
+            savedBook = bookRepository.save(book);
+        } catch (DataIntegrityViolationException e) {
+            throw new BookCreateFailedException(e.getMessage());
+        }
 
         // 엔티티를 DTO로 변환
         return bookMapper.toResponseDto(savedBook);
     }
+
 
     /**
      * 검색 조건을 기반으로 책 목록을 조회합니다.
@@ -143,7 +151,10 @@ public class BookServiceImpl implements BookService {
      * @throws URISyntaxException   URI 구문 예외
      */
     @Override
-    public ResponseAladinAPI searchBooksFromAladin(Long memberId, AladinAPISearchParams params)
+    public ResponseAladinAPI searchBooksFromAladin(
+        Long memberId,
+        AladinAPISearchParams params
+    )
         throws IOException, InterruptedException, URISyntaxException {
         return aladinAPIHandler.searchBooks(memberId, params);
     }
@@ -184,8 +195,11 @@ public class BookServiceImpl implements BookService {
      * @return ResponseBookOfLibraryDto
      */
     @Override
-    public ResponseBookOfLibraryDto getBookOfLibrary(Long bookId, Long memberId) {
-        
+    public ResponseBookOfLibraryDto getBookOfLibrary(
+        Long bookId,
+        Long memberId
+    ) {
+
         return bookRepository.getBookOfLibrary(bookId, memberId);
     }
 
@@ -216,16 +230,24 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public ResponseBookDto getOrCreateBookByBookData(RequestCreateBookDto bookDto) {
-        // isbn으로 조회했을 때 결과
-        Book bookByIsbn = bookRepository.findByIsbn(bookDto.isbn());
+        try {
+            // isbn으로 조회했을 때 결과
+            Book bookByIsbn = bookRepository.findByIsbn(bookDto.isbn());
 
-        // 만약 결과가 존재하면 그대로 반환
-        if (bookByIsbn != null) {
-            return bookMapper.toResponseDto(bookByIsbn);
+            // 만약 결과가 존재하면 그대로 반환
+            if (bookByIsbn != null) {
+                return bookMapper.toResponseDto(bookByIsbn);
+            }
+            // 없으면 생성
+            return createBook(bookDto);
+        } catch (Exception e) {
+            // 중복된 ISBN으로 인한 예외 발생 시 다시 조회하여 반환
+            Book bookByIsbn = bookRepository.findByIsbn(bookDto.isbn());
+            if (bookByIsbn != null) {
+                return bookMapper.toResponseDto(bookByIsbn);
+            }
+            throw new BookCreateFailedException(e.getMessage()); // 다른 예외는 다시 던짐
         }
-
-        // 없으면 생성
-        return createBook(bookDto);
     }
 
     /**
