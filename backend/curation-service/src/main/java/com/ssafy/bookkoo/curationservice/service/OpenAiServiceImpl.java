@@ -13,6 +13,7 @@ import com.ssafy.bookkoo.curationservice.dto.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseRecentFiveBookDto;
 import com.ssafy.bookkoo.curationservice.entity.Role;
 import com.ssafy.bookkoo.curationservice.exception.MemberNotFoundException;
+import com.ssafy.bookkoo.curationservice.exception.MessageParsingException;
 import com.ssafy.bookkoo.curationservice.exception.OpenAiException;
 import feign.FeignException;
 import java.util.ArrayList;
@@ -130,8 +131,7 @@ public class OpenAiServiceImpl implements OpenAiService {
                                        .path("message");
             return objectMapper.writeValueAsString(messageNode);
         } catch (Exception e) {
-            //TODO Exception 추가
-            throw new RuntimeException("Failed to parse response body", e);
+            throw new MessageParsingException();
         }
     }
 
