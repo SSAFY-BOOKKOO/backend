@@ -175,7 +175,7 @@ public class MemberServiceImpl implements MemberService {
         //기본 프로필 이미지 or 소셜 로그인의 경우 profileImgUrl
         String imgUrl = profileImgUrl == null ? DEFAULT_IMG_URL : profileImgUrl;
         if (profileImg != null) {
-            imgUrl = commonServiceClient.saveProfileImg(profileImg, BUCKET);
+            imgUrl = commonServiceClient.saveImg(profileImg, BUCKET);
         }
         MemberInfo memberInfo = MemberInfo.builder()
                                           .id(additionalInfo.id())

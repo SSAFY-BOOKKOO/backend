@@ -14,12 +14,12 @@ import org.springframework.web.multipart.MultipartFile;
 public interface CommonServiceClient {
 
     @PostMapping(value = "/commons/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    String saveProfileImg(
+    String saveImg(
         @RequestPart(name = "file") MultipartFile profileImg,
         @RequestPart(name = "bucket") String bucket);
 
     @DeleteMapping(value = "/commons/file")
-    void deleteProfileImg(
+    void deleteImg(
         @RequestParam(name = "file") String file,
         @RequestParam(name = "bucket") String bucket);
 
