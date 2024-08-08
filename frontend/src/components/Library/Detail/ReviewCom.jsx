@@ -61,37 +61,27 @@ const ReviewCom = ({ onBackClick, book }) => {
   const [showModal, setShowModal] = useState(false);
   const [currentReview, setCurrentReview] = useState(null);
 
-  useEffect(() => {
-    console.log(surfingReviews);
-  }, [surfingReviews]);
-
   // 리뷰 처음 제시
   useEffect(() => {
+    fetchReviews();
+  }, [id]);
+
+  const fetchReviews = () => {
     const bookId = id;
     authAxiosInstance
       .get(`/books/${bookId}/reviews/surfing`, { params: { bookId } })
       .then(res => {
         setSurfingReviews(Array.isArray(res.data) ? res.data : []);
-        console.log(res.data);
+        console.log('Fetched reviews:', res.data);
       })
       .catch(err => {
         console.log(err);
       });
-  }, [id]);
+  };
 
   // 새로고침
   const handleReviewRefresh = () => {
-    const bookId = id;
-    authAxiosInstance
-      .get(`/books/${bookId}/reviews/surfing`, { params: { bookId } })
-      .then(res => {
-        setSurfingReviews(Array.isArray(res.data.book) ? res.data.book : []);
-        console.log(res);
-      })
-      .catch(err => {
-        console.log(err);
-        console.log(bookId);
-      });
+    fetchReviews();
   };
 
   // 책 정보 보기 버튼
@@ -116,7 +106,6 @@ const ReviewCom = ({ onBackClick, book }) => {
       .post(`/books/${bookId}/reviews`, { content: reviewText, rating: rating })
       .then(res => {
         console.log('리뷰 아이디: ', res.data.id);
-        // reviewId 잘 들어감
         book.reviewId = res.data.id;
         console.log('book 객체!!:', book);
       })
@@ -131,19 +120,6 @@ const ReviewCom = ({ onBackClick, book }) => {
     console.log('Selected Review:', review); // review 객체 전체를 출력
     setCurrentReview(review);
     setShowModal(true);
-    // const bookId = review.bookId;
-    // const reviewId = review.id;
-    // authAxiosInstance
-    //   .get(`/books/${bookId}/reviews/${reviewId}`)
-    //   .then(res => {
-    //     console.log('Review Data:', res.data);
-    //     setCurrentReview(res.data);
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //     console.log(bookId);
-    //     console.log(id);
-    //   });
   };
 
   return (
