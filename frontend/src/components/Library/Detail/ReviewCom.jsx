@@ -4,7 +4,7 @@ import Button from '../../@common/Button';
 import { MdOutlineRefresh } from 'react-icons/md';
 import { CgProfile } from 'react-icons/cg';
 import { authAxiosInstance } from '@services/axiosInstance';
-// import Surfing from '../Detail/Surfing';
+import { useNavigate } from 'react-router-dom';
 
 // 모달
 const Modal = ({ show, onClose, review }) => {
@@ -12,21 +12,47 @@ const Modal = ({ show, onClose, review }) => {
     return null;
   }
 
+  const navigate = useNavigate();
+
+  const handleLibraryNavigation = () => {
+    const nickname = review.member.nickName;
+    navigate('/library', { state: { nickname } });
+  };
+
+  console.log('Modal Review:', review);
+
   return (
     <div className='fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50'>
-      <div className='bg-white p-4 rounded shadow-lg w-1/2 max-w-md'>
-        {/* <h2 className='text-xl font-bold mb-4'>{review.member.nickName}</h2> */}
-        <div className='flex justify-end'>
-          <Button text='X' size='small' color='text-black' onClick={onClose} />
+      <div className='bg-green-300 p-3 rounded-lg shadow-lg w-2/3 max-w-md'>
+        <div className='flex justify-between items-center'>
+          <div className='flex items-center'>
+            <img
+              src={review?.member?.profilImgUrl}
+              alt='Profile'
+              className='w-11 h-11 rounded-full mr-2'
+            />
+            <p className='mt-3 font-bold text-xl'>{review?.member?.nickName}</p>
+          </div>
+          <button onClick={onClose} className='pr-2 mt-2'>
+            X
+          </button>
         </div>
-        <p>{review.content}</p>
+        <p>{review?.content}</p>
+        <div className='flex justify-center items-center h-full'>
+          <button
+            onClick={handleLibraryNavigation}
+            className='bg-pink-500 mt-4 p-3 rounded-lg text-center text-md font-bold'
+          >
+            서재 구경하러 가기
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
 const ReviewCom = ({ onBackClick, book }) => {
-  const { id, title, author, publisher, summary, coverImgUrl } = book;
+  const { id, title } = book;
   const [editReview, setEditingReview] = useState(false);
   const [reviewText, setReviewText] = useState('');
   const [surfingReviews, setSurfingReviews] = useState([]);
@@ -37,7 +63,7 @@ const ReviewCom = ({ onBackClick, book }) => {
 
   useEffect(() => {
     console.log(surfingReviews);
-  }, []);
+  }, [surfingReviews]);
 
   // 리뷰 처음 제시
   useEffect(() => {
@@ -102,21 +128,22 @@ const ReviewCom = ({ onBackClick, book }) => {
 
   // 리뷰 더보기
   const handleMoreReview = review => {
-    const bookId = review.bookId;
-    const reviewId = review.id;
-    authAxiosInstance
-      .get(`/books/${bookId}/reviews/${reviewId}`)
-      .then(res => {
-        // console.log(res);
-        setCurrentReview(res.data);
-        // console.log(currentReview);
-        setShowModal(true);
-      })
-      .catch(err => {
-        console.log(err);
-        console.log(bookId);
-        console.log(id);
-      });
+    console.log('Selected Review:', review); // review 객체 전체를 출력
+    setCurrentReview(review);
+    setShowModal(true);
+    // const bookId = review.bookId;
+    // const reviewId = review.id;
+    // authAxiosInstance
+    //   .get(`/books/${bookId}/reviews/${reviewId}`)
+    //   .then(res => {
+    //     console.log('Review Data:', res.data);
+    //     setCurrentReview(res.data);
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //     console.log(bookId);
+    //     console.log(id);
+    //   });
   };
 
   return (
@@ -146,7 +173,7 @@ const ReviewCom = ({ onBackClick, book }) => {
 
         {surfingReviews.map((review, index) => (
           <div key={index} className='flex items-center pb-2 pr-1 mr-4 w-10/12'>
-            <div className='flex justify-between bg-white w-full p-2 mb-4 h-auto rounded-lg opacity-70'>
+            <div className='flex justify-between bg-white w-full p-2 mb-1 h-auto rounded-lg opacity-70'>
               <div
                 className='flex items-center space-x-3 cursor-pointer'
                 onClick={() => handleMoreReview(review)}
@@ -155,10 +182,11 @@ const ReviewCom = ({ onBackClick, book }) => {
                   src={review.member.profilImgUrl}
                   alt='Profile'
                   className='w-11 h-11 rounded-full mr-2'
-                  // onClick={handleMoreReview}
                 />
                 <div>
-                  <p className='font-bold'>{review.member.nickName}</p>
+                  <p className='font-bold text-overflow-1'>
+                    {review.member.nickName}
+                  </p>
                   <p className='text-overflow-2'>{review.content}</p>
                 </div>
               </div>
