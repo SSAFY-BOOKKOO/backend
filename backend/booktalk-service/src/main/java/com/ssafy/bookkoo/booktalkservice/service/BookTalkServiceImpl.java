@@ -113,19 +113,17 @@ public class BookTalkServiceImpl implements BookTalkService {
     }
 
     /**
-     * 사용자가 북톡에 참여한 책 반환
+     * 북톡에 있는 책 반환
      *
-     * @param memberId  멤버 ID
      * @param searchDto 검색 조건
      * @return List(ResponseBookDto)
      */
     @Override
     public List<ResponseBookDto> searchBookTalkBooks(
-        Long memberId,
         RequestSearchBookMultiFieldDto searchDto
     ) {
         // 라이브러리 ID로 연결된 책 ID 목록을 가져옵니다.
-        List<Long> bookIds = bookTalkMapperRepository.findBookIdsByMemberId(memberId);
+        List<Long> bookIds = bookTalkMapperRepository.findAllBookIds();
         // 없을 경우
         if (bookIds.isEmpty()) {
             return List.of();

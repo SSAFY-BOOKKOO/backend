@@ -76,14 +76,12 @@ public interface BookTalkService {
     ResponseBookTalkDto getBookTalkByBookId(Long bookId);
 
     /**
-     * 사용자가 북톡에 참여한 책 반환
+     * 북톡에 있는 책 반환
      *
-     * @param memberId  멤버 ID
      * @param searchDto 검색 조건
      * @return List(ResponseBookDto)
      */
     List<ResponseBookDto> searchBookTalkBooks(
-        Long memberId,
         RequestSearchBookMultiFieldDto searchDto
     );
 
