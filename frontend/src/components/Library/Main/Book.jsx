@@ -46,7 +46,7 @@ const Book = ({ item, index, moveBook, onBookClick, viewOnly }) => {
   const titleLength = {
     short: 7,
     medium: 8,
-    tall: 9,
+    tall: 10,
   }[
     item.book.sizeHeight <= 210
       ? 'short'
