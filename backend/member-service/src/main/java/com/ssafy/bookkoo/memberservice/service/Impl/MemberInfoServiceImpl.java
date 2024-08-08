@@ -6,6 +6,7 @@ import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdateMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberProfileDto;
+import com.ssafy.bookkoo.memberservice.dto.response.ResponseRecipientDto;
 import com.ssafy.bookkoo.memberservice.entity.Member;
 import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapper;
 import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapperKey;
@@ -136,7 +137,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @return
      */
     @Override
-    public List<Long> getRandomMemberInfo(List<Long> followers) {
+    public List<Long> getRandomMemberInfoId(List<Long> followers) {
         return memberInfoRepository.findRandomMemberInfoIdByFollowers(followers);
     }
 
@@ -188,6 +189,16 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         updateCategories(memberInfo, memberInfoUpdateDto.categories());
         memberInfo.setIntroduction(memberInfoUpdateDto.introduction());
         memberInfoRepository.flush();
+    }
+
+    /**
+     * 큐레이션 레터의 수신자들의 정보 (ID, email, 이메일 수신 여부 반환)
+     * @param recipientIds
+     * @return
+     */
+    @Override
+    public List<ResponseRecipientDto> getRecipientsInfo(List<Long> recipientIds) {
+        return memberInfoRepository.findByRecipientsInfoByIds(recipientIds);
     }
 
     /**

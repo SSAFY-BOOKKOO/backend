@@ -7,7 +7,7 @@ import lombok.Builder;
 @Builder
 public record RequestUpdateMemberInfoDto(
     @NotNull(message = "nickName can not be null") String nickName,
-    @MaxArray(value = 15) Integer[] categories,
+    @MaxArray(minValue = 1, maxValue = 15) Integer[] categories,
     String introduction
 ) {
 
