@@ -14,8 +14,9 @@ public interface BookTalkService {
      * 독서록을 생성하는 메서드
      *
      * @param dto : 책 번호
+     * @return 생성된 독서록 번호
      */
-    void createBookTalk(RequestCreateBookTalkDto dto);
+    Long createBookTalk(RequestCreateBookTalkDto dto);
 
 
     /**

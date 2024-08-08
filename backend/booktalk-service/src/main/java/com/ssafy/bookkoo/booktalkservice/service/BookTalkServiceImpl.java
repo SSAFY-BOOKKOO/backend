@@ -24,7 +24,7 @@ public class BookTalkServiceImpl implements BookTalkService {
     private final BookServiceClient bookServiceClient;
 
     @Override
-    public void createBookTalk(RequestCreateBookTalkDto dto) {
+    public Long createBookTalk(RequestCreateBookTalkDto dto) {
         // TODO 없는 책이라면 Exception
         // 이미 있는 책이면 exception
         // TODO Exception 생성
@@ -35,6 +35,7 @@ public class BookTalkServiceImpl implements BookTalkService {
                                     .book(dto.bookId())
                                     .build();
         bookTalkRepository.save(bookTalk);
+        return bookTalk.getId();
     }
 
     @Override
