@@ -1,6 +1,15 @@
 package com.ssafy.bookkoo.memberservice.handler;
 
-import com.ssafy.bookkoo.memberservice.exception.*;
+import com.ssafy.bookkoo.memberservice.exception.AlreadyFollowedException;
+import com.ssafy.bookkoo.memberservice.exception.EmailDuplicateException;
+import com.ssafy.bookkoo.memberservice.exception.EmailNotValidException;
+import com.ssafy.bookkoo.memberservice.exception.EmailSendFailException;
+import com.ssafy.bookkoo.memberservice.exception.FollowShipNotFoundException;
+import com.ssafy.bookkoo.memberservice.exception.MemberInfoNotExistException;
+import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
+import com.ssafy.bookkoo.memberservice.exception.NickNameDuplicateException;
+import com.ssafy.bookkoo.memberservice.exception.PasswordNotValidException;
+import com.ssafy.bookkoo.memberservice.exception.QuoteNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -108,12 +117,25 @@ public class MemberExceptionHandler {
 
     /**
      * 이미 팔로우한 상태에서 다시 요청했을 때 발생하는 예외
+     *
      * @param e
      * @return
      */
     @ExceptionHandler(AlreadyFollowedException.class)
     public ResponseEntity<String> handleAlreadyFollowedException(AlreadyFollowedException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * 해당 글귀를 찾을 수 없을 때 발생하는 예외 입니다.
+     *
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(QuoteNotFoundException.class)
+    public ResponseEntity<String> handleQuoteNotFoundException(QuoteNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                              .body(e.getMessage());
     }
 }
