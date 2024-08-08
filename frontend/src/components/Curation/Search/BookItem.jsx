@@ -53,9 +53,8 @@ const BookItem = ({ book, onClick, onCreateClick }) => {
       .post('/books', bookData)
       .then(res => {
         console.log('ID 받아라!!:', res.data.id);
-        book.id=res.data.id
-        console.log('book 객체!!:', book)
-
+        book.id = res.data.id;
+        console.log('book 객체!!:', book);
       })
       .catch(err => {
         console.log('error:', err);
@@ -65,7 +64,6 @@ const BookItem = ({ book, onClick, onCreateClick }) => {
     navigateToCreate();
     console.log('눌렀음');
   };
-
 
   return (
     <div

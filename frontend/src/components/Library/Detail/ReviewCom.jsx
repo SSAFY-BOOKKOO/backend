@@ -4,6 +4,7 @@ import Button from '../../@common/Button';
 import { MdOutlineRefresh } from 'react-icons/md';
 import { CgProfile } from 'react-icons/cg';
 import { authAxiosInstance } from '@services/axiosInstance';
+// import Surfing from '../Detail/Surfing';
 
 // 모달
 const Modal = ({ show, onClose, review }) => {
@@ -13,15 +14,12 @@ const Modal = ({ show, onClose, review }) => {
 
   return (
     <div className='fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50'>
-      <div className='bg-white p-4 rounded shadow-lg w-10/12 max-w-md'>
-        <h2 className='text-xl font-bold mb-4'>{review.member.nickName}</h2>
+      <div className='bg-white p-4 rounded shadow-lg w-1/2 max-w-md'>
+        {/* <h2 className='text-xl font-bold mb-4'>{review.member.nickName}</h2> */}
+        <div className='flex justify-end'>
+          <Button text='X' size='small' color='text-black' onClick={onClose} />
+        </div>
         <p>{review.content}</p>
-        <Button
-          text='Close'
-          size='small'
-          color='text-black bg-rose-300'
-          onClick={onClose}
-        />
       </div>
     </div>
   );
@@ -41,13 +39,14 @@ const ReviewCom = ({ onBackClick, book }) => {
     console.log(surfingReviews);
   }, []);
 
+  // 리뷰 처음 제시
   useEffect(() => {
     const bookId = id;
     authAxiosInstance
       .get(`/books/${bookId}/reviews/surfing`, { params: { bookId } })
       .then(res => {
         setSurfingReviews(Array.isArray(res.data) ? res.data : []);
-        console.log(res);
+        console.log(res.data);
       })
       .catch(err => {
         console.log(err);
@@ -90,8 +89,10 @@ const ReviewCom = ({ onBackClick, book }) => {
     authAxiosInstance
       .post(`/books/${bookId}/reviews`, { content: reviewText, rating: rating })
       .then(res => {
-        console.log(res);
-        setReviewId(res.data.id);
+        console.log('리뷰 아이디: ', res.data.id);
+        // reviewId 잘 들어감
+        book.reviewId = res.data.id;
+        console.log('book 객체!!:', book);
       })
       .catch(err => {
         console.log(err);
@@ -99,37 +100,22 @@ const ReviewCom = ({ onBackClick, book }) => {
       });
   };
 
-  // 특정 리뷰 보기
-  // const handleMoreReview = reviewId => {
-  //   const bookId = id;
-  //   authAxiosInstance
-  //     .get(`/books/${bookId}/reviews/${reviewId}`)
-  //     .then(res => {
-  //       setCurrentReview(res.data);
-  //       setShowModal(true);
-  //       console.log(res);
-  //     })
-  //     .catch(err => {
-  //       console.log(err);
-  //       console.log(bookId);
-  //     });
-  // };
-
-  const handleMoreReview = () => {
-    const bookId = id;
+  // 리뷰 더보기
+  const handleMoreReview = review => {
+    const bookId = review.bookId;
+    const reviewId = review.id;
     authAxiosInstance
-      .get(`/books/${bookId}/reviews/${reviewId}`, {
-        bookId: id,
-        reviewId: reviewId,
-      })
+      .get(`/books/${bookId}/reviews/${reviewId}`)
       .then(res => {
-        console.log(res);
+        // console.log(res);
         setCurrentReview(res.data);
+        // console.log(currentReview);
         setShowModal(true);
       })
       .catch(err => {
         console.log(err);
         console.log(bookId);
+        console.log(id);
       });
   };
 
@@ -161,12 +147,15 @@ const ReviewCom = ({ onBackClick, book }) => {
         {surfingReviews.map((review, index) => (
           <div key={index} className='flex items-center pb-2 pr-1 mr-4 w-10/12'>
             <div className='flex justify-between bg-white w-full p-2 mb-4 h-auto rounded-lg opacity-70'>
-              <div className='flex items-center space-x-3 cursor-pointer'>
+              <div
+                className='flex items-center space-x-3 cursor-pointer'
+                onClick={() => handleMoreReview(review)}
+              >
                 <img
                   src={review.member.profilImgUrl}
                   alt='Profile'
                   className='w-11 h-11 rounded-full mr-2'
-                  onClick={handleMoreReview()}
+                  // onClick={handleMoreReview}
                 />
                 <div>
                   <p className='font-bold'>{review.member.nickName}</p>
