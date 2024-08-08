@@ -12,7 +12,7 @@ public record RequestAdditionalInfo(
     @NotNull(message = "nickName can not be null") String nickName,
     Integer year,
     Gender gender,
-    @MaxArray(value = 15) Integer[] categories,
+    @MaxArray(minValue = 1, maxValue = 15) Integer[] categories,
     String introduction,
     String profileImgUrl) {
 

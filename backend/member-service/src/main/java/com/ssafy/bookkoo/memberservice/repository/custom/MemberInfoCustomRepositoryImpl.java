@@ -1,9 +1,13 @@
 package com.ssafy.bookkoo.memberservice.repository.custom;
 
+import static com.ssafy.bookkoo.memberservice.entity.QMember.member;
 import static com.ssafy.bookkoo.memberservice.entity.QMemberInfo.memberInfo;
+import static com.ssafy.bookkoo.memberservice.entity.QMemberSetting.memberSetting;
 
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.bookkoo.memberservice.dto.response.QResponseRecipientDto;
+import com.ssafy.bookkoo.memberservice.dto.response.ResponseRecipientDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -28,6 +32,29 @@ public class MemberInfoCustomRepositoryImpl implements MemberInfoCustomRepositor
                            .orderBy(Expressions.numberTemplate(Double.class, "function('RANDOM')")
                                                .asc())
                            .limit(3)
+                           .fetch();
+    }
+
+    /**
+     * 멤버, 멤버 정보, 멤버 세팅 조인을 통해 
+     * 멤버 Long id
+     * 이메일
+     * 이메일 수신 여부를 반환
+     * @param recipientIds
+     * @return
+     */
+    @Override
+    public List<ResponseRecipientDto> findByRecipientsInfoByIds(List<Long> recipientIds) {
+        return queryFactory.select(
+                               new QResponseRecipientDto(
+                                   memberInfo.id,
+                                   member.email,
+                                   memberSetting.isLetterReceive
+                               ))
+                           .from(memberInfo)
+                           .innerJoin(memberInfo.member, member)
+                           .innerJoin(memberInfo.memberSetting, memberSetting)
+                           .where(memberInfo.id.in(recipientIds))
                            .fetch();
     }
 }

@@ -5,6 +5,7 @@ import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdateMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberProfileDto;
+import com.ssafy.bookkoo.memberservice.dto.response.ResponseRecipientDto;
 import com.ssafy.bookkoo.memberservice.service.FollowShipService;
 import com.ssafy.bookkoo.memberservice.service.MemberInfoService;
 import com.ssafy.bookkoo.memberservice.util.CommonUtil;
@@ -90,18 +91,20 @@ public class MemberInfoController {
     @GetMapping("/curation/recipients")
     @Operation(summary = "큐레이션 레터의 수신자들 반환 API",
         description = "큐레이션 레터의 수신자들을 반환하는 API입니다. (팔로워 + 랜덤 3명)")
-    public ResponseEntity<List<Long>> getLetterRecipients(
+    public ResponseEntity<List<ResponseRecipientDto>> getLetterRecipients(
         @RequestParam("memberId") Long memberId
     ) {
         List<Long> followerIds = followShipService.getFollowerIds(memberId);
         //자기 자신 ID 추가 (follwerIds의 마지막에 추가)
         followerIds.add(memberId);
-        List<Long> recipientIds = memberInfoService.getRandomMemberInfo(followerIds);
+        List<Long> recipientIds = memberInfoService.getRandomMemberInfoId(followerIds);
         recipientIds.addAll(followerIds);
         //마지막 원소 제거(자기 자신)
         recipientIds.remove(recipientIds.size() - 1);
+        List<ResponseRecipientDto> letterRecipients
+            = memberInfoService.getRecipientsInfo(recipientIds);
         return ResponseEntity.ok()
-                             .body(recipientIds);
+                             .body(letterRecipients);
     }
 
     @GetMapping("/name")

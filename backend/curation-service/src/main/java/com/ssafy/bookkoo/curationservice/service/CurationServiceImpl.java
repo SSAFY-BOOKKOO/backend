@@ -9,9 +9,11 @@ import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.curationservice.entity.Curation;
 import com.ssafy.bookkoo.curationservice.entity.CurationSend;
+import com.ssafy.bookkoo.curationservice.exception.BookNotFoundException;
 import com.ssafy.bookkoo.curationservice.exception.CurationNotFoundException;
 import com.ssafy.bookkoo.curationservice.repository.CurationRepository;
 import com.ssafy.bookkoo.curationservice.repository.CurationSendRepository;
+import feign.FeignException.FeignClientException;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,11 @@ public class CurationServiceImpl implements CurationService {
     @Transactional
     @Override
     public void createCuration(Long writer, RequestCreateCurationDto createCurationDto) {
+        try {
+            bookServiceClient.getBook(createCurationDto.bookId());
+        } catch (FeignClientException exception) {
+            throw new BookNotFoundException(createCurationDto.bookId());
+        }
         Curation curation = Curation.builder()
                                     .writer(writer)
                                     .book(createCurationDto.bookId())
@@ -90,23 +97,25 @@ public class CurationServiceImpl implements CurationService {
             curationSend.getCuration()
                         .getWriter());
         // BookService 에게 book 정보 받아오기 (책 커버 이미지, 제목, 작가, 줄거리)
-        ResponseBookDto book = bookServiceClient.getBook(curation
-            .getBook());
-
-        return ResponseCurationDetailDto.builder()
-                                        .bookTitle(book.title())
-                                        .summary(book.summary())
-                                        .coverImgUrl(book.coverImgUrl())
-                                        .author(book.author())
-                                        .createdAt(curation.getCreatedAt()
-                                                           .toString())
-                                        .curationTitle(curation
-                                            .getTitle())
-                                        .content(curation
-                                            .getContent())
-                                        .writer(writerInfo.nickName())
-                                        .build();
-
+        try {
+            ResponseBookDto book = bookServiceClient.getBook(curation
+                .getBook());
+            return ResponseCurationDetailDto.builder()
+                                            .bookTitle(book.title())
+                                            .summary(book.summary())
+                                            .coverImgUrl(book.coverImgUrl())
+                                            .author(book.author())
+                                            .createdAt(curation.getCreatedAt()
+                                                               .toString())
+                                            .curationTitle(curation
+                                                .getTitle())
+                                            .content(curation
+                                                .getContent())
+                                            .writer(writerInfo.nickName())
+                                            .build();
+        } catch (FeignClientException exception) {
+            throw new BookNotFoundException(curation.getBook());
+        }
     }
 
     /**
@@ -211,15 +220,19 @@ public class CurationServiceImpl implements CurationService {
             ResponseMemberInfoDto writerInfo = memberServiceClient.getMemberInfoById(
                 curation.getWriter());
             // BookService 에게 book 정보 받아오기 (책 커버 이미지, 작가)
-            ResponseBookDto book = bookServiceClient.getBook(curation
-                .getBook());
-            responseCurationDtoList.add(ResponseCurationDto.builder()
-                                                           .writer(writerInfo.nickName())
-                                                           .curationId(curation.getId())
-                                                           .title(curation.getTitle())
-                                                           .coverImgUrl(
-                                                               book.coverImgUrl())
-                                                           .build());
+            try {
+                ResponseBookDto book = bookServiceClient.getBook(curation
+                    .getBook());
+                responseCurationDtoList.add(ResponseCurationDto.builder()
+                                                               .writer(writerInfo.nickName())
+                                                               .curationId(curation.getId())
+                                                               .title(curation.getTitle())
+                                                               .coverImgUrl(
+                                                                   book.coverImgUrl())
+                                                               .build());
+            } catch (FeignClientException exception) {
+                throw new BookNotFoundException(curation.getBook());
+            }
         }
         return responseCurationDtoList;
     }

@@ -5,7 +5,7 @@ import com.ssafy.bookkoo.libraryservice.entity.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import java.sql.Date;
+import java.time.LocalDate;
 
 /**
  * 서재 책 매핑 생성 요청 정보를 담는 DTO 클래스입니다.
@@ -17,10 +17,10 @@ public record RequestLibraryBookMapperCreateDto(
     String bookColor,
 
     @Schema(description = "시작일", example = "2024-01-01")
-    Date startAt,
+    LocalDate startAt,
 
     @Schema(description = "종료일", example = "2024-12-31")
-    Date endAt,
+    LocalDate endAt,
 
     @Schema(description = "상태", example = "READING")
     Status status,
