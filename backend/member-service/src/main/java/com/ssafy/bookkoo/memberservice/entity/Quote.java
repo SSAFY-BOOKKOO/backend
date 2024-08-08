@@ -44,10 +44,12 @@ public class Quote extends BaseEntity {
     private String backgroundImgUrl;
 
     @Builder
-    public Quote(Long id, MemberInfo memberInfo, String source, String content) {
+    public Quote(Long id, MemberInfo memberInfo, String source, String content,
+        String backgroundImgUrl) {
         this.id = id;
         this.memberInfo = memberInfo;
         this.source = source;
         this.content = content;
+        this.backgroundImgUrl = backgroundImgUrl;
     }
 }
