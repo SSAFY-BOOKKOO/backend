@@ -4,6 +4,7 @@ import com.ssafy.bookkoo.bookservice.dto.book.CheckExistBookByIsbnDto;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBooksFilterDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookOfLibraryDto;
+import com.ssafy.bookkoo.bookservice.dto.stats.ResponseStatsCategoryDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import java.util.List;
 
@@ -63,4 +64,13 @@ public interface BookCustomRepository {
      * @return ResponseBookOfLibraryDto
      */
     ResponseBookOfLibraryDto getBookOfLibrary(Long bookId, Long memberId);
+
+
+    /**
+     * 책 ID 리스트로 카테고리 통계 내서 반환
+     *
+     * @param bookIds 책 ID 리스트
+     * @return List<ResponseStatsCategoryDto>
+     */
+    List<ResponseStatsCategoryDto> searchBookCategoryStats(List<Long> bookIds);
 }
