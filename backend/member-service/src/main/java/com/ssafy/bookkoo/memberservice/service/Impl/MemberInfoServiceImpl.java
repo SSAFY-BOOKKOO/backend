@@ -74,6 +74,11 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         return memberInfoMapper.toResponseProfileDto(email, memberInfo);
     }
 
+    /**
+     * Long을 통해 반환
+     * @param id
+     * @return
+     */
     @Override
     public ResponseMemberProfileDto getMemberProfileInfo(Long id) {
         MemberInfo memberInfo = memberInfoRepository.findById(id)
@@ -83,6 +88,20 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         return memberInfoMapper.toResponseProfileDto(email, memberInfo);
     }
 
+    /**
+     * 닉네임을 통해 마이페이지의 정보를 반환
+     * @param nickName
+     * @return
+     */
+    @Override
+    public ResponseMemberProfileDto getMemberProfileInfoByNickName(String nickName) {
+        MemberInfo memberInfo = memberInfoRepository.findByNickName(nickName)
+                                                    .orElseThrow(MemberNotFoundException::new);
+
+        String email = memberInfo.getMember()
+                                 .getEmail();
+        return memberInfoMapper.toResponseProfileDto(email, memberInfo);
+    }
     /**
      * 멤버 ID(Long)을 통해 멤버 정보를 반환합니다.
      * 멤버 정보 전체를 반환합니다.
