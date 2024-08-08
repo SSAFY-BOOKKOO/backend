@@ -17,7 +17,7 @@ public class QuoteCustomRepositoryImpl implements QuoteCustomRepository {
 
 
     /**
-     * 페이징을 통해 멤버의 글귀를 가져옵니다.
+     * 페이징을 통해 멤버의 글귀를 가져옵니다. (최신 순)
      *
      * @param memberId
      * @param pageable
@@ -29,6 +29,7 @@ public class QuoteCustomRepositoryImpl implements QuoteCustomRepository {
                            .where(quote.memberInfo.id.eq(memberId))
                            .offset(pageable.getOffset())
                            .limit(pageable.getPageSize())
+                           .orderBy(quote.createdAt.desc())
                            .fetch();
     }
 }
