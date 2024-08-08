@@ -2,10 +2,12 @@ package com.ssafy.bookkoo.memberservice.mapper;
 
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberProfileDto;
+import com.ssafy.bookkoo.memberservice.entity.FollowShip;
 import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapper;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -27,6 +29,8 @@ public interface MemberInfoMapper {
     @Mapping(source = "memberInfo.introduction", target = "introduction")
     @Mapping(source = "memberInfo.memberId", target = "memberId")
     @Mapping(source = "memberInfo.categories", target = "categories", qualifiedByName = "mapCategories")
+    @Mapping(source = "memberInfo.followers", target = "followerCnt", qualifiedByName = "mapFollowShipCnt")
+    @Mapping(source = "memberInfo.followees", target = "followeeCnt", qualifiedByName = "mapFollowShipCnt")
     ResponseMemberProfileDto toResponseProfileDto(String email, MemberInfo memberInfo);
 
 
@@ -35,7 +39,7 @@ public interface MemberInfoMapper {
         return categories.stream()
                          .map(category -> category.getMemberCategoryMapperKey()
                                                   .getCategoryId())
-                         .toList();
+                         .collect(Collectors.toList());
     }
 
     /**
@@ -49,5 +53,16 @@ public interface MemberInfoMapper {
                                    .getYear();
         return currentYear - year + 1;
     }
+
+    /**
+     * 팔로워 카운팅
+     * @param followShips
+     * @return
+     */
+    @Named("mapFollowShipCnt")
+    default Integer mapFollowShipCnt(List<FollowShip> followShips) {
+        return followShips.size();
+    }
+
 
 }

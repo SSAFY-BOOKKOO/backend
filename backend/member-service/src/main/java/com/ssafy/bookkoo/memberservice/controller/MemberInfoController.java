@@ -142,4 +142,15 @@ public class MemberInfoController {
         return ResponseEntity.ok()
                              .build();
     }
+
+    @GetMapping("/name/{nickName}")
+    @Operation(summary = "닉네임을 통해 멤버의 프로필 정보를 얻는 API"
+        , description = "닉네임을 통해 멤버의 프로필 정보를 얻는 API")
+    public ResponseEntity<ResponseMemberProfileDto> getMemberProfile(
+        @PathVariable(value = "nickName") String nickName
+    ) {
+        ResponseMemberProfileDto memberProfileDto
+            = memberInfoService.getMemberProfileInfoByNickName(nickName);
+        return ResponseEntity.ok(memberProfileDto);
+    }
 }

@@ -13,6 +13,7 @@ import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import com.ssafy.bookkoo.memberservice.entity.MemberSetting;
 import com.ssafy.bookkoo.memberservice.exception.MemberInfoNotExistException;
 import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
+import com.ssafy.bookkoo.memberservice.exception.ProfileImageUploadException;
 import com.ssafy.bookkoo.memberservice.mapper.MemberInfoMapper;
 import com.ssafy.bookkoo.memberservice.repository.MemberCategoryMapperRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberInfoRepository;
@@ -74,6 +75,11 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         return memberInfoMapper.toResponseProfileDto(email, memberInfo);
     }
 
+    /**
+     * Long을 통해 반환
+     * @param id
+     * @return
+     */
     @Override
     public ResponseMemberProfileDto getMemberProfileInfo(Long id) {
         MemberInfo memberInfo = memberInfoRepository.findById(id)
@@ -83,6 +89,20 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         return memberInfoMapper.toResponseProfileDto(email, memberInfo);
     }
 
+    /**
+     * 닉네임을 통해 마이페이지의 정보를 반환
+     * @param nickName
+     * @return
+     */
+    @Override
+    public ResponseMemberProfileDto getMemberProfileInfoByNickName(String nickName) {
+        MemberInfo memberInfo = memberInfoRepository.findByNickName(nickName)
+                                                    .orElseThrow(MemberNotFoundException::new);
+
+        String email = memberInfo.getMember()
+                                 .getEmail();
+        return memberInfoMapper.toResponseProfileDto(email, memberInfo);
+    }
     /**
      * 멤버 ID(Long)을 통해 멤버 정보를 반환합니다.
      * 멤버 정보 전체를 반환합니다.
@@ -197,7 +217,8 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * 전체 카테고리 삭제
      * @param memberInfo
      */
-    private void deleteCategories(MemberInfo memberInfo) {
+    @Transactional
+    protected void deleteCategories(MemberInfo memberInfo) {
         memberCategoryMapperRepository.deleteAll(memberInfo.getCategories());
     }
 
@@ -207,7 +228,8 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @param memberInfo
      * @param categories
      */
-    private void saveCategories(MemberInfo memberInfo, Integer[] categories) {
+    @Transactional
+    protected void saveCategories(MemberInfo memberInfo, Integer[] categories) {
         Arrays.stream(categories)
               .forEach((categoryId) -> {
                   //멤버 매퍼 키를 생성
@@ -237,13 +259,22 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @param id
      * @param profileImg
      */
+    @Transactional
     public void updateProfileImg(Long id, MultipartFile profileImg) {
         MemberInfo memberInfo = memberInfoRepository.findById(id)
                                                     .orElseThrow(MemberNotFoundException::new);
         String profileImgUrl = memberInfo.getProfileImgUrl();
         if (!profileImgUrl.equals("Default.jpg")) {
-            commonServiceClient.deleteProfileImg(profileImgUrl, BUCKET);
+            try {
+                commonServiceClient.deleteProfileImg(profileImgUrl, BUCKET);
+            } catch (Exception e) {
+                throw new ProfileImageUploadException();
+            }
         }
+        updateMemberProfileUrl(profileImg, memberInfo);
+    }
+
+    protected void updateMemberProfileUrl(MultipartFile profileImg, MemberInfo memberInfo) {
         String fileName = commonServiceClient.saveProfileImg(profileImg, BUCKET);
         memberInfo.setProfileImgUrl(fileName);
         memberInfoRepository.flush();

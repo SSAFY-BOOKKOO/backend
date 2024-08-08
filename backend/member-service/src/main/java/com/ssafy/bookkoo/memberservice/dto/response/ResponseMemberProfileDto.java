@@ -11,6 +11,8 @@ public record ResponseMemberProfileDto(
     String nickName,
     String profileImgUrl,
     String introduction,
+    Integer followerCnt,
+    Integer followeeCnt,
     List<Integer> categories
 ) {
 
