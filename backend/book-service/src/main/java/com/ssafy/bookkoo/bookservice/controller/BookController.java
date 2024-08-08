@@ -8,6 +8,7 @@ import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookOfLibraryDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseCheckBooksByIsbnDto;
+import com.ssafy.bookkoo.bookservice.dto.stats.ResponseStatsCategoryDto;
 import com.ssafy.bookkoo.bookservice.service.book.BookService;
 import com.ssafy.bookkoo.bookservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -216,5 +217,20 @@ public class BookController {
         throws IOException, URISyntaxException, InterruptedException, ParseException {
         return ResponseEntity.ok()
                              .body(bookService.searchBookDetailFromAladin(isbn));
+    }
+
+    /**
+     * 책 ID 리스트로 카테고리 통계 내서 반환
+     *
+     * @param bookIds 책 ID 리스트
+     * @return List<ResponseStatsCategoryDto>
+     */
+    @GetMapping("/categories/stats")
+    @Operation(summary = "서비스 통신 : 책 ID 리스트로 카테고리 통계 내서 반환", description = "서비스 통신 : 책 ID로 카테고리 통계 내서 반환")
+    public ResponseEntity<List<ResponseStatsCategoryDto>> getBookCategoryStats(
+        @RequestParam List<Long> bookIds
+    ) {
+        return ResponseEntity.ok()
+                             .body(bookService.getBookCategoryStats(bookIds));
     }
 }
