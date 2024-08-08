@@ -11,6 +11,14 @@ const Book = ({ item, index, moveBook, onBookClick, viewOnly }) => {
       isDragging: monitor.isDragging(),
     }),
     canDrag: !viewOnly,
+    options: {
+      begin: () => {
+        document.body.classList.add('overflow-hidden');
+      },
+      end: () => {
+        document.body.classList.remove('overflow-hidden');
+      },
+    },
   });
 
   const [{ isOver, canDrop }, dropRef] = useDrop({
