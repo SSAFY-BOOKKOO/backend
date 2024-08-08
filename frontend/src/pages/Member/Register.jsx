@@ -189,7 +189,7 @@ const RegisterPage = () => {
       setAlert({
         isOpen: true,
         confirmOnly: true,
-        message: '인증 코드가 이메일로 전송되었습니다.',
+        message: '이메일이 오지 않는 경우 잠시 후 다시 전송바랍니다',
       });
     } catch (error) {
       setAlert({

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaCalendarDays, FaClipboardList } from 'react-icons/fa6';
 import { MdPeopleAlt } from 'react-icons/md';
 import { BsChatSquareQuoteFill } from 'react-icons/bs';
@@ -9,11 +9,13 @@ import { authAxiosInstance } from '@services/axiosInstance';
 import IconButton from '@components/@common/IconButton';
 import ProfileModal from '@components/@common/ProfileModal.jsx';
 import { postCategories } from '@services/Book';
+import Button from '@components/@common/Button';
 
 const MyPage = () => {
   const [member, setMember] = useState(null);
   const [categories, setCategories] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMemberInfo = async () => {
@@ -53,8 +55,17 @@ const MyPage = () => {
     setIsModalOpen(false);
   };
 
+  const handleLogout = async () => {
+    try {
+      await authAxiosInstance.post('/auth/logout');
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   return (
-    <div className='p-4 min-h-[43rem]'>
+    <div className='relative p-4 min-h-[43rem] pb-20'>
       <div className='flex items-start justify-between mb-8'>
         <div className='flex items-start space-x-8 w-full'>
           <img
@@ -89,7 +100,7 @@ const MyPage = () => {
         </div>
       </div>
       <hr className='my-4' />
-      <div className='flex justify-around text-center'>
+      <div className='flex justify-around text-center mb-8'>
         <div className='flex flex-col items-center'>
           <Link to='/mypage/statistics'>
             <button className='p-4 rounded-full'>
@@ -121,6 +132,14 @@ const MyPage = () => {
           <p className='text-lg'>친구</p>
         </div>
       </div>
+      <Button
+        text='로그아웃'
+        color='text-white bg-red-500 active:bg-red-600'
+        size='small'
+        full={false}
+        className='absolute bottom-4 right-4'
+        onClick={handleLogout}
+      />
       <ProfileModal
         isOpen={isModalOpen}
         onRequestClose={closeModal}

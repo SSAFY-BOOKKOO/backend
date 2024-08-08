@@ -163,7 +163,7 @@ const RegisterStep1 = ({
             }}
             required
             disabled={isSocialLogin}
-            className={`mt-1 p-2 block w-full border rounded-md ${isSocialLogin ? 'pr-2' : 'pr-24'} ${
+            className={`mt-1 p-2 block w-full border rounded-md pr-32 ${
               errors.email || emailError ? 'border-red-500' : ''
             }`}
           />
@@ -187,13 +187,47 @@ const RegisterStep1 = ({
       </div>
       {!isSocialLogin && formData.isEmailChecked && (
         <>
+          <div className='mb-4 relative'>
+            <label className='block mb-2 text-sm font-medium text-gray-700'>
+              인증 코드
+            </label>
+            <div className='relative'>
+              <input
+                type='text'
+                id='verificationCode'
+                name='verificationCode'
+                value={verificationCode}
+                onChange={e => setVerificationCode(e.target.value)}
+                required
+                className={`mt-1 p-2 block w-full border rounded-md pr-32 ${
+                  errors.verificationCode ? 'border-red-500' : ''
+                }`}
+              />
+              <Button
+                text='인증 코드 확인'
+                type='button'
+                color='text-white bg-pink-400 active:bg-pink-600'
+                size='small'
+                full={false}
+                onClick={async () => {
+                  await handleVerifyCode(verificationCode);
+                  setIsEmailVerified(true);
+                }}
+                className='absolute right-0 top-0 mt-2 mr-2'
+              />
+            </div>
+            {errors.verificationCode && (
+              <p className='text-red-500 text-xs italic'>
+                {errors.verificationCode}
+              </p>
+            )}
+          </div>
           <label className='block mb-2 text-sm font-medium text-gray-700'>
-            이메일 인증
             <div className='flex items-center mt-2'>
               <Button
                 text='인증 코드 전송'
                 type='button'
-                color='text-white bg-blue-500 active:bg-blue-600'
+                color='text-white bg-pink-400 active:bg-pink-600'
                 size='small'
                 full={false}
                 onClick={handleSendVerificationCodeClick}
@@ -201,29 +235,6 @@ const RegisterStep1 = ({
               />
             </div>
           </label>
-          <RegisterInput
-            labelText='인증 코드'
-            type='text'
-            id='verificationCode'
-            name='verificationCode'
-            value={verificationCode}
-            onChange={e => setVerificationCode(e.target.value)}
-            required
-            error={errors.verificationCode}
-          />
-          <div className='flex items-center mt-2'>
-            <Button
-              text='인증 코드 확인'
-              type='button'
-              color='text-white bg-blue-500 active:bg-blue-600'
-              size='small'
-              full={false}
-              onClick={async () => {
-                await handleVerifyCode(verificationCode);
-                setIsEmailVerified(true);
-              }}
-            />
-          </div>
         </>
       )}
       <div className='mb-4 relative'>
@@ -242,7 +253,7 @@ const RegisterStep1 = ({
               }));
             }}
             required
-            className={`mt-1 p-2 block w-full border rounded-md pr-24 ${
+            className={`mt-1 p-2 block w-full border rounded-md pr-32 ${
               errors.nickname || nicknameError ? 'border-red-500' : ''
             }`}
           />
