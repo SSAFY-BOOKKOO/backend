@@ -207,6 +207,7 @@ services:
       context: ./backend/common-service
     ports:
       - "8086:8086"
+      - "587:587"
     depends_on:
       eureka-server:
         condition: service_healthy
@@ -335,7 +336,6 @@ services:
       context: ./backend/member-service
     ports:
       - "8081:8081"
-      - "587:587"
     depends_on:
       eureka-server:
         condition: service_healthy

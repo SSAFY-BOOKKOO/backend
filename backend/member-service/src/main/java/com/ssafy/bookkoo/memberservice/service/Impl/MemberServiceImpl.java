@@ -7,20 +7,36 @@ import com.ssafy.bookkoo.memberservice.client.dto.request.LibraryStyleDto;
 import com.ssafy.bookkoo.memberservice.client.dto.request.RequestCreateLibraryDto;
 import com.ssafy.bookkoo.memberservice.client.dto.request.RequestLoginDto;
 import com.ssafy.bookkoo.memberservice.client.dto.request.RequestLoginDto.RequestLoginDtoBuilder;
-import com.ssafy.bookkoo.memberservice.dto.request.*;
-import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterDto.RequestRegisterDtoBuilder;
+import com.ssafy.bookkoo.memberservice.client.dto.request.RequestSendEmailDto;
 import com.ssafy.bookkoo.memberservice.client.dto.response.ResponseLoginTokenDto;
-import com.ssafy.bookkoo.memberservice.entity.*;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestAdditionalInfo;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestCertificationDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestMemberSettingDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterDto;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterDto.RequestRegisterDtoBuilder;
+import com.ssafy.bookkoo.memberservice.dto.request.RequestRegisterMemberDto;
+import com.ssafy.bookkoo.memberservice.entity.CertificationNumber;
+import com.ssafy.bookkoo.memberservice.entity.Member;
 import com.ssafy.bookkoo.memberservice.entity.Member.MemberBuilder;
+import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapper;
+import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapperKey;
+import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
+import com.ssafy.bookkoo.memberservice.entity.MemberSetting;
 import com.ssafy.bookkoo.memberservice.enums.SocialType;
-import com.ssafy.bookkoo.memberservice.exception.*;
+import com.ssafy.bookkoo.memberservice.exception.EmailDuplicateException;
+import com.ssafy.bookkoo.memberservice.exception.EmailNotValidException;
+import com.ssafy.bookkoo.memberservice.exception.EmailSendFailException;
+import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
+import com.ssafy.bookkoo.memberservice.exception.NickNameDuplicateException;
+import com.ssafy.bookkoo.memberservice.exception.PasswordNotValidException;
 import com.ssafy.bookkoo.memberservice.repository.CertificationRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberCategoryMapperRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberInfoRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberSettingRepository;
-import com.ssafy.bookkoo.memberservice.service.MailSendService;
 import com.ssafy.bookkoo.memberservice.service.MemberService;
+import java.util.Arrays;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,10 +44,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -45,12 +57,11 @@ public class MemberServiceImpl implements MemberService {
     private final MemberSettingRepository memberSettingRepository;
     private final CertificationRepository certificationRepository;
     private final PasswordEncoder passwordEncoder;
-    private final MailSendService mailSendService;
     private final MemberCategoryMapperRepository memberCategoryMapperRepository;
     private final AuthServiceClient authServiceClient;
     private final LibraryServiceClient libraryServiceClient;
 
-    //S3 common 서비스
+    //S3, email common 서비스
     private final CommonServiceClient commonServiceClient;
     private final String passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$";
 
@@ -299,14 +310,20 @@ public class MemberServiceImpl implements MemberService {
                                                                      .ttl(EXPIRED_TIME)
                                                                      .build();
 
+        //이메일 전송을 위한 DTO 생성
+        RequestSendEmailDto sendEmailDto
+            = createEmailSendTemplate(new String[]{email}, "북꾸북꾸 이메일 인증번호", certNum);
+
         certificationRepository.save(certificationNumber);
         try {
-            mailSendService.sendMail("북꾸북꾸 이메일 인증번호", certNum, Collections.singletonList(email));
+            commonServiceClient.sendMail(sendEmailDto);
         } catch (Exception e) {
-            log.info("mail send Exception : {}", e.getMessage());
+            log.info("메일 전송 에러 : {}", e.getMessage());
+            log.info("Common-Service Client와 통신 에러 : {}", e.getMessage());
             throw new EmailSendFailException();
         }
     }
+
 
     /**
      * 인증번호 발송을 통해 얻은 인증번호를 검증
@@ -319,8 +336,11 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public boolean checkValidationEmail(RequestCertificationDto requestCertificationDto) {
-        CertificationNumber certificationNumber = certificationRepository.findByEmailAndCertNum(requestCertificationDto.email(), requestCertificationDto.certNum())
-                                                                         .orElseThrow(EmailNotValidException::new);
+        CertificationNumber certificationNumber
+            = certificationRepository.findByEmailAndCertNum(
+                                         requestCertificationDto.email(),
+                                         requestCertificationDto.certNum())
+                                     .orElseThrow(EmailNotValidException::new);
         certificationRepository.delete(certificationNumber);
         return true;
     }
@@ -338,8 +358,11 @@ public class MemberServiceImpl implements MemberService {
                               .toString();
         Member member = memberRepository.findByEmail(email)
                                         .orElseThrow(() -> new MemberNotFoundException(email));
+        //이메일 전송을 위한 DTO 생성
+        RequestSendEmailDto sendEmailDto
+            = createEmailSendTemplate(new String[]{email}, "북꾸북꾸 임시 비밀번호 발급", password);
         try {
-            mailSendService.sendMail("북꾸북꾸 임시 비밀번호 발급", password, Collections.singletonList(email));
+            commonServiceClient.sendMail(sendEmailDto);
             member.setPassword(passwordEncoder.encode(password));
             memberRepository.save(member);
             memberRepository.flush();
@@ -348,9 +371,30 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
+    /**
+     * 최초 회원가입 시 로그인을 진행하는 메서드
+     * @param requestLoginDto
+     * @return
+     */
     @Override
     public ResponseLoginTokenDto registerLogin(RequestLoginDto requestLoginDto) {
         return authServiceClient.login(requestLoginDto);
     }
 
+
+    /**
+     * 메일 전송을 위한 DTO를 만들어주는 프라이빗 메서드
+     * @param emails
+     * @param subject
+     * @param content
+     * @return
+     */
+    private static RequestSendEmailDto createEmailSendTemplate(
+        String[] emails, String subject, String content) {
+        return RequestSendEmailDto.builder()
+                                  .receivers(emails)
+                                  .subject(subject)
+                                  .content(content)
+                                  .build();
+    }
 }

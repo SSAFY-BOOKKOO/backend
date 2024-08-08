@@ -2,7 +2,9 @@ package com.ssafy.bookkoo.booktalkservice.service;
 
 
 import com.ssafy.bookkoo.booktalkservice.dto.RequestCreateBookTalkDto;
+import com.ssafy.bookkoo.booktalkservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.booktalkservice.dto.ResponseBookTalkDto;
+import com.ssafy.bookkoo.booktalkservice.dto.other.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.booktalkservice.entity.BookTalk;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
@@ -72,5 +74,15 @@ public interface BookTalkService {
      * 독서록 ID, 책 제목, 작가, 카테고리, 책 커버 이미지, 최근 채팅 시간, 채팅 수
      */
     ResponseBookTalkDto getBookTalkByBookId(Long bookId);
-    // TODO searchBookTalk
+
+    /**
+     * 북톡에 있는 책 반환
+     *
+     * @param searchDto 검색 조건
+     * @return List(ResponseBookDto)
+     */
+    List<ResponseBookDto> searchBookTalkBooks(
+        RequestSearchBookMultiFieldDto searchDto
+    );
+
 }

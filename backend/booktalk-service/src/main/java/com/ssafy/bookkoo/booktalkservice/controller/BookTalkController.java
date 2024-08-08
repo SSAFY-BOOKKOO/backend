@@ -2,7 +2,9 @@ package com.ssafy.bookkoo.booktalkservice.controller;
 
 
 import com.ssafy.bookkoo.booktalkservice.dto.RequestCreateBookTalkDto;
+import com.ssafy.bookkoo.booktalkservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.booktalkservice.dto.ResponseBookTalkDto;
+import com.ssafy.bookkoo.booktalkservice.dto.other.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.booktalkservice.service.BookTalkService;
 import com.ssafy.bookkoo.booktalkservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -117,4 +119,48 @@ public class BookTalkController {
         return ResponseEntity.ok(bookTalkService.getBookTalkByBookId(bookId));
     }
 
+    /**
+     * 북톡에 있는 책을 검색합니다.
+     *
+     * @param searchDto 책 검색 요청 DTO
+     * @return 북톡에 있는 책 목록 응답 DTO 리스트
+     */
+    @PostMapping("/me/books/search")
+    @Operation(
+        summary = "북톡 모든 책 검색 반환(프론트에서 북톡 책검색 시 사용)",
+        description = """
+            북톡 모든 책 검색 반환(필터링 포함)시 사용하는 API(conditions 를 빈 리스트로 보내면 조건 없는 필터링)
+
+
+            <b>Input</b>:
+            | Name | Type  | Description |
+            |-----|-----|-------|
+            | conditions | RequestSearchBookMultiFieldDto | 조건 데이터 구조 |
+            | limit | int | 한 번의 요청에 나올 최대 데이터 개수 |
+            | offset | int | 페이지 넘버 |
+
+            <br>
+            <br>
+
+            <b>RequestSearchBookMultiFieldDto</b>:
+            | Name | Type  | Description |
+            |-----|-----|-------|
+            | field | string | 검색할 컬럼 이름(title, author, publisher, id, ... 등) |
+            | values | List(string) | 검색할 값 ex) ["어린왕자","냠냠",...] |
+
+            <b>Output</b>:
+            <br>
+                type: _description_
+
+            | Var | Type | Description |
+            |-----|-----|-------|
+            |  |  |  |
+            """
+    )
+    public ResponseEntity<List<ResponseBookDto>> searchBookTalkBooks(
+        @RequestBody RequestSearchBookMultiFieldDto searchDto
+    ) {
+        return ResponseEntity.ok()
+                             .body(bookTalkService.searchBookTalkBooks(searchDto));
+    }
 }
