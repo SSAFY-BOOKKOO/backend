@@ -2,7 +2,9 @@ package com.ssafy.bookkoo.booktalkservice.controller;
 
 
 import com.ssafy.bookkoo.booktalkservice.dto.RequestCreateBookTalkDto;
+import com.ssafy.bookkoo.booktalkservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.booktalkservice.dto.ResponseBookTalkDto;
+import com.ssafy.bookkoo.booktalkservice.dto.other.RequestSearchBookMultiFieldDto;
 import com.ssafy.bookkoo.booktalkservice.service.BookTalkService;
 import com.ssafy.bookkoo.booktalkservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -117,4 +119,52 @@ public class BookTalkController {
         return ResponseEntity.ok(bookTalkService.getBookTalkByBookId(bookId));
     }
 
+    /**
+     * 사용자가 북톡을 참여한 책을 검색합니다.
+     *
+     * @param headers   HTTP 헤더
+     * @param searchDto 책 검색 요청 DTO
+     * @return 사용자가 북톡에 참여한 책 목록 응답 DTO 리스트
+     */
+    @PostMapping("/me/books/search")
+    @Operation(
+        summary = "사용자가 북톡에 참여한 책 반환(프론트에서 북톡 책검색 시 사용)",
+        description = """
+            사용자가 북톡에 참여한 책 조회(필터링 포함)시 사용하는 API(conditions 를 빈 리스트로 보내면 조건 없는 필터링)
+
+
+            <b>Input</b>:
+            | Name | Type  | Description |
+            |-----|-----|-------|
+            | conditions | RequestSearchBookMultiFieldDto | 조건 데이터 구조 |
+            | limit | int | 한 번의 요청에 나올 최대 데이터 개수 |
+            | offset | int | 페이지 넘버 |
+
+            <br>
+            <br>
+
+            <b>RequestSearchBookMultiFieldDto</b>:
+            | Name | Type  | Description |
+            |-----|-----|-------|
+            | field | string | 검색할 컬럼 이름(title, author, publisher, id, ... 등) |
+            | values | List(string) | 검색할 값 ex) ["어린왕자","냠냠",...] |
+
+            <b>Output</b>:
+            <br>
+                type: _description_
+
+            | Var | Type | Description |
+            |-----|-----|-------|
+            |  |  |  |
+            """
+    )
+    public ResponseEntity<List<ResponseBookDto>> searchBookTalkBooks(
+        @RequestHeader HttpHeaders headers,
+        @RequestBody RequestSearchBookMultiFieldDto searchDto
+    ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+
+        return ResponseEntity.ok()
+                             .body(bookTalkService.searchBookTalkBooks(memberId, searchDto));
+    }
 }
