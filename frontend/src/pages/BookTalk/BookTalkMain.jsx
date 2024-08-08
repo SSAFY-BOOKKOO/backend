@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BookTalkItem from '@components/@common/Book/BookTalkItem';
 import PopularBook from '@components/BookTalk/PopularBook';
 import WrapContainer from '@components/Layout/WrapContainer';
@@ -6,12 +6,13 @@ import Button from '@components/@common/Button';
 import { books } from '@mocks/BookData';
 import { useNavigate } from 'react-router-dom';
 import BookSearch from '@components/Curation/Search/BookSearch';
+import { getMyBookTalk, getPopularBookTalk } from '../../services/BookTalk';
 
 const BookTalkMain = () => {
   const navigate = useNavigate();
 
-  const [participatedBooks, setParticipatedBooks] = useState(books);
-  const [popularBooks, setPopularBooks] = useState(books);
+  const [participatedBooks, setParticipatedBooks] = useState([]);
+  const [popularBooks, setPopularBooks] = useState([]);
 
   const handleMorePageMove = () => {
     navigate(`/booktalk/more`);
@@ -24,6 +25,21 @@ const BookTalkMain = () => {
   const handleCreatePageMove = () => {
     navigate(`/booktalk/create`);
   };
+
+  const handlePopularBooks = async () => {
+    const data = await getPopularBookTalk();
+    setPopularBooks(data);
+  };
+
+  const handleParticipatedBooks = async () => {
+    const data = await getMyBookTalk();
+    setParticipatedBooks(data);
+  };
+
+  useEffect(() => {
+    handlePopularBooks();
+    handleParticipatedBooks();
+  }, []);
 
   return (
     <WrapContainer>
