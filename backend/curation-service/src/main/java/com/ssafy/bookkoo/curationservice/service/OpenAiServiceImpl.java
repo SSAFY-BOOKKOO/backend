@@ -91,7 +91,6 @@ public class OpenAiServiceImpl implements OpenAiService {
         // 사용할 모델 정보
         requestBody.put("model", "gpt-4o-mini");
         // 응답으로 받을 최대 토큰 수
-        requestBody.put("max_tokens", 400);
         requestBody.put("messages", promptList);
         try {
             String requestJson = objectMapper.writeValueAsString(requestBody);
