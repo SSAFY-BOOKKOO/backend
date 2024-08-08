@@ -120,17 +120,16 @@ public class BookTalkController {
     }
 
     /**
-     * 사용자가 북톡을 참여한 책을 검색합니다.
+     * 북톡에 있는 책을 검색합니다.
      *
-     * @param headers   HTTP 헤더
      * @param searchDto 책 검색 요청 DTO
-     * @return 사용자가 북톡에 참여한 책 목록 응답 DTO 리스트
+     * @return 북톡에 있는 책 목록 응답 DTO 리스트
      */
     @PostMapping("/me/books/search")
     @Operation(
-        summary = "사용자가 북톡에 참여한 책 반환(프론트에서 북톡 책검색 시 사용)",
+        summary = "북톡 모든 책 검색 반환(프론트에서 북톡 책검색 시 사용)",
         description = """
-            사용자가 북톡에 참여한 책 조회(필터링 포함)시 사용하는 API(conditions 를 빈 리스트로 보내면 조건 없는 필터링)
+            북톡 모든 책 검색 반환(필터링 포함)시 사용하는 API(conditions 를 빈 리스트로 보내면 조건 없는 필터링)
 
 
             <b>Input</b>:
@@ -159,12 +158,9 @@ public class BookTalkController {
             """
     )
     public ResponseEntity<List<ResponseBookDto>> searchBookTalkBooks(
-        @RequestHeader HttpHeaders headers,
         @RequestBody RequestSearchBookMultiFieldDto searchDto
     ) {
-        Long memberId = CommonUtil.getMemberId(headers);
-
         return ResponseEntity.ok()
-                             .body(bookTalkService.searchBookTalkBooks(memberId, searchDto));
+                             .body(bookTalkService.searchBookTalkBooks(searchDto));
     }
 }
