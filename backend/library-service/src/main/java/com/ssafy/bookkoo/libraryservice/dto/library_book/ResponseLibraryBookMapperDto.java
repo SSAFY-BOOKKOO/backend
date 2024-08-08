@@ -3,7 +3,7 @@ package com.ssafy.bookkoo.libraryservice.dto.library_book;
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookDto;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.sql.Date;
+import java.time.LocalDate;
 import lombok.Builder;
 
 /**
@@ -23,10 +23,10 @@ public record ResponseLibraryBookMapperDto(
     String bookColor,
 
     @Schema(description = "시작일", example = "2024-01-01")
-    Date startAt,
+    LocalDate startAt,
 
     @Schema(description = "종료일", example = "2024-12-31")
-    Date endAt,
+    LocalDate endAt,
 
     @Schema(description = "상태", example = "READING")
     Status status,

@@ -9,7 +9,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.sql.Date;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -66,7 +66,7 @@ public class Book {
     private Category category;
 
     @Column
-    private Date publishedAt;
+    private LocalDate publishedAt;
 
     @Builder
     public Book(
@@ -81,7 +81,7 @@ public class Book {
         Integer sizeHeight,
         Integer sizeWidth,
         Category category,
-        Date publishedAt
+        LocalDate publishedAt
     ) {
         this.coverImgUrl = coverImgUrl;
         this.author = author;

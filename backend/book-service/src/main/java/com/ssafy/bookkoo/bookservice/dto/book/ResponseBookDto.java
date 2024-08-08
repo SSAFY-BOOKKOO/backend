@@ -2,7 +2,7 @@ package com.ssafy.bookkoo.bookservice.dto.book;
 
 import com.ssafy.bookkoo.bookservice.dto.category.CategoryDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.sql.Date;
+import java.time.LocalDate;
 import lombok.Builder;
 
 @Builder
@@ -43,8 +43,8 @@ public record ResponseBookDto(
     Integer sizeWidth,
 
     @Schema(description = "출판일", example = "2023-01-10")
-    Date publishedAt,
-    
+    LocalDate publishedAt,
+
     @Schema(description = "카테고리 정보")
     CategoryDto category
 ) {
