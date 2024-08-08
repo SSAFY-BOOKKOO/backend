@@ -73,26 +73,7 @@ const LibraryOthers = () => {
 
   const handleBookClick = item => {
     navigate(`/library/${libraries[activeLibrary].id}/detail/${item.book.id}`, {
-      state: { book: item.book, libraryId: libraries[activeLibrary].id },
-    });
-  };
-
-  const moveBook = (fromIndex, toIndex) => {
-    setLibraries(prevLibraries => {
-      const newLibraries = [...prevLibraries];
-      const library = newLibraries[activeLibrary];
-      const books = [...library.books];
-
-      const [movedBook] = books.splice(fromIndex, 1);
-      books.splice(toIndex, 0, movedBook);
-
-      books.forEach((book, index) => {
-        book.bookOrder = index + 1;
-      });
-
-      newLibraries[activeLibrary].books = books;
-
-      return newLibraries;
+      state: { nickname: location.state.nickname },
     });
   };
 
@@ -111,7 +92,6 @@ const LibraryOthers = () => {
         {libraries.length > 0 && (
           <BookShelf
             books={libraries[activeLibrary]?.books || []}
-            moveBook={moveBook}
             onBookClick={handleBookClick}
             viewOnly={true}
           />

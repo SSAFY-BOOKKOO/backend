@@ -1,6 +1,8 @@
 import React from 'react';
 import RegisterInput from './RegisterInput';
 import Button from '../@common/Button';
+import { useSetAtom } from 'jotai';
+import { alertAtom } from '@atoms/alertAtom';
 
 const RegisterStep2 = ({
   formData,
@@ -11,22 +13,33 @@ const RegisterStep2 = ({
   handlePrevStep,
   handleNextStep,
 }) => {
-  const getCategoryName = categoryId => {
-    const category = categoriesList.find(cat => cat.id === categoryId);
-    return category ? category.name : '';
+  const setAlert = useSetAtom(alertAtom);
+
+  const handleYearChange = e => {
+    const { value } = e.target;
+    if (value <= 0) {
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '출생연도 0 이하로 설정할 수 없습니다.',
+      });
+      return;
+    }
+    handleChange(e);
   };
+
   return (
     <>
       <h3 className='text-xl font-bold mb-4 text-center'>
         추가 정보를 알려주세요.
       </h3>
       <RegisterInput
-        labelText='연령'
+        labelText='출생 연도'
         type='number'
         id='year'
         name='year'
         value={formData.year}
-        onChange={handleChange}
+        onChange={handleYearChange}
         required
         error={errors.year}
       />
