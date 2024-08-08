@@ -6,8 +6,12 @@ import com.ssafy.bookkoo.booktalkservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.booktalkservice.dto.ResponseBookTalkDto;
 import com.ssafy.bookkoo.booktalkservice.entity.BookTalk;
 import com.ssafy.bookkoo.booktalkservice.entity.BookTalkMemberMapper;
+import com.ssafy.bookkoo.booktalkservice.exception.BookNotFoundException;
+import com.ssafy.bookkoo.booktalkservice.exception.BookTalkAlreadyExistException;
+import com.ssafy.bookkoo.booktalkservice.exception.BookTalkNotFoundException;
 import com.ssafy.bookkoo.booktalkservice.repository.BookTalkMapperRepository;
 import com.ssafy.bookkoo.booktalkservice.repository.BookTalkRepository;
+import feign.FeignException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,11 +29,15 @@ public class BookTalkServiceImpl implements BookTalkService {
 
     @Override
     public Long createBookTalk(RequestCreateBookTalkDto dto) {
-        // TODO 없는 책이라면 Exception
+        // 없는 책이라면 Exception
+        try {
+            bookServiceClient.getBook(dto.bookId());
+        } catch (FeignException e) {
+            throw new BookNotFoundException(dto.bookId());
+        }
         // 이미 있는 책이면 exception
-        // TODO Exception 생성
         if (bookTalkRepository.existsByBook(dto.bookId())) {
-            throw new RuntimeException();
+            throw new BookTalkAlreadyExistException();
         }
         BookTalk bookTalk = BookTalk.builder()
                                     .book(dto.bookId())
@@ -40,9 +48,9 @@ public class BookTalkServiceImpl implements BookTalkService {
 
     @Override
     public void enterBookTalk(Long bookTalkId, Long memberId) {
-        //TODO 독서록 정보가 없을때 (bookTalkId 가 잘못되었을때) exception 추가
+        // 독서록 정보가 없을때 예외
         BookTalk bookTalk = bookTalkRepository.findById(bookTalkId)
-                                              .orElseThrow(RuntimeException::new
+                                              .orElseThrow(BookTalkNotFoundException::new
                                               );
         BookTalkMemberMapper bookTalkMemberMapper = BookTalkMemberMapper.builder()
                                                                         .memberId(memberId)
@@ -95,16 +103,14 @@ public class BookTalkServiceImpl implements BookTalkService {
 
     @Override
     public BookTalk findBookTalk(Long bookTalkId) {
-        //TODO Custom Exception 만들기
         return bookTalkRepository.findById(bookTalkId)
-                                 .orElseThrow(RuntimeException::new);
+                                 .orElseThrow(BookTalkNotFoundException::new);
     }
 
     @Override
     public ResponseBookTalkDto getBookTalkByBookId(Long bookId) {
-        //TODO Custom Exception 만들기
         BookTalk bookTalk = bookTalkRepository.findByBook(bookId)
-                                              .orElseThrow(RuntimeException::new);
+                                              .orElseThrow(BookTalkNotFoundException::new);
         return toDto(bookTalk);
     }
 
@@ -115,20 +121,22 @@ public class BookTalkServiceImpl implements BookTalkService {
      * @return 독서록 정보 DTO
      */
     private ResponseBookTalkDto toDto(BookTalk bookTalk) {
-        ResponseBookDto bookInfo = bookServiceClient.getBook(bookTalk.getBook());
-        ResponseBookTalkDto dto = ResponseBookTalkDto.builder()
-                                                     .bookTalkId(bookTalk.getId())
-                                                     .chats(bookTalk.getTotalMessageCount())
-                                                     .lastChatTime(bookTalk.getUpdatedAt()
-                                                                           .toString())
-                                                     .title(bookInfo.title())
-                                                     .author(bookInfo.author())
-                                                     .coverImgUrl(bookInfo.coverImgUrl())
-                                                     .category(bookInfo.category()
-                                                                       .name())
-                                                     .build();
-        return dto;
+        try {
+            ResponseBookDto bookInfo = bookServiceClient.getBook(bookTalk.getBook());
+            ResponseBookTalkDto dto = ResponseBookTalkDto.builder()
+                                                         .bookTalkId(bookTalk.getId())
+                                                         .chats(bookTalk.getTotalMessageCount())
+                                                         .lastChatTime(bookTalk.getUpdatedAt()
+                                                                               .toString())
+                                                         .title(bookInfo.title())
+                                                         .author(bookInfo.author())
+                                                         .coverImgUrl(bookInfo.coverImgUrl())
+                                                         .category(bookInfo.category()
+                                                                           .name())
+                                                         .build();
+            return dto;
+        } catch (FeignException e) {
+            throw new BookNotFoundException();
+        }
     }
-
-
 }
