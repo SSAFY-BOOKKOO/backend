@@ -47,6 +47,7 @@ public class ReviewServiceImpl implements ReviewService {
      * @return 책에 대한 리뷰 응답 DTO 리스트
      */
     @Override
+    @Transactional(readOnly = true)
     public List<ResponseReviewDto> getReviewByBookId(Long bookId) {
         List<Review> reviews = reviewRepository.findByBookId(bookId);
         return reviewMapper.toDto(reviews);
@@ -60,6 +61,7 @@ public class ReviewServiceImpl implements ReviewService {
      * @return 조회된 리뷰 응답 DTO
      */
     @Override
+    @Transactional(readOnly = true)
     public ResponseReviewDto getReviewById(Long bookId, Long reviewId) {
         Review review = findReviewByIdWithException(reviewId);
         return reviewMapper.toDto(review);
@@ -74,6 +76,7 @@ public class ReviewServiceImpl implements ReviewService {
      * @return 생성된 리뷰 응답 DTO
      */
     @Override
+    @Transactional
     public ResponseReviewDto addReview(
         Long memberId,
         Long bookId,
@@ -106,6 +109,7 @@ public class ReviewServiceImpl implements ReviewService {
      * @return 토글된 좋아요 상태 (true: 좋아요 추가됨, false: 좋아요 제거됨)
      */
     @Override
+    @Transactional
     public Boolean toggleLikeReview(Long memberId, Long bookId, Long reviewId) {
         Review review = findReviewByIdWithException(reviewId);
 
@@ -137,6 +141,7 @@ public class ReviewServiceImpl implements ReviewService {
      * @return 회원을 제외한 랜덤 리뷰 응답 DTO 리스트
      */
     @Override
+    @Transactional(readOnly = true)
     public List<ResponseSurfingReviewDto> getRandomReviewExceptMine(Long memberId, Long bookId) {
         // 1. 해당 책에 대한 리뷰 목록 불러오기(내가 쓴 리뷰 제외)
         List<Review> reviewsExceptMine = reviewRepository.findByBookIdExceptMine(memberId, bookId);
@@ -269,7 +274,8 @@ public class ReviewServiceImpl implements ReviewService {
      * @param reviewId 리뷰 ID
      * @return 조회된 리뷰 엔티티
      */
-    private Review findReviewByIdWithException(Long reviewId) {
+    @Transactional(readOnly = true)
+    protected Review findReviewByIdWithException(Long reviewId) {
         return reviewRepository.findById(reviewId)
                                .orElseThrow(ReviewNotFoundException::new);
     }
