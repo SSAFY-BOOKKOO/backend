@@ -4,6 +4,8 @@ import com.ssafy.bookkoo.booktalkservice.client.BookServiceClient;
 import com.ssafy.bookkoo.booktalkservice.dto.RequestCreateBookTalkDto;
 import com.ssafy.bookkoo.booktalkservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.booktalkservice.dto.ResponseBookTalkDto;
+import com.ssafy.bookkoo.booktalkservice.dto.other.RequestSearchBookMultiFieldDto;
+import com.ssafy.bookkoo.booktalkservice.dto.other.SearchBookConditionDto;
 import com.ssafy.bookkoo.booktalkservice.entity.BookTalk;
 import com.ssafy.bookkoo.booktalkservice.entity.BookTalkMemberMapper;
 import com.ssafy.bookkoo.booktalkservice.repository.BookTalkMapperRepository;
@@ -55,8 +57,10 @@ public class BookTalkServiceImpl implements BookTalkService {
     }
 
     @Override
-    public List<ResponseBookTalkDto> getMyBookTalkList(Long memberId, String order,
-        Pageable pageable) {
+    public List<ResponseBookTalkDto> getMyBookTalkList(
+        Long memberId, String order,
+        Pageable pageable
+    ) {
         List<ResponseBookTalkDto> bookTalkDtos = new ArrayList<>();
         // 내가 참여한 독서록 매퍼
         List<BookTalkMemberMapper> mappers = bookTalkMapperRepository.findByMemberId(memberId);
@@ -106,6 +110,53 @@ public class BookTalkServiceImpl implements BookTalkService {
         BookTalk bookTalk = bookTalkRepository.findByBook(bookId)
                                               .orElseThrow(RuntimeException::new);
         return toDto(bookTalk);
+    }
+
+    /**
+     * 북톡에 있는 책 반환
+     *
+     * @param searchDto 검색 조건
+     * @return List(ResponseBookDto)
+     */
+    @Override
+    public List<ResponseBookDto> searchBookTalkBooks(
+        RequestSearchBookMultiFieldDto searchDto
+    ) {
+        // 라이브러리 ID로 연결된 책 ID 목록을 가져옵니다.
+        List<Long> bookIds = bookTalkMapperRepository.findAllBookIds();
+        // 없을 경우
+        if (bookIds.isEmpty()) {
+            return List.of();
+        }
+        // 책 ID 목록을 String 목록으로 변환합니다.
+        List<String> stringBookIds = bookIds.stream()
+                                            .map(String::valueOf)
+                                            .toList();
+
+        List<SearchBookConditionDto> conditions = new ArrayList<>();
+        // BookServiceClient를 통해 책 정보를 가져옵니다.
+        // 1. bookId로 condition 생성
+        conditions.add(SearchBookConditionDto.builder()
+                                             .field("id")
+                                             .values(stringBookIds)
+                                             .build());
+        // 2. 제목/출판사/저자로 필터링하는 condition 생성
+        conditions.addAll(searchDto.conditions());
+
+        // 필터 DTO를 생성합니다.
+        RequestSearchBookMultiFieldDto filterDto = RequestSearchBookMultiFieldDto.builder()
+                                                                                 .conditions(
+                                                                                     conditions)
+                                                                                 .limit(
+                                                                                     searchDto.limit())
+                                                                                 .offset(
+                                                                                     searchDto.offset())
+                                                                                 .build();
+
+        // 책 정보 가져오기
+        List<ResponseBookDto> books = bookServiceClient.getBooksByCondition(filterDto);
+
+        return books;
     }
 
     /**
