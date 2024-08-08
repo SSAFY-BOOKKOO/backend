@@ -114,14 +114,11 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
           }
         );
 
-        console.log(response.data);
-
         setAlert({
           isOpen: true,
           confirmOnly: true,
           message: '프로필이 성공적으로 업데이트되었습니다.',
         });
-
         onSave({
           nickName: formData.nickname,
           categories: formData.categories,
@@ -130,8 +127,6 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
         });
       } catch (error) {
         console.error('Failed to update profile:', error);
-        console.log(error.response.data); // 서버 응답 데이터 로깅
-
         setAlert({
           isOpen: true,
           confirmOnly: true,

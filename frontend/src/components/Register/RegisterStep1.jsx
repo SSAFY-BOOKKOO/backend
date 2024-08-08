@@ -20,7 +20,12 @@ const RegisterStep1 = ({
   handleChange,
   handleFileChange,
   handleNextStep,
+  handleSendVerificationCode,
+  handleVerifyCode,
   isSocialLogin,
+  isEmailVerified,
+  setFormData,
+  setIsEmailVerified,
 }) => {
   const setEmailDuplicate = useSetAtom(emailDuplicateAtom);
   const setNicknameDuplicate = useSetAtom(nicknameDuplicateAtom);
@@ -29,15 +34,17 @@ const RegisterStep1 = ({
 
   const [emailError, setEmailError] = useState('');
   const [nicknameError, setNicknameError] = useState('');
-
-  const [isEmailChecked, setIsEmailChecked] = useState(false);
-  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+  const [verificationCode, setVerificationCode] = useState('');
+  const [isSendingCode, setIsSendingCode] = useState(false);
 
   useEffect(() => {
     if (isSocialLogin) {
-      setIsEmailChecked(true);
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        isEmailChecked: true,
+      }));
     }
-  }, [isSocialLogin]);
+  }, [isSocialLogin, setFormData]);
 
   const handleEmailCheck = async () => {
     if (!formData.email) {
@@ -47,7 +54,10 @@ const RegisterStep1 = ({
     try {
       const isDuplicate = await checkEmailDuplicate(formData.email);
       setEmailDuplicate(isDuplicate);
-      setIsEmailChecked(true);
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        isEmailChecked: !isDuplicate,
+      }));
       if (isDuplicate) {
         setEmailError('이미 사용 중인 이메일입니다.');
       } else {
@@ -71,7 +81,10 @@ const RegisterStep1 = ({
     try {
       const isDuplicate = await checkNicknameDuplicate(formData.nickname);
       setNicknameDuplicate(isDuplicate);
-      setIsNicknameChecked(true);
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        isNicknameChecked: !isDuplicate,
+      }));
       if (isDuplicate) {
         setNicknameError('이미 사용 중인 닉네임입니다.');
       } else {
@@ -87,8 +100,14 @@ const RegisterStep1 = ({
     }
   };
 
+  const handleSendVerificationCodeClick = async () => {
+    setIsSendingCode(true);
+    await handleSendVerificationCode();
+    setIsSendingCode(false);
+  };
+
   const validateAndProceed = () => {
-    if (!isSocialLogin && !isEmailChecked) {
+    if (!isSocialLogin && !formData.isEmailChecked) {
       setAlert({
         isOpen: true,
         confirmOnly: true,
@@ -96,7 +115,7 @@ const RegisterStep1 = ({
       });
       return;
     }
-    if (!isNicknameChecked) {
+    if (!formData.isNicknameChecked) {
       setAlert({
         isOpen: true,
         confirmOnly: true,
@@ -109,6 +128,14 @@ const RegisterStep1 = ({
         isOpen: true,
         confirmOnly: true,
         message: '중복 확인을 다시 해주세요.',
+      });
+      return;
+    }
+    if (!isEmailVerified) {
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '이메일 인증을 완료해주세요.',
       });
       return;
     }
@@ -127,11 +154,16 @@ const RegisterStep1 = ({
             value={formData.email}
             onChange={e => {
               handleChange(e);
-              if (!isSocialLogin) setIsEmailChecked(false);
+              if (!isSocialLogin) {
+                setFormData(prevFormData => ({
+                  ...prevFormData,
+                  isEmailChecked: false,
+                }));
+              }
             }}
             required
             disabled={isSocialLogin}
-            className={`mt-1 p-2 block w-full border rounded-md ${isSocialLogin ? 'pr-2' : 'pr-24'} ${
+            className={`mt-1 p-2 block w-full border rounded-md pr-32 ${
               errors.email || emailError ? 'border-red-500' : ''
             }`}
           />
@@ -153,6 +185,58 @@ const RegisterStep1 = ({
           </p>
         )}
       </div>
+      {!isSocialLogin && formData.isEmailChecked && (
+        <>
+          <div className='mb-4 relative'>
+            <label className='block mb-2 text-sm font-medium text-gray-700'>
+              인증 코드
+            </label>
+            <div className='relative'>
+              <input
+                type='text'
+                id='verificationCode'
+                name='verificationCode'
+                value={verificationCode}
+                onChange={e => setVerificationCode(e.target.value)}
+                required
+                className={`mt-1 p-2 block w-full border rounded-md pr-32 ${
+                  errors.verificationCode ? 'border-red-500' : ''
+                }`}
+              />
+              <Button
+                text='인증 코드 확인'
+                type='button'
+                color='text-white bg-pink-400 active:bg-pink-600'
+                size='small'
+                full={false}
+                onClick={async () => {
+                  await handleVerifyCode(verificationCode);
+                  setIsEmailVerified(true);
+                }}
+                className='absolute right-0 top-0 mt-2 mr-2'
+              />
+            </div>
+            {errors.verificationCode && (
+              <p className='text-red-500 text-xs italic'>
+                {errors.verificationCode}
+              </p>
+            )}
+          </div>
+          <label className='block mb-2 text-sm font-medium text-gray-700'>
+            <div className='flex items-center mt-2'>
+              <Button
+                text='인증 코드 전송'
+                type='button'
+                color='text-white bg-pink-400 active:bg-pink-600'
+                size='small'
+                full={false}
+                onClick={handleSendVerificationCodeClick}
+                disabled={isSendingCode}
+              />
+            </div>
+          </label>
+        </>
+      )}
       <div className='mb-4 relative'>
         <label className='block text-gray-700 font-medium'>닉네임</label>
         <div className='relative'>
@@ -163,10 +247,13 @@ const RegisterStep1 = ({
             value={formData.nickname}
             onChange={e => {
               handleChange(e);
-              setIsNicknameChecked(false);
+              setFormData(prevFormData => ({
+                ...prevFormData,
+                isNicknameChecked: false,
+              }));
             }}
             required
-            className={`mt-1 p-2 block w-full border rounded-md pr-24 ${
+            className={`mt-1 p-2 block w-full border rounded-md pr-32 ${
               errors.nickname || nicknameError ? 'border-red-500' : ''
             }`}
           />

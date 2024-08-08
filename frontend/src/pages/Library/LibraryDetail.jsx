@@ -36,7 +36,6 @@ const LibraryDetail = () => {
         );
         setBook(response.data);
       } catch (error) {
-        console.log(location.state);
         console.error('Failed to fetch book data:', error);
       }
     };
