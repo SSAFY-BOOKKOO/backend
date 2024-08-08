@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface BookTalkMapperCustomRepository {
 
-    List<Long> findBookIdsByMemberId(Long memberId);
+    List<Long> findAllBookIds();
 }

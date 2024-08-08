@@ -17,16 +17,13 @@ public class BookTalkMapperCustomRepositoryImpl implements
     private final JPAQueryFactory queryFactory;
 
     /**
-     * 사용자 아이디로 참여한 북톡 책 ID 가져오기
+     * 북톡 모든 책 ID 가져오기
      *
-     * @param memberId 사용자 ID
      * @return List(책 ID)
      */
     @Override
-    public List<Long> findBookIdsByMemberId(Long memberId) {
+    public List<Long> findAllBookIds() {
         BooleanBuilder predicate = new BooleanBuilder();
-        // memberId가 일치하는지 확인
-        predicate.and(bookTalkMemberMapper.memberId.eq(memberId));
 
         return queryFactory.select(bookTalkMemberMapper.booktalk.book)
                            .from(bookTalkMemberMapper)
