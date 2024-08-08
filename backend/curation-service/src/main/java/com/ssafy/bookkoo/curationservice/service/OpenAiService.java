@@ -5,5 +5,5 @@ import java.util.ArrayList;
 
 public interface OpenAiService {
 
-    String getCompletion(ArrayList<RequestChatbotDto> prompt);
+    String getCompletion(ArrayList<RequestChatbotDto> prompt, Long memberId);
 }
