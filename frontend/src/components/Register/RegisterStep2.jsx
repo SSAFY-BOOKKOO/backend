@@ -3,6 +3,7 @@ import RegisterInput from './RegisterInput';
 import Button from '../@common/Button';
 import { useSetAtom } from 'jotai';
 import { alertAtom } from '@atoms/alertAtom';
+import RadioButton from '../@common/RadioButton';
 
 const RegisterStep2 = ({
   formData,
@@ -28,73 +29,48 @@ const RegisterStep2 = ({
     handleChange(e);
   };
 
+  const genderTags = [
+    { id: 1, value: 'MALE', name: '남성' },
+    { id: 2, value: 'FEMALE', name: '여성' },
+    { id: 3, value: 'NONE', name: '선택 안함' },
+  ];
+
   return (
     <>
-      <h3 className='text-xl font-bold mb-4 text-center'>
-        추가 정보를 알려주세요.
-      </h3>
-      <RegisterInput
-        labelText='출생 연도'
-        type='number'
-        id='year'
-        name='year'
-        value={formData.year}
-        onChange={handleYearChange}
-        required
-        error={errors.year}
-      />
-      <label className='block mb-2 text-sm font-medium text-gray-700'>
+      <div className='text-center mb-4'>
+        <h3 className='text-xl font-bold text-left'>
+          추가 정보를 입력해주세요
+        </h3>
+        <p className='text-gray-500 text-left'>
+          연령, 성별, 취향을 토대로 책을 추천해드립니다.
+        </p>
+      </div>
+      <label className='block mb-2 text-md font-medium text-gray-700'>
+        출생 연도
+        <RegisterInput
+          type='number'
+          id='year'
+          name='year'
+          value={formData.year}
+          onChange={handleYearChange}
+          required
+          error={errors.year}
+        />
+      </label>
+      <label className='block mb-2 text-md font-medium text-gray-700'>
         성별
-        <div className='flex space-x-4 mt-2 justify-center'>
-          <label className='flex items-center'>
-            <input
-              type='radio'
-              id='gender-male'
-              name='gender'
-              value='MALE'
-              checked={formData.gender === 'MALE'}
-              onChange={handleChange}
-            />
-            <span className='ml-2'>남성</span>
-          </label>
-          <label className='flex items-center'>
-            <input
-              type='radio'
-              id='gender-female'
-              name='gender'
-              value='FEMALE'
-              checked={formData.gender === 'FEMALE'}
-              onChange={handleChange}
-            />
-            <span className='ml-2'>여성</span>
-          </label>
-          <label className='flex items-center'>
-            <input
-              type='radio'
-              id='gender-none'
-              name='gender'
-              value='NONE'
-              checked={formData.gender === 'NONE'}
-              onChange={handleChange}
-            />
-            <span className='ml-2'>선택 안함</span>
-          </label>
-        </div>
+        <RadioButton
+          tags={genderTags}
+          selectedTag={formData.gender}
+          setSelectedTag={value =>
+            handleChange({ target: { name: 'gender', value } })
+          }
+        />
         {errors.gender && (
           <p className='text-red-500 text-sm'>{errors.gender}</p>
         )}
       </label>
-      <RegisterInput
-        labelText='소개글'
-        type='textarea'
-        id='introduction'
-        name='introduction'
-        value={formData.introduction}
-        onChange={handleChange}
-        required
-        error={errors.introduction}
-      />
-      <label className='block mb-2 text-sm font-medium text-gray-700'>
+      <label className='block mb-2 text-md font-medium text-gray-700'>
         선호 카테고리
         <div className='flex flex-wrap mt-2 justify-center'>
           {categoriesList.map(category => (
@@ -102,8 +78,8 @@ const RegisterStep2 = ({
               <label
                 className={`flex items-center border px-2 py-1 rounded-lg cursor-pointer ${
                   formData.categories.includes(category.id)
-                    ? 'bg-green-400 text-white'
-                    : 'bg-gray-200 text-gray-700'
+                    ? 'bg-pink-500 text-white'
+                    : 'bg-gray-400 text-white'
                 }`}
               >
                 <input

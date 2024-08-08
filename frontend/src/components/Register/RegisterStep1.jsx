@@ -206,7 +206,7 @@ const RegisterStep1 = ({
               <Button
                 text='인증 코드 확인'
                 type='button'
-                color='text-white bg-pink-400 active:bg-pink-600'
+                color='text-white bg-pink-500 active:bg-pink-600'
                 size='small'
                 full={false}
                 onClick={async () => {
@@ -227,7 +227,7 @@ const RegisterStep1 = ({
               <Button
                 text='인증 코드 전송'
                 type='button'
-                color='text-white bg-pink-400 active:bg-pink-600'
+                color='text-white bg-pink-500 active:bg-pink-600'
                 size='small'
                 full={false}
                 onClick={handleSendVerificationCodeClick}
@@ -329,7 +329,7 @@ const RegisterStep1 = ({
           text='다음'
           type='button'
           color='text-white bg-green-400 active:bg-green-600'
-          size='large'
+          size='medium'
           full
           onClick={validateAndProceed}
         />

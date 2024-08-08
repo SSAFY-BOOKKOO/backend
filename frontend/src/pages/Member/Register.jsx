@@ -302,6 +302,7 @@ const RegisterPage = () => {
       }
     }
   };
+
   return (
     <WrapContainer>
       <div className='flex flex-col justify-center items-center min-h-screen px-4 w-full'>
@@ -335,10 +336,11 @@ const RegisterPage = () => {
           )}
           {step === 3 && (
             <RegisterStep3
-              formData={formData.memberSettingDto}
+              formData={{ ...formData, ...formData.memberSettingDto }}
               errors={errors}
               handleChange={handleChange}
               handleSubmit={handleSubmit}
+              handlePrevStep={handlePrevStep}
             />
           )}
         </div>
