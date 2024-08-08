@@ -4,14 +4,18 @@ import {
   differenceInMinutes,
   differenceInHours,
   differenceInDays,
+  addHours,
 } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
+const TIME_DIFFERENCE = 9; // 서버랑 시간 차이
+
 export const formatRelativeTime = date => {
   const now = new Date();
-  const minutesDiff = differenceInMinutes(now, date);
-  const hoursDiff = differenceInHours(now, date);
-  const daysDiff = differenceInDays(now, date);
+  const adjustedDate = addHours(new Date(date), TIME_DIFFERENCE);
+  const minutesDiff = differenceInMinutes(now, adjustedDate);
+  const hoursDiff = differenceInHours(now, adjustedDate);
+  const daysDiff = differenceInDays(now, adjustedDate);
 
   if (minutesDiff < 60) {
     // 1시간 이내
