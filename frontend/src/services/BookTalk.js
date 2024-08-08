@@ -28,9 +28,12 @@ export const postBookTalkEnter = async bookTalkId => {
 export const getMyBookTalk = async (order = 'time', page = 0) => {
   try {
     const response = await authAxiosInstance.get('/booktalks/my', {
-      order,
-      page,
+      params: {
+        order,
+        page,
+      },
     });
+
     return response.data;
   } catch (error) {
     console.error('get my booktalk list failed:', error);
@@ -42,7 +45,9 @@ export const getMyBookTalk = async (order = 'time', page = 0) => {
 export const getBookTalkByBookId = async bookId => {
   try {
     const response = await authAxiosInstance.get('/booktalks/book', {
-      bookId,
+      params: {
+        bookId,
+      },
     });
     return response.data;
   } catch (error) {
