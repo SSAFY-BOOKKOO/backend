@@ -1,8 +1,10 @@
-package com.ssafy.bookkoo.commonservice.s3.service;
+package com.ssafy.bookkoo.commonservice.s3.service.Impl;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import java.io.IOException;
+import com.ssafy.bookkoo.commonservice.s3.exception.FileDeleteFailException;
+import com.ssafy.bookkoo.commonservice.s3.exception.FileSaveFailException;
+import com.ssafy.bookkoo.commonservice.s3.service.S3Service;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,14 +42,13 @@ public class S3ServiceImpl implements S3Service {
         try {
             amazonS3Client.putObject(bucket, fileName.toString(),
                 file.getInputStream(), metadata);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new FileSaveFailException();
         }
         StringBuilder path = new StringBuilder(PROTOCAL);
         path.append(bucket);
         path.append(AWS_PATH);
         path.append(fileName);
-        log.info("save \"{}\" to \"{}\"", fileName, path.toString());
         return path.toString();
     }
 
@@ -59,6 +60,10 @@ public class S3ServiceImpl implements S3Service {
      */
     @Override
     public void deleteToBucket(String file, String bucket) {
-        amazonS3Client.deleteObject(bucket, file);
+        try {
+            amazonS3Client.deleteObject(bucket, file);
+        } catch (Exception e) {
+            throw new FileDeleteFailException();
+        }
     }
 }

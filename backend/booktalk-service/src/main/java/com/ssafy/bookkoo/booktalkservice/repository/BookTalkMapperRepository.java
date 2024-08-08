@@ -5,7 +5,8 @@ import com.ssafy.bookkoo.booktalkservice.entity.BookTalkMemberMapper;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BookTalkMapperRepository extends JpaRepository<BookTalkMemberMapper, Long> {
+public interface BookTalkMapperRepository extends JpaRepository<BookTalkMemberMapper, Long>,
+    BookTalkMapperCustomRepository {
 
     /**
      * 사용자가 참여한 독서록을 찾기 위한 메서드
