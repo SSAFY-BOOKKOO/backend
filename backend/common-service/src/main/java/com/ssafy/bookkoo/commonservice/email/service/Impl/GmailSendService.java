@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,10 +21,11 @@ public class GmailSendService implements MailSendService {
 
     /**
      * JavaMailSender를 통해 메일을 전송합니다.
-     *
+     * 메일 전송의 대기시간을 줄이기 위해 @Async를 사용
      * @param sendEmailDto@return
      * @throws MessagingException
      */
+    @Async
     @Override
     public void sendMail(RequestSendEmailDto sendEmailDto) {
         try {
