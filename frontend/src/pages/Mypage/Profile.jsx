@@ -7,6 +7,7 @@ import { authAxiosInstance } from '@services/axiosInstance';
 import { useAtom } from 'jotai';
 import { alertAtom } from '@atoms/alertAtom';
 import Alert from '@components/@common/Alert';
+import { postCategories } from '@services/Book';
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -21,9 +22,8 @@ const ProfilePage = () => {
     try {
       const memberResponse = await authAxiosInstance.get('/members/info');
       setMember(memberResponse.data);
-      const categoriesResponse =
-        await authAxiosInstance.post('/categories/search');
-      setCategories(categoriesResponse.data);
+      const categoriesResponse = await postCategories();
+      setCategories(categoriesResponse);
       setLoading(false);
     } catch (error) {
       console.error(error);
