@@ -24,8 +24,10 @@ public class AwsSesService implements MailSendService {
      */
     public void sendMail(RequestSendEmailDto sendEmailDto) {
         try {
+            String[] receivers = validMailFilter(sendEmailDto.receivers());
+
             final AwsSesDto awsSesDto = AwsSesDto.builder()
-                                                 .to(List.of(sendEmailDto.receivers()))
+                                                 .to(List.of(receivers))
                                                  .subject(sendEmailDto.subject())
                                                  .content(sendEmailDto.content())
                                                  .build();
@@ -35,5 +37,4 @@ public class AwsSesService implements MailSendService {
             throw new EmailSendFailException();
         }
     }
-
 }

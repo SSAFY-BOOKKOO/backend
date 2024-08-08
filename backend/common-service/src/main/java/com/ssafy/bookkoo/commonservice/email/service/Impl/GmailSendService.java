@@ -29,10 +29,10 @@ public class GmailSendService implements MailSendService {
         try {
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
+            String[] receivers = validMailFilter(sendEmailDto.receivers());
             helper.setSubject(sendEmailDto.subject());
             helper.setText(sendEmailDto.content());
-            helper.setTo(sendEmailDto.receivers());
+            helper.setTo(receivers);
             emailSender.send(message);
         } catch (MessagingException e) {
             throw new EmailSendFailException();
