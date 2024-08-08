@@ -9,19 +9,22 @@ import lombok.extern.slf4j.Slf4j;
 public class MaxArrayValidator implements ConstraintValidator<MaxArray, Integer[]> {
 
     private long maxValue;
+    private long minValue;
+
     @Override
     public void initialize(MaxArray constraintAnnotation) {
-        maxValue = constraintAnnotation.value();
+        maxValue = constraintAnnotation.maxValue();
+        minValue = constraintAnnotation.minValue();
     }
 
     @Override
     public boolean isValid(Integer[] value, ConstraintValidatorContext context) {
         if (value == null) {
-            return true;
+            return false;
         }
 
         for (Integer i : value) {
-            if (i != null && i > maxValue) {
+            if (i != null && i > maxValue && i < minValue) {
                 return false;
             }
         }

@@ -21,5 +21,7 @@ public @interface MaxArray {
 
     Class<? extends Payload>[] payload() default {};
 
-    long value();
+    long maxValue();
+
+    long minValue();
 }

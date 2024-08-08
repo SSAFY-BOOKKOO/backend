@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
 @Builder
-public record RequestRegisterMemberDto (
+public record RequestRegisterMemberDto(
     @NotNull
     @Pattern(
         regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$",
@@ -18,7 +18,7 @@ public record RequestRegisterMemberDto (
     @NotNull(message = "nickName can not be null") String nickName,
     Integer year,
     Gender gender,
-    @MaxArray(value = 15) Integer[] categories,
+    @MaxArray(minValue = 1, maxValue = 15) Integer[] categories,
     String introduction,
     SocialType socialType,
     String profileImgUrl,
@@ -26,9 +26,7 @@ public record RequestRegisterMemberDto (
 ) {
 
     /**
-     * Default
-     * SocialType: bookkoo
-     * Gender: NONE
+     * Default SocialType: bookkoo Gender: NONE
      */
     public RequestRegisterMemberDto {
         if (socialType == null) {
