@@ -216,7 +216,8 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * 전체 카테고리 삭제
      * @param memberInfo
      */
-    private void deleteCategories(MemberInfo memberInfo) {
+    @Transactional
+    protected void deleteCategories(MemberInfo memberInfo) {
         memberCategoryMapperRepository.deleteAll(memberInfo.getCategories());
     }
 
@@ -226,7 +227,8 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @param memberInfo
      * @param categories
      */
-    private void saveCategories(MemberInfo memberInfo, Integer[] categories) {
+    @Transactional
+    protected void saveCategories(MemberInfo memberInfo, Integer[] categories) {
         Arrays.stream(categories)
               .forEach((categoryId) -> {
                   //멤버 매퍼 키를 생성
