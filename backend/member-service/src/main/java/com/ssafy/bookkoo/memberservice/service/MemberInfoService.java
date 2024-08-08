@@ -17,6 +17,8 @@ public interface MemberInfoService {
 
     ResponseMemberProfileDto getMemberProfileInfo(Long id);
 
+    ResponseMemberProfileDto getMemberProfileInfoByNickName(String nickName);
+
     ResponseMemberInfoDto getMemberInfo(Long memberId);
 
     Long getMemberPk(String memberId);

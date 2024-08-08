@@ -98,6 +98,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @return 필터 조건에 맞는 카테고리 DTO 리스트
      */
     @Override
+    @Transactional(readOnly = true)
     public List<CategoryDto> getCategoriesByFilter(CategorySearchParam params) {
         return categoryMapper.toResponseDtoList(categoryRepository.findByFilter(params));
     }

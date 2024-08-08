@@ -11,7 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -55,7 +57,7 @@ public class FollowController {
     }
 
     @GetMapping("/followees")
-    @Operation(summary = "팔로워 목록을 반환합니다.", description = "멤버가 팔로우 하는 목록을 반환합니다.")
+    @Operation(summary = "팔로잉 목록을 반환합니다.", description = "멤버가 팔로우 하는 목록을 반환합니다.")
     public ResponseEntity<List<ResponseFollowShipDto>> getFollowees(
         @RequestHeader HttpHeaders headers,
         @RequestParam(required = false) RequestFollowShipDto requestFollowShipDto
@@ -80,5 +82,19 @@ public class FollowController {
         }
         List<ResponseFollowShipDto> followers = followShipService.getFollowers(id);
         return ResponseEntity.ok(followers);
+    }
+
+    @DeleteMapping("/{memberId}")
+    @Operation(summary = "나를 팔로우하는 상대를 팔로우 취소하게 만드는 API",
+        description = "나를 팔로우 하는 대상이 더 이상 나를 팔로우 하지 않도록 하는 API")
+    public ResponseEntity<HttpStatus> deleteMyFollower(
+        @RequestHeader HttpHeaders headers,
+        @PathVariable(value = "memberId") String memberId
+    ) {
+        Long followerId = memberInfoService.getMemberPk(memberId);
+        Long followeeId = CommonUtil.getMemberId(headers);
+        followShipService.unFollow(followerId, followeeId);
+        return ResponseEntity.noContent()
+                             .build();
     }
 }

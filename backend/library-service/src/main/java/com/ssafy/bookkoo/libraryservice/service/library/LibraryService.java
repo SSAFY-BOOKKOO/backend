@@ -169,4 +169,13 @@ public interface LibraryService {
      * @param memberId 멤버 ID
      */
     void deleteLibrariesByMemberId(Long memberId);
+
+    /**
+     * 서재에서 책 빼기
+     *
+     * @param memberId  사용자 ID
+     * @param libraryId 서재 ID
+     * @param bookId    책 ID
+     */
+    void deleteBookFromLibrary(Long memberId, Long libraryId, Long bookId);
 }

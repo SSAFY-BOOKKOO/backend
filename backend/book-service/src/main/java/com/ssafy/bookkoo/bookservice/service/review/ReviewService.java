@@ -62,4 +62,24 @@ public interface ReviewService {
      * @param memberId 사용자 id
      */
     void deleteReviewsByMemberId(Long memberId);
+
+    /**
+     * 한줄평 수정
+     *
+     * @param memberId 멤버 ID
+     * @param bookId   책 ID
+     * @param reviewId 한줄평 ID
+     * @param dto      바꿀 값
+     * @return ResponseReviewDto
+     */
+    ResponseReviewDto updateReview(Long memberId, Long bookId, Long reviewId, RequestReviewDto dto);
+
+    /**
+     * 리뷰 삭제
+     *
+     * @param memberId 멤버 ID
+     * @param bookId   책 ID
+     * @param reviewId 한줄평 ID
+     */
+    void deleteReviewById(Long memberId, Long bookId, Long reviewId);
 }

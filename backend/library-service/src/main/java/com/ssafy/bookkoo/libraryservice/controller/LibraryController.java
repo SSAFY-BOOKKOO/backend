@@ -195,6 +195,27 @@ public class LibraryController {
     }
 
     /**
+     * 서재에 책을 뺍니다
+     *
+     * @param headers   HTTP 헤더
+     * @param libraryId 서재 ID
+     * @param bookId    책 ID
+     * @return 204 (no content)
+     */
+    @DeleteMapping("/{libraryId}/books/{bookId}")
+    @Operation(summary = "서재에 책 삭제", description = "서재에 있던 책 삭제하는 API <br> 삭제 완료시 204 코드(no content)")
+    public ResponseEntity<HttpStatus> deleteBookFromLibrary(
+        @RequestHeader HttpHeaders headers,
+        @PathVariable Long libraryId,
+        @PathVariable Long bookId
+    ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+        libraryService.deleteBookFromLibrary(memberId, libraryId, bookId);
+        return ResponseEntity.noContent()
+                             .build();
+    }
+
+    /**
      * 서재 안의 책 단일 조회(프론트에서 서재 내 책 단일 조회시 사용)
      *
      * @param libraryId libraryId

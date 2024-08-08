@@ -11,7 +11,9 @@ import com.ssafy.bookkoo.bookservice.entity.Review;
 import com.ssafy.bookkoo.bookservice.entity.ReviewLike;
 import com.ssafy.bookkoo.bookservice.entity.ReviewMemberId;
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
+import com.ssafy.bookkoo.bookservice.exception.ReviewDeleteFailedException;
 import com.ssafy.bookkoo.bookservice.exception.ReviewHasWrittenException;
+import com.ssafy.bookkoo.bookservice.exception.ReviewIsNotYoursException;
 import com.ssafy.bookkoo.bookservice.exception.ReviewNotFoundException;
 import com.ssafy.bookkoo.bookservice.mapper.ReviewMapper;
 import com.ssafy.bookkoo.bookservice.repository.book.BookRepository;
@@ -45,6 +47,7 @@ public class ReviewServiceImpl implements ReviewService {
      * @return 책에 대한 리뷰 응답 DTO 리스트
      */
     @Override
+    @Transactional(readOnly = true)
     public List<ResponseReviewDto> getReviewByBookId(Long bookId) {
         List<Review> reviews = reviewRepository.findByBookId(bookId);
         return reviewMapper.toDto(reviews);
@@ -58,6 +61,7 @@ public class ReviewServiceImpl implements ReviewService {
      * @return 조회된 리뷰 응답 DTO
      */
     @Override
+    @Transactional(readOnly = true)
     public ResponseReviewDto getReviewById(Long bookId, Long reviewId) {
         Review review = findReviewByIdWithException(reviewId);
         return reviewMapper.toDto(review);
@@ -72,6 +76,7 @@ public class ReviewServiceImpl implements ReviewService {
      * @return 생성된 리뷰 응답 DTO
      */
     @Override
+    @Transactional
     public ResponseReviewDto addReview(
         Long memberId,
         Long bookId,
@@ -104,6 +109,7 @@ public class ReviewServiceImpl implements ReviewService {
      * @return 토글된 좋아요 상태 (true: 좋아요 추가됨, false: 좋아요 제거됨)
      */
     @Override
+    @Transactional
     public Boolean toggleLikeReview(Long memberId, Long bookId, Long reviewId) {
         Review review = findReviewByIdWithException(reviewId);
 
@@ -135,6 +141,7 @@ public class ReviewServiceImpl implements ReviewService {
      * @return 회원을 제외한 랜덤 리뷰 응답 DTO 리스트
      */
     @Override
+    @Transactional(readOnly = true)
     public List<ResponseSurfingReviewDto> getRandomReviewExceptMine(Long memberId, Long bookId) {
         // 1. 해당 책에 대한 리뷰 목록 불러오기(내가 쓴 리뷰 제외)
         List<Review> reviewsExceptMine = reviewRepository.findByBookIdExceptMine(memberId, bookId);
@@ -170,6 +177,67 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     /**
+     * 한줄평 수정
+     *
+     * @param memberId 멤버 ID
+     * @param bookId   책 ID
+     * @param reviewId 한줄평 ID
+     * @param dto      바꿀 값
+     * @return ResponseReviewDto
+     */
+    @Override
+    @Transactional
+    public ResponseReviewDto updateReview(
+        Long memberId,
+        Long bookId,
+        Long reviewId,
+        RequestReviewDto dto
+    ) {
+        Review reviewToUpdate = findReviewByIdWithException(reviewId);
+        // 내 리뷰가 아닐 경우 예외처리
+        if (!reviewToUpdate.getMemberId()
+                           .equals(memberId)) {
+            throw new ReviewIsNotYoursException();
+        }
+        // 리뷰 업데이트
+        if (dto.content() != null) {
+            reviewToUpdate.setContent(dto.content());
+        }
+        if (dto.rating() != null) {
+            reviewToUpdate.setRating(dto.rating());
+        }
+
+        // 저장
+        reviewRepository.save(reviewToUpdate);
+
+        return reviewMapper.toDto(reviewToUpdate);
+    }
+
+    /**
+     * 리뷰 삭제
+     *
+     * @param memberId 멤버 ID
+     * @param bookId   책 ID
+     * @param reviewId 한줄평 ID
+     */
+    @Override
+    @Transactional
+    public void deleteReviewById(Long memberId, Long bookId, Long reviewId) {
+        Review reviewToDelete = findReviewByIdWithException(reviewId);
+        // 내 리뷰가 아닐 경우 예외처리
+        if (!reviewToDelete.getMemberId()
+                           .equals(memberId)) {
+            throw new ReviewIsNotYoursException();
+        }
+        // 삭제 시도
+        try {
+            reviewRepository.delete(reviewToDelete);
+        } catch (Exception e) {
+            throw new ReviewDeleteFailedException();
+        }
+    }
+
+    /**
      * 리뷰 엔티티를 서핑 리뷰 응답 DTO로 변환합니다.
      *
      * @param review 리뷰 엔티티
@@ -185,7 +253,7 @@ public class ReviewServiceImpl implements ReviewService {
                                                                                      .nickName(
                                                                                          memberInfo.nickName())
                                                                                      .profilImgUrl(
-                                                                                         memberInfo.profilImgUrl())
+                                                                                         memberInfo.profileImgUrl())
                                                                                      .build();
 
         return ResponseSurfingReviewDto.builder()
@@ -206,7 +274,8 @@ public class ReviewServiceImpl implements ReviewService {
      * @param reviewId 리뷰 ID
      * @return 조회된 리뷰 엔티티
      */
-    private Review findReviewByIdWithException(Long reviewId) {
+    @Transactional(readOnly = true)
+    protected Review findReviewByIdWithException(Long reviewId) {
         return reviewRepository.findById(reviewId)
                                .orElseThrow(ReviewNotFoundException::new);
     }
