@@ -571,6 +571,36 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     /**
+     * 서재에서 책 빼기
+     *
+     * @param memberId  사용자 ID
+     * @param libraryId 서재 ID
+     * @param bookId    책 ID
+     */
+    @Override
+    @Transactional
+    public void deleteBookFromLibrary(Long memberId, Long libraryId, Long bookId) {
+        // 1. library 가 내꺼인지 찾기
+        Optional<Library> libraryOpt = libraryRepository.findById(libraryId);
+
+        // 서재가 없을 때
+        if (libraryOpt.isEmpty()) {
+            throw new LibraryNotFoundException(libraryId);
+        }
+
+        // 서재가 내게 아닐 때
+        if (!isLibraryOwnedByUser(libraryOpt.get(), memberId)) {
+            throw new LibraryIsNotYoursException();
+        }
+
+        // 2. library_book_mapper 에서 삭제시켜버리기
+        MapperKey mapperKey = new MapperKey();
+        mapperKey.setLibraryId(libraryId);
+        mapperKey.setBookId(bookId);
+        libraryBookMapperRepository.deleteById(mapperKey);
+    }
+
+    /**
      * 해당 서재가 해당 사용자의 서재인지 확인
      *
      * @param library  서재 ID

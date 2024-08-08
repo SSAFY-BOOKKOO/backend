@@ -75,12 +75,11 @@ public class BookTalkController {
         description = "책 번호로 독서록을 생성합니다."
     )
     @PostMapping
-    public ResponseEntity<Void> createBookTalk(
+    public ResponseEntity<Long> createBookTalk(
         @RequestBody RequestCreateBookTalkDto dto
     ) {
-        bookTalkService.createBookTalk(dto);
-        return ResponseEntity.ok()
-                             .build();
+        Long bookTalkId = bookTalkService.createBookTalk(dto);
+        return ResponseEntity.ok(bookTalkId);
     }
 
     /**
