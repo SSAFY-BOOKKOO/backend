@@ -50,7 +50,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
-    private final Long EXPIRED_TIME = 1800L; //30분 만료 시간
+    private final Long EXPIRED_TIME = 300L; //5분 만료 시간
 
     private final MemberRepository memberRepository;
     private final MemberInfoRepository memberInfoRepository;
