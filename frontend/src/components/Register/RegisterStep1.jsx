@@ -35,6 +35,7 @@ const RegisterStep1 = ({
   const [emailError, setEmailError] = useState('');
   const [nicknameError, setNicknameError] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
+  const [isSendingCode, setIsSendingCode] = useState(false);
 
   useEffect(() => {
     if (isSocialLogin) {
@@ -97,6 +98,12 @@ const RegisterStep1 = ({
     } catch (error) {
       setNicknameError(error.message);
     }
+  };
+
+  const handleSendVerificationCodeClick = async () => {
+    setIsSendingCode(true);
+    await handleSendVerificationCode();
+    setIsSendingCode(false);
   };
 
   const validateAndProceed = () => {
@@ -189,10 +196,8 @@ const RegisterStep1 = ({
                 color='text-white bg-blue-500 active:bg-blue-600'
                 size='small'
                 full={false}
-                onClick={async () => {
-                  await handleSendVerificationCode();
-                  setIsEmailVerified(false);
-                }}
+                onClick={handleSendVerificationCodeClick}
+                disabled={isSendingCode}
               />
             </div>
           </label>

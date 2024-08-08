@@ -3,24 +3,28 @@ import { useDrag, useDrop } from 'react-dnd';
 
 const ItemType = 'BOOK';
 
-const Book = ({ item, index, moveBook, onBookClick }) => {
+const Book = ({ item, index, moveBook, onBookClick, viewOnly }) => {
   const [{ isDragging }, dragRef] = useDrag({
     type: ItemType,
     item: { bookOrder: item.bookOrder, originalIndex: index },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
+    canDrag: !viewOnly,
   });
 
   const [{ isOver, canDrop }, dropRef] = useDrop({
     accept: ItemType,
     drop: draggedItem => {
-      moveBook(draggedItem.originalIndex, index);
+      if (moveBook) {
+        moveBook(draggedItem.originalIndex, index);
+      }
     },
     collect: monitor => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
     }),
+    canDrop: () => !viewOnly,
   });
 
   const getTitle = (title, length) => {
@@ -40,9 +44,9 @@ const Book = ({ item, index, moveBook, onBookClick }) => {
   ];
 
   const titleLength = {
-    short: 8,
-    medium: 9,
-    tall: 10,
+    short: 7,
+    medium: 8,
+    tall: 9,
   }[
     item.book.sizeHeight <= 210
       ? 'short'
@@ -65,7 +69,7 @@ const Book = ({ item, index, moveBook, onBookClick }) => {
 
   return (
     <div
-      ref={node => dragRef(dropRef(node))}
+      ref={viewOnly ? null : node => dragRef(dropRef(node))}
       className={`${heightClass} text-center rounded-lg cursor-pointer shadow-md flex items-center justify-center ${item.bookColor} ${
         isOver && canDrop ? 'border-4 border-dashed border-gray-500' : ''
       }`}

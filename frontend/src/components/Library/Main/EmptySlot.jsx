@@ -3,21 +3,24 @@ import { useDrop } from 'react-dnd';
 
 const ItemType = 'BOOK';
 
-const EmptySlot = ({ index, moveBook }) => {
+const EmptySlot = ({ index, moveBook, viewOnly }) => {
   const [{ isOver, canDrop }, dropRef] = useDrop({
     accept: ItemType,
     drop: draggedItem => {
-      moveBook(draggedItem.originalIndex, index);
+      if (moveBook) {
+        moveBook(draggedItem.originalIndex, index);
+      }
     },
     collect: monitor => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
     }),
+    canDrop: () => !viewOnly,
   });
 
   return (
     <div
-      ref={dropRef}
+      ref={viewOnly ? null : dropRef}
       className={`m-1 p-1 h-48 text-center rounded-lg flex items-center justify-center ${
         isOver && canDrop ? 'border-4 border-dashed border-gray-500' : ''
       }`}
