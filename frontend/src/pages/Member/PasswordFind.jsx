@@ -11,6 +11,7 @@ import { axiosInstance } from '@services/axiosInstance';
 const PasswordFind = () => {
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [, setAlert] = useAtom(alertAtom);
 
@@ -24,6 +25,7 @@ const PasswordFind = () => {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    setLoading(true);
     const validationConfig = { email: true };
     const formData = { email };
     const newErrors = validateForm(formData, validationConfig);
@@ -51,7 +53,11 @@ const PasswordFind = () => {
           confirmOnly: true,
           message: errorMessage,
         });
+      } finally {
+        setLoading(false);
       }
+    } else {
+      setLoading(false);
     }
   };
 
@@ -80,6 +86,7 @@ const PasswordFind = () => {
               color='text-white bg-green-400 active:bg-green-600'
               size='large'
               full
+              disabled={loading}
             />
           </div>
         </form>

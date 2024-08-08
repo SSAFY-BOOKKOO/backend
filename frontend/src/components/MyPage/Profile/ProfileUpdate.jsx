@@ -119,7 +119,6 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
           confirmOnly: true,
           message: '프로필이 성공적으로 업데이트되었습니다.',
         });
-        console.log(formData);
         onSave({
           nickName: formData.nickname,
           categories: formData.categories,

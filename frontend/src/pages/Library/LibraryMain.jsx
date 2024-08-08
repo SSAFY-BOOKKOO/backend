@@ -48,7 +48,6 @@ const LibraryMain = () => {
         );
         const librariesDetails = await Promise.all(libraryDetailsPromises);
         setLibraries(librariesDetails.map(response => response.data));
-        console.log(librariesDetails);
       } catch (error) {
         console.error(error);
       }
