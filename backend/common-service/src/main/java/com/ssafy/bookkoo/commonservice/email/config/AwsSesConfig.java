@@ -1,4 +1,4 @@
-package com.ssafy.bookkoo.memberservice.config;
+package com.ssafy.bookkoo.commonservice.email.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;

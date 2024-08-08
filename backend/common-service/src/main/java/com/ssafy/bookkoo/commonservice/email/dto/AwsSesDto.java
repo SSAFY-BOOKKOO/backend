@@ -1,4 +1,4 @@
-package com.ssafy.bookkoo.memberservice.dto;
+package com.ssafy.bookkoo.commonservice.email.dto;
 
 import com.amazonaws.services.simpleemail.model.Body;
 import com.amazonaws.services.simpleemail.model.Content;
