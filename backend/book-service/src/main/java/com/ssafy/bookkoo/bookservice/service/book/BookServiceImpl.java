@@ -181,6 +181,7 @@ public class BookServiceImpl implements BookService {
      * @return 검색된 책 응답 DTO 리스트
      */
     @Override
+    @Transactional(readOnly = true)
     public List<ResponseBookDto> getBooksByCondition(RequestSearchBookMultiFieldDto filterDto) {
         List<Book> books = bookRepository.findByConditions(filterDto);
 
@@ -195,6 +196,7 @@ public class BookServiceImpl implements BookService {
      * @return ResponseBookOfLibraryDto
      */
     @Override
+    @Transactional(readOnly = true)
     public ResponseBookOfLibraryDto getBookOfLibrary(
         Long bookId,
         Long memberId
@@ -270,7 +272,8 @@ public class BookServiceImpl implements BookService {
      * @param bookId 책 ID
      * @return 조회된 책 엔티티
      */
-    private Book findBookByIdWithException(Long bookId) {
+    @Transactional(readOnly = true)
+    protected Book findBookByIdWithException(Long bookId) {
         return bookRepository.findById(bookId)
                              .orElseThrow(() -> new BookNotFoundException(
                                  "Book not found with id : " + bookId));
