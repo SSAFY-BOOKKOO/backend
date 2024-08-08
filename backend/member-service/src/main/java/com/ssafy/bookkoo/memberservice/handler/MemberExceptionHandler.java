@@ -1,15 +1,6 @@
 package com.ssafy.bookkoo.memberservice.handler;
 
-import com.ssafy.bookkoo.memberservice.exception.AlreadyFollowedException;
-import com.ssafy.bookkoo.memberservice.exception.EmailDuplicateException;
-import com.ssafy.bookkoo.memberservice.exception.EmailNotValidException;
-import com.ssafy.bookkoo.memberservice.exception.EmailSendFailException;
-import com.ssafy.bookkoo.memberservice.exception.FollowShipNotFoundException;
-import com.ssafy.bookkoo.memberservice.exception.MemberInfoNotExistException;
-import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
-import com.ssafy.bookkoo.memberservice.exception.NickNameDuplicateException;
-import com.ssafy.bookkoo.memberservice.exception.PasswordNotValidException;
-import com.ssafy.bookkoo.memberservice.exception.QuoteNotFoundException;
+import com.ssafy.bookkoo.memberservice.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -136,6 +127,17 @@ public class MemberExceptionHandler {
     @ExceptionHandler(QuoteNotFoundException.class)
     public ResponseEntity<String> handleQuoteNotFoundException(QuoteNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * 권한이 없는 리소스에 접근할 때 발생하는 예외
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(UnAuthorizationException.class)
+    public ResponseEntity<String> handleUnAuthorizationException(UnAuthorizationException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                              .body(e.getMessage());
     }
 }
