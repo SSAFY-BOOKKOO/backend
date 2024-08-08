@@ -139,9 +139,11 @@ public class CurationController {
     @PostMapping("/chat")
     @Operation(summary = "챗봇", description = "OpenAPI 를 이용한 챗봇 대화")
     public ResponseEntity<String> chatbot(
+        @RequestHeader HttpHeaders headers,
         @RequestBody @Valid ArrayList<RequestChatbotDto> requestChatbotDtoList
     ) {
-        return ResponseEntity.ok(openAiService.getCompletion(requestChatbotDtoList));
+        Long memberId = CommonUtil.getMemberId(headers);
+        return ResponseEntity.ok(openAiService.getCompletion(requestChatbotDtoList, memberId));
     }
 
 
