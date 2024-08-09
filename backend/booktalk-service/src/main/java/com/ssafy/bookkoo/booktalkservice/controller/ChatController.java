@@ -5,11 +5,11 @@ import com.ssafy.bookkoo.booktalkservice.dto.ResponseChatMessageDto;
 import com.ssafy.bookkoo.booktalkservice.service.ChatService;
 import com.ssafy.bookkoo.booktalkservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,19 +67,20 @@ public class ChatController {
     }
 
     /**
-     * 독서록의 채팅 기록을 가져오는 API (페이징 10개씩)
+     * 독서록의 채팅 기록을 가져오는 API
      *
      * @param bookTalkId : 독서록 번호
-     * @param page       : 페이징 번호
+     * @param time       : 기준 시간
      * @return ResponseChatMessageDto 메세지 번호, 독서록 번호, 작성자 닉네임, 작성자 프로필, 메세지 내용, 좋아요 수 , 작성 시간
      */
     @Operation(summary = "채팅 기록 가져오기",
-        description = "해당 독서록의 채팅을 최근순으로 10개씩 가져옵니다."
+        description = "해당 독서록의 채팅을 기준 시간 이전으로 10개씩 가져옵니다. time 을 주지 않을 경우 현재시간을 기준으로 가져옵니다."
     )
     @GetMapping("/{bookTalkId}")
     public List<ResponseChatMessageDto> getMessageList(
         @PathVariable(value = "bookTalkId") Long bookTalkId,
-        @RequestParam Integer page) {
-        return chatService.getMessageList(bookTalkId, PageRequest.of(page, 10));
+        @RequestParam(required = false) LocalDateTime time
+    ) {
+        return chatService.getMessageList(bookTalkId, time);
     }
 }
