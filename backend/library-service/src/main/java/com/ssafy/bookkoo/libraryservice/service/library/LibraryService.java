@@ -178,4 +178,14 @@ public interface LibraryService {
      * @param bookId    책 ID
      */
     void deleteBookFromLibrary(Long memberId, Long libraryId, Long bookId);
+
+    /**
+     * 서재에서 책 색상 변경하기
+     *
+     * @param memberId  사용자 ID
+     * @param libraryId 서재 ID
+     * @param bookId    책 ID
+     * @param bookColor 책 색상
+     */
+    void updateBookColorFromLibrary(Long memberId, Long libraryId, Long bookId, String bookColor);
 }
