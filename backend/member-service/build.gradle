@@ -74,6 +74,8 @@ dependencies {
 
     // spring configuration processor
     implementation 'org.springframework.boot:spring-boot-configuration-processor:3.3.2'
+    //구글 Vision
+    implementation 'com.google.cloud:google-cloud-vision:3.34.0'
 }
 
 dependencyManagement {
