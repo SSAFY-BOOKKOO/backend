@@ -21,4 +21,6 @@ public interface QuoteService {
     List<ResponseQuoteDto> getQuotes(Long memberId, Pageable pageable);
 
     ResponseQuoteDetailDto getQuoteDetail(Long memberId, Long quoteId);
+
+    String opticalCharacterRecognition(MultipartFile image);
 }
