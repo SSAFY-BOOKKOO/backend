@@ -5,8 +5,11 @@ import Textarea from '@components/@common/Textarea';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import TopDownButton from '@components/@common/TopDownButton';
-import { getBookTalkChats } from '@services/BookTalk';
-import { postBookTalkChat, postBookTalkEnter } from '../../services/BookTalk';
+import {
+  getBookTalkChats,
+  postBookTalkChat,
+  postBookTalkEnter,
+} from '@services/BookTalk';
 import { useLocation, useParams } from 'react-router-dom';
 
 const BookTalkDetail = () => {
@@ -23,7 +26,7 @@ const BookTalkDetail = () => {
   const client = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView();
   };
 
   // 스크롤 아래로
