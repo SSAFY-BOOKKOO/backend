@@ -35,6 +35,16 @@ public class QuoteServiceImpl implements QuoteService {
     @Value("${config.quote-bucket-name}")
     private String BUCKET;
 
+
+    @Value("${config.default-quote-img-url}")
+    private String DEFAULT_QUOTE_IMG_URL;
+
+    @Value("${config.server-url}")
+    private String SERVER;
+
+    @Value("${config.common-service-file}")
+    private String COMMON_URL;
+
     /**
      * 한줄평 저장
      *
@@ -49,10 +59,12 @@ public class QuoteServiceImpl implements QuoteService {
         MemberInfo memberInfo = getMemberInfo(memberId);
         Quote quote = quoteMapper.toEntity(createQuoteDto);
         quote.setMemberInfo(memberInfo);
+        String imgUrl = DEFAULT_QUOTE_IMG_URL;
         if (backgroundImg != null) {
-            String fileName = commonServiceClient.saveImg(backgroundImg, BUCKET);
-            quote.setBackgroundImgUrl(fileName);
+            imgUrl = commonServiceClient.saveImg(backgroundImg, BUCKET);
+            imgUrl = SERVER + COMMON_URL + imgUrl;
         }
+        quote.setBackgroundImgUrl(imgUrl);
         quoteRepository.save(quote);
     }
 
@@ -91,8 +103,9 @@ public class QuoteServiceImpl implements QuoteService {
         quote.setContent(updateQuoteDto.content());
         quote.setSource(updateQuoteDto.source());
         if (backgroundImg != null) {
-            String fileName = commonServiceClient.saveImg(backgroundImg, BUCKET);
-            quote.setBackgroundImgUrl(fileName);
+            String imgUrl = commonServiceClient.saveImg(backgroundImg, BUCKET);
+            imgUrl = SERVER + COMMON_URL + imgUrl;
+            quote.setBackgroundImgUrl(imgUrl);
         }
         quoteRepository.flush();
     }
@@ -115,6 +128,7 @@ public class QuoteServiceImpl implements QuoteService {
 
     /**
      * 자신의 글귀에 대한 상세 정보를 반환 (본인 것 아니면 예외 발생)
+     *
      * @param memberId
      * @param quoteId
      * @return
@@ -130,6 +144,12 @@ public class QuoteServiceImpl implements QuoteService {
             throw new UnAuthorizationException();
         }
         return quoteMapper.toDetailDto(quote);
+    }
+
+    @Override
+    public String opticalCharacterRecognition(MultipartFile image) {
+        
+        return "";
     }
 
     private MemberInfo getMemberInfo(Long memberId) {
