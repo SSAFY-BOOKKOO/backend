@@ -4,8 +4,7 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import { useAtom } from 'jotai';
 import useModal from '@hooks/useModal';
-// import ReviewCom from '@components/Library/Detail/ReviewCom';
-import ReviewCom2 from '@components/Library/Detail/ReviewCom2';
+import ReviewCom from '@components/Library/Detail/ReviewCom';
 import ColorPicker from '@components/Library/BookCreate/ColorPicker';
 import ShelfSelectStep from '@components/Library/BookCreate/ShelfSelectStep';
 import SettingsModal from '@components/@common/SettingsModal';
@@ -35,19 +34,20 @@ const LibraryDetail = () => {
         const response = await authAxiosInstance.get(
           `/libraries/${libraryId}/books/${bookId}?nickname=${location.state.nickname}`
         );
-        const bookResponse = response.data.book;
-        setBook(response.data.book);
-        console.log(bookResponse);
+        const bookResponse = response.data;
+        const book = response.data.book;
+        setBook(book);
+
+        console.log('bookResponse:', bookResponse);
         // console.log(book);
-        console.log('jotai에 저장', bookData);
-        // setBookData({
-        //   status: bookResponse.status || 'READ',
-        //   startAt: bookResponse.startAt || '',
-        //   endAt: bookResponse.endAt || '',
-        //   rating: bookResponse.rating || 0,
-        //   bookColor: bookResponse.color || '',
-        //   libraryId: libraryId,
-        // });
+        setBookData({
+          status: bookResponse.status || 'READ',
+          startAt: bookResponse.startAt || '',
+          endAt: bookResponse.endAt || '',
+          rating: bookResponse.rating || 0,
+          bookColor: bookResponse.bookColor || '',
+          libraryId: libraryId,
+        });
       } catch (error) {
         console.log(location.state);
         console.error('Failed to fetch book data:', error);
@@ -67,9 +67,6 @@ const LibraryDetail = () => {
     publishedAt = '',
     summary = '',
     coverImgUrl,
-    // status,
-    // startAt,
-    // endAt,
   } = book;
 
   const handleDelete = () => {
@@ -120,7 +117,7 @@ const LibraryDetail = () => {
           classNames='fade'
         >
           {showReview ? (
-            <ReviewCom2
+            <ReviewCom
               bookId={bookId}
               onBackClick={() => setShowReview(false)}
               book={book}
@@ -146,11 +143,11 @@ const LibraryDetail = () => {
                       <IoBookmarkSharp className='absolute top-5 right-16 flex items-center justify-center w-16 h-32 text-blue-500 z-10' />
                       {bookData.status === 'READ' && (
                         <span
-                          className='absolute right-[5.5rem] text-black text-xs mb-5 font-bold z-20'
+                          className='absolute flex flex-col items-center justify-center right-[5.5rem] text-black text-xs mb-5 font-bold z-20'
                           style={{
                             writingMode: 'vertical-rl',
                             textOrientation: 'upright',
-                            letterSpacing: '-0.23em',
+                            letterSpacing: '-0.1em',
                           }}
                         >
                           읽음
@@ -170,7 +167,7 @@ const LibraryDetail = () => {
                       )}
                       {bookData.status === 'DIB' && (
                         <span
-                          className='absolute right-[5.5rem] text-black text-xs mb-5 font-bold z-20'
+                          className='absolute flex items-center justify-center right-[5.5rem] text-black text-xs mb-5 font-bold z-20'
                           style={{
                             writingMode: 'vertical-rl',
                             textOrientation: 'upright',
@@ -180,18 +177,7 @@ const LibraryDetail = () => {
                           찜
                         </span>
                       )}
-                      {/* <span
-                        className='absolute right-[5.5rem] text-black text-xs mb-5 font-bold z-20'
-                        style={{
-                          writingMode: 'vertical-rl',
-                          textOrientation: 'upright',
-                          letterSpacing: '-0.23em',
-                        }}
-                      >
-                        {bookData.status}
-                      </span> */}
                     </div>
-                    {/* <IoBookmarkSharp className='absolute top-[3.7rem] right-[4rem] text-6xl text-blue-500' /> */}
                     {/* 모달 */}
                     <SettingsModal
                       isOpen={isOpen}
@@ -202,7 +188,9 @@ const LibraryDetail = () => {
                     />
                     {/* 읽은 기간 로직 (수정예정) */}
                     <p className='m-2 pl-3'>
-                      {bookData.startAt}-{bookData.endAt}
+                      {bookData.startAt
+                        ? `${bookData.startAt}~${bookData.endAt}`
+                        : ''}
                     </p>
                   </div>
                 </div>
@@ -221,8 +209,6 @@ const LibraryDetail = () => {
                   <div className='flex space-x-1 mt-1'>
                     {Array(5).fill(<AiFillStar className='text-amber-300' />)}
                   </div>
-                  {/* 읽은 기간 */}
-                  {/* 읽은 상태 */}
                   <p className='text-lg text-black text-overflow-1'>{author}</p>
                   <p className='text-sm text-black'>
                     {publisher} | {publishedAt}

@@ -6,6 +6,7 @@ import { authAxiosInstance } from '../../services/axiosInstance';
 import { IoIosArrowBack } from 'react-icons/io';
 import { IoIosArrowForward } from 'react-icons/io';
 import { BsEnvelopeHeart } from 'react-icons/bs';
+import Spinner from '@components/@common/Spinner';
 
 const CurationSend = () => {
   const location = useLocation();
@@ -51,6 +52,7 @@ const CurationSend = () => {
 
   return (
     <div className='flex flex-col'>
+      <Spinner />
       <CurationTab />
       <p className='font-bold text-green-400 px-8 pt-3 pb-1'>
         보낸 레터 수: {sendLetters.length}
