@@ -22,7 +22,7 @@ import CurationLetterDetail from './pages/Curation/CurationLetterDetail.jsx';
 import BookTalkMain from './pages/BookTalk/BookTalkMain.jsx';
 import BookTalkDetail from './pages/BookTalk/BookTalkDetail.jsx';
 import Intro from './pages/Member/Intro.jsx';
-import PrivateRoute from '@/components/@common/PrivateRoute';
+import PrivateRoute from '@components/@common/PrivateRoute';
 import CurationLetterSend from './pages/Curation/CurationLetterSend.jsx';
 import Quote from './pages/Mypage/Quote.jsx';
 import SearchMore from './pages/Library/SearchMore.jsx';
@@ -31,6 +31,7 @@ import PasswordFind from './pages/Member/PasswordFind.jsx';
 import AdditionalInfo from './pages/Member/AdditionalInfo.jsx';
 import LibraryOthers from './pages/Library/LibraryOthers.jsx';
 import SocialLoginCallback from './components/Login/SocialLoginCallback.jsx';
+import BookTalkCreate from './pages/BookTalk/BookTalkCreate.jsx';
 
 const router = createBrowserRouter([
   {
@@ -81,8 +82,9 @@ const router = createBrowserRouter([
 
           //booktalk
           { path: 'booktalk', element: <BookTalkMain /> },
-          { path: 'booktalk/detail/:bookId', element: <BookTalkDetail /> },
+          { path: 'booktalk/detail/:bookTalkId', element: <BookTalkDetail /> },
           { path: 'booktalk/more', element: <BookTalkMore /> },
+          { path: 'booktalk/create', element: <BookTalkCreate /> },
 
           // mypage
           { path: 'mypage/friend', element: <Friend /> },

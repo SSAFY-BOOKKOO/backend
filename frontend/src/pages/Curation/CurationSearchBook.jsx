@@ -61,8 +61,6 @@ const BookSearch = () => {
     navigate('/curation/letter-create');
   };
 
-
-
   //////////////////검색 결과
 
   const renderBookItem = book => {
@@ -83,7 +81,7 @@ const BookSearch = () => {
         onSubmit={handleSearchSubmit}
         className='bg-white rounded-lg p-6 w-full max-w-md'
       >
-        <div className='flex items-center'>
+        <div className='flex items-center pl-2'>
           <input
             type='text'
             placeholder='책 제목/작가명으로 검색'
@@ -93,7 +91,7 @@ const BookSearch = () => {
           />
           <button
             type='submit'
-            className='ml-2 p-2 bg-transparent border cursor-pointer'
+            className='ml-2 p-2 bg-transparent cursor-pointer'
           >
             <BiSearch className='text-2xl' />
           </button>

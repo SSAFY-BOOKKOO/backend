@@ -12,7 +12,7 @@ const ScrollToTop = ({ children }) => {
   }, [pathname]);
 
   return (
-    <div ref={scrollRef} className='flex-1 overflow-y-auto'>
+    <div ref={scrollRef} className='flex-1 overflow-y-auto overflow-x-hidden'>
       {children}
     </div>
   );
