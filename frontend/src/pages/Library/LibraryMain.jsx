@@ -3,7 +3,7 @@ import { DndProvider } from 'react-dnd';
 import { MultiBackend, TouchTransition } from 'react-dnd-multi-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import MemberProfile from '@components/Library/Main/MemberProfile';
 import LibraryOptions from '@components/Library/Main/LibraryOptions';
@@ -34,9 +34,11 @@ const LibraryMain = () => {
   const [createLibraryName, setCreateLibraryName] = useState('');
   const [activeLibrary, setActiveLibrary] = useState(0);
   const navigate = useNavigate();
+  const location = useLocation();
   const [, setAlert] = useAtom(alertAtom);
   const [member, setMember] = useState(null);
   const [libraries, setLibraries] = useState([]);
+  const [bookChanges, setBookChanges] = useState([]);
 
   useEffect(() => {
     const fetchLibraries = async () => {
@@ -81,63 +83,79 @@ const LibraryMain = () => {
     }
   }, [location.state]);
 
-  const moveBook = async (fromIndex, toIndex) => {
+  const moveBook = (fromIndex, toIndex) => {
     const libraryId = libraries[activeLibrary].id;
-    const movedBook = libraries[activeLibrary].books.find(
-      book => book.bookOrder === fromIndex + 1
-    );
+    setLibraries(prevLibraries => {
+      const newLibraries = prevLibraries.map(library => {
+        if (library.id === libraryId) {
+          const newBooks = [...library.books];
+          const movedBookIndex = newBooks.findIndex(
+            book => book.bookOrder === fromIndex + 1
+          );
+          newBooks[movedBookIndex].bookOrder = toIndex + 1;
 
-    if (movedBook) {
-      try {
-        await authAxiosInstance.put(`/libraries/${libraryId}/books`, [
-          {
-            bookOrder: toIndex + 1,
-            bookColor: movedBook.bookColor,
-            startAt: movedBook.startAt,
-            endAt: movedBook.endAt,
-            status: movedBook.status,
-            rating: movedBook.rating,
-            bookId: movedBook.book.id,
-          },
-        ]);
-
-        setLibraries(prevLibraries => {
-          const newLibraries = prevLibraries.map(library => {
-            if (library.id === libraryId) {
-              const newBooks = [...library.books];
-              const movedBookIndex = newBooks.findIndex(
-                book => book.bookOrder === fromIndex + 1
-              );
-              newBooks[movedBookIndex].bookOrder = toIndex + 1;
-
-              newBooks.forEach(book => {
-                if (
-                  book.bookOrder === toIndex + 1 &&
-                  book.book.id !== newBooks[movedBookIndex].book.id
-                ) {
-                  book.bookOrder = fromIndex + 1;
-                }
-              });
-
-              return {
-                ...library,
-                books: newBooks.sort((a, b) => a.bookOrder - b.bookOrder),
-              };
+          newBooks.forEach(book => {
+            if (
+              book.bookOrder === toIndex + 1 &&
+              book.book.id !== newBooks[movedBookIndex].book.id
+            ) {
+              book.bookOrder = fromIndex + 1;
             }
-            return library;
           });
-          return newLibraries;
-        });
-      } catch (error) {
-        console.error('책 순서 변경에 실패했습니다:', error);
-        setAlert({
-          isOpen: true,
-          confirmOnly: true,
-          message: '책 순서 변경에 실패했습니다. 다시 시도해 주세요.',
-        });
-      }
-    }
+
+          return {
+            ...library,
+            books: newBooks.sort((a, b) => a.bookOrder - b.bookOrder),
+          };
+        }
+        return library;
+      });
+
+      // Store the changes locally
+      setBookChanges(prevChanges => [
+        ...prevChanges,
+        { fromIndex, toIndex, libraryId },
+      ]);
+
+      return newLibraries;
+    });
   };
+
+  // Function to handle PUT request on unmount
+  useEffect(() => {
+    const handleSaveChanges = async () => {
+      if (bookChanges.length > 0) {
+        try {
+          const libraryId = libraries[activeLibrary].id;
+          const changesToApply = libraries[activeLibrary].books.map(book => ({
+            bookOrder: book.bookOrder,
+            bookColor: book.bookColor,
+            startAt: book.startAt,
+            endAt: book.endAt,
+            status: book.status,
+            rating: book.rating,
+            bookId: book.book.id,
+          }));
+
+          await authAxiosInstance.put(
+            `/libraries/${libraryId}/books`,
+            changesToApply
+          );
+        } catch (error) {
+          console.error('책 순서 변경에 실패했습니다:', error);
+          setAlert({
+            isOpen: true,
+            confirmOnly: true,
+            message: '책 순서 변경에 실패했습니다. 다시 시도해 주세요.',
+          });
+        }
+      }
+    };
+
+    return () => {
+      handleSaveChanges();
+    };
+  }, [bookChanges, libraries, activeLibrary, setAlert]);
 
   const changeLibraryName = async (libraryId, newName) => {
     try {

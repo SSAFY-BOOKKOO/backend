@@ -12,6 +12,7 @@ const CreateLibraryModal = ({
   const handleCreateLibrary = () => {
     createLibrary();
     setShowCreateModal(false);
+    setCreateLibraryName('');
   };
 
   return (
