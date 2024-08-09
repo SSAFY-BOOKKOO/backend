@@ -6,6 +6,7 @@ import com.ssafy.bookkoo.booktalkservice.dto.RequestChatMessageDto;
 import com.ssafy.bookkoo.booktalkservice.dto.ResponseChatMessageDto;
 import com.ssafy.bookkoo.booktalkservice.dto.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.booktalkservice.entity.BookTalk;
+import com.ssafy.bookkoo.booktalkservice.exception.ChatMessageNotFoundException;
 import com.ssafy.bookkoo.booktalkservice.mongo.ChatMessageRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -49,6 +50,8 @@ public class ChatServiceImpl implements ChatService {
                                     .profileImgUrl(memberInfo.profileImgUrl())
                                     .createdAt(chatMessage.getCreatedAt()
                                                           .toString())
+                                    // 보낼때는 좋아요를 누를 수 없다.
+                                    .isMemberLiked(false)
                                     .build();
         // 해당 주소를 구독하고 있는 사람들에게 보냄
         simpleMessageSendingOperations.convertAndSend("/booktalks/sub/chat/" + bookTalkId,
@@ -59,7 +62,8 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public List<ResponseChatMessageDto> getMessageList(Long bookTalkId, LocalDateTime time) {
+    public List<ResponseChatMessageDto> getMessageList(Long bookTalkId, LocalDateTime time,
+        Long memberId) {
         if (time == null) {
             time = LocalDateTime.now();
         }
@@ -80,6 +84,7 @@ public class ChatServiceImpl implements ChatService {
                                         .profileImgUrl(memberInfo.profileImgUrl())
                                         .createdAt(chatMessage.getCreatedAt()
                                                               .toString())
+                                        .isMemberLiked(chatMessage.isLiked(memberId))
                                         .build();
             messageList.addFirst(dto);
         });
@@ -87,4 +92,20 @@ public class ChatServiceImpl implements ChatService {
                           .toList();
     }
 
+    /**
+     * @param chatMessageId : 해당 채팅 메세지 아이디
+     * @param memberId      : 좋아요 누를 멤버
+     * @return : 변경된 좋아요 상태
+     */
+    @Transactional
+    @Override
+    public Boolean chatMessageLikeToggle(String chatMessageId, Long memberId) {
+        ChatMessage chatMessage
+            = chatMessageRepository.findById(chatMessageId)
+                                   .orElseThrow(
+                                       ChatMessageNotFoundException::new);
+        Boolean status = chatMessage.toggleLike(memberId);
+        chatMessageRepository.save(chatMessage);
+        return status;
+    }
 }

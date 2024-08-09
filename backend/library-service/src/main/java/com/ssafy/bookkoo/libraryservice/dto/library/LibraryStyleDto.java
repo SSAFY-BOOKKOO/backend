@@ -11,7 +11,13 @@ import lombok.Builder;
 public record LibraryStyleDto(
 
     @Schema(description = "서재 색상", example = "#FFFFFF")
-    String libraryColor
+    String libraryColor,
+
+    @Schema(description = "서재 폰트 이름", example = "쿠키런!")
+    String fontName,
+
+    @Schema(description = "서재 폰트 크기", example = "3")
+    String fontSize
 
 ) {
 

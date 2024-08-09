@@ -29,12 +29,24 @@ public class LibraryStyle {
     @Setter
     private String libraryColor;
 
+    @Column
+    @Setter
+    private String fontName;
+
+    @Column
+    @Setter
+    private String fontSize;
+
     @Builder
     public LibraryStyle(
         Library library,
-        String libraryColor
+        String libraryColor,
+        String fontName,
+        String fontSize
     ) {
         this.library = library;
         this.libraryColor = libraryColor;
+        this.fontName = fontName;
+        this.fontSize = fontSize;
     }
 }
