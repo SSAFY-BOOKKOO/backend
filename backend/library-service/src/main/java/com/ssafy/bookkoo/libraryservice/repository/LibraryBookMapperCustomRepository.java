@@ -2,6 +2,7 @@ package com.ssafy.bookkoo.libraryservice.repository;
 
 import com.ssafy.bookkoo.libraryservice.entity.LibraryBookMapper;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 
@@ -71,4 +72,30 @@ public interface LibraryBookMapperCustomRepository {
      * @return List(책 ID)
      */
     List<Long> findBookIdsByMemberIdLimitFive(Long memberId);
+
+    /**
+     * 멤버가 서재에 넣은 책 중 READ 이면서 읽은 기간이 파라미터 범위에 해당되는 책의 ID 가져오기
+     *
+     * @param memberId 멤버 ID
+     * @param startAt  시작일
+     * @param endAt    끝일
+     * @param status   상태
+     * @return memberId 리스트
+     */
+    List<Long> findBookIdsByStatsCategoriesCondition(
+        Long memberId,
+        LocalDate startAt,
+        LocalDate endAt,
+        Status status
+    );
+
+    /**
+     * 멤버가 서재에 넣은 책 중 updatedAt이 파라미터 범위에 해당되는 책 ID 가져오기
+     *
+     * @param memberId 멤버 ID
+     * @param startAt  시작일
+     * @param endAt    끝일
+     * @return List<Long>
+     */
+    List<Long> findBookIdsByMemberIdUpdatedAt(Long memberId, LocalDate startAt, LocalDate endAt);
 }

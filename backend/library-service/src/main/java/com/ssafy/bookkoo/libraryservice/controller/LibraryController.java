@@ -10,7 +10,7 @@ import com.ssafy.bookkoo.libraryservice.dto.other.RequestSearchBookMultiFieldDto
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseRecentFiveBookDto;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
-import com.ssafy.bookkoo.libraryservice.service.LibraryService;
+import com.ssafy.bookkoo.libraryservice.service.library.LibraryService;
 import com.ssafy.bookkoo.libraryservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;

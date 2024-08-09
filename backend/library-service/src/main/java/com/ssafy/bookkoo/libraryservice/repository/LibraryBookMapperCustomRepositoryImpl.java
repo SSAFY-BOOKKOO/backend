@@ -1,16 +1,18 @@
 package com.ssafy.bookkoo.libraryservice.repository;
 
 import static com.ssafy.bookkoo.libraryservice.entity.QLibrary.library;
+import static com.ssafy.bookkoo.libraryservice.entity.QLibraryBookMapper.libraryBookMapper;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.bookkoo.libraryservice.entity.LibraryBookMapper;
-import com.ssafy.bookkoo.libraryservice.entity.QLibraryBookMapper;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * LibraryBookMapper 엔티티에 대한 사용자 정의 쿼리 메서드를 구현하는 클래스입니다.
@@ -29,7 +31,6 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
      */
     @Override
     public Integer countLibrariesByMemberId(Long memberId) {
-        QLibraryBookMapper libraryBookMapper = QLibraryBookMapper.libraryBookMapper;
 
         // memberId에 대해 서재 개수 반환
         Long count = queryFactory.select(libraryBookMapper.count())
@@ -50,7 +51,7 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
      */
     @Override
     public List<Long> findBookIdsByLibraryId(Long libraryId) {
-        QLibraryBookMapper libraryBookMapper = QLibraryBookMapper.libraryBookMapper;
+
         return queryFactory.select(libraryBookMapper.id.bookId)
                            .from(libraryBookMapper)
                            .where(libraryBookMapper.library.id.eq(libraryId))
@@ -71,7 +72,7 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
         Status filter,
         Pageable pageable
     ) {
-        QLibraryBookMapper libraryBookMapper = QLibraryBookMapper.libraryBookMapper;
+
         BooleanBuilder predicate = new BooleanBuilder();
 
         // 해당 서재와 연결된 책 쿼리
@@ -99,7 +100,6 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
      */
     @Override
     public List<Long> findBookIdsByMemberId(Long memberId) {
-        QLibraryBookMapper libraryBookMapper = QLibraryBookMapper.libraryBookMapper;
 
         BooleanBuilder predicate = new BooleanBuilder();
         // memberId가 일치하는지 확인
@@ -122,7 +122,6 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
      */
     @Override
     public List<Long> findBookIdsByMemberIdAndBookIds(Long memberId, List<Long> bookIds) {
-        QLibraryBookMapper libraryBookMapper = QLibraryBookMapper.libraryBookMapper;
 
         BooleanBuilder predicate = new BooleanBuilder();
 
@@ -146,7 +145,6 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
      */
     @Override
     public Integer findMaxBookOrderByLibraryId(Long libraryId) {
-        QLibraryBookMapper libraryBookMapper = QLibraryBookMapper.libraryBookMapper;
 
         BooleanBuilder predicate = new BooleanBuilder();
 
@@ -167,7 +165,7 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
      */
     @Override
     public List<Long> findBookIdsByMemberIdLimitFive(Long memberId) {
-        QLibraryBookMapper libraryBookMapper = QLibraryBookMapper.libraryBookMapper;
+
         BooleanBuilder predicate = new BooleanBuilder();
         predicate.and(library.memberId.eq(memberId));
         return queryFactory.select(libraryBookMapper.id.bookId)
@@ -175,6 +173,74 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
                            .where(predicate)
                            .orderBy(libraryBookMapper.createdAt.desc())
                            .limit(5)
+                           .fetch();
+    }
+
+    /**
+     * 멤버가 서재에 넣은 책 중 READ 이면서 읽은 기간이 파라미터 범위에 해당되는 책의 ID 가져오기
+     *
+     * @param memberId 멤버 ID
+     * @param startAt  시작일
+     * @param endAt    끝일
+     * @param status   상태
+     * @return memberId 리스트
+     */
+    @Override
+    // 이걸 사용하는 측에서 다른 서비스와의 통신이 있기 때문에 레퍼지토리 레이어에서 트랜잭션 사용
+    @Transactional(readOnly = true)
+    public List<Long> findBookIdsByStatsCategoriesCondition(
+        Long memberId,
+        LocalDate startAt,
+        LocalDate endAt,
+        Status status
+    ) {
+        BooleanBuilder predicate = new BooleanBuilder();
+        // 1. 내 서재에 대해서만 쿼리
+        predicate.and(libraryBookMapper.library.memberId.eq(memberId));
+
+        // 2. status 에 따른 쿼리
+        if (status != null) { // 안 들어올 경우 전체 대상
+            predicate.and(libraryBookMapper.status.eq(status));
+        }
+
+        // 3. 날짜에 대해 쿼리
+        // 책의 읽기 시작 날짜가 주어진 기간의 끝 날짜 이전이거나 같은 경우
+        predicate.and(libraryBookMapper.startAt.loe(endAt));
+        // 책의 읽기 끝 날짜가 주어진 기간의 시작 날짜 이후거나 같은 경우
+        predicate.and(libraryBookMapper.endAt.goe(startAt));
+
+        return queryFactory.select(libraryBookMapper.id.bookId)
+                           .from(libraryBookMapper)
+                           .where(predicate)
+                           .fetch()
+            ;
+    }
+
+
+    /**
+     * 멤버가 서재에 넣은 책 중 updatedAt이 파라미터 범위에 해당되는 책 ID 가져오기
+     *
+     * @param memberId 멤버 ID
+     * @param startAt  시작일
+     * @param endAt    끝일
+     * @return List<Long>
+     */
+    @Override
+    public List<Long> findBookIdsByMemberIdUpdatedAt(
+        Long memberId,
+        LocalDate startAt,
+        LocalDate endAt
+    ) {
+        BooleanBuilder predicate = new BooleanBuilder();
+
+        // 1. memberId로 필터링
+        predicate.and(libraryBookMapper.library.memberId.eq(memberId));
+
+        // startAt, endAt 으로 필터링
+
+        return queryFactory.select(libraryBookMapper.id.bookId)
+                           .from(libraryBookMapper)
+                           .where(predicate)
                            .fetch();
     }
 }
