@@ -2,6 +2,7 @@ package com.ssafy.bookkoo.curationservice.client;
 
 
 import com.ssafy.bookkoo.curationservice.dto.ResponseMemberInfoDto;
+import com.ssafy.bookkoo.curationservice.dto.ResponseRecipientDto;
 import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,7 @@ public interface MemberServiceClient {
     );
 
     @GetMapping("/members/info/curation/recipients")
-    List<Long> getLetterRecipients(
+    List<ResponseRecipientDto> getLetterRecipients(
         @RequestParam("memberId") Long memberId
     );
 
