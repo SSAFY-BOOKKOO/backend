@@ -73,6 +73,7 @@ const MyPage = () => {
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
+      localStorage.removeItem('MEMBER_ID');
       localStorage.removeItem('ACCESS_TOKEN');
       navigate('/login');
     }
