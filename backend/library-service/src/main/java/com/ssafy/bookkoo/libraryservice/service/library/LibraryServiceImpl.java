@@ -505,17 +505,7 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     @Transactional
     public Boolean deleteLibrary(Long memberId, Long libraryId) {
-        Optional<Library> libraryOpt = libraryRepository.findById(libraryId);
-
-        // 서재가 없을 때
-        if (libraryOpt.isEmpty()) {
-            throw new LibraryNotFoundException(libraryId);
-        }
-
-        // 서재가 내게 아닐 때
-        if (!isLibraryOwnedByUser(libraryOpt.get(), memberId)) {
-            throw new LibraryIsNotYoursException();
-        }
+        checkIsValidLibraryOwner(memberId, libraryId);
 
         // 서재가 존재하면서, 소유자가 확실하다면, 삭제
         try {
@@ -586,6 +576,23 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     @Transactional
     public void deleteBookFromLibrary(Long memberId, Long libraryId, Long bookId) {
+        checkIsValidLibraryOwner(memberId, libraryId);
+
+        // 2. library_book_mapper 에서 삭제시켜버리기
+        MapperKey mapperKey = new MapperKey();
+        mapperKey.setLibraryId(libraryId);
+        mapperKey.setBookId(bookId);
+        libraryBookMapperRepository.deleteById(mapperKey);
+    }
+
+    /**
+     * 해당 서재가 유효하고, 내 서재인지 확인
+     *
+     * @param memberId  사용자 ID
+     * @param libraryId 서재 ID
+     */
+    @Transactional(readOnly = true)
+    protected void checkIsValidLibraryOwner(Long memberId, Long libraryId) {
         // 1. library 가 내꺼인지 찾기
         Optional<Library> libraryOpt = libraryRepository.findById(libraryId);
 
@@ -595,15 +602,47 @@ public class LibraryServiceImpl implements LibraryService {
         }
 
         // 서재가 내게 아닐 때
-        if (!isLibraryOwnedByUser(libraryOpt.get(), memberId)) {
+        if (libraryOpt.get()
+                      .getMemberId()
+                      .equals(memberId)) {
             throw new LibraryIsNotYoursException();
         }
+    }
 
-        // 2. library_book_mapper 에서 삭제시켜버리기
+    /**
+     * 서재에서 책 색상 변경하기
+     *
+     * @param memberId  사용자 ID
+     * @param libraryId 서재 ID
+     * @param bookId    책 ID
+     * @param bookColor 책 색상
+     */
+    @Override
+    @Transactional
+    public void updateBookColorFromLibrary(
+        Long memberId,
+        Long libraryId,
+        Long bookId,
+        String bookColor
+    ) {
+        checkIsValidLibraryOwner(memberId, libraryId);
+
+        // 2. library_book_mapper 에서 수정시키기
         MapperKey mapperKey = new MapperKey();
         mapperKey.setLibraryId(libraryId);
         mapperKey.setBookId(bookId);
-        libraryBookMapperRepository.deleteById(mapperKey);
+
+        Optional<LibraryBookMapper> lbm = libraryBookMapperRepository.findById(mapperKey);
+        if (lbm.isEmpty()) {
+            throw new LibraryBookNotFoundException(
+                "(libraryId, bookId) not found: (" + libraryId + " , " + bookId + ")");
+        }
+
+        LibraryBookMapper lbMapper = lbm.get();
+
+        lbMapper.setBookColor(bookColor);
+
+        libraryBookMapperRepository.save(lbMapper);
     }
 
     /**
