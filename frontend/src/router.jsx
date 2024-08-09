@@ -82,7 +82,7 @@ const router = createBrowserRouter([
 
           //booktalk
           { path: 'booktalk', element: <BookTalkMain /> },
-          { path: 'booktalk/detail/:bookId', element: <BookTalkDetail /> },
+          { path: 'booktalk/detail/:bookTalkId', element: <BookTalkDetail /> },
           { path: 'booktalk/more', element: <BookTalkMore /> },
           { path: 'booktalk/create', element: <BookTalkCreate /> },
 
