@@ -44,3 +44,15 @@ export const postCategories = async () => {
     throw error;
   }
 };
+
+// 책 생성
+export const postBook = async book => {
+  try {
+    const response = await authAxiosInstance.post('/books/isbn', book);
+
+    return response.data;
+  } catch (error) {
+    console.error('postBook failed:', error);
+    throw error;
+  }
+};

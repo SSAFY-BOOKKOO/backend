@@ -1,22 +1,51 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ChatBubble from '@components/@common/ChatBubble';
 import Button from '@components/@common/Button';
 import Textarea from '@components/@common/Textarea';
-import { comments, talkbook } from '@mocks/BookTalkData';
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
 import TopDownButton from '@components/@common/TopDownButton';
+import {
+  getBookTalkChats,
+  postBookTalkChat,
+  postBookTalkEnter,
+} from '@services/BookTalk';
+import { useLocation, useParams } from 'react-router-dom';
 
 const BookTalkDetail = () => {
+  const location = useLocation();
+  const params = useParams();
+  const { bookTalkId } = useParams();
+  const { book } = location.state;
+  const userNickName = localStorage.getItem('USER_NICKNAME');
   const [inputMessage, setInputMessage] = useState('');
-  const [book, setBook] = useState(talkbook);
-  const [commentList, setCommentList] = useState(comments);
+  const [messageList, setMessageList] = useState([]);
   const messagesEndRef = useRef(null);
 
+  const [connected, setConnected] = useState(false);
+  const client = useRef(null);
+
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView();
   };
 
-  useEffect(scrollToBottom, [commentList]);
+  // 스크롤 아래로
+  useEffect(scrollToBottom, [messageList]);
 
+  // 채팅 연결
+  useEffect(() => {
+    connect();
+    getChats();
+
+    return () => disconnect();
+  }, []);
+
+  // 메세지 추가
+  const addMessage = useCallback(newMessage => {
+    setMessageList(prevList => [...prevList, newMessage]);
+  }, []);
+
+  // 메세지 작성
   const handleInputChange = e => {
     const message = e.target.value;
     if (message.length <= 1000) {
@@ -24,46 +53,91 @@ const BookTalkDetail = () => {
     }
   };
 
-  const handleSendMessage = () => {
+  // 메세지 전송
+  const handleSendMessage = async () => {
     if (inputMessage.trim() !== '') {
-      const newComment = {
-        message: inputMessage,
-        role: 'user',
-        likes: 0,
-        profileImage: '',
-      };
-      setCommentList([...commentList, newComment]);
+      await postBookTalkChat(bookTalkId, inputMessage);
       setInputMessage('');
     }
   };
 
-  return (
-    <div className='flex flex-col min-h-[calc(100vh-121px)]'>
-      <div className='flex flex-col items-center'>
-        <div className='w-32 min-h-40 my-4 flex items-center'>
-          <img
-            src={book?.coverImgUrl}
-            alt='Book Cover'
-            className='rounded-lg'
-          />
-        </div>
+  // 채팅방 연결
+  const connect = () => {
+    client.current = new Client({
+      webSocketFactory: () =>
+        new SockJS('https://api.i11a506.ssafy.io/booktalks/connect'),
+      debug: function (str) {
+        console.log(str);
+      },
+      reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+    });
 
-        <div className='text-center mb-3'>
-          <h2 className='text-xl font-semibold'>{book.title}</h2>
-          <p className='text-gray-500'>{book.author}</p>
+    client.current.onConnect = async frame => {
+      setConnected(true);
+      await postBookTalkEnter(bookTalkId);
+
+      client.current.subscribe(`/booktalks/sub/chat/${bookTalkId}`, message => {
+        console.log(JSON.stringify(JSON.parse(message.body)));
+
+        // 채팅 가져오기
+        const newMessage = JSON.parse(message.body);
+        addMessage(newMessage);
+      });
+    };
+
+    client.current.onStompError = frame => {};
+
+    client.current.activate();
+  };
+
+  // 채팅 가져오기
+  const getChats = async () => {
+    const data = await getBookTalkChats(bookTalkId);
+    console.log(data);
+
+    setMessageList(data.reverse());
+  };
+
+  // 채팅방 연결 제거
+  const disconnect = () => {
+    if (client.current !== null) {
+      client.current.deactivate();
+    }
+
+    setConnected(false);
+  };
+
+  return (
+    <div className='flex flex-col min-h-[calc(100vh-121px)] w-full'>
+      <div className='flex justify-center w-full'>
+        <div className='flex flex-col items-center w-3/4 max-w-md'>
+          <div className='w-32 min-h-40 my-4 flex justify-center'>
+            <img
+              src={book?.coverImgUrl}
+              alt='Book Cover'
+              className='rounded-lg'
+            />
+          </div>
+
+          <div className='text-center mb-3'>
+            <h2 className='text-xl font-semibold'>{book.title}</h2>
+            <p className='text-gray-500'>{book.author}</p>
+          </div>
         </div>
       </div>
-      <div className='flex-1 overflow-y-auto p-4 scrollbar-none'>
+      <div className='flex-1 overflow-y-auto p-4 scrollbar-none flex flex-col-reverse'>
         <div className='space-y-4'>
-          {commentList.map((comment, index) => (
+          {messageList.map((message, index) => (
             <ChatBubble
               key={index}
-              message={comment.message}
-              role={comment.role}
-              showProfile={comment.role !== 'user'}
+              message={message?.message}
+              role={message?.nickName === userNickName ? 'user' : 'other'}
+              showProfile={message?.role !== 'user'}
               showLikes={true}
-              likes={comment.likes}
-              profileImage={comment.profileImage}
+              likes={message?.likes}
+              profileImage={message?.profileImage}
             />
           ))}
         </div>
