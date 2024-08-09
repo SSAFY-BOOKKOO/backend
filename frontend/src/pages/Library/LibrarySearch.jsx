@@ -89,6 +89,7 @@ const LibrarySearch = () => {
     <WrapContainer className='mt-4'>
       <Spinner />
       <SearchForm
+        placeholder='책을 검색하세요'
         searchText={searchText}
         setSearchText={setSearchText}
         onSubmit={handleSearchSubmit}

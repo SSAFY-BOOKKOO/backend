@@ -21,6 +21,8 @@ const useBookInfiniteScroll = (text, tag) => {
       })),
       pageParams: data.pageParams,
     }),
+    // 검색어가 있을 때만 쿼리 활성화
+    enabled: !!text && text.trim() !== '',
   });
 };
 
