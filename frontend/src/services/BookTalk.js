@@ -4,7 +4,7 @@ import { authAxiosInstance } from './axiosInstance';
 export const postBookTalks = async bookId => {
   try {
     const response = await authAxiosInstance.post('/booktalks', { bookId });
-    return response;
+    return response.data;
   } catch (error) {
     console.error('booktalk create failed:', error);
     throw error;
@@ -44,11 +44,7 @@ export const getMyBookTalk = async (order = 'time', page = 0) => {
 // 책 번호로 북톡 조회
 export const getBookTalkByBookId = async bookId => {
   try {
-    const response = await authAxiosInstance.get('/booktalks/book', {
-      params: {
-        bookId,
-      },
-    });
+    const response = await authAxiosInstance.get(`/booktalks/book/${bookId}`);
     return response.data;
   } catch (error) {
     console.error('get booktalk by bookId', error);
