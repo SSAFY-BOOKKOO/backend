@@ -103,15 +103,29 @@ public interface LibraryMapper {
         RequestUpdateLibraryDto dto,
         @MappingTarget Library entity
     ) {
-        if (dto.libraryStyleDto() != null && dto.libraryStyleDto()
-                                                .libraryColor() != null) {
+        if (dto.libraryStyleDto() != null) {
             if (entity.getLibraryStyle() == null) {
                 entity.setLibraryStyle(LibraryStyle.builder()
                                                    .build());
             }
-            entity.getLibraryStyle()
-                  .setLibraryColor(dto.libraryStyleDto()
-                                      .libraryColor());
+            if (dto.libraryStyleDto()
+                   .libraryColor() != null) {
+                entity.getLibraryStyle()
+                      .setLibraryColor(dto.libraryStyleDto()
+                                          .libraryColor());
+            }
+            if (dto.libraryStyleDto()
+                   .fontName() != null) {
+                entity.getLibraryStyle()
+                      .setFontName(dto.libraryStyleDto()
+                                      .fontName());
+            }
+            if (dto.libraryStyleDto()
+                   .fontSize() != null) {
+                entity.getLibraryStyle()
+                      .setFontSize(dto.libraryStyleDto()
+                                      .fontSize());
+            }
         }
     }
 }
