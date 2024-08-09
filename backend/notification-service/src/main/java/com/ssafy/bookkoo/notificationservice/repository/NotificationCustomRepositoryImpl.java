@@ -1,17 +1,14 @@
 package com.ssafy.bookkoo.notificationservice.repository;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
+import static com.ssafy.bookkoo.notificationservice.entity.QNotification.notification;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.bookkoo.notificationservice.entity.Notification;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-
-import javax.management.NotificationFilter;
-import java.util.List;
-
-import static com.ssafy.bookkoo.notificationservice.entity.QNotification.notification;
 
 @Slf4j
 @Repository

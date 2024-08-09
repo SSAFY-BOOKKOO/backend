@@ -283,7 +283,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         String profileImgUrl = memberInfo.getProfileImgUrl();
         if (!profileImgUrl.equals("Default.jpg")) {
             try {
-                commonServiceClient.deleteProfileImg(profileImgUrl, BUCKET);
+                commonServiceClient.deleteImg(profileImgUrl, BUCKET);
             } catch (Exception e) {
                 throw new ProfileImageUploadException();
             }
@@ -292,9 +292,9 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     }
 
     protected void updateMemberProfileUrl(MultipartFile profileImg, MemberInfo memberInfo) {
-        String fileUrl = commonServiceClient.saveProfileImg(profileImg, BUCKET);
-        fileUrl = SERVER + COMMON_URL + fileUrl;
-        memberInfo.setProfileImgUrl(fileUrl);
+        String imgUrl = commonServiceClient.saveImg(profileImg, BUCKET);
+        imgUrl = SERVER + COMMON_URL + imgUrl;
+        memberInfo.setProfileImgUrl(imgUrl);
         memberInfoRepository.flush();
     }
 
