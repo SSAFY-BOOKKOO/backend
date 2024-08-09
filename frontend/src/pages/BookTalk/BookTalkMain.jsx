@@ -3,7 +3,7 @@ import BookTalkItem from '@components/@common/Book/BookTalkItem';
 import PopularBook from '@components/BookTalk/PopularBook';
 import WrapContainer from '@components/Layout/WrapContainer';
 import Button from '@components/@common/Button';
-import { books } from '@mocks/BookData';
+import Spinner from '@components/@common/Spinner';
 import { useNavigate } from 'react-router-dom';
 import BookSearch from '@components/Curation/Search/BookSearch';
 import { getMyBookTalk, getPopularBookTalk } from '../../services/BookTalk';
@@ -18,8 +18,8 @@ const BookTalkMain = () => {
     navigate(`/booktalk/more`);
   };
 
-  const handleDetailPageMove = id => {
-    navigate(`/booktalk/detail/${id}`);
+  const handleDetailPageMove = book => {
+    navigate(`/booktalk/detail/${book?.bookTalkId}`, { state: { book: book } });
   };
 
   const handleCreatePageMove = () => {
@@ -37,12 +37,12 @@ const BookTalkMain = () => {
   };
 
   useEffect(() => {
-    handlePopularBooks();
-    handleParticipatedBooks();
+    Promise.all([handlePopularBooks(), handleParticipatedBooks()]);
   }, []);
 
   return (
     <WrapContainer>
+      <Spinner />
       <div className='flex justify-between items-center mb-6'>
         <Button onClick={handleCreatePageMove} size='small'>
           채팅방 생성
@@ -56,7 +56,7 @@ const BookTalkMain = () => {
           <BookTalkItem
             key={index}
             book={book}
-            onClick={() => handleDetailPageMove(book.book_id)}
+            onClick={() => handleDetailPageMove(book)}
           />
         ))}
         <div className='flex justify-end text-sm cursor-pointer'>
@@ -75,7 +75,7 @@ const BookTalkMain = () => {
               <PopularBook
                 key={index}
                 book={book}
-                onClick={() => handleDetailPageMove(book.book_id)}
+                onClick={() => handleDetailPageMove(book)}
               />
             ))}
           </div>
