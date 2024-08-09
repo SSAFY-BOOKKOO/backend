@@ -11,7 +11,7 @@ public record ResponseSurfingMemberInfoDto(
     String nickName,
 
     @Schema(description = "회원 프로필 이미지 URL", example = "http://example.com/profile.jpg")
-    String profilImgUrl
+    String profileImgUrl
 ) {
 
 }

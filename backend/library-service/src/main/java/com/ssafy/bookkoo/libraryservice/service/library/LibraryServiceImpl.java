@@ -85,6 +85,10 @@ public class LibraryServiceImpl implements LibraryService {
         LibraryStyle libraryStyle = LibraryStyle.builder()
                                                 .libraryColor(libraryDto.libraryStyleDto()
                                                                         .libraryColor())
+                                                .fontName(libraryDto.libraryStyleDto()
+                                                                    .fontName())
+                                                .fontSize(libraryDto.libraryStyleDto()
+                                                                    .fontSize())
                                                 .library(library)
                                                 .build();
         // 서재 스타일 저장하기
@@ -417,7 +421,9 @@ public class LibraryServiceImpl implements LibraryService {
                                       .name("기본 서재")
                                       .libraryOrder(1)
                                       .libraryStyleDto(LibraryStyleDto.builder()
-                                                                      .libraryColor("#FFFFFF")
+                                                                      .libraryColor("default")
+                                                                      .fontName("default")
+                                                                      .fontSize("default")
                                                                       .build())
                                       .build();
     }
