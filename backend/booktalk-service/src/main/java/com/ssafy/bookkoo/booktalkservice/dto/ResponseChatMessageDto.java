@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record ResponseChatMessageDto(
+    String memberId,
     String messageId,
     Long bookTalkId,
     String nickName,
