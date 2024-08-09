@@ -183,6 +183,7 @@ public class MemberServiceImpl implements MemberService {
         String imgUrl = profileImgUrl == null ? DEFAULT_MEMBER_IMG_URL : profileImgUrl;
         if (profileImg != null) {
             imgUrl = commonServiceClient.saveImg(profileImg, BUCKET);
+            imgUrl = SERVER + COMMON_URL + imgUrl;
         }
         MemberInfo memberInfo = MemberInfo.builder()
                                           .id(additionalInfo.id())

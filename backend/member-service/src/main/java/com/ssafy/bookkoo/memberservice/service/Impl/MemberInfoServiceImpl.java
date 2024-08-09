@@ -292,8 +292,9 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     }
 
     protected void updateMemberProfileUrl(MultipartFile profileImg, MemberInfo memberInfo) {
-        String fileName = commonServiceClient.saveImg(profileImg, BUCKET);
-        memberInfo.setProfileImgUrl(fileName);
+        String imgUrl = commonServiceClient.saveImg(profileImg, BUCKET);
+        imgUrl = SERVER + COMMON_URL + imgUrl;
+        memberInfo.setProfileImgUrl(imgUrl);
         memberInfoRepository.flush();
     }
 
