@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSetAtom } from 'jotai';
 import Button from '@components/@common/Button';
 import Alert from '@components/@common/Alert';
@@ -59,14 +59,22 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
   const handleFileChange = e => {
     const file = e.target.files[0];
     if (file) {
-      setFormData({
-        ...formData,
-        profileImgUrl: file,
-      });
-      setErrors(prevErrors => ({
-        ...prevErrors,
-        profileImgUrl: '',
-      }));
+      if (file.type !== 'image/webp') {
+        // Prevent webp file uploads
+        setFormData({
+          ...formData,
+          profileImgUrl: file,
+        });
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          profileImgUrl: '',
+        }));
+      } else {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          profileImgUrl: 'WEBP 형식의 파일은 지원되지 않습니다.',
+        }));
+      }
     }
   };
 
@@ -169,25 +177,39 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
           )}
         </div>
         <div className='mb-4'>
-          <label
-            className='block mb-2 text-sm font-medium text-gray-700'
-            htmlFor='profileImgUrl'
-          >
+          <label className='block mb-2 text-sm font-medium text-gray-700'>
             프로필 이미지
           </label>
-          <input
-            type='file'
-            id='profileImgUrl'
-            name='profileImgUrl'
-            onChange={handleFileChange}
-            className='mt-1 p-2 block w-full border rounded-md'
-          />
+          <div className='flex items-center mt-2'>
+            <input
+              type='file'
+              accept='image/*'
+              onChange={handleFileChange}
+              className='hidden'
+              id='profile_img_input'
+            />
+            <Button
+              text='찾기'
+              type='button'
+              color='text-white bg-green-400 active:bg-green-600'
+              size='small'
+              full={false}
+              onClick={() =>
+                document.getElementById('profile_img_input').click()
+              }
+            />
+          </div>
           {formData.profileImgUrl && formData.profileImgUrl instanceof File && (
             <img
               src={URL.createObjectURL(formData.profileImgUrl)}
               alt='Profile Preview'
               className='mt-2 w-32 h-32 object-cover rounded-full inline-block'
             />
+          )}
+          {errors.profileImgUrl && (
+            <p className='text-red-500 text-xs italic'>
+              {errors.profileImgUrl}
+            </p>
           )}
         </div>
         <div className='mb-4'>
