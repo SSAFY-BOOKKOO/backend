@@ -98,4 +98,14 @@ public interface LibraryBookMapperCustomRepository {
      * @return List<Long>
      */
     List<Long> findBookIdsByMemberIdUpdatedAt(Long memberId, LocalDate startAt, LocalDate endAt);
+
+    /**
+     * 시간 내에 읽은 권수
+     *
+     * @param memberId memberId
+     * @param startAt  startAt
+     * @param endAt    endAt
+     * @return 읽은 권수
+     */
+    Integer countBooksByMemberIdDuration(Long memberId, LocalDate startAt, LocalDate endAt);
 }
