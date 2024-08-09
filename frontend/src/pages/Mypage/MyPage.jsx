@@ -58,9 +58,11 @@ const MyPage = () => {
   const handleLogout = async () => {
     try {
       await authAxiosInstance.post('/auth/logout');
-      navigate('/login');
     } catch (error) {
       console.error('Logout failed:', error);
+    } finally {
+      localStorage.removeItem('ACCESS_TOKEN');
+      navigate('/login');
     }
   };
 
