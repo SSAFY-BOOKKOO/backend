@@ -87,6 +87,11 @@ public class ChatController {
         return chatService.getMessageList(bookTalkId, time, memberId);
     }
 
+    /**
+     * @param headers       : 멤버 Passport
+     * @param chatMessageId : 좋아요를 토글할 채팅 메세지 아이디
+     * @return : 좋아요 상태 변경 후 상태
+     */
     @Operation(summary = "채팅 좋아요",
         description = "채팅 좋아요를 누른상태라면 취소, 누르지 않았다면 좋아요를 누릅니다. 변경된 상태를 반환합니다."
     )

@@ -92,6 +92,11 @@ public class ChatServiceImpl implements ChatService {
                           .toList();
     }
 
+    /**
+     * @param chatMessageId : 해당 채팅 메세지 아이디
+     * @param memberId      : 좋아요 누를 멤버
+     * @return : 변경된 좋아요 상태
+     */
     @Transactional
     @Override
     public Boolean chatMessageLikeToggle(String chatMessageId, Long memberId) {

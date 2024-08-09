@@ -28,6 +28,13 @@ public interface ChatService {
     List<ResponseChatMessageDto> getMessageList(Long bookTalkId, LocalDateTime time, Long memberId);
 
 
+    /**
+     * 좋아요 상태를 토글하는 메서드
+     *
+     * @param chatMessageId : 해당 채팅 아이디
+     * @param memberId      : 토글할 멤버
+     * @return : 변화된 좋아요 상태 정보
+     */
     Boolean chatMessageLikeToggle(String chatMessageId, Long memberId);
 
 }
