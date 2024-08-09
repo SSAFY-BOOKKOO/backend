@@ -73,8 +73,8 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className='max-w-md mx-auto mt-10'>
-      <div className='flex border-b mb-6'>
+    <div className='max-w-md mx-auto'>
+      <div className='flex border-b '>
         <button
           className={`flex-1 py-2 text-center ${
             activeTab === 'profile'

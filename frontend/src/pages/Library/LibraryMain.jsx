@@ -3,12 +3,13 @@ import { DndProvider } from 'react-dnd';
 import { MultiBackend, TouchTransition } from 'react-dnd-multi-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import MemberProfile from '@components/Library/Main/MemberProfile';
 import LibraryOptions from '@components/Library/Main/LibraryOptions';
 import BookShelf from '@components/Library/Main/BookShelf';
 import Alert from '@components/@common/Alert';
+import Spinner from '@components/@common/Spinner'; // Import Spinner component
 import { alertAtom } from '@atoms/alertAtom';
 import { authAxiosInstance } from '@services/axiosInstance';
 
@@ -33,10 +34,13 @@ const LibraryMain = () => {
   const [newLibraryName, setNewLibraryName] = useState('');
   const [createLibraryName, setCreateLibraryName] = useState('');
   const [activeLibrary, setActiveLibrary] = useState(0);
+  const [isLoading, setIsLoading] = useState(true); // Loading state
   const navigate = useNavigate();
+  const location = useLocation();
   const [, setAlert] = useAtom(alertAtom);
   const [member, setMember] = useState(null);
   const [libraries, setLibraries] = useState([]);
+  const [bookChanges, setBookChanges] = useState([]);
 
   useEffect(() => {
     const fetchLibraries = async () => {
@@ -50,6 +54,8 @@ const LibraryMain = () => {
         setLibraries(librariesDetails.map(response => response.data));
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false); // Set loading to false after data is fetched
       }
     };
 
@@ -81,63 +87,79 @@ const LibraryMain = () => {
     }
   }, [location.state]);
 
-  const moveBook = async (fromIndex, toIndex) => {
+  const moveBook = (fromIndex, toIndex) => {
     const libraryId = libraries[activeLibrary].id;
-    const movedBook = libraries[activeLibrary].books.find(
-      book => book.bookOrder === fromIndex + 1
-    );
+    setLibraries(prevLibraries => {
+      const newLibraries = prevLibraries.map(library => {
+        if (library.id === libraryId) {
+          const newBooks = [...library.books];
+          const movedBookIndex = newBooks.findIndex(
+            book => book.bookOrder === fromIndex + 1
+          );
+          newBooks[movedBookIndex].bookOrder = toIndex + 1;
 
-    if (movedBook) {
-      try {
-        await authAxiosInstance.put(`/libraries/${libraryId}/books`, [
-          {
-            bookOrder: toIndex + 1,
-            bookColor: movedBook.bookColor,
-            startAt: movedBook.startAt,
-            endAt: movedBook.endAt,
-            status: movedBook.status,
-            rating: movedBook.rating,
-            bookId: movedBook.book.id,
-          },
-        ]);
-
-        setLibraries(prevLibraries => {
-          const newLibraries = prevLibraries.map(library => {
-            if (library.id === libraryId) {
-              const newBooks = [...library.books];
-              const movedBookIndex = newBooks.findIndex(
-                book => book.bookOrder === fromIndex + 1
-              );
-              newBooks[movedBookIndex].bookOrder = toIndex + 1;
-
-              newBooks.forEach(book => {
-                if (
-                  book.bookOrder === toIndex + 1 &&
-                  book.book.id !== newBooks[movedBookIndex].book.id
-                ) {
-                  book.bookOrder = fromIndex + 1;
-                }
-              });
-
-              return {
-                ...library,
-                books: newBooks.sort((a, b) => a.bookOrder - b.bookOrder),
-              };
+          newBooks.forEach(book => {
+            if (
+              book.bookOrder === toIndex + 1 &&
+              book.book.id !== newBooks[movedBookIndex].book.id
+            ) {
+              book.bookOrder = fromIndex + 1;
             }
-            return library;
           });
-          return newLibraries;
-        });
-      } catch (error) {
-        console.error('책 순서 변경에 실패했습니다:', error);
-        setAlert({
-          isOpen: true,
-          confirmOnly: true,
-          message: '책 순서 변경에 실패했습니다. 다시 시도해 주세요.',
-        });
-      }
-    }
+
+          return {
+            ...library,
+            books: newBooks.sort((a, b) => a.bookOrder - b.bookOrder),
+          };
+        }
+        return library;
+      });
+
+      // Store the changes locally
+      setBookChanges(prevChanges => [
+        ...prevChanges,
+        { fromIndex, toIndex, libraryId },
+      ]);
+
+      return newLibraries;
+    });
   };
+
+  // Function to handle PUT request on unmount
+  useEffect(() => {
+    const handleSaveChanges = async () => {
+      if (bookChanges.length > 0) {
+        try {
+          const libraryId = libraries[activeLibrary].id;
+          const changesToApply = libraries[activeLibrary].books.map(book => ({
+            bookOrder: book.bookOrder,
+            bookColor: book.bookColor,
+            startAt: book.startAt,
+            endAt: book.endAt,
+            status: book.status,
+            rating: book.rating,
+            bookId: book.book.id,
+          }));
+
+          await authAxiosInstance.put(
+            `/libraries/${libraryId}/books`,
+            changesToApply
+          );
+        } catch (error) {
+          console.error('책 순서 변경에 실패했습니다:', error);
+          setAlert({
+            isOpen: true,
+            confirmOnly: true,
+            message: '책 순서 변경에 실패했습니다. 다시 시도해 주세요.',
+          });
+        }
+      }
+    };
+
+    return () => {
+      handleSaveChanges();
+    };
+  }, [bookChanges, libraries, activeLibrary, setAlert]);
 
   const changeLibraryName = async (libraryId, newName) => {
     try {
@@ -250,6 +272,15 @@ const LibraryMain = () => {
       state: { nickname: member.nickName },
     });
   };
+
+  // Show spinner while loading
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center min-h-screen'>
+        <Spinner /> {/* Spinner while data is loading */}
+      </div>
+    );
+  }
 
   return (
     <DndProvider backend={MultiBackend} options={HTML5toTouch}>

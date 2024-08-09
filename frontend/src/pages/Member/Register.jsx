@@ -61,6 +61,7 @@ const RegisterPage = () => {
         email,
         socialType,
       }));
+      setIsEmailVerified(true);
       setIsSocial(true);
     }
   }, [location]);

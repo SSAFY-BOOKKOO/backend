@@ -64,7 +64,7 @@ const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
           <Button
             text='변경'
             size='medium'
-            color='text-white bg-blue-500 active:bg-blue-600'
+            color='text-white bg-green-400 active:bg-green-500'
             onClick={onChangePassword}
           />
         </div>
