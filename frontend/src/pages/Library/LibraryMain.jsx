@@ -9,6 +9,7 @@ import MemberProfile from '@components/Library/Main/MemberProfile';
 import LibraryOptions from '@components/Library/Main/LibraryOptions';
 import BookShelf from '@components/Library/Main/BookShelf';
 import Alert from '@components/@common/Alert';
+import Spinner from '@components/@common/Spinner'; // Import Spinner component
 import { alertAtom } from '@atoms/alertAtom';
 import { authAxiosInstance } from '@services/axiosInstance';
 
@@ -33,6 +34,7 @@ const LibraryMain = () => {
   const [newLibraryName, setNewLibraryName] = useState('');
   const [createLibraryName, setCreateLibraryName] = useState('');
   const [activeLibrary, setActiveLibrary] = useState(0);
+  const [isLoading, setIsLoading] = useState(true); // Loading state
   const navigate = useNavigate();
   const location = useLocation();
   const [, setAlert] = useAtom(alertAtom);
@@ -52,6 +54,8 @@ const LibraryMain = () => {
         setLibraries(librariesDetails.map(response => response.data));
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false); // Set loading to false after data is fetched
       }
     };
 
@@ -268,6 +272,15 @@ const LibraryMain = () => {
       state: { nickname: member.nickName },
     });
   };
+
+  // Show spinner while loading
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center min-h-screen'>
+        <Spinner /> {/* Spinner while data is loading */}
+      </div>
+    );
+  }
 
   return (
     <DndProvider backend={MultiBackend} options={HTML5toTouch}>

@@ -10,11 +10,13 @@ import IconButton from '@components/@common/IconButton';
 import ProfileModal from '@components/@common/ProfileModal.jsx';
 import { postCategories } from '@services/Book';
 import Button from '@components/@common/Button';
+import Spinner from '@components/@common/Spinner';
 
 const MyPage = () => {
   const [member, setMember] = useState(null);
   const [categories, setCategories] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,14 +29,24 @@ const MyPage = () => {
         setCategories(categoriesResponse);
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false); // Set loading to false after data is fetched
       }
     };
 
     fetchMemberInfo();
   }, []);
 
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center min-h-screen'>
+        <Spinner /> {/* Use the Spinner component while loading */}
+      </div>
+    );
+  }
+
   if (!member) {
-    return <div>Loading...</div>;
+    return <div>Error loading data.</div>;
   }
 
   const getCategoryName = categoryId => {
@@ -136,7 +148,7 @@ const MyPage = () => {
       </div>
       <Button
         text='로그아웃'
-        color='text-white bg-red-500 active:bg-red-600'
+        color='text-white bg-pink-500 active:bg-pink-600'
         size='small'
         full={false}
         className='absolute up-4 right-4'
