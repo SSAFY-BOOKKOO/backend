@@ -137,7 +137,7 @@ const MyPage = () => {
         color='text-white bg-red-500 active:bg-red-600'
         size='small'
         full={false}
-        className='absolute bottom-4 right-4'
+        className='absolute up-4 right-4'
         onClick={handleLogout}
       />
       <ProfileModal
