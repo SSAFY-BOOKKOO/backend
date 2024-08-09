@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
+import { authAxiosInstance } from '@services/axiosInstance';
 
 Modal.setAppElement('#root');
 
@@ -12,9 +13,29 @@ const ProfileModal = ({
   introduction,
 }) => {
   const navigate = useNavigate();
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await authAxiosInstance.get('/members/info');
+        if (response.data.nickName === nickname) {
+          setIsOwnProfile(true);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user info:', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, [nickname]);
 
   const handleLibraryNavigation = () => {
-    navigate('/library', { state: { nickname } });
+    if (isOwnProfile) {
+      navigate('/');
+    } else {
+      navigate('/library', { state: { nickname } });
+    }
   };
 
   return (
@@ -38,7 +59,7 @@ const ProfileModal = ({
           onClick={handleLibraryNavigation}
           className='mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
         >
-          서재 구경하러가기
+          {isOwnProfile ? '내 서재로 이동' : '서재 구경하러가기'}
         </button>
         <button
           onClick={onRequestClose}

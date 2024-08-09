@@ -22,7 +22,6 @@ const AdditionalSetting = ({ userInfo, onSave }) => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      console.log(formData);
       const response = await authAxiosInstance.put('/members/info/setting', {
         isLetterReceive: formData.isLetterReceive,
         reviewVisibility: formData.reviewVisibility,
@@ -50,7 +49,8 @@ const AdditionalSetting = ({ userInfo, onSave }) => {
         <div className='border-t border-gray-300 mb-4'></div>
         <label className='block mb-2 text-sm font-medium text-gray-700'>
           <div className='flex flex-col mt-2'>
-            <label className='flex items-center'>
+            <label className='flex items-center mb-2 text-sm'>
+              {' '}
               <input
                 type='radio'
                 id='reviewVisibility-public'
@@ -61,7 +61,8 @@ const AdditionalSetting = ({ userInfo, onSave }) => {
               />
               <span className='ml-2'>모두에게</span>
             </label>
-            <label className='flex items-center'>
+            <label className='flex items-center mb-2 text-sm'>
+              {' '}
               <input
                 type='radio'
                 id='reviewVisibility-follower_public'
@@ -72,7 +73,8 @@ const AdditionalSetting = ({ userInfo, onSave }) => {
               />
               <span className='ml-2'>팔로워에게만</span>
             </label>
-            <label className='flex items-center'>
+            <label className='flex items-center text-sm'>
+              {' '}
               <input
                 type='radio'
                 id='reviewVisibility-private'
@@ -90,7 +92,10 @@ const AdditionalSetting = ({ userInfo, onSave }) => {
         <h2 className='text-xl font-bold mb-4'>레터 수신 설정</h2>
         <div className='border-t border-gray-300 mb-4'></div>
         <div className='flex items-center'>
-          <label className='text-gray-700 font-medium w-1/3'>레터 수신</label>
+          <label className='text-gray-700 font-medium w-1/3 text-sm'>
+            {' '}
+            레터 수신
+          </label>
           <div className='w-2/3 flex justify-end'>
             <input
               type='checkbox'

@@ -101,7 +101,7 @@ const RegisterStep2 = ({
           text='이전'
           type='button'
           color='text-white bg-gray-500 active:bg-gray-600'
-          size='large'
+          size='medium'
           full={false}
           onClick={handlePrevStep}
         />
@@ -109,7 +109,7 @@ const RegisterStep2 = ({
           text='다음'
           type='button'
           color='text-white bg-green-400 active:bg-green-600'
-          size='large'
+          size='medium'
           full={false}
           onClick={handleNextStep}
         />

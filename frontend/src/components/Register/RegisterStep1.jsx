@@ -37,14 +37,16 @@ const RegisterStep1 = ({
   const [verificationCode, setVerificationCode] = useState('');
   const [isSendingCode, setIsSendingCode] = useState(false);
 
+  // Automatically set email verification to true if social login is used
   useEffect(() => {
     if (isSocialLogin) {
       setFormData(prevFormData => ({
         ...prevFormData,
         isEmailChecked: true,
       }));
+      setIsEmailVerified(true);
     }
-  }, [isSocialLogin, setFormData]);
+  }, [isSocialLogin, setFormData, setIsEmailVerified]);
 
   const handleEmailCheck = async () => {
     if (!formData.email) {
@@ -131,7 +133,7 @@ const RegisterStep1 = ({
       });
       return;
     }
-    if (!isEmailVerified) {
+    if (!isEmailVerified && !isSocialLogin) {
       setAlert({
         isOpen: true,
         confirmOnly: true,

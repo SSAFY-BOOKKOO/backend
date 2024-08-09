@@ -6,7 +6,6 @@ import Alert from '../../@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
 import CreateLibraryModal from './CreateLibraryModal';
 import ChangeLibraryNameModal from './ChangeLibraryNameModal';
-import { authAxiosInstance } from '@services/axiosInstance';
 
 const LibraryOptions = ({
   activeLibrary,
@@ -20,7 +19,7 @@ const LibraryOptions = ({
   newLibraryName,
   setNewLibraryName,
   changeLibraryName,
-  viewOnly = false, // 추가된 viewOnly prop
+  viewOnly = false,
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -41,6 +40,19 @@ const LibraryOptions = ({
     }
   };
 
+  const handleCreateLibraryOption = () => {
+    if (libraries.length >= 3) {
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '서재는 최대 3개까지만 생성할 수 있습니다.',
+      });
+    } else {
+      setShowMenu(false);
+      setShowCreateModal(true);
+    }
+  };
+
   const actions = [
     {
       label: '서재명 변경',
@@ -55,10 +67,7 @@ const LibraryOptions = ({
     },
     {
       label: '서재 생성',
-      onClick: () => {
-        setShowMenu(false);
-        setShowCreateModal(true);
-      },
+      onClick: handleCreateLibraryOption,
     },
   ];
 
