@@ -64,13 +64,13 @@ export const getPopularBookTalk = async () => {
 };
 
 // 채팅 기록 가져오기(by BookTalkId) -> 최근순으로 10개씩
-export const getBookTalkChats = async (bookTalkId, page = 0) => {
+export const getBookTalkChats = async (bookTalkId, time) => {
   try {
     const response = await authAxiosInstance.get(
       `/booktalks/chat/${bookTalkId}`,
       {
         params: {
-          page: page,
+          time,
         },
       }
     );
