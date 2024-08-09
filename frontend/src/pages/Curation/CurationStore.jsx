@@ -3,36 +3,7 @@ import CurationTab from '@components/Curation/CurationTab';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
 import { IoIosArrowForward } from 'react-icons/io';
-import axios from 'axios';
 import { axiosInstance, authAxiosInstance } from '../../services/axiosInstance';
-// 임시 레터 데이터
-// const initialLetters = [
-//     {
-//       id: 1,
-//       title: '레터1',
-//       content: '너무 유익했다!',
-//       from: '양귀자',
-//       date: '2024-07-19',
-//       image: 'https://image.yes24.com/momo/TopCate249/MidCate003/24823257.jpg',
-//     },
-//     {
-//       id: 2,
-//       title: '키움 우승',
-//       from: '홍원기',
-//       content: '영웅질주',
-//       date: '2024-07-19',
-//       image:
-//         'https://yt3.googleusercontent.com/HmU-cGuNTGaoyJ2dSCW7CrdNMLVXq8xgKQ2Tsri543dTS7RMSgcseDb8p9w-g2amOoNJkXxT=s900-c-k-c0x00ffffff-no-rj',
-//     },
-//     {
-//       id: 3,
-//       title: '레터2',
-//       content: '너무 재밌당',
-//       from: '에이미',
-//       date: '2024-07-19',
-//       image: 'https://image.yes24.com/goods/123400303/L',
-//     },
-//   ];
 
 const CurationStore = () => {
   const location = useLocation();
@@ -42,7 +13,19 @@ const CurationStore = () => {
 
   // 레터 상세보기
   const handleLetterClick = letter => {
-    navigate(`/curation/letter/${letter.id}`, { state: { letter } });
+    authAxiosInstance
+      .get(`/curations/detail/${letter.curationId}`, {
+        curationId: letter.curationId,
+      })
+      .then(res => {
+        console.log('Letter Detail:', res);
+        navigate(`/curation/letter/${letter.curationId}`, {
+          state: { letter },
+        });
+      })
+      .catch(err => {
+        console.log('error:', err);
+      });
   };
 
   useEffect(() => {
@@ -64,24 +47,25 @@ const CurationStore = () => {
   return (
     <div className='flex flex-col'>
       <CurationTab />
-      <p className='font-bold text-green-400 pl-6 pr-4 py-3'>
+      <p className='font-bold text-green-400 px-8 pt-3 pb-1'>
         보관한 레터 수: {storedLetters.length}
       </p>
       {storedLetters.length > 0 ? (
-        <div className='flex-1 overflow-y-auto px-4'>
+        <div className='flex-1 overflow-y-auto px-8'>
           {storedLetters.map(letter => (
             <div key={letter.id} className='flex flex-grow'>
               <div
                 key={letter.id}
                 className={
-                  'relative flex items-center mb-6 bg-green-50 rounded-lg shadow w-full h-40'
+                  'relative flex items-center mb-6 bg-green-50 rounded-lg shadow w-full h-40 cursor-pointer'
                 }
+                onClick={() => handleLetterClick(letter)}
               >
                 <img
-                  src={letter.image}
+                  src={letter.coverImgUrl}
                   alt='Letter'
                   className='w-16 h-24 mx-4 rounded-lg'
-                  onClick={() => handleLetterClick(letter)}
+                  // onClick={() => handleLetterClick(letter)}
                 />
                 <div className='flex-1 pb-7'>
                   <h2 className='text-lg font-bold'>{letter.title}</h2>
@@ -90,7 +74,7 @@ const CurationStore = () => {
                 </div>
 
                 <p className='absolute bottom-2 right-4 text-sm text-gray-600'>
-                  FROM. {letter.from}
+                  FROM. {letter.writer}
                 </p>
               </div>
             </div>
@@ -102,7 +86,7 @@ const CurationStore = () => {
         </div>
       )}
 
-      <div className='flex justify-center space-x-4 pt-4'>
+      <div className='flex justify-center space-x-12 text-2xl pb-4'>
         <IoIosArrowBack
           onClick={() => setPage(prevPage => Math.max(prevPage - 1, 0))}
           className='cursor-pointer text-xl'

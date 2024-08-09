@@ -302,11 +302,11 @@ const RegisterPage = () => {
       }
     }
   };
+
   return (
     <WrapContainer>
       <div className='flex flex-col justify-center items-center min-h-screen px-4 w-full'>
         <div className='w-full max-w-md'>
-          <h2 className='text-2xl font-bold mb-4 text-center'>회원가입</h2>
           {step === 1 && (
             <RegisterStep1
               formData={formData}
@@ -335,10 +335,11 @@ const RegisterPage = () => {
           )}
           {step === 3 && (
             <RegisterStep3
-              formData={formData.memberSettingDto}
+              formData={{ ...formData, ...formData.memberSettingDto }}
               errors={errors}
               handleChange={handleChange}
               handleSubmit={handleSubmit}
+              handlePrevStep={handlePrevStep}
             />
           )}
         </div>

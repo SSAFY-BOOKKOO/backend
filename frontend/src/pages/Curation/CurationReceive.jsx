@@ -109,12 +109,14 @@ const CurationReceive = () => {
           letters.filter(letter => !selectedLetters.includes(letter.id))
         );
         setSelectedLetters([]);
+        window.location.reload(); // 새로고침 추가
       })
       .catch(err => {
         console.log('Error deleting letters:', err);
       });
   };
 
+  // 레터 상세 보기
   const handleLetterClick = letter => {
     authAxiosInstance
       .get(`/curations/detail/${letter.curationId}`, {
@@ -140,7 +142,7 @@ const CurationReceive = () => {
           받은 날부터 15일 후 자동 삭제됩니다!
         </p>
       </div>
-      <div className='flex justify-between items-center pl-6 pr-4 py-3'>
+      <div className='flex justify-between items-center px-8 pt-3 pb-1'>
         <p className='font-bold text-green-400'>
           받은 레터 수: {letters.length}
         </p>
@@ -149,7 +151,7 @@ const CurationReceive = () => {
           onClick={() => setIsDeleting(!isDeleting)}
         />
       </div>
-      <div className='flex-1 overflow-y-auto px-4'>
+      <div className='flex-1 overflow-y-auto px-8'>
         {letters.map(letter => (
           <div key={letter.id} className='flex flex-grow'>
             <div
@@ -157,13 +159,15 @@ const CurationReceive = () => {
               onClick={() => handleLetterClick(letter)}
             >
               <img
-                src={letter.image}
+                src={letter.coverImgUrl}
                 alt='Letter'
                 className='w-16 h-24 mx-4 rounded-lg'
               />
               <div className='flex-1 pb-7'>
-                <h2 className='text-lg font-bold'>{letter.title}</h2>
-                <p>{letter.content}</p>
+                <h2 className='text-lg font-bold text-overflow-1'>
+                  {letter.title}
+                </h2>
+                {/* <p>{letter.content}</p> */}
                 <p>{letter.date}</p>
               </div>
               {storeLetters.some(
@@ -179,8 +183,8 @@ const CurationReceive = () => {
                   className='absolute top-7 right-3 cursor-pointer size-7'
                 />
               )}
-              <p className='absolute bottom-2 right-4 text-sm text-gray-600'>
-                FROM. {letter.from}
+              <p className='absolute bottom-2 right-4 text-sm text-gray-600 text-overflow-1'>
+                FROM. {letter.writer}
               </p>
             </div>
             {isDeleting && (
@@ -206,14 +210,14 @@ const CurationReceive = () => {
           </button>
         </div>
       )}
-      <div className='flex justify-center space-x-4'>
+      <div className='flex justify-center space-x-12 text-2xl pb-4'>
         <IoIosArrowBack
           onClick={() => setPage(prevPage => Math.max(prevPage - 1, 0))}
-          className='cursor-pointer text-xl'
+          className='cursor-pointer '
         />
         <IoIosArrowForward
           onClick={() => setPage(prevPage => prevPage + 1)}
-          className='cursor-pointer text-xl'
+          className='cursor-pointer '
         />
       </div>
     </div>

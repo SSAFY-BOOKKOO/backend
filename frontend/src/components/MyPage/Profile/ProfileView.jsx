@@ -77,7 +77,7 @@ const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
           <Button
             text='탈퇴'
             size='medium'
-            color='text-white bg-pink-400 active:bg-pink-600'
+            color='text-white bg-pink-500 active:bg-pink-600'
             onClick={() => console.log('탈퇴')}
           />
         </div>

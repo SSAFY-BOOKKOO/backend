@@ -82,7 +82,7 @@ const CurationLetterDetail = () => {
         </div>
         <div className='bg-green-400 px-6 py-3 rounded-b-lg flex justify-between text-sm text-gray-700'>
           <span>{new Date(letter.createdAt).toLocaleDateString()}</span>
-          <span>FROM: {letter.from}</span>
+          <span>FROM: {letter.writer}</span>
         </div>
       </div>
     </div>

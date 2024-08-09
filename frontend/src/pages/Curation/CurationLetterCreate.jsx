@@ -33,7 +33,7 @@ const CreateLetter = () => {
   const handleLetterCreate = () => {
     const letter = {
       // bookId: book ? book.id : null,
-      bookId:book.id,
+      bookId: book.id,
       title,
       content,
     };
@@ -41,7 +41,7 @@ const CreateLetter = () => {
     authAxiosInstance
       .post('/curations', letter)
       .then(res => {
-        console.log('Letter send successfully:', res);
+        // console.log('Letter send successfully:', res);
         navigate('/curation/send');
       })
       .catch(err => {
@@ -61,8 +61,8 @@ const CreateLetter = () => {
                   alt={book.title}
                   className='w-12 h-16 rounded-md shadow-lg'
                 />
-                <div className='ml-4 text-gray-700 text-ellipsis'>
-                  {book.title}|{book.id}
+                <div className='ml-4 text-gray-700 text-ellipsis text-overflow-1'>
+                  {book.title}
                 </div>
               </div>
             ) : (
