@@ -243,4 +243,28 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
                            .where(predicate)
                            .fetch();
     }
+
+    /**
+     * 시간 내에 읽은 권수
+     *
+     * @param memberId memberId
+     * @param startAt  startAt
+     * @param endAt    endAt
+     * @return 읽은 권수
+     */
+    @Override
+    public Integer countBooksByMemberIdDuration(Long memberId, LocalDate startAt, LocalDate endAt) {
+        BooleanBuilder predicate = new BooleanBuilder();
+        // 내 서재
+        predicate.and(libraryBookMapper.library.memberId.eq(memberId));
+
+        // 기간 (걸치는 것도 포함!)
+        predicate.and(libraryBookMapper.startAt.loe(endAt));
+        predicate.and(libraryBookMapper.endAt.goe(startAt));
+
+        Long count = queryFactory.select(libraryBookMapper.id.bookId.count())
+                                 .fetchOne();
+
+        return count != null ? count.intValue() : 0;
+    }
 }
