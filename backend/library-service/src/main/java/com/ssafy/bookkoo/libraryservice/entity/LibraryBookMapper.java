@@ -9,7 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
-import java.sql.Date;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,11 +40,11 @@ public class LibraryBookMapper extends BaseEntity {
 
     @Column
     @Setter
-    Date startAt;
+    LocalDate startAt;
 
     @Column
     @Setter
-    Date endAt;
+    LocalDate endAt;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -60,8 +60,8 @@ public class LibraryBookMapper extends BaseEntity {
         MapperKey id,
         Integer bookOrder,
         String bookColor,
-        Date startAt,
-        Date endAt,
+        LocalDate startAt,
+        LocalDate endAt,
         Status status,
         Integer rating
     ) {

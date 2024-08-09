@@ -47,6 +47,12 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     @Value("${config.member-bucket-name}")
     private String BUCKET;
 
+    @Value("${config.server-url}")
+    private String SERVER;
+
+    @Value("${config.common-service-file}")
+    private String COMMON_URL;
+
     /**
      * 비밀번호를 업데이트합니다.
      * @param requestUpdatePasswordDto

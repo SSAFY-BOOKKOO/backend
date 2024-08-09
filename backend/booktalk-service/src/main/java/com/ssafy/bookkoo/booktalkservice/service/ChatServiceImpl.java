@@ -8,7 +8,8 @@ import com.ssafy.bookkoo.booktalkservice.dto.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.booktalkservice.entity.BookTalk;
 import com.ssafy.bookkoo.booktalkservice.mongo.ChatMessageRepository;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -61,7 +62,7 @@ public class ChatServiceImpl implements ChatService {
     public List<ResponseChatMessageDto> getMessageList(Long bookTalkId, Pageable pageable) {
         List<ChatMessage> chatMessageList = chatMessageRepository.findByBookTalkIdOrderByCreatedAtDesc(
             bookTalkId, pageable);
-        List<ResponseChatMessageDto> messageDtoList = new ArrayList<>();
+        Deque<ResponseChatMessageDto> messageList = new ArrayDeque<>();
         chatMessageList.forEach(chatMessage -> {
             ResponseMemberInfoDto memberInfo = memberServiceClient.getMemberInfoById(
                 chatMessage.getSender());
@@ -76,9 +77,10 @@ public class ChatServiceImpl implements ChatService {
                                         .createdAt(chatMessage.getCreatedAt()
                                                               .toString())
                                         .build();
-            messageDtoList.add(dto);
+            messageList.addFirst(dto);
         });
-        return messageDtoList;
+        return messageList.stream()
+                          .toList();
     }
 
 }

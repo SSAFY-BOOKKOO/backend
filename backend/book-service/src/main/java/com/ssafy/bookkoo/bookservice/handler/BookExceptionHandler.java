@@ -22,7 +22,7 @@ public class BookExceptionHandler {
      */
     @ExceptionHandler(BookNotFoundException.class)
     public ResponseEntity<String> bookNotFoundException(BookNotFoundException e) {
-        return ResponseEntity.status(404)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                              .body(e.getMessage());
     }
 
@@ -34,7 +34,7 @@ public class BookExceptionHandler {
      */
     @ExceptionHandler(CategoryNotFoundException.class)
     public ResponseEntity<String> categoryNotFoundException(CategoryNotFoundException e) {
-        return ResponseEntity.status(404)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                              .body(e.getMessage());
     }
 
