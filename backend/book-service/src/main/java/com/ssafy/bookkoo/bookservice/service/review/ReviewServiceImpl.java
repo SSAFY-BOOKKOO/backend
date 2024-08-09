@@ -252,7 +252,7 @@ public class ReviewServiceImpl implements ReviewService {
         ResponseSurfingMemberInfoDto surfingMemberInfo = ResponseSurfingMemberInfoDto.builder()
                                                                                      .nickName(
                                                                                          memberInfo.nickName())
-                                                                                     .profilImgUrl(
+                                                                                     .profileImgUrl(
                                                                                          memberInfo.profileImgUrl())
                                                                                      .build();
 
