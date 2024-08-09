@@ -108,12 +108,36 @@ public class MemberExceptionHandler {
 
     /**
      * 이미 팔로우한 상태에서 다시 요청했을 때 발생하는 예외
+     *
      * @param e
      * @return
      */
     @ExceptionHandler(AlreadyFollowedException.class)
     public ResponseEntity<String> handleAlreadyFollowedException(AlreadyFollowedException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * 해당 글귀를 찾을 수 없을 때 발생하는 예외 입니다.
+     *
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(QuoteNotFoundException.class)
+    public ResponseEntity<String> handleQuoteNotFoundException(QuoteNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * 권한이 없는 리소스에 접근할 때 발생하는 예외
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(UnAuthorizationException.class)
+    public ResponseEntity<String> handleUnAuthorizationException(UnAuthorizationException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                              .body(e.getMessage());
     }
 }

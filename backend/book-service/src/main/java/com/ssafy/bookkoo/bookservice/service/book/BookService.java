@@ -9,6 +9,7 @@ import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBooksFilterDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookOfLibraryDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseCheckBooksByIsbnDto;
+import com.ssafy.bookkoo.bookservice.dto.stats.ResponseStatsCategoryDto;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -138,4 +139,12 @@ public interface BookService {
      * @return ResponseBookOfLibraryDto
      */
     ResponseBookOfLibraryDto getBookOfLibrary(Long bookId, Long memberId);
+
+    /**
+     * 책 ID 리스트로 카테고리 통계 내서 반환
+     *
+     * @param bookIds 책 ID 리스트
+     * @return List<ResponseStatsCategoryDto>
+     */
+    List<ResponseStatsCategoryDto> getBookCategoryStats(List<Long> bookIds);
 }

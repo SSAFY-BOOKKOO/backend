@@ -1,7 +1,5 @@
 package com.ssafy.bookkoo.bookservice.repository.book;
 
-// dto 로 변환을 위한 constructor 사용
-
 import static com.querydsl.core.types.Projections.constructor;
 import static com.ssafy.bookkoo.bookservice.entity.QBook.book;
 import static com.ssafy.bookkoo.bookservice.entity.QCategory.category;
@@ -19,6 +17,8 @@ import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookOfLibraryDto;
 import com.ssafy.bookkoo.bookservice.dto.book.SearchBookConditionDto;
 import com.ssafy.bookkoo.bookservice.dto.category.CategoryDto;
 import com.ssafy.bookkoo.bookservice.dto.review.ResponseReviewDto;
+import com.ssafy.bookkoo.bookservice.dto.stats.QResponseStatsCategoryDto;
+import com.ssafy.bookkoo.bookservice.dto.stats.ResponseStatsCategoryDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import com.ssafy.bookkoo.bookservice.exception.InvalidAttributeException;
 import java.util.List;
@@ -246,5 +246,29 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
             categoryDto,
             reviewDto
         );
+    }
+
+
+    /**
+     * 책 ID 리스트로 카테고리 통계 내서 반환
+     *
+     * @param bookIds 책 ID 리스트
+     * @return List<ResponseStatsCategoryDto>
+     */
+    @Override
+    public List<ResponseStatsCategoryDto> searchBookCategoryStats(List<Long> bookIds) {
+        
+        return queryFactory
+            .select(
+                new QResponseStatsCategoryDto(
+                    book.category.name,
+                    book.id.count()
+                           .intValue()
+                )
+            )
+            .from(book)
+            .where(book.id.in(bookIds))
+            .groupBy(book.category.name)
+            .fetch();
     }
 }

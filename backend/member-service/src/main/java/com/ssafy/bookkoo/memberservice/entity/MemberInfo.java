@@ -70,10 +70,21 @@ public class MemberInfo extends BaseEntity {
     @OneToMany(mappedBy = "follower")
     private List<FollowShip> followees = new ArrayList<>();
 
+    @OneToMany(mappedBy = "memberInfo")
+    private List<Quote> quotes = new ArrayList<>();
+
     @Builder
-    public MemberInfo(Long id, Member member, String memberId, String nickName, Integer year,
-        Gender gender, String introduction,
-        String profileImgUrl, MemberSetting memberSetting) {
+    public MemberInfo(
+        Long id,
+        Member member,
+        String memberId,
+        String nickName,
+        Integer year,
+        Gender gender,
+        String introduction,
+        String profileImgUrl,
+        MemberSetting memberSetting,
+        List<Quote> quotes) {
         this.id = id;
         this.member = member;
         this.memberId = memberId;
@@ -83,6 +94,7 @@ public class MemberInfo extends BaseEntity {
         this.introduction = introduction;
         this.profileImgUrl = profileImgUrl;
         this.memberSetting = memberSetting;
+        this.quotes = quotes;
     }
 
     /**
@@ -140,5 +152,17 @@ public class MemberInfo extends BaseEntity {
      */
     public void removeFollowee(FollowShip followShip) {
         followees.remove(followShip);
+    }
+
+    /**
+     * 글귀 추가
+     */
+    public void addQuote(Quote quote) {
+        this.quotes.add(quote);
+        quote.setMemberInfo(this);
+    }
+
+    public void removeQuote(Quote quote) {
+        this.quotes.remove(quote);
     }
 }

@@ -10,4 +10,5 @@ public interface S3Service {
 
     void deleteToBucket(String file, String bucket);
 
+    byte[] getFile(String bucket, String fileName);
 }

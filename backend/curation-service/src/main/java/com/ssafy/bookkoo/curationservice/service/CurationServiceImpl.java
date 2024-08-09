@@ -7,6 +7,7 @@ import com.ssafy.bookkoo.curationservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDetailDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseMemberInfoDto;
+import com.ssafy.bookkoo.curationservice.dto.ResponseRecipientDto;
 import com.ssafy.bookkoo.curationservice.entity.Curation;
 import com.ssafy.bookkoo.curationservice.entity.CurationSend;
 import com.ssafy.bookkoo.curationservice.exception.BookNotFoundException;
@@ -57,14 +58,16 @@ public class CurationServiceImpl implements CurationService {
                                     .build();
         curationRepository.save(curation);
         // 멤버 ID Token에서 가져오기
-        List<Long> idList = memberServiceClient.getLetterRecipients(writer);
-        for (long id : idList) {
+        List<ResponseRecipientDto> recipients = memberServiceClient.getLetterRecipients(writer);
+
+        for (ResponseRecipientDto recipient : recipients) {
             CurationSend curationSend =
                 CurationSend.builder()
                             .curation(curation)
-                            .receiver(id)
+                            .receiver(recipient.memberId())
                             .build();
             curationSendRepository.save(curationSend);
+            //TODO 메일 보내기
         }
     }
 

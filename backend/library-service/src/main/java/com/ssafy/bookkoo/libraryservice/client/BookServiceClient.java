@@ -5,6 +5,7 @@ import com.ssafy.bookkoo.libraryservice.dto.other.RequestSearchBookMultiFieldDto
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseBookOfLibraryDto;
 import com.ssafy.bookkoo.libraryservice.dto.other.ResponseCheckBooksByIsbnDto;
+import com.ssafy.bookkoo.libraryservice.dto.stats.ResponseStatsCategoryDto;
 import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,11 +77,19 @@ public interface BookServiceClient {
      */
     @PostMapping(prefix + "/check-books")
     List<ResponseCheckBooksByIsbnDto> checkBooksByIsbn(@RequestBody String[] isbnList);
-
+    
     @GetMapping(prefix + "/{bookId}/me")
     ResponseBookOfLibraryDto getBookOfLibrary(
         @PathVariable Long bookId,
         @RequestParam Long memberId
     );
 
+    /**
+     * bookId 리스트를 주고 카테고리 통계를 받아오은 메서드
+     *
+     * @param bookIds bookId 리스트
+     * @return List<ResponseStatsCategoryDto>
+     */
+    @GetMapping(prefix + "/categories/stats")
+    List<ResponseStatsCategoryDto> getBookCategoryStats(@RequestParam List<Long> bookIds);
 }

@@ -65,11 +65,18 @@ public class MemberServiceImpl implements MemberService {
     private final CommonServiceClient commonServiceClient;
     private final String passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$";
 
-    @Value("${config.default-img-url}")
-    private String DEFAULT_IMG_URL;
+    @Value("${config.default-member-img-url}")
+    private String DEFAULT_MEMBER_IMG_URL;
 
     @Value("${config.member-bucket-name}")
     private String BUCKET;
+
+    @Value("${config.server-url}")
+    private String SERVER;
+
+    @Value("${config.common-service-file}")
+    private String COMMON_URL;
+
     /**
      * 회원가입에 필요한 모든 정보를 받아 회원가입하는 서비스
      *
@@ -173,9 +180,10 @@ public class MemberServiceImpl implements MemberService {
         String profileImgUrl = additionalInfo.profileImgUrl();
 
         //기본 프로필 이미지 or 소셜 로그인의 경우 profileImgUrl
-        String imgUrl = profileImgUrl == null ? DEFAULT_IMG_URL : profileImgUrl;
+        String imgUrl = profileImgUrl == null ? DEFAULT_MEMBER_IMG_URL : profileImgUrl;
         if (profileImg != null) {
-            imgUrl = commonServiceClient.saveProfileImg(profileImg, BUCKET);
+            imgUrl = commonServiceClient.saveImg(profileImg, BUCKET);
+            imgUrl = SERVER + COMMON_URL + imgUrl;
         }
         MemberInfo memberInfo = MemberInfo.builder()
                                           .id(additionalInfo.id())

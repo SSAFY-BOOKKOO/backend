@@ -47,6 +47,12 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     @Value("${config.member-bucket-name}")
     private String BUCKET;
 
+    @Value("${config.server-url}")
+    private String SERVER;
+
+    @Value("${config.common-service-file}")
+    private String COMMON_URL;
+
     /**
      * 비밀번호를 업데이트합니다.
      * @param requestUpdatePasswordDto
@@ -277,7 +283,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         String profileImgUrl = memberInfo.getProfileImgUrl();
         if (!profileImgUrl.equals("Default.jpg")) {
             try {
-                commonServiceClient.deleteProfileImg(profileImgUrl, BUCKET);
+                commonServiceClient.deleteImg(profileImgUrl, BUCKET);
             } catch (Exception e) {
                 throw new ProfileImageUploadException();
             }
@@ -286,8 +292,9 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     }
 
     protected void updateMemberProfileUrl(MultipartFile profileImg, MemberInfo memberInfo) {
-        String fileName = commonServiceClient.saveProfileImg(profileImg, BUCKET);
-        memberInfo.setProfileImgUrl(fileName);
+        String imgUrl = commonServiceClient.saveImg(profileImg, BUCKET);
+        imgUrl = SERVER + COMMON_URL + imgUrl;
+        memberInfo.setProfileImgUrl(imgUrl);
         memberInfoRepository.flush();
     }
 

@@ -9,6 +9,7 @@ import com.ssafy.bookkoo.bookservice.dto.book.RequestSearchBooksFilterDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseBookOfLibraryDto;
 import com.ssafy.bookkoo.bookservice.dto.book.ResponseCheckBooksByIsbnDto;
+import com.ssafy.bookkoo.bookservice.dto.stats.ResponseStatsCategoryDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import com.ssafy.bookkoo.bookservice.entity.Category;
 import com.ssafy.bookkoo.bookservice.exception.BookCreateFailedException;
@@ -203,6 +204,19 @@ public class BookServiceImpl implements BookService {
     ) {
 
         return bookRepository.getBookOfLibrary(bookId, memberId);
+    }
+
+    /**
+     * 책 ID 리스트로 카테고리 통계 내서 반환
+     *
+     * @param bookIds 책 ID 리스트
+     * @return List<ResponseStatsCategoryDto>
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<ResponseStatsCategoryDto> getBookCategoryStats(List<Long> bookIds) {
+
+        return bookRepository.searchBookCategoryStats(bookIds);
     }
 
     /**
