@@ -25,6 +25,9 @@ public interface ChatService {
      * <p>
      * 메세지 번호, 독서록 번호, 작성자 닉네임, 작성자 프로필 이미지, 메세지 내용, 좋아요 수, 작성 시간
      */
-    List<ResponseChatMessageDto> getMessageList(Long bookTalkId, LocalDateTime time);
+    List<ResponseChatMessageDto> getMessageList(Long bookTalkId, LocalDateTime time, Long memberId);
+
+
+    Boolean chatMessageLikeToggle(String chatMessageId, Long memberId);
 
 }
