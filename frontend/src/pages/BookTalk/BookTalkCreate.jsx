@@ -41,9 +41,10 @@ const BookTalkCreate = () => {
     }
   };
 
-  const handleBookCreate = async id => {
+  const handleBookCreate = async book => {
     try {
-      const data = await postBookTalks(id);
+      const data = await postBookTalks(book.id);
+      navigate(`/booktalk/detail/${data}`, { state: { book: book } });
     } catch (error) {
       showAlert('헉 오류가 발생했습니다! 다시 시도해주세요', true, () => {});
     }
@@ -56,8 +57,7 @@ const BookTalkCreate = () => {
       false,
       async () => {
         // 확인
-        const data = await handleBookCreate(book.id);
-        navigate(`/booktalk/detail/${data}`);
+        await handleBookCreate(book);
       },
       () => {}
     );
