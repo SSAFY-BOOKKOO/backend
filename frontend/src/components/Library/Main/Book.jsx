@@ -11,14 +11,6 @@ const Book = ({ item, index, moveBook, onBookClick, viewOnly }) => {
       isDragging: monitor.isDragging(),
     }),
     canDrag: !viewOnly,
-    options: {
-      begin: () => {
-        document.body.classList.add('overflow-hidden');
-      },
-      end: () => {
-        document.body.classList.remove('overflow-hidden');
-      },
-    },
   });
 
   const [{ isOver, canDrop }, dropRef] = useDrop({
@@ -78,7 +70,7 @@ const Book = ({ item, index, moveBook, onBookClick, viewOnly }) => {
   return (
     <div
       ref={viewOnly ? null : node => dragRef(dropRef(node))}
-      className={`${heightClass} text-center rounded-lg cursor-pointer shadow-md flex items-center justify-center ${item.bookColor} ${
+      className={`${heightClass} touch-none text-center rounded-lg cursor-pointer shadow-md flex items-center justify-center ${item.bookColor} ${
         isOver && canDrop ? 'border-4 border-dashed border-gray-500' : ''
       }`}
       style={{ ...thicknessStyle, opacity: isDragging ? 0.5 : 1 }}
