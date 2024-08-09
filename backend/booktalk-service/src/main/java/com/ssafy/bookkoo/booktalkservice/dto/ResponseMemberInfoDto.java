@@ -5,10 +5,11 @@ import lombok.Builder;
 
 @Builder
 public record ResponseMemberInfoDto(
+    String memberId,
     String nickName,
     Gender gender,
     String[] categories,
-    int age,
+    Integer age,
     String introduction,
     String profileImgUrl
 ) {
