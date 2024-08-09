@@ -19,7 +19,6 @@ public interface MemberInfoMapper {
     // 엔티티를 DTO로 변환
     @Mapping(source = "categories", target = "categories", qualifiedByName = "mapCategories")
     @Mapping(source = "year", target = "age", qualifiedByName = "toAge")
-    @Mapping(target = "profileImgUrl", ignore = true)
     ResponseMemberInfoDto toResponseDto(MemberInfo memberInfo);
 
 
@@ -44,6 +43,7 @@ public interface MemberInfoMapper {
 
     /**
      * 저장된 탄생년도를 통해 나이로 변환해서 매핑
+     *
      * @param year
      * @return
      */
@@ -56,6 +56,7 @@ public interface MemberInfoMapper {
 
     /**
      * 팔로워 카운팅
+     *
      * @param followShips
      * @return
      */
