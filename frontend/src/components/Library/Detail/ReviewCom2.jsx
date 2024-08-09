@@ -23,7 +23,7 @@ const Modal = ({ show, onClose, review }) => {
 
   return (
     <div className='fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50'>
-      <div className='bg-white border-8 border-green-400 p-3 rounded-lg shadow-lg w-2/3 max-w-md'>
+      <div className='bg-green-300 p-3 rounded-lg shadow-lg w-2/3 max-w-md'>
         <div className='flex justify-between items-center'>
           <div className='flex items-center'>
             <img
@@ -41,7 +41,7 @@ const Modal = ({ show, onClose, review }) => {
         <div className='flex justify-center items-center h-full'>
           <button
             onClick={handleLibraryNavigation}
-            className='bg-pink-400 mt-6 p-3 rounded-lg text-center text-md font-bold'
+            className='bg-pink-500 mt-4 p-3 rounded-lg text-center text-md font-bold'
           >
             서재 구경하러 가기
           </button>
@@ -57,10 +57,9 @@ const ReviewCom = ({ onBackClick, book }) => {
   const [reviewText, setReviewText] = useState('');
   const [surfingReviews, setSurfingReviews] = useState([]);
   const [rating, setRating] = useState(5); // Default rating, adjust as necessary
-  // const [reviewId, setReviewId] = useState(null); // Store the review ID
   const [showModal, setShowModal] = useState(false);
   const [currentReview, setCurrentReview] = useState(null);
-  const [myReview, setmyReview] = useState('');
+  const [myReview, setMyReview] = useState(null); // Initialize as null to detect existing reviews
 
   // 리뷰 처음 제시
   useEffect(() => {
@@ -73,6 +72,12 @@ const ReviewCom = ({ onBackClick, book }) => {
       .get(`/books/${bookId}/reviews/surfing`, { params: { bookId } })
       .then(res => {
         setSurfingReviews(Array.isArray(res.data) ? res.data : []);
+        const userReview = res.data.find(review => review.member.isCurrentUser);
+        if (userReview) {
+          setMyReview(userReview);
+          setReviewText(userReview.content);
+          setRating(userReview.rating);
+        }
         console.log('Fetched reviews:', res.data);
       })
       .catch(err => {
@@ -95,53 +100,47 @@ const ReviewCom = ({ onBackClick, book }) => {
   };
 
   // 내 한줄평 작성
-  const handleWriteReview = () => {
-    console.log(myReview);
-    if (myReview.content.length > 70) {
+  const handleSaveReview = () => {
+    if (reviewText.length > 70) {
       alert('70자 이내로 작성해 주세요!');
       return;
     }
 
     setEditingReview(false);
     const bookId = id;
-    authAxiosInstance
-      .post(`/books/${bookId}/reviews`, {
-        content: myReview.content,
-        rating: rating,
-      })
-      .then(res => {
-        console.log('내 리뷰: ', res);
-        setmyReview(res.data);
-      })
-      .catch(err => {
-        console.log(err);
-        console.log(bookId);
-      });
-  };
 
-  // 내 한줄평 수정
-  const handleRewriteReview = () => {
-    console.log(myReview);
-    if (myReview.content.length > 70) {
-      alert('70자 이내로 작성해 주세요!');
-      return;
+    if (myReview) {
+      // Update existing review
+      const reviewId = myReview.id;
+      authAxiosInstance
+        .put(`/books/${bookId}/reviews/${reviewId}`, {
+          content: reviewText,
+          rating: rating,
+        })
+        .then(res => {
+          console.log('수정 결과:', res.data);
+          setMyReview(res.data);
+        })
+        .catch(err => {
+          console.log(err);
+          console.log(bookId);
+        });
+    } else {
+      // Create new review
+      authAxiosInstance
+        .post(`/books/${bookId}/reviews`, {
+          content: reviewText,
+          rating: rating,
+        })
+        .then(res => {
+          console.log('등록 결과:', res.data);
+          setMyReview(res.data);
+        })
+        .catch(err => {
+          console.log(err);
+          console.log(bookId);
+        });
     }
-
-    setEditingReview(false);
-    const bookId = myReview.bookId;
-    const reviewId = myReview.id;
-    authAxiosInstance
-      .put(`/books/${bookId}/reviews/${reviewId}`, {
-        content: myReview.content,
-        rating: rating,
-      })
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => {
-        console.log(err);
-        console.log(bookId);
-      });
   };
 
   // 리뷰 더보기
@@ -205,14 +204,14 @@ const ReviewCom = ({ onBackClick, book }) => {
           {editReview ? (
             <textarea
               className='w-full h-44 p-2 bg-white border border-gray-400 rounded resize-none'
-              value={myReview.content}
-              // onChange={e => setReviewText(e.target.value)}
+              value={reviewText}
+              onChange={e => setReviewText(e.target.value)}
               onClick={e => e.stopPropagation()}
               maxLength={70}
             ></textarea>
           ) : (
             <p className='w-full h-44 p-2 pb-4 border border-gray-400 rounded resize-none'>
-              {myReview.content || '한줄평을 작성해 보세요!'}
+              {reviewText || '한줄평을 작성해 보세요!'}
             </p>
           )}
           <Button
@@ -222,10 +221,9 @@ const ReviewCom = ({ onBackClick, book }) => {
             onClick={e => {
               e.stopPropagation();
               if (editReview) {
-                handleWriteReview();
+                handleSaveReview();
               } else {
                 setEditingReview(true);
-                handleRewriteReview();
               }
             }}
             className='absolute top-36 right-2'

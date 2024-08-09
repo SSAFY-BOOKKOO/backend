@@ -5,6 +5,7 @@ import axios from 'axios';
 import { authAxiosInstance } from '../../services/axiosInstance';
 import { IoIosArrowBack } from 'react-icons/io';
 import { IoIosArrowForward } from 'react-icons/io';
+import { BsEnvelopeHeart } from 'react-icons/bs';
 
 const CurationSend = () => {
   const location = useLocation();
@@ -67,7 +68,7 @@ const CurationSend = () => {
               >
                 <img
                   src={letter.coverImgUrl}
-                  alt='Letter'
+                  alt={<BsEnvelopeHeart />}
                   className='w-16 h-24 mx-4 rounded-lg'
                   onClick={() => handleLetterClick(letter)}
                 />

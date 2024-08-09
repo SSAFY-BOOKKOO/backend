@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
 import { IoIosArrowForward } from 'react-icons/io';
 import { axiosInstance, authAxiosInstance } from '../../services/axiosInstance';
+import { BsEnvelopeHeart } from 'react-icons/bs';
 
 const CurationStore = () => {
   const location = useLocation();
@@ -63,7 +64,7 @@ const CurationStore = () => {
               >
                 <img
                   src={letter.coverImgUrl}
-                  alt='Letter'
+                  alt={<BsEnvelopeHeart />}
                   className='w-16 h-24 mx-4 rounded-lg'
                   // onClick={() => handleLetterClick(letter)}
                 />

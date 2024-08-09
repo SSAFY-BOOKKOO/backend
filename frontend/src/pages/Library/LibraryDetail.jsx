@@ -4,7 +4,8 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import { useAtom } from 'jotai';
 import useModal from '@hooks/useModal';
-import ReviewCom from '@components/Library/Detail/ReviewCom';
+// import ReviewCom from '@components/Library/Detail/ReviewCom';
+import ReviewCom2 from '@components/Library/Detail/ReviewCom2';
 import ColorPicker from '@components/Library/BookCreate/ColorPicker';
 import ShelfSelectStep from '@components/Library/BookCreate/ShelfSelectStep';
 import SettingsModal from '@components/@common/SettingsModal';
@@ -20,12 +21,12 @@ const LibraryDetail = () => {
   const [showReview, setShowReview] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showShelfSelect, setShowShelfSelect] = useState(false);
-  const [bookData, setBookData] = useAtom(bookDataAtom);
+  const [bookData, setBookData] = useAtom(bookDataAtom); // jotai로 받은 북 데이터
   const navigate = useNavigate();
   const maxLength = 80;
   // const authorMaxLength = 14;
   // const titleMaxLength = 10;
-  const [book, setBook] = useState(null);
+  const [book, setBook] = useState(null); // api로 받은 북데이터
   const { isOpen, closeModal, toggleModal } = useModal();
 
   useEffect(() => {
@@ -34,8 +35,19 @@ const LibraryDetail = () => {
         const response = await authAxiosInstance.get(
           `/libraries/${libraryId}/books/${bookId}?nickname=${location.state.nickname}`
         );
+        const bookResponse = response.data.book;
         setBook(response.data.book);
-        console.log(book);
+        console.log(bookResponse);
+        // console.log(book);
+        console.log('jotai에 저장', bookData);
+        // setBookData({
+        //   status: bookResponse.status || 'READ',
+        //   startAt: bookResponse.startAt || '',
+        //   endAt: bookResponse.endAt || '',
+        //   rating: bookResponse.rating || 0,
+        //   bookColor: bookResponse.color || '',
+        //   libraryId: libraryId,
+        // });
       } catch (error) {
         console.log(location.state);
         console.error('Failed to fetch book data:', error);
@@ -52,9 +64,12 @@ const LibraryDetail = () => {
     title = '',
     author = '',
     publisher = '',
+    publishedAt = '',
     summary = '',
     coverImgUrl,
-    status,
+    // status,
+    // startAt,
+    // endAt,
   } = book;
 
   const handleDelete = () => {
@@ -67,6 +82,7 @@ const LibraryDetail = () => {
 
   const handleColorChange = color => {
     setBookData(prev => ({ ...prev, color }));
+    console.log(bookData);
     setShowColorPicker(false);
   };
 
@@ -104,52 +120,90 @@ const LibraryDetail = () => {
           classNames='fade'
         >
           {showReview ? (
-            <ReviewCom
+            <ReviewCom2
               bookId={bookId}
               onBackClick={() => setShowReview(false)}
               book={book}
             />
           ) : (
             // 앞면
-            <div className='w-10/12 max-w-md h-10/12 flex flex-col'>
+            <div className='w-10/12 max-w-md h-full flex flex-col'>
               {/* 1. 회색 영역 */}
               <div className='relative bg-zinc-300 rounded-t-lg w-3/2 max-w-md h-4/5 flex flex-col justify-between overflow-auto'>
                 {/* 하드커버 선 */}
                 <div className='absolute left-6 top-0 bottom-0 shadow-2xl w-1 bg-gray-500 shadow-2xl z-30'></div>
-                {/* 모달 */}
-                <SettingsModal
-                  isOpen={isOpen}
-                  onClose={closeModal}
-                  onToggle={toggleModal}
-                  actions={actions}
-                  className='z-20'
-                />
+
                 <div>
                   <div className='flex flex-col items-center'>
-                    <div className='relative w-11/12 h-96 pt-6 pr-7 pl-12 cursor-pointer rounded-lg mt-[2rem] z-0 flex justify-center'>
+                    <div className=' w-11/12 h-96 pt-6 pr-7 pl-12 cursor-pointer rounded-lg mt-[2rem] z-0 flex justify-center'>
                       <img
                         src={coverImgUrl}
                         alt={title}
                         onClick={() => setShowReview(true)}
-                        className='w-full h-full'
+                        className='relative w-full h-full'
                       />
-                    </div>
-                    {/* <IoBookmarkSharp className='absolute top-[3.7rem] right-[4rem] text-6xl text-blue-500' /> */}
-                    <div className='absolute top-5 right-16 flex items-center justify-center w-16 h-32 text-blue-500'>
-                      <IoBookmarkSharp className='h-full w-full' />
-                      <span
-                        className='absolute text-black text-xs mb-5 font-bold'
+
+                      <IoBookmarkSharp className='absolute top-5 right-16 flex items-center justify-center w-16 h-32 text-blue-500 z-10' />
+                      {bookData.status === 'READ' && (
+                        <span
+                          className='absolute right-[5.5rem] text-black text-xs mb-5 font-bold z-20'
+                          style={{
+                            writingMode: 'vertical-rl',
+                            textOrientation: 'upright',
+                            letterSpacing: '-0.23em',
+                          }}
+                        >
+                          읽음
+                        </span>
+                      )}
+                      {bookData.status === 'READING' && (
+                        <span
+                          className='absolute right-[5.5rem] text-black text-xs mb-5 font-bold z-20'
+                          style={{
+                            writingMode: 'vertical-rl',
+                            textOrientation: 'upright',
+                            letterSpacing: '-0.23em',
+                          }}
+                        >
+                          읽는중
+                        </span>
+                      )}
+                      {bookData.status === 'DIB' && (
+                        <span
+                          className='absolute right-[5.5rem] text-black text-xs mb-5 font-bold z-20'
+                          style={{
+                            writingMode: 'vertical-rl',
+                            textOrientation: 'upright',
+                            letterSpacing: '-0.23em',
+                          }}
+                        >
+                          찜
+                        </span>
+                      )}
+                      {/* <span
+                        className='absolute right-[5.5rem] text-black text-xs mb-5 font-bold z-20'
                         style={{
                           writingMode: 'vertical-rl',
                           textOrientation: 'upright',
                           letterSpacing: '-0.23em',
                         }}
                       >
-                        {status}
-                      </span>
+                        {bookData.status}
+                      </span> */}
                     </div>
+                    {/* <IoBookmarkSharp className='absolute top-[3.7rem] right-[4rem] text-6xl text-blue-500' /> */}
+                    {/* 모달 */}
+                    <SettingsModal
+                      isOpen={isOpen}
+                      onClose={closeModal}
+                      onToggle={toggleModal}
+                      actions={actions}
+                      className='z-50'
+                    />
                     {/* 읽은 기간 로직 (수정예정) */}
-                    <p className='m-2 pl-3'>2024.07.19-2024.07-24</p>
+                    <p className='m-2 pl-3'>
+                      {bookData.startAt}-{bookData.endAt}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -170,7 +224,9 @@ const LibraryDetail = () => {
                   {/* 읽은 기간 */}
                   {/* 읽은 상태 */}
                   <p className='text-lg text-black text-overflow-1'>{author}</p>
-                  <p className='text-sm text-black'>{publisher} | 2022-07-14</p>
+                  <p className='text-sm text-black'>
+                    {publisher} | {publishedAt}
+                  </p>
                   <p className='mt-2 text-sm text-black'>{displaySummary}</p>
                 </div>
               </div>
@@ -189,7 +245,7 @@ const LibraryDetail = () => {
             </button>
             <ColorPicker
               presetColors={PRESET_COLORS}
-              selected={bookData.color}
+              // selected={bookData.color}
               onChange={handleColorChange}
             />
           </div>

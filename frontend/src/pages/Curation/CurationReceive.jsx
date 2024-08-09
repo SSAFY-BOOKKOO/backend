@@ -9,6 +9,7 @@ import { FaTrashCan } from 'react-icons/fa6';
 // import { useAtom } from 'jotai';
 // import { storedLettersAtom } from '../../atoms/CurationStoreAtom';
 import { authAxiosInstance } from '../../services/axiosInstance';
+import { BsEnvelopeHeart } from 'react-icons/bs';
 
 const CurationReceive = () => {
   const navigate = useNavigate();
@@ -160,7 +161,7 @@ const CurationReceive = () => {
             >
               <img
                 src={letter.coverImgUrl}
-                alt='Letter'
+                alt={<BsEnvelopeHeart />}
                 className='w-16 h-24 mx-4 rounded-lg'
               />
               <div className='flex-1 pb-7'>
