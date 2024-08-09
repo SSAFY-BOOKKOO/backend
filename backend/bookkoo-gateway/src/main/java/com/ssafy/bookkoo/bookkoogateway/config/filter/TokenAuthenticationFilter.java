@@ -47,6 +47,7 @@ public class TokenAuthenticationFilter implements GlobalFilter {
         "/js",
         "/css",
         "/images",
+        "/commons/file",
         //토큰 인증 스킵 URL
         "/members/register",
         "/auth",
