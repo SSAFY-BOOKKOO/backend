@@ -15,7 +15,7 @@ public interface CommonServiceClient {
 
     @PostMapping(value = "/commons/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     String saveImg(
-        @RequestPart(name = "file") MultipartFile profileImg,
+        @RequestPart(name = "file") MultipartFile file,
         @RequestPart(name = "bucket") String bucket);
 
     @DeleteMapping(value = "/commons/file")
