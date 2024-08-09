@@ -11,6 +11,7 @@ const ChangeLibraryNameModal = ({
 
   const handleChangeLibraryName = () => {
     changeLibraryName();
+    setNewLibraryName('');
     setShowModal(false);
   };
 
