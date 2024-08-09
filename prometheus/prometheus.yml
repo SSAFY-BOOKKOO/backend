@@ -30,6 +30,10 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['common-service:8086']
+  - job_name: 'common-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['common-service:8087']
   - job_name: 'notification-service'
     metrics_path: '/actuator/prometheus'
     static_configs:
