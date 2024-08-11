@@ -22,8 +22,13 @@ const BookTalkDetail = () => {
   const [messageList, setMessageList] = useState([]);
   const messagesEndRef = useRef(null);
 
-  const [connected, setConnected] = useState(false);
-  const client = useRef(null);
+  const scrollToBottom = useCallback(() => {
+    console.log()
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView();
