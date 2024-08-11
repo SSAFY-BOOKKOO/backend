@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -104,7 +104,7 @@ public class QuoteController {
     @Operation(summary = "OCR 이미지 텍스트 추출 API",
         description = "OCR을 통해 글귀의 텍스트를 가져옵니다.")
     public ResponseEntity<String> processingOCR(
-        @RequestBody MultipartFile image
+        @RequestParam("image") MultipartFile image
     ) {
         String text = ocrService.extractTextFromImage(image);
         return ResponseEntity.ok(text);
