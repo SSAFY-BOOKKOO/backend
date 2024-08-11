@@ -69,7 +69,7 @@ public class ChatServiceImpl implements ChatService {
         }
         List<ChatMessage> chatMessageList = chatMessageRepository.findTop10ByBookTalkIdAndCreatedAtBeforeOrderByCreatedAtDesc(
             bookTalkId, time);
-        Deque<ResponseChatMessageDto> messageList = new ArrayDeque<>();
+        Deque<ResponseChatMessageDto> messageList = new ArrayDeque<>(10);
         chatMessageList.forEach(chatMessage -> {
             ResponseMemberInfoDto memberInfo = memberServiceClient.getMemberInfoById(
                 chatMessage.getSender());
@@ -86,7 +86,7 @@ public class ChatServiceImpl implements ChatService {
                                                               .toString())
                                         .isMemberLiked(chatMessage.isLiked(memberId))
                                         .build();
-            messageList.addFirst(dto);
+            messageList.addLast(dto);
         });
         return messageList.stream()
                           .toList();
