@@ -14,7 +14,7 @@ const SearchBookItem = ({ book, onClick, onCreateClick }) => {
     >
       <div className='w-36 h-36 flex'>
         <img
-          className='object-contain'
+          className='object-contain rounded-lg'
           src={book?.coverImgUrl}
           alt={book?.title}
         />
