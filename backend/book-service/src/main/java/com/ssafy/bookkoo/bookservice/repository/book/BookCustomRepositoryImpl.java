@@ -197,7 +197,10 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
     }
 
     @Override
-    public ResponseBookOfLibraryDto getBookOfLibrary(Long bookId, Long memberId) {
+    public ResponseBookOfLibraryDto getBookOfLibrary(
+        Long bookId,
+        Long memberId
+    ) {
         // 책 정보 조회
         Book bookEntity = queryFactory.selectFrom(book)
                                       .leftJoin(book.category, category)
@@ -259,7 +262,7 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
      */
     @Override
     public List<ResponseStatsCategoryDto> searchBookCategoryStats(List<Long> bookIds) {
-        
+
         return queryFactory
             .select(
                 new QResponseStatsCategoryDto(
