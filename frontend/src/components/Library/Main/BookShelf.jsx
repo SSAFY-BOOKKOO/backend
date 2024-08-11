@@ -1,7 +1,6 @@
 import React from 'react';
 import Book from './Book';
 import EmptySlot from './EmptySlot';
-import './BookShelf.css';
 
 const BookShelf = ({ books, moveBook, onBookClick, viewOnly }) => {
   const totalSlots = 21; // 3층에 7개의 슬롯
@@ -28,7 +27,7 @@ const BookShelf = ({ books, moveBook, onBookClick, viewOnly }) => {
 
   const renderShelf = (start, end) => (
     <div className='flex justify-center mb-2'>
-      <div className='flex flex-nowrap px-1 justify-center w-full rounded-xl shadow-lg shelf-bg'>
+      <div className='flex flex-nowrap px-1 justify-center w-full rounded-xl shadow-lg bg-[#a27045]'>
         {allSlots.slice(start, end)}
       </div>
     </div>
@@ -36,7 +35,7 @@ const BookShelf = ({ books, moveBook, onBookClick, viewOnly }) => {
 
   return (
     <div className='p-4 flex flex-col items-center'>
-      <div className='shelf-container rounded-xl shadow-lg w-full max-w-full overflow-x-auto'>
+      <div className='bg-[#d2a679] rounded-xl shadow-lg w-full max-w-full overflow-x-auto p-2'>
         {books.length >= 0 ? (
           <>
             {renderShelf(0, 7)} {/* 1층 */}

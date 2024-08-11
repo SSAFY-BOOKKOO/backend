@@ -30,7 +30,7 @@ const MyPage = () => {
       } catch (error) {
         console.error(error);
       } finally {
-        setIsLoading(false); // Set loading to false after data is fetched
+        setIsLoading(false);
       }
     };
 
@@ -40,7 +40,7 @@ const MyPage = () => {
   if (isLoading) {
     return (
       <div className='flex items-center justify-center min-h-screen'>
-        <Spinner /> {/* Use the Spinner component while loading */}
+        <Spinner />
       </div>
     );
   }

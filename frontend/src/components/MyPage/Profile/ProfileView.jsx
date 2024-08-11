@@ -1,6 +1,5 @@
 import React from 'react';
 import Button from '@components/@common/Button';
-import profileImgSample from '@assets/images/profile_img_sample.png';
 
 const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
   const getCategoryName = categoryId => {
@@ -25,7 +24,7 @@ const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
           </label>
           <div className='w-2/3 text-right'>
             <img
-              src={member.profileImgUrl || profileImgSample}
+              src={member.profileImgUrl}
               alt='Profile'
               className='w-16 h-16 rounded-full inline-block'
             />
