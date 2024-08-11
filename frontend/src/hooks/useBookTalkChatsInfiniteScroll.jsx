@@ -9,9 +9,11 @@ const useBookTalkChatsInfiniteScroll = bookTalkId => {
       if (lastPage.length < 10) {
         return undefined;
       }
-      return lastPage[0].createdAt;
+      return lastPage[lastPage.length - 1].createdAt;
     },
     initialPageParam: '',
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 };
 

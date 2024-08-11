@@ -15,6 +15,8 @@ const useLibraryInfiniteScroll = (text, tag, limit = 10) => {
     select: data => ({
       pages: data.pages.map(page => ({ data: page })),
     }),
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 };
 
