@@ -121,7 +121,10 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
      * @return List<Long> 갖고있는 책 ID
      */
     @Override
-    public List<Long> findBookIdsByMemberIdAndBookIds(Long memberId, List<Long> bookIds) {
+    public List<Long> findBookIdsByMemberIdAndBookIds(
+        Long memberId,
+        List<Long> bookIds
+    ) {
 
         BooleanBuilder predicate = new BooleanBuilder();
 
@@ -253,7 +256,11 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
      * @return 읽은 권수
      */
     @Override
-    public Integer countBooksByMemberIdDuration(Long memberId, LocalDate startAt, LocalDate endAt) {
+    public Integer countBooksByMemberIdDuration(
+        Long memberId,
+        LocalDate startAt,
+        LocalDate endAt
+    ) {
         BooleanBuilder predicate = new BooleanBuilder();
         // 내 서재
         predicate.and(libraryBookMapper.library.memberId.eq(memberId));
@@ -263,6 +270,8 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
         predicate.and(libraryBookMapper.endAt.goe(startAt));
 
         Long count = queryFactory.select(libraryBookMapper.id.bookId.count())
+                                 .from(libraryBookMapper)
+                                 .where(predicate)
                                  .fetchOne();
 
         return count != null ? count.intValue() : 0;
