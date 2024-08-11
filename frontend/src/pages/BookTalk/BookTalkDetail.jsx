@@ -10,7 +10,11 @@ import useModal from '@hooks/useModal';
 import ProfileModal from '@components/@common/ProfileModal';
 import useBookTalkChatsInfiniteScroll from '@hooks/useBookTalkChatsInfiniteScroll';
 import Spinner from '@components/@common/Spinner';
-import { postBookTalkChat, postBookTalkEnter } from '@services/BookTalk';
+import {
+  postBookTalkChat,
+  postBookTalkEnter,
+  postBookTalkLike,
+} from '@services/BookTalk';
 import { QueryClient } from '@tanstack/react-query';
 
 const BookTalkDetail = () => {
@@ -96,6 +100,7 @@ const BookTalkDetail = () => {
 
       client.current.subscribe(`/booktalks/sub/chat/${bookTalkId}`, message => {
         const newMessage = JSON.parse(message.body);
+        console.log(newMessage);
 
         queryClient.setQueryData(['bookTalkChats', bookTalkId], old => {
           if (!old) return old;
@@ -128,6 +133,32 @@ const BookTalkDetail = () => {
     toggleModal();
   };
 
+  const handleLikeClick = async chatMessageId => {
+    // 기존 messageList 상태 백업
+    const previousMessageList = [...messageList];
+
+    // messageList 업데이트
+    const updatedMessageList = messageList.map(message => {
+      if (message.messageId === chatMessageId) {
+        return {
+          ...message,
+          like: message.isMemberLiked ? message.like - 1 : message.like + 1,
+          isMemberLiked: !message.isMemberLiked,
+        };
+      }
+      return message;
+    });
+
+    setMessageList(updatedMessageList);
+
+    try {
+      await postBookTalkLike(chatMessageId);
+      queryClient.invalidateQueries(['bookTalkChats', bookTalkId]);
+    } catch (error) {
+      setMessageList(previousMessageList);
+    }
+  };
+
   const renderMessages = () => {
     if (!messageList.length) return null;
 
@@ -137,8 +168,11 @@ const BookTalkDetail = () => {
         message={message?.message}
         role={message.memberId === memberId ? 'user' : 'other'}
         showProfile={message?.memberId !== memberId}
+        nickName={message.nickName}
+        time={message.createdAt}
         showLikes={true}
-        likes={message?.likes}
+        likes={message?.like}
+        isMemberLiked={message?.isMemberLiked}
         profileImage={message?.profileImgUrl}
         profileClick={() =>
           handleProfileClick({
@@ -146,6 +180,7 @@ const BookTalkDetail = () => {
             profileImgUrl: message.profileImgUrl,
           })
         }
+        onLikeClick={() => handleLikeClick(message?.messageId)}
       />
     ));
   };
