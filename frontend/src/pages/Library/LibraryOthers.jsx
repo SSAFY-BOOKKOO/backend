@@ -59,10 +59,11 @@ const LibraryOthers = () => {
     const fetchMemberInfo = async () => {
       try {
         const nickname = location.state?.nickname;
-        const response = await authAxiosInstance.get('/members/info', {
+        const response = await authAxiosInstance.get('/members/info/name/${nickname}', {
           params: { nickname },
         });
         setMember(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error(error);
       }
