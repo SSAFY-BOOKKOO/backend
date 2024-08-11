@@ -8,9 +8,8 @@ import WrapContainer from '@components/Layout/WrapContainer';
 import Spinner from '@components/@common/Spinner';
 import SearchForm from '@components/Library/Search/SearchForm';
 import { alertAtom, showAlertAtom } from '@atoms/alertAtom';
-import { postBookTalks } from '@services/BookTalk';
+import { postBookTalks, getBookTalkByBookId } from '@services/BookTalk';
 import Alert from '@components/@common/Alert';
-import { postBook } from '@services/Book';
 
 const BookTalkCreate = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,15 +18,13 @@ const BookTalkCreate = () => {
 
   const navigate = useNavigate();
 
-  const [, setAlert] = useAtom(alertAtom);
   const [, showAlert] = useAtom(showAlertAtom);
 
-  // 무한 스크롤
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useBookInfiniteScroll(isSearched ? searchTerm : null, null);
 
   const { ref, inView } = useInView();
-  console.log(isSearched);
+
   useEffect(() => {
     if (inView && hasNextPage) {
       fetchNextPage();
@@ -41,41 +38,60 @@ const BookTalkCreate = () => {
     }
   };
 
-  const handleBookCreate = async book => {
+  const handleBookCreateButton = async book => {
+    if (!book.id) {
+      showAlert('앗 오류가 발생했습니다. 다시 시도해주세요!', true, () => {});
+      return;
+    }
+
     try {
-      const data = await postBookTalks(book.id);
-      navigate(`/booktalk/detail/${data}`, { state: { book: book } });
+      const booktalkData = await getBookTalkByBookId(book.id);
+
+      if (booktalkData) {
+        showAlert(
+          '이미 북톡이 존재합니다. 해당 북톡으로 이동하시겠습니까?',
+          false,
+          () =>
+            navigate(`/booktalk/detail/${booktalkData.bookTalkId}`, {
+              state: { book: book },
+            }),
+          () => {}
+        );
+        return;
+      }
+
+      // 북톡이 존재 X
     } catch (error) {
-      showAlert('헉 오류가 발생했습니다! 다시 시도해주세요', true, () => {});
+      if (error.response && error.response.status === 404) {
+        createNewBookTalk(book);
+      } else {
+        showAlert('앗 오류가 발생했습니다. 다시 시도해주세요!', true, () => {});
+      }
     }
   };
 
-  // 도서 등록 -> 북톡 생성
-  const handleBookCreateButton = async book => {
+  const createNewBookTalk = book => {
     showAlert(
       '북톡을 생성하시겠습니까?',
       false,
       async () => {
-        // 확인
-        await handleBookCreate(book);
+        try {
+          const bookTalkResponse = await postBookTalks(book.id);
+          navigate(`/booktalk/detail/${bookTalkResponse}`, {
+            state: { book: book },
+          });
+        } catch (error) {
+          console.error('Error creating book talk:', error);
+          showAlert(
+            '앗 오류가 발생했습니다. 다시 시도해주세요!',
+            true,
+            () => {}
+          );
+        }
       },
-      () => {}
+      () => {} // 취소 시 동작
     );
   };
-
-  //////////////////검색 결과
-
-  const renderBookItem = book => {
-    return (
-      // BookItem으로 클릭 버튼 넘기기
-      <BookItem
-        key={book.id}
-        book={book}
-        onCreateClick={() => handleBookCreateButton(book)}
-      />
-    );
-  };
-
   return (
     <WrapContainer className='mt-4'>
       <Alert />
@@ -89,7 +105,15 @@ const BookTalkCreate = () => {
         <WrapContainer className='mt-4'>
           {isLoading && <Spinner />}
           {data?.pages?.map(page => (
-            <div key={page?.startIndex}>{page.data?.map(renderBookItem)}</div>
+            <div key={page.startIndex}>
+              {page.data?.map(book => (
+                <BookItem
+                  key={book.id}
+                  book={book}
+                  onCreateClick={handleBookCreateButton}
+                />
+              ))}
+            </div>
           ))}
           {isFetchingNextPage && <Spinner infiniteScroll />}
           <div ref={ref}></div>
