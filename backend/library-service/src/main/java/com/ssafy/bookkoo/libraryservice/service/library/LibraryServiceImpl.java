@@ -242,7 +242,8 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     @Transactional
     public ResponseLibraryDto updateLibrary(
-        Long memberId, Long libraryId,
+        Long memberId,
+        Long libraryId,
         RequestUpdateLibraryDto libraryDto
     ) {
         // 서재 찾기
@@ -504,7 +505,10 @@ public class LibraryServiceImpl implements LibraryService {
      */
     @Override
     @Transactional
-    public Boolean deleteLibrary(Long memberId, Long libraryId) {
+    public Boolean deleteLibrary(
+        Long memberId,
+        Long libraryId
+    ) {
         checkIsValidLibraryOwner(memberId, libraryId);
 
         // 서재가 존재하면서, 소유자가 확실하다면, 삭제
@@ -575,7 +579,11 @@ public class LibraryServiceImpl implements LibraryService {
      */
     @Override
     @Transactional
-    public void deleteBookFromLibrary(Long memberId, Long libraryId, Long bookId) {
+    public void deleteBookFromLibrary(
+        Long memberId,
+        Long libraryId,
+        Long bookId
+    ) {
         checkIsValidLibraryOwner(memberId, libraryId);
 
         // 2. library_book_mapper 에서 삭제시켜버리기
@@ -592,7 +600,10 @@ public class LibraryServiceImpl implements LibraryService {
      * @param libraryId 서재 ID
      */
     @Transactional(readOnly = true)
-    protected void checkIsValidLibraryOwner(Long memberId, Long libraryId) {
+    protected void checkIsValidLibraryOwner(
+        Long memberId,
+        Long libraryId
+    ) {
         // 1. library 가 내꺼인지 찾기
         Optional<Library> libraryOpt = libraryRepository.findById(libraryId);
 
@@ -602,9 +613,9 @@ public class LibraryServiceImpl implements LibraryService {
         }
 
         // 서재가 내게 아닐 때
-        if (libraryOpt.get()
-                      .getMemberId()
-                      .equals(memberId)) {
+        if (!libraryOpt.get()
+                       .getMemberId()
+                       .equals(memberId)) {
             throw new LibraryIsNotYoursException();
         }
     }
@@ -652,7 +663,10 @@ public class LibraryServiceImpl implements LibraryService {
      * @param memberId 사용자 ID
      * @return true/false
      */
-    private boolean isLibraryOwnedByUser(Library library, Long memberId) {
+    private boolean isLibraryOwnedByUser(
+        Library library,
+        Long memberId
+    ) {
         return library.getMemberId()
                       .equals(memberId);
     }
