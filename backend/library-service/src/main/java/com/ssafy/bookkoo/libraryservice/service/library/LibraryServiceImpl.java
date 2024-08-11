@@ -21,6 +21,7 @@ import com.ssafy.bookkoo.libraryservice.entity.LibraryStyle;
 import com.ssafy.bookkoo.libraryservice.entity.MapperKey;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import com.ssafy.bookkoo.libraryservice.exception.BookAlreadyMappedException;
+import com.ssafy.bookkoo.libraryservice.exception.LibraryBookLimitExceededException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryBookNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryIsNotYoursException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryLimitExceededException;
@@ -297,11 +298,18 @@ public class LibraryServiceImpl implements LibraryService {
 
         // 2.2 엔티티 생성
         LibraryBookMapper lbMapper = libraryBookMapperMapper.toEntity(mapperDto, mapperKey);
-        // 2.3 가장 큰 BookOrder 값 + 1을 넣어주기
-        int maxBookOrder = libraryBookMapperRepository.findMaxBookOrderByLibraryId(libraryId);
-        lbMapper.setBookOrder(
-            maxBookOrder + 1);
-        // lbMapper와 서재 매핑해주기
+        // 2.3 빈 곳 중 가장 작은 숫자에 넣기
+        Integer smallestMissingBookOrder = libraryBookMapperRepository.findFirstMissingBookOrderByLibraryId(
+            libraryId);
+
+        // 빈곳이 없으면 에러처리
+        if (smallestMissingBookOrder == null) {
+            throw new LibraryBookLimitExceededException();
+        }
+        // 빈 자리가 있을 때 넣기
+        lbMapper.setBookOrder(smallestMissingBookOrder);
+
+        // lbMapper 와 서재 매핑해주기
         lbMapper.setLibrary(library);
         // 2.3 매퍼 엔티티 저장
         libraryBookMapperRepository.save(lbMapper);
