@@ -6,6 +6,7 @@ import SearchLibraryItem from '@components/Library/Search/SearchLibraryItem';
 import BookTalkItem from '@components/@common/Book/BookTalkItem';
 import useBookInfiniteScroll from '@hooks/useBookInfiniteScroll';
 import useLibraryInfiniteScroll from '@hooks/useLibraryInfiniteScroll';
+import useBookTalkSearchInfiniteScroll from '@hooks/useBookTalkSearchInfiniteScroll';
 import { useInView } from 'react-intersection-observer';
 import useModal from '@hooks/useModal';
 import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
@@ -28,12 +29,8 @@ const SearchMore = () => {
       case 'library':
         return useLibraryInfiniteScroll(searchText, selectedTag);
       case 'booktalk':
-        return {
-          data: null,
-          fetchNextPage: () => {},
-          hasNextPage: false,
-          isFetchingNextPage: false,
-        };
+        return useBookTalkSearchInfiniteScroll(searchText, selectedTag);
+
       default:
         return;
     }
