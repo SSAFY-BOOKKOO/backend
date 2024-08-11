@@ -9,6 +9,7 @@ const ChatBubble = ({
   likes = 0,
   profileImage,
   customStyle = {},
+  profileClick,
 }) => {
   const handleLike = () => {
     // 좋아요 api 연동
@@ -19,7 +20,10 @@ const ChatBubble = ({
       className={`flex ${role === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
     >
       {showProfile && role !== 'user' && (
-        <div className='flex-shrink-0 w-12 h-12 mr-3 flex items-center justify-center'>
+        <div
+          className='flex-shrink-0 w-12 h-12 mr-3 flex items-center justify-center'
+          onClick={profileClick}
+        >
           <img
             src={profileImage}
             alt='Profile'
