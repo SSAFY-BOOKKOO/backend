@@ -6,6 +6,7 @@ import Alert from '../../@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
 import CreateLibraryModal from './CreateLibraryModal';
 import ChangeLibraryNameModal from './ChangeLibraryNameModal';
+import CaptureButton from './CaptureButton';
 
 const LibraryOptions = ({
   activeLibrary,
@@ -20,6 +21,7 @@ const LibraryOptions = ({
   setNewLibraryName,
   changeLibraryName,
   viewOnly = false,
+  libraryRef,
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -87,14 +89,19 @@ const LibraryOptions = ({
           ))}
         </select>
       </div>
-      {!viewOnly && (
-        <SettingsModal
-          isOpen={isSettingsOpen}
-          onClose={() => setIsSettingsOpen(false)}
-          onToggle={() => setIsSettingsOpen(!isSettingsOpen)}
-          actions={actions}
-        />
-      )}
+      <div>
+        <div className='p-1 mr-3 mt-1'>
+          <CaptureButton targetRef={libraryRef} />
+        </div>
+        {!viewOnly && (
+          <SettingsModal
+            isOpen={isSettingsOpen}
+            onClose={() => setIsSettingsOpen(false)}
+            onToggle={() => setIsSettingsOpen(!isSettingsOpen)}
+            actions={actions}
+          />
+        )}
+      </div>
       <DeleteLibraryModal
         showDeleteModal={showDeleteModal}
         deleteLibrary={deleteLibrary}
