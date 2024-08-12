@@ -203,15 +203,25 @@ public class LibraryController {
      * @return 바뀐 데이터
      */
     @PatchMapping("/{libraryId}/books/{bookId}")
-    @Operation(summary = "서재에 책 수정", description = "서재에 있던 책 색상 수정하는 API")
+    @Operation(summary = "서재에 책 (색상 수정)/(서재 이동)", description = "서재에 있던 책 색상 수정 또는 서재 이동하는 API")
     public ResponseEntity<HttpStatus> updateBookColorFromLibrary(
         @RequestHeader HttpHeaders headers,
         @PathVariable Long libraryId,
         @PathVariable Long bookId,
-        @RequestParam String bookColor
+        @RequestParam(required = false) Long targetLibraryId,
+        @RequestParam(required = false) String bookColor
     ) {
         Long memberId = CommonUtil.getMemberId(headers);
-        libraryService.updateBookColorFromLibrary(memberId, libraryId, bookId, bookColor);
+
+        // bookColor 가 들어오면
+        if (bookColor != null) {
+            libraryService.updateBookColorFromLibrary(memberId, libraryId, bookId, bookColor);
+        }
+        // targetLibraryId가 들어오면
+        if (targetLibraryId != null) {
+            libraryService.updateBookLibraryIdFromLibrary(memberId, libraryId, bookId,
+                targetLibraryId);
+        }
         return ResponseEntity.ok()
                              .build();
     }
