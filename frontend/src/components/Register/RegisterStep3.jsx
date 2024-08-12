@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '../@common/Button';
-import RegisterInput from './RegisterInput'; // 추가
+import RegisterInput from './RegisterInput';
 import RadioButton from '../@common/RadioButton';
 
 const RegisterStep3 = ({

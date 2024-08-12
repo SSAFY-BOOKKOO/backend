@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSetAtom } from 'jotai';
 import Button from '@components/@common/Button';
 import Alert from '@components/@common/Alert';
@@ -15,6 +15,7 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
   });
   const [errors, setErrors] = useState({});
   const setAlert = useSetAtom(alertAtom);
+  const introductionRef = useRef(null); // textarea에 대한 ref 생성
 
   useEffect(() => {
     if (member) {
@@ -26,6 +27,13 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
       });
     }
   }, [member]);
+
+  useEffect(() => {
+    if (introductionRef.current) {
+      introductionRef.current.style.height = 'auto';
+      introductionRef.current.style.height = `${introductionRef.current.scrollHeight}px`;
+    }
+  }, [formData.introduction]);
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
@@ -60,7 +68,6 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
     const file = e.target.files[0];
     if (file) {
       if (file.type !== 'image/webp') {
-        // Prevent webp file uploads
         setFormData({
           ...formData,
           profileImgUrl: file,
@@ -244,9 +251,12 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
             name='introduction'
             value={formData.introduction}
             onChange={handleChange}
+            ref={introductionRef}
             className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
               errors.introduction ? 'border-red-500' : ''
             }`}
+            rows={1}
+            style={{ resize: 'none', overflow: 'hidden' }}
           />
           {errors.introduction && (
             <p className='text-red-500 text-xs italic'>{errors.introduction}</p>
