@@ -158,7 +158,7 @@
 ![Axios](https://img.shields.io/badge/Axios-5A29E4.svg?&style=for-the-badge&logo=Axios&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4.svg?&style=for-the-badge&logo=TailwindCSS&logoColor=white)
 ![ReactQuery](https://img.shields.io/badge/React_Query-FF4154.svg?&style=for-the-badge&logo=ReactQuery&logoColor=white)
-![Jotai](https://img.shields.io/badge/Jotai-FFFFFF.svg?&style=for-the-badge&logo=Jotai&logoColor=white)
+![Jotai](https://img.shields.io/badge/Jotai-000000.svg?&style=for-the-badge&logoColor=white)
 
 ### Backend
 
