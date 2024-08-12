@@ -22,5 +22,5 @@ public interface QuoteService {
 
     ResponseQuoteDetailDto getQuoteDetail(Long memberId, Long quoteId);
 
-    String opticalCharacterRecognition(MultipartFile image);
+    Integer getQuoteCount(Long memberId);
 }
