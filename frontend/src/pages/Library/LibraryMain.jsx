@@ -65,7 +65,7 @@ const LibraryMain = () => {
     if (token) {
       fetchLibraries();
     }
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     const fetchMemberInfo = async () => {
@@ -82,7 +82,7 @@ const LibraryMain = () => {
     if (token) {
       fetchMemberInfo();
     }
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     if (location.state && location.state.deleteBookId) {
