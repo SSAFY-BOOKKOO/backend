@@ -1,10 +1,10 @@
-package com.ssafy.bookkoo.commonservice.s3.service;
+package com.ssafy.bookkoo.commonservice.file.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public interface S3Service {
+public interface FileService {
 
     String saveToBucket(MultipartFile file, String bucket);
 
