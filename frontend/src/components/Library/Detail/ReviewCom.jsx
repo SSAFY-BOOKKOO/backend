@@ -4,6 +4,7 @@ import Button from '../../@common/Button';
 import { MdOutlineRefresh } from 'react-icons/md';
 import { CgProfile } from 'react-icons/cg';
 import { authAxiosInstance } from '@services/axiosInstance';
+import { useNavigate } from 'react-router-dom';
 
 // 모달
 const Modal = ({ show, onClose, review }) => {

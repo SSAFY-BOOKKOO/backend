@@ -45,6 +45,7 @@ const CurationReceive = () => {
       });
   }, [page]);
 
+  // 내가 받은 레터 보기
   useEffect(() => {
     authAxiosInstance
       .get('/curations', { params: { page } })
@@ -72,6 +73,7 @@ const CurationReceive = () => {
       updatedStoreLetters = [...storeLetters, letter];
     }
     setStoreLetters(updatedStoreLetters);
+    // 큐레이션 보관상태 변경
     authAxiosInstance
       .post(`/curations/store/${letter.curationId}`, {
         curationId: letter.curationId,
@@ -94,6 +96,7 @@ const CurationReceive = () => {
     }
   };
 
+  // 큐레이션 삭제
   const handleDeleteSelected = () => {
     if (selectedLetters.length === 0) return;
 
@@ -211,16 +214,18 @@ const CurationReceive = () => {
           </button>
         </div>
       )}
-      <div className='flex justify-center space-x-12 text-2xl pb-4'>
-        <IoIosArrowBack
-          onClick={() => setPage(prevPage => Math.max(prevPage - 1, 0))}
-          className='cursor-pointer '
-        />
-        <IoIosArrowForward
-          onClick={() => setPage(prevPage => prevPage + 1)}
-          className='cursor-pointer '
-        />
-      </div>
+      {letters.length > 10 && (
+        <div className='flex justify-center space-x-12 text-2xl pb-4'>
+          <IoIosArrowBack
+            onClick={() => setPage(prevPage => Math.max(prevPage - 1, 0))}
+            className='cursor-pointer '
+          />
+          <IoIosArrowForward
+            onClick={() => setPage(prevPage => prevPage + 1)}
+            className='cursor-pointer '
+          />
+        </div>
+      )}
     </div>
   );
 };

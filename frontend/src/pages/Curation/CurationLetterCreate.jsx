@@ -11,11 +11,10 @@ const CreateLetter = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const navigate = useNavigate();
-  const [book] = useAtom(curationBookAtom);
+  const [book, setBook] = useAtom(curationBookAtom);
 
   useEffect(() => {
-    console.log('Book object:', book);
-    // console.log(`Book Id: ${book.id}`);
+    console.log('book 정보:', book);
   }, [book]);
 
   const handleTitleChange = e => {
@@ -33,8 +32,7 @@ const CreateLetter = () => {
   // 전송 로직
   const handleLetterCreate = () => {
     const letter = {
-      // bookId: book ? book.id : null,
-      bookId: book.id,
+      bookId: book ? book.id : null,
       title,
       content,
     };
@@ -42,7 +40,9 @@ const CreateLetter = () => {
     authAxiosInstance
       .post('/curations', letter)
       .then(res => {
-        // console.log('Letter send successfully:', res);
+        console.log('Letter send successfully:', res);
+        console.log('전송된 레터의 정보', book);
+        setBook(null); // 책 정보 초기화
         navigate('/curation/send');
       })
       .catch(err => {

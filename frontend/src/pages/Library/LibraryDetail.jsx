@@ -70,7 +70,20 @@ const LibraryDetail = () => {
   } = book;
 
   const handleDelete = () => {
-    navigate('/library', { state: { deleteBookId: bookId } });
+    // navigate('/library', { state: { deleteBookId: bookId } });
+    authAxiosInstance
+      .delete(`/libraries/${libraryId}/books/${bookId}`, {
+        params: { libraryId, bookId },
+      })
+      .then(res => {
+        console.log('book Delete:', res);
+        // console.log(book);
+      })
+      .catch(err => {
+        console.error('Error deleting review:', err);
+        console.log(bookId);
+        console.log(libraryId);
+      });
   };
 
   const handleColorChangeClick = () => {
@@ -78,8 +91,20 @@ const LibraryDetail = () => {
   };
 
   const handleColorChange = color => {
-    setBookData(prev => ({ ...prev, color }));
+    setBookData(prev => ({ ...prev, bookColor: color }));
     console.log(bookData);
+    authAxiosInstance
+      .patch(`/libraries/${libraryId}/books/${bookId}`, null, {
+        params: { bookColor: color },
+      })
+      .then(res => {
+        console.log('color change:', res);
+      })
+      .catch(err => {
+        console.error('color change err:', err);
+        console.log(bookId);
+        console.log(libraryId);
+      });
     setShowColorPicker(false);
   };
 
