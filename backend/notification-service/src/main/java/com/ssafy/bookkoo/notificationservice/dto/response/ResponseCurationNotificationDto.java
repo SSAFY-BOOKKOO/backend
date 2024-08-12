@@ -40,6 +40,7 @@ public class ResponseCurationNotificationDto extends ResponseNotificationDto {
                                               .memberId(memberInfoDto.memberId())
                                               .nickName(memberInfoDto.nickName())
                                               .createdAt(curationNotification.getCreatedAt())
+                                              .curationId(curationNotification.getCurationId())
                                               .build();
     }
 }
