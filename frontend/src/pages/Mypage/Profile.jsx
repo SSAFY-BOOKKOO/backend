@@ -4,20 +4,26 @@ import ProfileView from '@components/MyPage/Profile/ProfileView.jsx';
 import PasswordUpdate from '@components/MyPage/Profile/PasswordUpdate.jsx';
 import AdditionalSetting from '@components/MyPage/Profile/AdditionalSetting.jsx';
 import { authAxiosInstance } from '@services/axiosInstance';
+import { useAtom } from 'jotai';
+import { alertAtom } from '@atoms/alertAtom';
+import Alert from '@components/@common/Alert';
+import { postCategories } from '@services/Book';
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
   const [member, setMember] = useState(null);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [, setAlert] = useAtom(alertAtom);
 
   const fetchMemberInfo = async () => {
     try {
-      const response = await authAxiosInstance.get(
-        '/members/info?memberId=312c2435-d0b5-4607-808d-fc0e9c51b58d'
-      );
-      setMember(response.data);
+      const memberResponse = await authAxiosInstance.get('/members/info');
+      setMember(memberResponse.data);
+      const categoriesResponse = await postCategories();
+      setCategories(categoriesResponse);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -33,7 +39,11 @@ const ProfilePage = () => {
   const handleCancelEdit = () => setIsEditing(false);
 
   const handleSave = updatedInfo => {
-    setMember(updatedInfo);
+    setMember(prevMember => ({
+      ...prevMember,
+      ...updatedInfo,
+      categories: updatedInfo.categories ?? prevMember.categories,
+    }));
     setIsEditing(false);
   };
 
@@ -46,13 +56,25 @@ const ProfilePage = () => {
     setIsChangingPassword(false);
   };
 
+  const handleAdditionalSettingSave = updatedInfo => {
+    setMember(prevMember => ({
+      ...prevMember,
+      ...updatedInfo,
+    }));
+    setAlert({
+      isOpen: true,
+      confirmOnly: true,
+      message: '설정이 성공적으로 저장되었습니다.',
+    });
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className='max-w-md mx-auto mt-10'>
-      <div className='flex border-b mb-6'>
+    <div className='max-w-md mx-auto'>
+      <div className='flex border-b '>
         <button
           className={`flex-1 py-2 text-center ${
             activeTab === 'profile'
@@ -78,6 +100,7 @@ const ProfilePage = () => {
         isEditing ? (
           <ProfileUpdate
             member={member}
+            categories={categories}
             onSave={handleSave}
             onCancel={handleCancelEdit}
           />
@@ -86,13 +109,18 @@ const ProfilePage = () => {
         ) : (
           <ProfileView
             member={member}
+            categories={categories}
             onEdit={handleEdit}
             onChangePassword={handleChangePassword}
           />
         )
       ) : (
-        <AdditionalSetting member={member} onSave={handleSave} />
+        <AdditionalSetting
+          userInfo={member}
+          onSave={handleAdditionalSettingSave}
+        />
       )}
+      <Alert />
     </div>
   );
 };

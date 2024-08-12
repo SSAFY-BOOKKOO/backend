@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatRelativeTime } from '@utils/formatTime';
 
 const BookTalkItem = ({ book, onClick }) => {
   return (
@@ -6,25 +7,17 @@ const BookTalkItem = ({ book, onClick }) => {
       <img
         src={book?.coverImgUrl}
         alt='Book'
-        className='w-12 h-16 mr-4 rounded-lg'
+        className='w-12 h-16 mr-3 rounded-lg'
       />
-      <div className='flex-grow'>
-        <h3 className='text-black text-sm'>{book?.title}</h3>
-        <p className='text-gray-500 text-sm'>{book?.author}</p>
-        <div className='flex space-x-2 mt-1'>
-          {book?.tags?.map((tag, index) => (
-            <span
-              key={index}
-              className='bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded'
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
+      <div className='flex-grow w-1/12 mr-2'>
+        <h3 className='text-black text-sm text-overflow-2'>{book?.title}</h3>
+        <p className='text-gray-500 text-sm text-overflow-1'>{book?.author}</p>
       </div>
       <div className='ml-auto text-right'>
-        <p className='text-gray-500 text-xs'>{book.time}</p>
-        <p className='text-gray-500 text-xs'>댓글 수 {book.comments}</p>
+        <p className='text-gray-500 text-xs'>
+          {formatRelativeTime(book?.lastChatTime)}
+        </p>
+        <p className='text-gray-500 text-xs'>✉ {book?.chats || 0}</p>
       </div>
     </div>
   );

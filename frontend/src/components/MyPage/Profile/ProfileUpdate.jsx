@@ -1,30 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSetAtom } from 'jotai';
 import Button from '@components/@common/Button';
 import Alert from '@components/@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
+import { authAxiosInstance } from '@services/axiosInstance';
 import { validateForm } from '@utils/ValidateForm';
 
-const categoriesList = [
-  '추리/스릴러',
-  '로맨스',
-  '인문학',
-  '철학',
-  '경제/경영',
-  '역사',
-  '시',
-  '에세이',
-  '소설',
-  '과학',
-  '사회과학',
-  '자기계발',
-  '기타',
-];
-
-const ProfileUpdate = ({ member, onSave, onCancel }) => {
-  const [formData, setFormData] = useState(member);
+const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
+  const [formData, setFormData] = useState({
+    nickname: '',
+    profileImgUrl: '',
+    introduction: '',
+    categories: [],
+  });
   const [errors, setErrors] = useState({});
   const setAlert = useSetAtom(alertAtom);
+
+  useEffect(() => {
+    if (member) {
+      setFormData({
+        nickname: member.nickName || '',
+        profileImgUrl: member.profileImgUrl || '',
+        introduction: member.introduction || '',
+        categories: member.categories || [],
+      });
+    }
+  }, [member]);
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
@@ -38,18 +39,18 @@ const ProfileUpdate = ({ member, onSave, onCancel }) => {
     }));
   };
 
-  const handleCategoryChange = category => {
+  const handleCategoryChange = categoryId => {
     setFormData(prevState => {
       const { categories } = prevState;
-      if (categories.includes(category)) {
+      if (categories.includes(categoryId)) {
         return {
           ...prevState,
-          categories: categories.filter(c => c !== category),
+          categories: categories.filter(c => c !== categoryId),
         };
       } else {
         return {
           ...prevState,
-          categories: [...categories, category],
+          categories: [...categories, categoryId],
         };
       }
     });
@@ -58,22 +59,29 @@ const ProfileUpdate = ({ member, onSave, onCancel }) => {
   const handleFileChange = e => {
     const file = e.target.files[0];
     if (file) {
-      setFormData({
-        ...formData,
-        profileImgUrl: URL.createObjectURL(file),
-      });
-      setErrors(prevErrors => ({
-        ...prevErrors,
-        profileImgUrl: '',
-      }));
+      if (file.type !== 'image/webp') {
+        // Prevent webp file uploads
+        setFormData({
+          ...formData,
+          profileImgUrl: file,
+        });
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          profileImgUrl: '',
+        }));
+      } else {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          profileImgUrl: 'WEBP 형식의 파일은 지원되지 않습니다.',
+        }));
+      }
     }
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
 
     const validationConfig = {
-      email: true,
       nickname: true,
       introduction: true,
     };
@@ -82,7 +90,57 @@ const ProfileUpdate = ({ member, onSave, onCancel }) => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      onSave(formData);
+      try {
+        const formDataToSend = new FormData();
+
+        const blob = new Blob(
+          [
+            JSON.stringify({
+              nickName: formData.nickname,
+              categories: formData.categories,
+              introduction: formData.introduction,
+            }),
+          ],
+          {
+            type: 'application/json',
+          }
+        );
+
+        formDataToSend.append('requestUpdateMemberInfoDto', blob);
+
+        if (formData.profileImgUrl && formData.profileImgUrl instanceof File) {
+          formDataToSend.append('profileImg', formData.profileImgUrl);
+        }
+
+        const response = await authAxiosInstance.put(
+          '/members/info',
+          formDataToSend,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '프로필이 성공적으로 업데이트되었습니다.',
+        });
+        onSave({
+          nickName: formData.nickname,
+          categories: formData.categories,
+          introduction: formData.introduction,
+          profileImgUrl: response.data.profileImgUrl,
+        });
+      } catch (error) {
+        console.error('Failed to update profile:', error);
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '프로필 업데이트 중 오류가 발생했습니다.',
+        });
+      }
     } else {
       setAlert({
         isOpen: true,
@@ -97,27 +155,6 @@ const ProfileUpdate = ({ member, onSave, onCancel }) => {
       <h2 className='text-xl font-bold mb-4'>회원 정보 수정</h2>
       <div className='border-t border-gray-300 mb-4'></div>
       <form onSubmit={handleSubmit}>
-        <div className='mb-4'>
-          <label
-            className='block mb-2 text-sm font-medium text-gray-700'
-            htmlFor='email'
-          >
-            이메일
-          </label>
-          <input
-            type='email'
-            id='email'
-            name='email'
-            value={formData.email}
-            onChange={handleChange}
-            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-              errors.email ? 'border-red-500' : ''
-            }`}
-          />
-          {errors.email && (
-            <p className='text-red-500 text-xs italic'>{errors.email}</p>
-          )}
-        </div>
         <div className='mb-4'>
           <label
             className='block mb-2 text-sm font-medium text-gray-700'
@@ -140,26 +177,60 @@ const ProfileUpdate = ({ member, onSave, onCancel }) => {
           )}
         </div>
         <div className='mb-4'>
-          <label
-            className='block mb-2 text-sm font-medium text-gray-700'
-            htmlFor='profileImgUrl'
-          >
+          <label className='block mb-2 text-sm font-medium text-gray-700'>
             프로필 이미지
           </label>
-          <input
-            type='file'
-            id='profileImgUrl'
-            name='profileImgUrl'
-            onChange={handleFileChange}
-            className='mt-1 p-2 block w-full border rounded-md'
-          />
-          {formData.profileImgUrl && (
+          <div className='flex items-center mt-2'>
+            <input
+              type='file'
+              accept='image/*'
+              onChange={handleFileChange}
+              className='hidden'
+              id='profile_img_input'
+            />
+            <Button
+              text='찾기'
+              type='button'
+              color='text-white bg-green-400 active:bg-green-600'
+              size='small'
+              full={false}
+              onClick={() =>
+                document.getElementById('profile_img_input').click()
+              }
+            />
+          </div>
+          {formData.profileImgUrl && formData.profileImgUrl instanceof File && (
             <img
-              src={formData.profileImgUrl}
+              src={URL.createObjectURL(formData.profileImgUrl)}
               alt='Profile Preview'
               className='mt-2 w-32 h-32 object-cover rounded-full inline-block'
             />
           )}
+          {errors.profileImgUrl && (
+            <p className='text-red-500 text-xs italic'>
+              {errors.profileImgUrl}
+            </p>
+          )}
+        </div>
+        <div className='mb-4'>
+          <label className='block mb-2 text-sm font-medium text-gray-700'>
+            선호 카테고리
+          </label>
+          <div className='flex flex-wrap'>
+            {categories.map(category => (
+              <span
+                key={category.id}
+                className={`mr-2 mb-2 px-2 py-1 border rounded-lg cursor-pointer text-gray-700 ${
+                  formData.categories.includes(category.id)
+                    ? 'bg-pink-100'
+                    : 'bg-gray-100'
+                }`}
+                onClick={() => handleCategoryChange(category.id)}
+              >
+                {category.name}
+              </span>
+            ))}
+          </div>
         </div>
         <div className='mb-4'>
           <label
@@ -176,30 +247,10 @@ const ProfileUpdate = ({ member, onSave, onCancel }) => {
             className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
               errors.introduction ? 'border-red-500' : ''
             }`}
-          ></textarea>
+          />
           {errors.introduction && (
             <p className='text-red-500 text-xs italic'>{errors.introduction}</p>
           )}
-        </div>
-        <div className='mb-4'>
-          <label className='block mb-2 text-sm font-medium text-gray-700'>
-            선호 카테고리
-          </label>
-          <div className='flex flex-wrap'>
-            {categoriesList.map(category => (
-              <span
-                key={category}
-                className={`mr-2 mb-2 px-2 py-1 border rounded-lg cursor-pointer text-gray-700 ${
-                  formData.categories.includes(category)
-                    ? 'bg-pink-100'
-                    : 'bg-gray-100'
-                }`}
-                onClick={() => handleCategoryChange(category)}
-              >
-                {category}
-              </span>
-            ))}
-          </div>
         </div>
         <div className='flex justify-end mt-14'>
           <Button

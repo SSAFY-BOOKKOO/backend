@@ -8,24 +8,39 @@ import { alertAtom } from '@atoms/alertAtom';
 import { axiosInstance } from '@services/axiosInstance';
 import { validateForm } from '@utils/ValidateForm';
 
-const AdditionalInfo = ({ userInfo, onSave }) => {
+const AdditionalInfo = ({ userInfo }) => {
   const [formData, setFormData] = useState({
     age: '',
     gender: '',
     categories: [],
     introduction: '',
+    memberSettingDto: {
+      isLetterReceive: false,
+      reviewVisibility: 'PUBLIC',
+    },
     ...userInfo,
   });
+
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const [, setAlert] = useAtom(alertAtom);
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    if (name in formData.memberSettingDto) {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        memberSettingDto: {
+          ...prevFormData.memberSettingDto,
+          [name]: type === 'checkbox' ? checked : value,
+        },
+      }));
+    } else {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        [name]: type === 'checkbox' ? checked : value,
+      }));
+    }
     setErrors(prevErrors => ({
       ...prevErrors,
       [name]: '',
@@ -50,10 +65,12 @@ const AdditionalInfo = ({ userInfo, onSave }) => {
     e.preventDefault();
 
     const validationConfig = {
-      year: true,
+      age: true,
       gender: true,
       categories: true,
       introduction: true,
+      isLetterReceive: true,
+      reviewVisibility: true,
     };
 
     const newErrors = validateForm(formData, validationConfig);
@@ -64,10 +81,14 @@ const AdditionalInfo = ({ userInfo, onSave }) => {
         const requestData = {
           memberId: formData.memberId,
           nickName: formData.nickname,
-          year: parseInt(formData.year),
+          age: parseInt(formData.age),
           gender: formData.gender.toUpperCase(),
           categories: formData.categories.map(category => parseInt(category)),
           introduction: formData.introduction || '',
+          memberSettingDto: {
+            isLetterReceive: formData.memberSettingDto.isLetterReceive,
+            reviewVisibility: formData.memberSettingDto.reviewVisibility,
+          },
         };
 
         await axiosInstance.post('/members/register/info', requestData);
@@ -198,6 +219,68 @@ const AdditionalInfo = ({ userInfo, onSave }) => {
             onChange={handleChange}
             error={errors.introduction}
           />
+          <label className='block mb-2 text-sm font-medium text-gray-700'>
+            큐레이션 레터 수신 알림
+            <div className='mt-2'>
+              <input
+                type='checkbox'
+                id='isLetterReceive'
+                name='isLetterReceive'
+                checked={formData.memberSettingDto.isLetterReceive}
+                onChange={handleChange}
+                className='mr-2'
+              />
+              <span>수신 여부</span>
+            </div>
+          </label>
+          <label className='block mb-2 text-sm font-medium text-gray-700'>
+            한줄평 공개 설정
+            <div className='flex space-x-4 mt-2 justify-center'>
+              <label className='flex items-center'>
+                <input
+                  type='radio'
+                  id='reviewVisibility-public'
+                  name='reviewVisibility'
+                  value='PUBLIC'
+                  checked={
+                    formData.memberSettingDto.reviewVisibility === 'PUBLIC'
+                  }
+                  onChange={handleChange}
+                />
+                <span className='ml-2'>전체 공개</span>
+              </label>
+              <label className='flex items-center'>
+                <input
+                  type='radio'
+                  id='reviewVisibility-follower_public'
+                  name='reviewVisibility'
+                  value='FOLLOWER_PUBLIC'
+                  checked={
+                    formData.memberSettingDto.reviewVisibility ===
+                    'FOLLOWER_PUBLIC'
+                  }
+                  onChange={handleChange}
+                />
+                <span className='ml-2'>팔로워 공개</span>
+              </label>
+              <label className='flex items-center'>
+                <input
+                  type='radio'
+                  id='reviewVisibility-private'
+                  name='reviewVisibility'
+                  value='PRIVATE'
+                  checked={
+                    formData.memberSettingDto.reviewVisibility === 'PRIVATE'
+                  }
+                  onChange={handleChange}
+                />
+                <span className='ml-2'>비공개</span>
+              </label>
+            </div>
+            {errors.reviewVisibility && (
+              <p className='text-red-500 text-sm'>{errors.reviewVisibility}</p>
+            )}
+          </label>
           <div className='flex justify-center mt-6'>
             <Button
               text='가입 완료'

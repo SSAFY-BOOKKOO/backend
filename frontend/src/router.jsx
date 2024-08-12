@@ -1,7 +1,6 @@
 import React from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import App from './App.jsx';
-import LibraryHome from './pages/Library/LibraryHome.jsx';
 import LibraryDetail from './pages/Library/LibraryDetail.jsx';
 import LibrarySearch from './pages/Library/LibrarySearch.jsx';
 import SearchBookDetail from './pages/Library/SearchBookDetail.jsx';
@@ -18,19 +17,22 @@ import CurationStore from './pages/Curation/CurationStore.jsx';
 import Login from './pages/Member/Login.jsx';
 import CurationChatBot from './pages/Curation/CurationChatBot.jsx';
 import CurationLetterCreate from './pages/Curation/CurationLetterCreate.jsx';
+import CurationSearchBook from './pages/Curation/CurationSearchBook.jsx';
 import CurationLetterDetail from './pages/Curation/CurationLetterDetail.jsx';
 import BookTalkMain from './pages/BookTalk/BookTalkMain.jsx';
 import BookTalkDetail from './pages/BookTalk/BookTalkDetail.jsx';
 import Intro from './pages/Member/Intro.jsx';
-import PrivateRoute from '@/components/@common/PrivateRoute';
+import PrivateRoute from '@components/@common/PrivateRoute';
 import CurationLetterSend from './pages/Curation/CurationLetterSend.jsx';
 import Quote from './pages/Mypage/Quote.jsx';
 import SearchMore from './pages/Library/SearchMore.jsx';
 import BookTalkMore from './pages/BookTalk/BookTalkMore.jsx';
 import PasswordFind from './pages/Member/PasswordFind.jsx';
 import AdditionalInfo from './pages/Member/AdditionalInfo.jsx';
-
-const isAuthenticated = true; // 로그인 상태를 확인하는 로직 추가 필요
+import LibraryOthers from './pages/Library/LibraryOthers.jsx';
+import SocialLoginCallback from './components/Login/SocialLoginCallback.jsx';
+import BookTalkCreate from './pages/BookTalk/BookTalkCreate.jsx';
+import FriendSearch from './pages/Mypage/FriendSearch.jsx';
 
 const router = createBrowserRouter([
   {
@@ -39,24 +41,19 @@ const router = createBrowserRouter([
     children: [
       { path: 'intro', element: <Intro /> },
 
-      { path: 'booktalk', element: <BookTalkMain /> },
-      { path: 'booktalk/detail/:bookId', element: <BookTalkDetail /> },
-      { path: 'booktalk/more', element: <BookTalkMore /> },
-
       // 인증이 필요한 페이지
       {
-        element: (
-          <PrivateRoute
-            userAuthentication={true}
-            isAuthenticated={isAuthenticated}
-          />
-        ),
+        element: <PrivateRoute />,
         children: [
           // library
           { path: '', element: <LibraryMain /> },
+          { path: 'library', element: <LibraryOthers /> },
 
           // book in library detail
-          { path: 'library/detail/:bookId', element: <LibraryDetail /> },
+          {
+            path: 'library/:libraryId/detail/:bookId',
+            element: <LibraryDetail />,
+          },
 
           // search
           { path: 'search', element: <LibrarySearch /> },
@@ -73,14 +70,26 @@ const router = createBrowserRouter([
           { path: 'curation/store', element: <CurationStore /> },
           { path: 'curation/chatbot', element: <CurationChatBot /> },
           { path: 'curation/letter-create', element: <CurationLetterCreate /> },
+          {
+            path: 'curation/letter-create/book-search',
+            element: <CurationSearchBook />,
+          },
+
           { path: 'curation/letter/:id', element: <CurationLetterDetail /> },
           {
             path: 'curation/letter-create/send',
             element: <CurationLetterSend />,
           },
 
+          //booktalk
+          { path: 'booktalk', element: <BookTalkMain /> },
+          { path: 'booktalk/detail/:bookTalkId', element: <BookTalkDetail /> },
+          { path: 'booktalk/more', element: <BookTalkMore /> },
+          { path: 'booktalk/create', element: <BookTalkCreate /> },
+
           // mypage
           { path: 'mypage/friend', element: <Friend /> },
+          { path: 'mypage/friend/search', element: <FriendSearch /> },
           { path: 'mypage/statistics', element: <Statistics /> },
           { path: 'mypage/profile', element: <Profile /> },
           { path: 'mypage/quote', element: <Quote /> },
@@ -106,6 +115,10 @@ const router = createBrowserRouter([
   {
     path: 'login',
     element: <Login />,
+  },
+  {
+    path: 'auth/callback',
+    element: <SocialLoginCallback />,
   },
   {
     path: '*',

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import RegisterStep1 from '@components/Register/RegisterStep1';
 import RegisterStep2 from '@components/Register/RegisterStep2';
+import RegisterStep3 from '@components/Register/RegisterStep3';
 import WrapContainer from '@components/Layout/WrapContainer';
 import Alert from '@components/@common/Alert';
 import {
@@ -17,6 +18,7 @@ import {
 } from '@utils/RegisterCheck';
 import { axiosInstance } from '@services/axiosInstance';
 import { validateForm } from '@utils/ValidateForm';
+import { postCategories } from '@services/Book';
 
 const RegisterPage = () => {
   const [step, setStep] = useState(1);
@@ -26,28 +28,72 @@ const RegisterPage = () => {
     password: '',
     confirmPassword: '',
     introduction: '',
-    profileImgUrl: null,
+    profileImgUrl: '',
     year: '',
     gender: '',
     categories: [],
     socialType: 'bookkoo',
+    memberSettingDto: {
+      isLetterReceive: false,
+      reviewVisibility: 'PUBLIC',
+    },
   });
-
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [errors, setErrors] = useState({});
   const [emailDuplicate, setEmailDuplicate] = useAtom(emailDuplicateAtom);
   const [nicknameDuplicate, setNicknameDuplicate] = useAtom(
     nicknameDuplicateAtom
   );
-  const [error, setError] = useAtom(errorAtom);
   const [, setAlert] = useAtom(alertAtom);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [categories, setCategories] = useState([]);
+  const [isSocial, setIsSocial] = useState(false);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const email = searchParams.get('email');
+    const socialType = searchParams.get('socialType');
+
+    if (email && socialType) {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        email,
+        socialType,
+      }));
+      setIsEmailVerified(true);
+      setIsSocial(true);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await postCategories();
+        setCategories(response);
+      } catch (error) {
+        console.error('Failed to fetch categories', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    if (name in formData.memberSettingDto) {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        memberSettingDto: {
+          ...prevFormData.memberSettingDto,
+          [name]: type === 'checkbox' ? checked : value,
+        },
+      }));
+    } else {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        [name]: type === 'checkbox' ? checked : value,
+      }));
+    }
     setErrors(prevErrors => ({
       ...prevErrors,
       [name]: '',
@@ -71,31 +117,34 @@ const RegisterPage = () => {
   const handleCategoryChange = category => {
     setFormData(prevFormData => {
       const categories = [...prevFormData.categories];
-      if (categories.includes(category)) {
+      if (categories.includes(category.id)) {
         return {
           ...prevFormData,
-          categories: categories.filter(cat => cat !== category),
+          categories: categories.filter(cat => cat !== category.id),
         };
       } else {
-        return { ...prevFormData, categories: [...categories, category] };
+        return { ...prevFormData, categories: [...categories, category.id] };
       }
     });
   };
 
   const handleNextStep = async () => {
     const validationConfig = {
-      email: true,
-      password: true,
-      confirmPassword: true,
       nickname: true,
+      ...(!isSocial && {
+        email: true,
+        password: true,
+        confirmPassword: true,
+      }),
     };
 
     const newErrors = validateForm(formData, validationConfig);
     setErrors(newErrors);
-
     if (Object.keys(newErrors).length === 0) {
       try {
-        const isEmailDuplicate = await checkEmailDuplicate(formData.email);
+        const isEmailDuplicate = isSocial
+          ? false
+          : await checkEmailDuplicate(formData.email);
         const isNicknameDuplicate = await checkNicknameDuplicate(
           formData.nickname
         );
@@ -131,16 +180,63 @@ const RegisterPage = () => {
     setStep(step - 1);
   };
 
+  const handleSendVerificationCode = async () => {
+    try {
+      await axiosInstance.post('/members/register/validation', formData.email, {
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+      });
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '이메일이 오지 않는 경우 잠시 후 다시 전송바랍니다',
+      });
+    } catch (error) {
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '인증 코드 전송에 실패했습니다.',
+      });
+    }
+  };
+
+  const handleVerifyCode = async verificationCode => {
+    try {
+      await axiosInstance.get('/members/register/validation', {
+        params: {
+          email: formData.email,
+          certNum: verificationCode,
+        },
+      });
+      setIsEmailVerified(true);
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '인증이 성공적으로 완료되었습니다.',
+      });
+    } catch (error) {
+      setIsEmailVerified(false);
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '인증 코드 확인에 실패했습니다.',
+      });
+    }
+  };
+
   const handleSubmit = async () => {
     const validationConfig = {
-      email: true,
-      password: true,
-      confirmPassword: true,
       nickname: true,
       year: true,
       gender: true,
       categories: true,
       introduction: true,
+      ...(!isSocial && {
+        email: true,
+        password: true,
+        confirmPassword: true,
+      }),
     };
 
     const newErrors = validateForm(formData, validationConfig);
@@ -160,7 +256,8 @@ const RegisterPage = () => {
               gender: formData.gender,
               categories: formData.categories,
               introduction: formData.introduction,
-              socialType: formData.socialType,
+              socialType: formData?.socialType,
+              memberSettingDto: formData.memberSettingDto,
             }),
           ],
           {
@@ -211,7 +308,6 @@ const RegisterPage = () => {
     <WrapContainer>
       <div className='flex flex-col justify-center items-center min-h-screen px-4 w-full'>
         <div className='w-full max-w-md'>
-          <h2 className='text-2xl font-bold mb-4 text-center'>회원가입</h2>
           {step === 1 && (
             <RegisterStep1
               formData={formData}
@@ -219,6 +315,12 @@ const RegisterPage = () => {
               handleChange={handleChange}
               handleFileChange={handleFileChange}
               handleNextStep={handleNextStep}
+              handleSendVerificationCode={handleSendVerificationCode}
+              handleVerifyCode={handleVerifyCode}
+              isSocialLogin={isSocial}
+              isEmailVerified={isEmailVerified}
+              setFormData={setFormData}
+              setIsEmailVerified={setIsEmailVerified}
             />
           )}
           {step === 2 && (
@@ -227,8 +329,18 @@ const RegisterPage = () => {
               errors={errors}
               handleChange={handleChange}
               handleCategoryChange={handleCategoryChange}
+              categoriesList={categories}
               handlePrevStep={handlePrevStep}
+              handleNextStep={() => setStep(3)}
+            />
+          )}
+          {step === 3 && (
+            <RegisterStep3
+              formData={{ ...formData, ...formData.memberSettingDto }}
+              errors={errors}
+              handleChange={handleChange}
               handleSubmit={handleSubmit}
+              handlePrevStep={handlePrevStep}
             />
           )}
         </div>

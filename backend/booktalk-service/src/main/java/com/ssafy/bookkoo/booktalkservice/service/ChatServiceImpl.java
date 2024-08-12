@@ -42,6 +42,7 @@ public class ChatServiceImpl implements ChatService {
         ResponseMemberInfoDto memberInfo = memberServiceClient.getMemberInfoById(memberId);
         ResponseChatMessageDto responseDto
             = ResponseChatMessageDto.builder()
+                                    .memberId(memberInfo.memberId())
                                     .message(chatMessage.getMessage())
                                     .messageId(chatMessage.getId())
                                     .bookTalkId(chatMessage.getBookTalkId())

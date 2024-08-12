@@ -61,3 +61,10 @@ scrape_configs:
         labels:
           job: gateway-service
           __path__: ./logs/gateway-service/*.log
+  - job_name: booktalk
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: booktalk-service
+          __path__: ./logs/booktalk-service/*.log

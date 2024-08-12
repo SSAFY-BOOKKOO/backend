@@ -10,11 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.0.0",
     "@tanstack/react-query": "^5.51.15",
     "axios": "^1.7.2",
     "chart.js": "^4.4.3",
     "date-fns": "^3.6.0",
     "jotai": "^2.9.0",
+    "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-day-picker": "^8.10.1",
@@ -28,6 +30,7 @@
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.24.1",
     "react-transition-group": "^4.4.5",
+    "sockjs-client": "^1.6.1",
     "swiper": "^11.1.5"
   },
   "devDependencies": {
