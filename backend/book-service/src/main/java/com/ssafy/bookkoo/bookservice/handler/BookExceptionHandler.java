@@ -1,5 +1,6 @@
 package com.ssafy.bookkoo.bookservice.handler;
 
+import com.ssafy.bookkoo.bookservice.exception.AladdinAPIException;
 import com.ssafy.bookkoo.bookservice.exception.BookCreateFailedException;
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
 import com.ssafy.bookkoo.bookservice.exception.CategoryNotFoundException;
@@ -86,6 +87,18 @@ public class BookExceptionHandler {
      */
     @ExceptionHandler(BookCreateFailedException.class)
     public ResponseEntity<String> handleBookCreateFailedException(BookCreateFailedException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * 알라딘 책 검색 중 에러 발생(Item 이 없음)
+     *
+     * @param e AladdinAPIException
+     * @return 에러코드 + 설명
+     */
+    @ExceptionHandler(AladdinAPIException.class)
+    public ResponseEntity<String> handleAladdinAPIException(AladdinAPIException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body(e.getMessage());
     }
