@@ -88,6 +88,10 @@
   font-family: 'JejuDoldam';
   src: url('@assets/fonts/JejuDoldam.ttf') format('truetype');
 }
+@font-face {
+  font-family: 'Kdg';
+  src: url('@assets/fonts/Kdg.ttf') format('truetype');
+}
 * {
   font-family: 'Pretendard';
 }

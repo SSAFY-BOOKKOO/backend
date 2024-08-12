@@ -29,11 +29,26 @@ const ChangeFontStyleModal = ({
             value={localFontName}
             onChange={e => setLocalFontName(e.target.value)}
             className='border p-2 w-full'
+            style={{ fontFamily: localFontName }}
           >
-            <option value=''>기본 폰트</option>
-            <option value='GyeonggiCheonnyeon'>경기천년체</option>
-            <option value='Inklipquid'>잉크립퀴드체</option>
-            <option value='JejuDoldam'>제주돌담체</option>
+            <option value='' style={{ fontFamily: 'Pretendard' }}>
+              기본 폰트
+            </option>
+            <option
+              value='GyeonggiCheonnyeon'
+              style={{ fontFamily: 'GyeonggiCheonnyeon' }}
+            >
+              경기천년체
+            </option>
+            <option value='Inklipquid' style={{ fontFamily: 'Inklipquid' }}>
+              잉크립퀴드체
+            </option>
+            <option value='JejuDoldam' style={{ fontFamily: 'JejuDoldam' }}>
+              제주돌담체
+            </option>
+            <option value='Kdg' style={{ fontFamily: 'Kdg' }}>
+              솔뫼 김대건체
+            </option>
           </select>
         </div>
         <div className='mb-4'>
