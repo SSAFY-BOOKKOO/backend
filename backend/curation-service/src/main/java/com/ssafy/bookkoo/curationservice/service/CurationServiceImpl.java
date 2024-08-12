@@ -86,19 +86,22 @@ public class CurationServiceImpl implements CurationService {
                                               .orElseThrow(
                                                   () -> new CurationNotFoundException(
                                                       curationId));
-        // PassPort 에서 읽은사람 가져오기
-        CurationSend curationSend = curationSendRepository.findCurationSendsByCurationAndReceiver(
-                                                              curation, memberId)
-                                                          .orElseThrow(
-                                                              // 자신이 받은 큐레이션이 아닐경우 권한 Exception 던져야함
-                                                              () -> new CurationNotFoundException(
-                                                                  curationId));
-        //읽기 처리
-        curationSend.read();
         // 작성자 정보 가져오기
         ResponseMemberInfoDto writerInfo = memberServiceClient.getMemberInfoById(
-            curationSend.getCuration()
-                        .getWriter());
+            curation.getWriter());
+        // 작성자가 본인이 아닐경우 본인에게 온 메세지가 맞는지 확인
+        if (!curation.getWriter()
+                     .equals(memberId)) {
+            // PassPort 에서 읽은사람 가져오기
+            CurationSend curationSend = curationSendRepository.findCurationSendsByCurationAndReceiver(
+                                                                  curation, memberId)
+                                                              .orElseThrow(
+                                                                  // 자신이 받은 큐레이션이 아닐경우 권한 Exception 던져야함
+                                                                  () -> new CurationNotFoundException(
+                                                                      curationId));
+            //읽기 처리
+            curationSend.read();
+        }
         // BookService 에게 book 정보 받아오기 (책 커버 이미지, 제목, 작가, 줄거리)
         try {
             ResponseBookDto book = bookServiceClient.getBook(curation
