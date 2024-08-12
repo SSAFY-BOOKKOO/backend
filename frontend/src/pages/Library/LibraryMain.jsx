@@ -9,7 +9,7 @@ import MemberProfile from '@components/Library/Main/MemberProfile';
 import LibraryOptions from '@components/Library/Main/LibraryOptions';
 import BookShelf from '@components/Library/Main/BookShelf';
 import Alert from '@components/@common/Alert';
-import Spinner from '@components/@common/Spinner'; // Import Spinner component
+import Spinner from '@components/@common/Spinner';
 import { alertAtom } from '@atoms/alertAtom';
 import { authAxiosInstance } from '@services/axiosInstance';
 
@@ -34,7 +34,7 @@ const LibraryMain = () => {
   const [newLibraryName, setNewLibraryName] = useState('');
   const [createLibraryName, setCreateLibraryName] = useState('');
   const [activeLibrary, setActiveLibrary] = useState(0);
-  const [isLoading, setIsLoading] = useState(true); // Loading state
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   const [, setAlert] = useAtom(alertAtom);
@@ -202,6 +202,48 @@ const LibraryMain = () => {
     }
   };
 
+  const changeFontStyle = async (libraryId, fontName, fontSize) => {
+    try {
+      const existingLibraryResponse = await authAxiosInstance.get(
+        `/libraries/${libraryId}`
+      );
+      const existingLibrary = existingLibraryResponse.data;
+
+      await authAxiosInstance.patch(`/libraries/${libraryId}`, {
+        libraryStyleDto: {
+          libraryColor: existingLibrary.libraryStyleDto.libraryColor,
+          fontName: fontName || existingLibrary.libraryStyleDto.fontName,
+          fontSize: fontSize || existingLibrary.libraryStyleDto.fontSize,
+        },
+      });
+
+      setLibraries(prev => {
+        const newLibraries = [...prev];
+        const libraryIndex = newLibraries.findIndex(
+          lib => lib.id === libraryId
+        );
+        if (libraryIndex !== -1) {
+          newLibraries[libraryIndex].libraryStyleDto.fontName = fontName;
+          newLibraries[libraryIndex].libraryStyleDto.fontSize = fontSize;
+        }
+        return newLibraries;
+      });
+
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '폰트 스타일이 성공적으로 변경되었습니다.',
+      });
+    } catch (error) {
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '폰트 스타일 변경에 실패했습니다. 다시 시도해 주세요.',
+      });
+      console.error(error);
+    }
+  };
+
   const deleteLibrary = async () => {
     try {
       const libraryId = libraries[activeLibrary].id;
@@ -243,8 +285,8 @@ const LibraryMain = () => {
             libraryOrder: libraries.length + 1,
             libraryStyleDto: {
               libraryColor: '#FFFFFF',
-              fontName: "쿠키런!",
-              fontSize: "3"
+              fontName: '쿠키런!',
+              fontSize: '3',
             },
           });
 
@@ -300,6 +342,7 @@ const LibraryMain = () => {
           newLibraryName={newLibraryName}
           setNewLibraryName={setNewLibraryName}
           changeLibraryName={changeLibraryName}
+          changeFontStyle={changeFontStyle}
         />
 
         {libraries.length > 0 && (
@@ -307,6 +350,7 @@ const LibraryMain = () => {
             books={libraries[activeLibrary]?.books || []}
             moveBook={moveBook}
             onBookClick={handleBookClick}
+            libraryStyleDto={libraries[activeLibrary]?.libraryStyleDto}
           />
         )}
       </div>

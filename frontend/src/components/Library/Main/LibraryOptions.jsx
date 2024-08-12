@@ -6,6 +6,7 @@ import Alert from '../../@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
 import CreateLibraryModal from './CreateLibraryModal';
 import ChangeLibraryNameModal from './ChangeLibraryNameModal';
+import ChangeFontStyleModal from './ChangeFontStyleModal'; // 추가된 모달
 
 const LibraryOptions = ({
   activeLibrary,
@@ -19,6 +20,7 @@ const LibraryOptions = ({
   newLibraryName,
   setNewLibraryName,
   changeLibraryName,
+  changeFontStyle, // 폰트 스타일 변경 함수 추가
   viewOnly = false,
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -26,6 +28,8 @@ const LibraryOptions = ({
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showChangeLibraryNameModal, setShowChangeLibraryNameModal] =
     useState(false);
+  const [showChangeFontStyleModal, setShowChangeFontStyleModal] =
+    useState(false); // 폰트 변경 모달 상태 추가
   const setAlert = useSetAtom(alertAtom);
 
   const handleDeleteLibrary = () => {
@@ -68,6 +72,13 @@ const LibraryOptions = ({
     {
       label: '서재 생성',
       onClick: handleCreateLibraryOption,
+    },
+    {
+      label: '폰트 변경',
+      onClick: () => {
+        setShowMenu(false);
+        setShowChangeFontStyleModal(true);
+      },
     },
   ];
 
@@ -115,6 +126,17 @@ const LibraryOptions = ({
           changeLibraryName(libraries[activeLibrary].id, newLibraryName)
         }
         setShowModal={setShowChangeLibraryNameModal}
+      />
+      <ChangeFontStyleModal
+        showModal={showChangeFontStyleModal}
+        fontName={libraries[activeLibrary]?.libraryStyleDto?.fontName}
+        setFontName={name => setFontName(libraries[activeLibrary].id, name)}
+        fontSize={libraries[activeLibrary]?.libraryStyleDto?.fontSize}
+        setFontSize={size => setFontSize(libraries[activeLibrary].id, size)}
+        changeFontStyle={(name, size) =>
+          changeFontStyle(libraries[activeLibrary].id, name, size)
+        }
+        setShowModal={setShowChangeFontStyleModal}
       />
       <Alert />
     </div>

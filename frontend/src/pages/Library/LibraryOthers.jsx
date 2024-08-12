@@ -7,6 +7,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import MemberProfile from '@components/Library/Main/MemberProfile';
 import LibraryOptions from '@components/Library/Main/LibraryOptions';
 import BookShelf from '@components/Library/Main/BookShelf';
+import Spinner from '@components/@common/Spinner';
 import { authAxiosInstance } from '@services/axiosInstance';
 
 const HTML5toTouch = {
@@ -27,6 +28,7 @@ const HTML5toTouch = {
 
 const LibraryOthers = () => {
   const [activeLibrary, setActiveLibrary] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   const [member, setMember] = useState(null);
@@ -49,6 +51,8 @@ const LibraryOthers = () => {
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -59,11 +63,13 @@ const LibraryOthers = () => {
     const fetchMemberInfo = async () => {
       try {
         const nickname = location.state?.nickname;
-        const response = await authAxiosInstance.get('/members/info/name/${nickname}', {
-          params: { nickname },
-        });
+        const response = await authAxiosInstance.get(
+          `/members/info/name/${nickname}`,
+          {
+            params: { nickname },
+          }
+        );
         setMember(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -77,6 +83,14 @@ const LibraryOthers = () => {
       state: { nickname: location.state.nickname },
     });
   };
+
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center min-h-screen'>
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <DndProvider backend={MultiBackend} options={HTML5toTouch}>
