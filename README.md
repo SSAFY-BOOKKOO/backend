@@ -203,7 +203,7 @@
 ## 📜 설계 문서
 ### 아키텍처 구조
 MSA와 Event Driven Architecture를 적용하여 확장성과 유지보수성을 확보.
-![아키텍처도](./images/bookkoo_architecture.png)
+![아키텍처도](./images/bookkoo_architecture_new.png)
 
 ### ERD
 관계형 데이터베이스(`PostgreSQL`)와 NoSQL (`MongoDB`)를 활용한 데이터 모델 설계.
