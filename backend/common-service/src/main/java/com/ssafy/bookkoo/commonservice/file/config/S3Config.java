@@ -1,4 +1,4 @@
-package com.ssafy.bookkoo.commonservice.s3.config;
+package com.ssafy.bookkoo.commonservice.file.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;

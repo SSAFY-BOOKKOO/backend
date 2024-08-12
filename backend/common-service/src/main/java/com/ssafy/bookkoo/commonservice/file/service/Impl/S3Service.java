@@ -1,12 +1,12 @@
-package com.ssafy.bookkoo.commonservice.s3.service.Impl;
+package com.ssafy.bookkoo.commonservice.file.service.Impl;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
-import com.ssafy.bookkoo.commonservice.s3.exception.FileDeleteFailException;
-import com.ssafy.bookkoo.commonservice.s3.exception.FileSaveFailException;
-import com.ssafy.bookkoo.commonservice.s3.service.S3Service;
+import com.ssafy.bookkoo.commonservice.file.exception.FileDeleteFailException;
+import com.ssafy.bookkoo.commonservice.file.exception.FileSaveFailException;
+import com.ssafy.bookkoo.commonservice.file.service.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class S3ServiceImpl implements S3Service {
+public class S3Service implements FileService {
 
     private final AmazonS3Client amazonS3Client;
 
@@ -33,11 +33,16 @@ public class S3ServiceImpl implements S3Service {
     @Override
     public String saveToBucket(MultipartFile file, String bucket) {
         StringBuilder fileName = new StringBuilder();
-        fileName.append(file.getOriginalFilename());
-        fileName.append("_");
-        fileName.append(UUID.randomUUID());
-        fileName.append(".");
-        fileName.append(StringUtils.getFilenameExtension(file.getOriginalFilename()));
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename != null) {
+            fileName.append(originalFilename, 0, originalFilename.lastIndexOf("."));
+            fileName.append("_");
+            fileName.append(UUID.randomUUID());
+            fileName.append(".");
+            fileName.append(StringUtils.getFilenameExtension(file.getOriginalFilename()));
+        } else {
+            throw new FileSaveFailException();
+        }
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
         metadata.setContentType(file.getContentType());
