@@ -23,6 +23,8 @@ const useBookInfiniteScroll = (text, tag) => {
     }),
     // 검색어가 있을 때만 쿼리 활성화
     enabled: !!text && text.trim() !== '',
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 };
 

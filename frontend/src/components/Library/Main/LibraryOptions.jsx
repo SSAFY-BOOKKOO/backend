@@ -7,6 +7,7 @@ import { alertAtom } from '@atoms/alertAtom';
 import CreateLibraryModal from './CreateLibraryModal';
 import ChangeLibraryNameModal from './ChangeLibraryNameModal';
 import ChangeFontStyleModal from './ChangeFontStyleModal'; // 추가된 모달
+import CaptureButton from './CaptureButton';
 
 const LibraryOptions = ({
   activeLibrary,
@@ -22,6 +23,7 @@ const LibraryOptions = ({
   changeLibraryName,
   changeFontStyle, // 폰트 스타일 변경 함수 추가
   viewOnly = false,
+  libraryRef,
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -98,14 +100,19 @@ const LibraryOptions = ({
           ))}
         </select>
       </div>
-      {!viewOnly && (
-        <SettingsModal
-          isOpen={isSettingsOpen}
-          onClose={() => setIsSettingsOpen(false)}
-          onToggle={() => setIsSettingsOpen(!isSettingsOpen)}
-          actions={actions}
-        />
-      )}
+      <div>
+        <div className='p-1 mr-3 mt-1'>
+          <CaptureButton targetRef={libraryRef} />
+        </div>
+        {!viewOnly && (
+          <SettingsModal
+            isOpen={isSettingsOpen}
+            onClose={() => setIsSettingsOpen(false)}
+            onToggle={() => setIsSettingsOpen(!isSettingsOpen)}
+            actions={actions}
+          />
+        )}
+      </div>
       <DeleteLibraryModal
         showDeleteModal={showDeleteModal}
         deleteLibrary={deleteLibrary}

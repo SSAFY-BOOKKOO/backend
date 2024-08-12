@@ -32,6 +32,7 @@ import AdditionalInfo from './pages/Member/AdditionalInfo.jsx';
 import LibraryOthers from './pages/Library/LibraryOthers.jsx';
 import SocialLoginCallback from './components/Login/SocialLoginCallback.jsx';
 import BookTalkCreate from './pages/BookTalk/BookTalkCreate.jsx';
+import FriendSearch from './pages/Mypage/FriendSearch.jsx';
 
 const router = createBrowserRouter([
   {
@@ -88,6 +89,7 @@ const router = createBrowserRouter([
 
           // mypage
           { path: 'mypage/friend', element: <Friend /> },
+          { path: 'mypage/friend/search', element: <FriendSearch /> },
           { path: 'mypage/statistics', element: <Statistics /> },
           { path: 'mypage/profile', element: <Profile /> },
           { path: 'mypage/quote', element: <Quote /> },

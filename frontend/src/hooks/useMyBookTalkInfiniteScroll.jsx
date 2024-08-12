@@ -14,6 +14,8 @@ const useMyBookTalkInfiniteScroll = (order = 'time') => {
     select: data => ({
       pages: data.pages.map(page => ({ data: page })),
     }),
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 };
 

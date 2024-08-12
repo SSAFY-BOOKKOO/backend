@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { DndProvider } from 'react-dnd';
 import { MultiBackend, TouchTransition } from 'react-dnd-multi-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -41,11 +41,13 @@ const LibraryMain = () => {
   const [member, setMember] = useState(null);
   const [libraries, setLibraries] = useState([]);
   const [bookChanges, setBookChanges] = useState([]);
+  const libraryRef = useRef(null);
 
   useEffect(() => {
     const fetchLibraries = async () => {
       try {
         const response = await authAxiosInstance.get(`/libraries/me`);
+        console.log(response);
         const libraries = response.data;
         const libraryDetailsPromises = libraries.map(library =>
           authAxiosInstance.get(`/libraries/${library.id}`)
@@ -59,21 +61,28 @@ const LibraryMain = () => {
       }
     };
 
-    fetchLibraries();
-  }, []);
+    const token = localStorage.getItem('ACCESS_TOKEN');
+    if (token) {
+      fetchLibraries();
+    }
+  }, [navigate]);
 
   useEffect(() => {
     const fetchMemberInfo = async () => {
       try {
         const response = await authAxiosInstance.get('/members/info');
         setMember(response.data);
+        console.log(response);
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchMemberInfo();
-  }, []);
+    const token = localStorage.getItem('ACCESS_TOKEN');
+    if (token) {
+      fetchMemberInfo();
+    }
+  }, [navigate]);
 
   useEffect(() => {
     if (location.state && location.state.deleteBookId) {
@@ -342,17 +351,18 @@ const LibraryMain = () => {
           newLibraryName={newLibraryName}
           setNewLibraryName={setNewLibraryName}
           changeLibraryName={changeLibraryName}
+          libraryRef={libraryRef}
           changeFontStyle={changeFontStyle}
         />
-
-        {libraries.length > 0 && (
-          <BookShelf
-            books={libraries[activeLibrary]?.books || []}
-            moveBook={moveBook}
-            onBookClick={handleBookClick}
-            libraryStyleDto={libraries[activeLibrary]?.libraryStyleDto}
-          />
-        )}
+        <div ref={libraryRef}>
+          {libraries.length > 0 && (
+            <BookShelf
+              books={libraries[activeLibrary]?.books || []}
+              moveBook={moveBook}
+              onBookClick={handleBookClick}
+            />
+          )}
+        </div>
       </div>
       <Alert />
     </DndProvider>

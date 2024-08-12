@@ -6,8 +6,10 @@ const ScrollToTop = ({ children }) => {
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = 0;
+    if (!pathname.includes('/booktalk/detail')) {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = 0;
+      }
     }
   }, [pathname]);
 

@@ -63,6 +63,31 @@ export const getPopularBookTalk = async () => {
   }
 };
 
+// 북톡 검색
+export const postBookTalkSearch = async (text, tag, offset = 0, limit = 4) => {
+  try {
+    const bodyData = {
+      conditions: [
+        {
+          field: tag.toLowerCase(),
+          values: [text],
+        },
+      ],
+      offset,
+      limit,
+    };
+
+    const response = await authAxiosInstance.post(
+      '/booktalks/me/books/search',
+      bodyData
+    );
+    return response.data;
+  } catch (error) {
+    console.error('booktalk search failed:', error);
+    throw error;
+  }
+};
+
 // 채팅 기록 가져오기(by BookTalkId) -> 최근순으로 10개씩
 export const getBookTalkChats = async (bookTalkId, time) => {
   try {
@@ -91,6 +116,19 @@ export const postBookTalkChat = async (bookTalkId, content) => {
     return response.data;
   } catch (error) {
     console.error('post booktalk chat failed:', error);
+    throw error;
+  }
+};
+
+// 채팅 좋아요
+export const postBookTalkLike = async chatMessageId => {
+  try {
+    const response = await authAxiosInstance.post(
+      `/booktalks/chat/like/${chatMessageId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('post booktalk like failed:', error);
     throw error;
   }
 };

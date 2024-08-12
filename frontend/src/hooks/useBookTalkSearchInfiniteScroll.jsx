@@ -1,9 +1,9 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getLibrarySearchBooks } from '@services/Library';
 
-const useLibraryInfiniteScroll = (text, tag, limit = 10) => {
+const useBookTalkSearchInfiniteScroll = (text, tag, limit = 10) => {
   return useInfiniteQuery({
-    queryKey: ['library', text, tag],
+    queryKey: ['booktalk', text, tag],
     queryFn: ({ pageParam = 0 }) =>
       getLibrarySearchBooks(text, tag, pageParam, limit),
     getNextPageParam: (lastPage, allPages) => {
@@ -20,4 +20,4 @@ const useLibraryInfiniteScroll = (text, tag, limit = 10) => {
   });
 };
 
-export default useLibraryInfiniteScroll;
+export default useBookTalkSearchInfiniteScroll;

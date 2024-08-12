@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import ChatBubble from '@components/@common/ChatBubble';
 import Input from '@components/@common/Input';
 import Button from '@components/@common/Button';
+import ChatLoading from '@components/Curation/ChatLoading';
 import bookkooBookIcon from '@assets/icons/bookkoo_book_icon.png';
 import { postChatbot } from '@services/Curation';
 
 const CurationChatBot = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const messagesEndRef = useRef(null);
 
@@ -36,7 +37,6 @@ const CurationChatBot = () => {
   const handleSendMessage = async e => {
     e.preventDefault();
 
-    // 내용이 입력된 경우에만 전송
     if (inputMessage.trim() !== '') {
       const newUserMessage = {
         text: inputMessage,
@@ -46,6 +46,7 @@ const CurationChatBot = () => {
 
       setMessages(prevMessages => [...prevMessages, newUserMessage]);
       setInputMessage('');
+      setLoading(true);
 
       try {
         const data = await postChatbot(inputMessage);
@@ -60,7 +61,8 @@ const CurationChatBot = () => {
         setMessages(prevMessages => [...prevMessages, newBotMessage]);
       } catch (error) {
         console.error('Error posting to chatbot:', error);
-        // 에러 처리 로직 추가
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -78,6 +80,18 @@ const CurationChatBot = () => {
             profileImage={message.profileImage}
           />
         ))}
+        {loading && (
+          <div className='flex justify-start mb-4'>
+            <div className='flex-shrink-0 w-12 h-12 mr-3 flex items-center justify-center'>
+              <img
+                src={bookkooBookIcon}
+                alt='Profile'
+                className='max-w-full max-h-full object-contain rounded-full'
+              />
+            </div>
+            <ChatLoading />
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
       <form
@@ -94,7 +108,7 @@ const CurationChatBot = () => {
               customClass='border rounded-l-lg focus:outline-none'
             />
           </div>
-          <Button type='submit' className='ml-2'>
+          <Button type='submit' className='ml-2' disabled={loading}>
             등록
           </Button>
         </div>

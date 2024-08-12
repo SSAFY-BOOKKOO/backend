@@ -12,8 +12,7 @@ const SocialLoginCallback = () => {
 
   const getNickname = async () => {
     const data = await getMemberInfo();
-
-    localStorage.setItem('USER_NICKNAME', data.nickName);
+    localStorage.setItem('MEMBER_ID', data.memberId);
   };
 
   useEffect(() => {
@@ -29,7 +28,7 @@ const SocialLoginCallback = () => {
     } else {
       navigate('/login');
     }
-  }, [location, navigate]);
+  }, [location, navigate, setIsAuthenticated]);
 
   return (
     <div>
