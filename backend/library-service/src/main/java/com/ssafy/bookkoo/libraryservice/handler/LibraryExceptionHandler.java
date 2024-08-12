@@ -5,6 +5,7 @@ import com.ssafy.bookkoo.libraryservice.exception.LibraryBookLimitExceededExcept
 import com.ssafy.bookkoo.libraryservice.exception.LibraryBookNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryIsNotYoursException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryLimitExceededException;
+import com.ssafy.bookkoo.libraryservice.exception.LibraryMoveToSameLibraryException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.MemberNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -105,8 +106,30 @@ public class LibraryExceptionHandler {
                              .body(e.getMessage());
     }
 
+    /**
+     * 서재에 최대 책 개수를 넣었을 떄
+     *
+     * @param e LibraryBookLimitExceededException
+     * @return 에러 메시지 + 상태 코드
+     */
     @ExceptionHandler(LibraryBookLimitExceededException.class)
-    public ResponseEntity<String> handleLibraryBookLimitExceededException(LibraryBookLimitExceededException e) {
+    public ResponseEntity<String> handleLibraryBookLimitExceededException(
+        LibraryBookLimitExceededException e
+    ) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * 같은 서재로 옮기려고 할 떄
+     *
+     * @param e LibraryMoveToSameLibraryException
+     * @return 에러 메시지 + 상태 코드
+     */
+    @ExceptionHandler(LibraryMoveToSameLibraryException.class)
+    public ResponseEntity<String> handleLibraryMoveToSameLibraryException(
+        LibraryMoveToSameLibraryException e
+    ) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body(e.getMessage());
     }

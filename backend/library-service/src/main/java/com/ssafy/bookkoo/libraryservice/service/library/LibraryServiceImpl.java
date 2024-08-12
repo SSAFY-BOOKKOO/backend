@@ -25,6 +25,7 @@ import com.ssafy.bookkoo.libraryservice.exception.LibraryBookLimitExceededExcept
 import com.ssafy.bookkoo.libraryservice.exception.LibraryBookNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryIsNotYoursException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryLimitExceededException;
+import com.ssafy.bookkoo.libraryservice.exception.LibraryMoveToSameLibraryException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.libraryservice.mapper.ClientBookMapper;
@@ -680,7 +681,15 @@ public class LibraryServiceImpl implements LibraryService {
         Long bookId,
         Long targetLibraryId
     ) {
+        log.info("이동 할래 : bookId={} from libraryId={} to targetLibraryId={}", bookId, libraryId,
+            targetLibraryId);
+
+        // 같은 서재로 옮기려는 경우
+        if (libraryId.equals(targetLibraryId)) {
+            throw new LibraryMoveToSameLibraryException();
+        }
         checkIsValidLibraryOwner(memberId, libraryId);
+        log.info("너 소유주가 맞구나! memberId={} is the owner of libraryId={}", memberId, libraryId);
 
         // 2. library_book_mapper 에서 수정시키기
         MapperKey mapperKey = new MapperKey();
@@ -694,12 +703,14 @@ public class LibraryServiceImpl implements LibraryService {
         }
 
         LibraryBookMapper lbMapper = lbm.get();
+        log.info("기존 꺼 LibraryBookMapper for (libraryId={}, bookId={})", libraryId, bookId);
 
         // 3. 새 서재 찾기
         Optional<Library> targetLibrary = libraryRepository.findById(targetLibraryId);
         if (targetLibrary.isEmpty()) {
             throw new LibraryNotFoundException(targetLibraryId);
         }
+        log.info("새거 : target library for targetLibraryId={}", targetLibraryId);
 
         // 3. 매핑 정보 수정 (서재 변경)
         MapperKey newMapperKey = new MapperKey();
@@ -714,6 +725,8 @@ public class LibraryServiceImpl implements LibraryService {
         if (smallestMissingBookOrder == null) {
             throw new LibraryBookLimitExceededException();
         }
+        log.info("짝은거 : missing bookOrder={} found for targetLibraryId={}",
+            smallestMissingBookOrder, targetLibraryId);
 
         // 4. 새 매핑 생성
         LibraryBookMapper newLbMapper = LibraryBookMapper.builder()
@@ -727,8 +740,15 @@ public class LibraryServiceImpl implements LibraryService {
                                                          .build();
         newLbMapper.setLibrary(targetLibrary.get());
         // 기존 매핑 삭제 및 새 매핑 저장
+        log.info("지우고 넣는중 old mapping and saving new mapping for bookId={} in targetLibraryId={}",
+            bookId, targetLibraryId);
+
         libraryBookMapperRepository.delete(lbMapper);
         libraryBookMapperRepository.save(newLbMapper);
+
+        libraryBookMapperRepository.flush(); // flush를 호출하여 즉시 DB 반영
+        log.info("다 옮김 moved bookId={} to targetLibraryId={}", bookId, targetLibraryId);
+
     }
 
     /**
