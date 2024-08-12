@@ -1,8 +1,12 @@
 package com.ssafy.bookkoo.curationservice.service;
 
 import com.ssafy.bookkoo.curationservice.client.BookServiceClient;
+import com.ssafy.bookkoo.curationservice.client.CommonServiceClient;
 import com.ssafy.bookkoo.curationservice.client.MemberServiceClient;
+import com.ssafy.bookkoo.curationservice.client.NotificationServiceClient;
 import com.ssafy.bookkoo.curationservice.dto.RequestCreateCurationDto;
+import com.ssafy.bookkoo.curationservice.dto.RequestCreateCurationNotificationDto;
+import com.ssafy.bookkoo.curationservice.dto.RequestSendEmailDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDetailDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDto;
@@ -20,6 +24,8 @@ import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -32,10 +38,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CurationServiceImpl implements CurationService {
 
+    private static final Logger log = LoggerFactory.getLogger(CurationServiceImpl.class);
     final CurationRepository curationRepository;
     final CurationSendRepository curationSendRepository;
     final BookServiceClient bookServiceClient;
     final MemberServiceClient memberServiceClient;
+    final NotificationServiceClient notificationServiceClient;
+    final CommonServiceClient commonServiceClient;
 
     /**
      * Curation을 생성하고 전송하는 메서드 생성시 팔로워와 랜덤 멤버 3명에게 전송한다.
@@ -60,6 +69,8 @@ public class CurationServiceImpl implements CurationService {
         curationRepository.save(curation);
         List<ResponseRecipientDto> recipients = memberServiceClient.getLetterRecipients(writer);
 
+        List<Long> notificationList = new ArrayList<>();
+        List<String> mailList = new ArrayList<>();
         for (ResponseRecipientDto recipient : recipients) {
             CurationSend curationSend =
                 CurationSend.builder()
@@ -67,7 +78,34 @@ public class CurationServiceImpl implements CurationService {
                             .receiver(recipient.memberId())
                             .build();
             curationSendRepository.save(curationSend);
-            //TODO 메일 보내기
+            if (recipient.isReceiveEmail()) {
+                mailList.add(recipient.email());
+            }
+            notificationList.add(recipient.memberId());
+        }
+        try {
+            // 알림 보내기
+            notificationServiceClient.createCurationNotification(
+                RequestCreateCurationNotificationDto.builder()
+                                                    .memberIds(
+                                                        notificationList.toArray(Long[]::new))
+                                                    .curationId(curation.getId())
+                                                    .writerId(writer)
+                                                    .build());
+        } catch (FeignClientException exception) {
+            log.info("Caught exception: {}", exception.getMessage());
+        }
+        try {
+            // 메일 보내기
+            commonServiceClient.sendMail(RequestSendEmailDto.builder()
+                                                            .receivers(
+                                                                mailList.toArray(String[]::new))
+                                                            .subject("새로운 큐레이션이 도착했어요 "
+                                                                + createCurationDto.title())
+                                                            .content(createCurationDto.content())
+                                                            .build());
+        } catch (FeignClientException exception) {
+            log.info("Caught exception: {}", exception.getMessage());
         }
     }
 
