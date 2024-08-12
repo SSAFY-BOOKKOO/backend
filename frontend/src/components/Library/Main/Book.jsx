@@ -3,7 +3,14 @@ import { useDrag, useDrop } from 'react-dnd';
 
 const ItemType = 'BOOK';
 
-const Book = ({ item, index, moveBook, onBookClick, viewOnly }) => {
+const Book = ({
+  item,
+  index,
+  moveBook,
+  onBookClick,
+  viewOnly,
+  libraryStyleDto,
+}) => {
   const [{ isDragging }, dragRef] = useDrag({
     type: ItemType,
     item: { bookOrder: item.bookOrder, originalIndex: index },
@@ -43,18 +50,6 @@ const Book = ({ item, index, moveBook, onBookClick, viewOnly }) => {
         : 'tall'
   ];
 
-  const titleLength = {
-    short: 7,
-    medium: 8,
-    tall: 10,
-  }[
-    item.book.sizeHeight <= 210
-      ? 'short'
-      : item.book.sizeHeight <= 220
-        ? 'medium'
-        : 'tall'
-  ];
-
   const thicknessStyle = {
     thin: { width: '100px' },
     normal: { width: '150px' },
@@ -67,6 +62,20 @@ const Book = ({ item, index, moveBook, onBookClick, viewOnly }) => {
         : 'thick'
   ];
 
+  const fontSizeClass =
+    {
+      0: 'text-xs',
+      1: 'text-sm',
+      2: 'text-base',
+      3: 'text-lg',
+    }[libraryStyleDto?.fontSize] || 'text-xs';
+
+  const fontStyle = {
+    ...(libraryStyleDto?.fontName
+      ? { fontFamily: libraryStyleDto.fontName }
+      : {}),
+  };
+
   return (
     <div
       ref={viewOnly ? null : node => dragRef(dropRef(node))}
@@ -77,10 +86,10 @@ const Book = ({ item, index, moveBook, onBookClick, viewOnly }) => {
       onClick={() => onBookClick(item)}
     >
       <span
-        className='writing-vertical text-xs sm:text-base'
-        style={{ letterSpacing: '-3px' }}
+        className={`writing-vertical ${fontSizeClass} line-clamp-1`}
+        style={{ ...fontStyle }}
       >
-        {getTitle(item.book.title, titleLength)}
+        {getTitle(item.book.title)}
       </span>
     </div>
   );

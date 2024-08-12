@@ -9,6 +9,7 @@ import { FaTrashCan } from 'react-icons/fa6';
 // import { useAtom } from 'jotai';
 // import { storedLettersAtom } from '../../atoms/CurationStoreAtom';
 import { authAxiosInstance } from '../../services/axiosInstance';
+import { BsEnvelopeHeart } from 'react-icons/bs';
 
 const CurationReceive = () => {
   const navigate = useNavigate();
@@ -18,14 +19,15 @@ const CurationReceive = () => {
   const [storeLetters, setStoreLetters] = useState([]);
   const [selectedLetters, setSelectedLetters] = useState([]);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [countLetters, setCountLetters] = useState(0);
 
   // 컴포넌트가 마운트될 때 로컬 스토리지에서 storeLetters를 불러옴
-  useEffect(() => {
-    const stored = localStorage.getItem('storeLetters');
-    if (stored) {
-      setStoreLetters(JSON.parse(stored));
-    }
-  }, []);
+  // useEffect(() => {
+  //   const stored = localStorage.getItem('storeLetters');
+  //   if (stored) {
+  //     setStoreLetters(JSON.parse(stored));
+  //   }
+  // }, []);
 
   // storeLetters가 변경될 때마다 로컬 스토리지에 저장
   useEffect(() => {
@@ -36,7 +38,7 @@ const CurationReceive = () => {
     authAxiosInstance
       .get('/curations/store', { params: { page } })
       .then(res => {
-        setStoreLetters(res.data);
+        setStoreLetters(res.data.curationList);
         console.log(storeLetters);
       })
       .catch(err => {
@@ -44,12 +46,13 @@ const CurationReceive = () => {
       });
   }, [page]);
 
+  // 내가 받은 레터 보기
   useEffect(() => {
     authAxiosInstance
       .get('/curations', { params: { page } })
       .then(res => {
-        setLetters(res.data);
-        console.log(res);
+        setLetters(res.data.curationList);
+        setCountLetters(res.data.count);
       })
       .catch(err => {
         console.log('error:', err);
@@ -71,6 +74,7 @@ const CurationReceive = () => {
       updatedStoreLetters = [...storeLetters, letter];
     }
     setStoreLetters(updatedStoreLetters);
+    // 큐레이션 보관상태 변경
     authAxiosInstance
       .post(`/curations/store/${letter.curationId}`, {
         curationId: letter.curationId,
@@ -93,6 +97,7 @@ const CurationReceive = () => {
     }
   };
 
+  // 큐레이션 삭제
   const handleDeleteSelected = () => {
     if (selectedLetters.length === 0) return;
 
@@ -143,9 +148,7 @@ const CurationReceive = () => {
         </p>
       </div>
       <div className='flex justify-between items-center px-8 pt-3 pb-1'>
-        <p className='font-bold text-green-400'>
-          받은 레터 수: {letters.length}
-        </p>
+        <p className='font-bold text-green-400'>받은 레터 수: {countLetters}</p>
         <FaTrashCan
           className='text-xl cursor-pointer'
           onClick={() => setIsDeleting(!isDeleting)}
@@ -160,7 +163,7 @@ const CurationReceive = () => {
             >
               <img
                 src={letter.coverImgUrl}
-                alt='Letter'
+                alt={<BsEnvelopeHeart />}
                 className='w-16 h-24 mx-4 rounded-lg'
               />
               <div className='flex-1 pb-7'>
@@ -210,16 +213,18 @@ const CurationReceive = () => {
           </button>
         </div>
       )}
-      <div className='flex justify-center space-x-12 text-2xl pb-4'>
-        <IoIosArrowBack
-          onClick={() => setPage(prevPage => Math.max(prevPage - 1, 0))}
-          className='cursor-pointer '
-        />
-        <IoIosArrowForward
-          onClick={() => setPage(prevPage => prevPage + 1)}
-          className='cursor-pointer '
-        />
-      </div>
+      {letters.length > 10 && (
+        <div className='flex justify-center space-x-12 text-2xl pb-4'>
+          <IoIosArrowBack
+            onClick={() => setPage(prevPage => Math.max(prevPage - 1, 0))}
+            className='cursor-pointer '
+          />
+          <IoIosArrowForward
+            onClick={() => setPage(prevPage => prevPage + 1)}
+            className='cursor-pointer '
+          />
+        </div>
+      )}
     </div>
   );
 };
