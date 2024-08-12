@@ -1,0 +1,44 @@
+import React from 'react';
+import IconButton from '@components/@common/IconButton';
+import { MdOutlineFileDownload } from 'react-icons/md';
+import domtoimage from 'dom-to-image';
+import { saveAs } from 'file-saver';
+import { showAlertAtom } from '@atoms/alertAtom';
+import { useAtom } from 'jotai';
+
+const CaptureButton = ({ targetRef }) => {
+  const [, showAlert] = useAtom(showAlertAtom);
+
+  const handleDownload = async () => {
+    if (targetRef.current) {
+      try {
+        const scale = 4;
+        const style = {
+          transform: `scale(${scale})`,
+          transformOrigin: 'top left',
+          width: targetRef.current.scrollWidth + 'px',
+          height: targetRef.current.scrollHeight + 'px',
+        };
+        const blob = await domtoimage.toBlob(targetRef.current, {
+          quality: 1, // 최대 품질로 설정
+          height: targetRef.current.scrollHeight * scale,
+          width: targetRef.current.scrollWidth * scale,
+          style: style,
+        });
+        saveAs(blob, `library.png`);
+      } catch (error) {
+        showAlert('오류가 발생했습니다. 다시 시도해주세요.', true, () => {});
+      }
+    }
+  };
+
+  return (
+    <IconButton
+      onClick={handleDownload}
+      icon={MdOutlineFileDownload}
+      iconClassName='w-7 h-7'
+    />
+  );
+};
+
+export default CaptureButton;
