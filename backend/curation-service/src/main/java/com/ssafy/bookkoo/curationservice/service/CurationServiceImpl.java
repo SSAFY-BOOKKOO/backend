@@ -24,8 +24,7 @@ import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -34,11 +33,11 @@ import org.springframework.stereotype.Service;
  *
  * @author dino9881
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CurationServiceImpl implements CurationService {
 
-    private static final Logger log = LoggerFactory.getLogger(CurationServiceImpl.class);
     final CurationRepository curationRepository;
     final CurationSendRepository curationSendRepository;
     final BookServiceClient bookServiceClient;
