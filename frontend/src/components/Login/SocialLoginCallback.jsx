@@ -12,7 +12,6 @@ const SocialLoginCallback = () => {
 
   const getNickname = async () => {
     const data = await getMemberInfo();
-
     localStorage.setItem('MEMBER_ID', data.memberId);
   };
 
@@ -29,7 +28,7 @@ const SocialLoginCallback = () => {
     } else {
       navigate('/login');
     }
-  }, [location, navigate]);
+  }, [location, navigate, setIsAuthenticated]);
 
   return (
     <div>
