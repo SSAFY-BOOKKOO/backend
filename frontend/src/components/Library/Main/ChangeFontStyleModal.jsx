@@ -25,13 +25,16 @@ const ChangeFontStyleModal = ({
         <h2 className='text-xl font-bold mb-4'>폰트 스타일 변경</h2>
         <div className='mb-4'>
           <label className='block mb-2 font-bold'>폰트 이름</label>
-          <input
-            type='text'
-            placeholder='폰트 이름'
+          <select
             value={localFontName}
             onChange={e => setLocalFontName(e.target.value)}
             className='border p-2 w-full'
-          />
+          >
+            <option value=''>기본 폰트</option>
+            <option value='GyeonggiCheonnyeon'>경기천년체</option>
+            <option value='Inklipquid'>잉크립퀴드체</option>
+            <option value='JejuDoldam'>제주돌담체</option>
+          </select>
         </div>
         <div className='mb-4'>
           <label className='block mb-2 font-bold'>폰트 크기</label>

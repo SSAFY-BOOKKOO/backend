@@ -86,8 +86,8 @@ const Book = ({
       onClick={() => onBookClick(item)}
     >
       <span
-        className={`writing-vertical ${fontSizeClass} line-clamp-1 tracking-tighter`}
-        style={{ ...fontStyle, wordSpacing: '-10px' }}
+        className={`writing-vertical ${fontSizeClass} line-clamp-1`}
+        style={{ ...fontStyle }}
       >
         {getTitle(item.book.title)}
       </span>

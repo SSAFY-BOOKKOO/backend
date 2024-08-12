@@ -76,7 +76,18 @@
   font-style: normal;
   font-weight: bold;
 }
-
+@font-face {
+  font-family: 'GyeonggiCheonnyeon';
+  src: url('@assets/fonts/GyeonggiCheonnyeon.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Inklipquid';
+  src: url('@assets/fonts/Inklipquid.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'JejuDoldam';
+  src: url('@assets/fonts/JejuDoldam.ttf') format('truetype');
+}
 * {
   font-family: 'Pretendard';
 }
