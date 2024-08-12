@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CurationRepository extends JpaRepository<Curation, Long> {
 
     List<Curation> findCurationsByWriterOrderByCreatedAtDesc(Long writer, Pageable pageable);
+
+    Long countByWriter(Long writer);
 }

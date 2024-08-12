@@ -4,6 +4,7 @@ import com.ssafy.bookkoo.curationservice.dto.RequestChatbotDto;
 import com.ssafy.bookkoo.curationservice.dto.RequestCreateCurationDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDetailDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDto;
+import com.ssafy.bookkoo.curationservice.dto.ResponseCurationListDto;
 import com.ssafy.bookkoo.curationservice.exception.DtoValidationException;
 import com.ssafy.bookkoo.curationservice.service.CurationService;
 import com.ssafy.bookkoo.curationservice.service.OpenAiService;
@@ -39,7 +40,7 @@ public class CurationController {
 
     @GetMapping
     @Operation(summary = "내가 받은 큐레이션 리스트 가져오기", description = "수신한 큐레이션 레터 리스트 가져오기")
-    public ResponseEntity<List<ResponseCurationDto>> getCurationList(
+    public ResponseEntity<ResponseCurationListDto> getCurationList(
         @RequestHeader HttpHeaders headers,
         @RequestParam(name = "page") int page
     ) {
@@ -53,7 +54,7 @@ public class CurationController {
 
     @GetMapping("/store")
     @Operation(summary = "내가 보관한 큐레이션 리스트 가져오기", description = "보관한 큐레이션 레터 리스트 가져오기")
-    public ResponseEntity<List<ResponseCurationDto>> getStoredCurationList(
+    public ResponseEntity<ResponseCurationListDto> getStoredCurationList(
         @RequestHeader HttpHeaders headers,
         @RequestParam(name = "page") int page
     ) {
@@ -67,7 +68,7 @@ public class CurationController {
 
     @GetMapping("/mycuration")
     @Operation(summary = "내가 보낸 큐레이션 리스트 가져오기", description = "발신한 큐레이션 레터 리스트 가져오기")
-    public ResponseEntity<List<ResponseCurationDto>> getMyCurationList(
+    public ResponseEntity<ResponseCurationListDto> getMyCurationList(
         @RequestHeader HttpHeaders headers,
         @RequestParam(name = "page") int page
     ) {

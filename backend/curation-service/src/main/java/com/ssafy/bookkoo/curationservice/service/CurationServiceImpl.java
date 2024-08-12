@@ -1,11 +1,16 @@
 package com.ssafy.bookkoo.curationservice.service;
 
 import com.ssafy.bookkoo.curationservice.client.BookServiceClient;
+import com.ssafy.bookkoo.curationservice.client.CommonServiceClient;
 import com.ssafy.bookkoo.curationservice.client.MemberServiceClient;
+import com.ssafy.bookkoo.curationservice.client.NotificationServiceClient;
 import com.ssafy.bookkoo.curationservice.dto.RequestCreateCurationDto;
+import com.ssafy.bookkoo.curationservice.dto.RequestCreateCurationNotificationDto;
+import com.ssafy.bookkoo.curationservice.dto.RequestSendEmailDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDetailDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDto;
+import com.ssafy.bookkoo.curationservice.dto.ResponseCurationListDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseRecipientDto;
 import com.ssafy.bookkoo.curationservice.entity.Curation;
@@ -19,6 +24,7 @@ import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +33,7 @@ import org.springframework.stereotype.Service;
  *
  * @author dino9881
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CurationServiceImpl implements CurationService {
@@ -35,6 +42,8 @@ public class CurationServiceImpl implements CurationService {
     final CurationSendRepository curationSendRepository;
     final BookServiceClient bookServiceClient;
     final MemberServiceClient memberServiceClient;
+    final NotificationServiceClient notificationServiceClient;
+    final CommonServiceClient commonServiceClient;
 
     /**
      * Curation을 생성하고 전송하는 메서드 생성시 팔로워와 랜덤 멤버 3명에게 전송한다.
@@ -57,9 +66,10 @@ public class CurationServiceImpl implements CurationService {
                                     .content(createCurationDto.content())
                                     .build();
         curationRepository.save(curation);
-        // 멤버 ID Token에서 가져오기
         List<ResponseRecipientDto> recipients = memberServiceClient.getLetterRecipients(writer);
 
+        List<Long> notificationList = new ArrayList<>();
+        List<String> mailList = new ArrayList<>();
         for (ResponseRecipientDto recipient : recipients) {
             CurationSend curationSend =
                 CurationSend.builder()
@@ -67,7 +77,34 @@ public class CurationServiceImpl implements CurationService {
                             .receiver(recipient.memberId())
                             .build();
             curationSendRepository.save(curationSend);
-            //TODO 메일 보내기
+            if (recipient.isReceiveEmail()) {
+                mailList.add(recipient.email());
+            }
+            notificationList.add(recipient.memberId());
+        }
+        try {
+            // 알림 보내기
+            notificationServiceClient.createCurationNotification(
+                RequestCreateCurationNotificationDto.builder()
+                                                    .memberIds(
+                                                        notificationList.toArray(Long[]::new))
+                                                    .curationId(curation.getId())
+                                                    .writerId(writer)
+                                                    .build());
+        } catch (FeignClientException exception) {
+            log.info("Caught exception: {}", exception.getMessage());
+        }
+        try {
+            // 메일 보내기
+            commonServiceClient.sendMail(RequestSendEmailDto.builder()
+                                                            .receivers(
+                                                                mailList.toArray(String[]::new))
+                                                            .subject("새로운 큐레이션이 도착했어요 "
+                                                                + createCurationDto.title())
+                                                            .content(createCurationDto.content())
+                                                            .build());
+        } catch (FeignClientException exception) {
+            log.info("Caught exception: {}", exception.getMessage());
         }
     }
 
@@ -86,19 +123,22 @@ public class CurationServiceImpl implements CurationService {
                                               .orElseThrow(
                                                   () -> new CurationNotFoundException(
                                                       curationId));
-        // PassPort 에서 읽은사람 가져오기
-        CurationSend curationSend = curationSendRepository.findCurationSendsByCurationAndReceiver(
-                                                              curation, memberId)
-                                                          .orElseThrow(
-                                                              // 자신이 받은 큐레이션이 아닐경우 권한 Exception 던져야함
-                                                              () -> new CurationNotFoundException(
-                                                                  curationId));
-        //읽기 처리
-        curationSend.read();
         // 작성자 정보 가져오기
         ResponseMemberInfoDto writerInfo = memberServiceClient.getMemberInfoById(
-            curationSend.getCuration()
-                        .getWriter());
+            curation.getWriter());
+        // 작성자가 본인이 아닐경우 본인에게 온 메세지가 맞는지 확인
+        if (!curation.getWriter()
+                     .equals(memberId)) {
+            // PassPort 에서 읽은사람 가져오기
+            CurationSend curationSend = curationSendRepository.findCurationSendsByCurationAndReceiver(
+                                                                  curation, memberId)
+                                                              .orElseThrow(
+                                                                  // 자신이 받은 큐레이션이 아닐경우 권한 Exception 던져야함
+                                                                  () -> new CurationNotFoundException(
+                                                                      curationId));
+            //읽기 처리
+            curationSend.read();
+        }
         // BookService 에게 book 정보 받아오기 (책 커버 이미지, 제목, 작가, 줄거리)
         try {
             ResponseBookDto book = bookServiceClient.getBook(curation
@@ -128,14 +168,17 @@ public class CurationServiceImpl implements CurationService {
      * @return ResponseCurationDto
      */
     @Override
-    public List<ResponseCurationDto> getCurationList(Long receiver, Pageable pageable) {
+    public ResponseCurationListDto getCurationList(Long receiver, Pageable pageable) {
         List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByReceiverOrderByCreatedAtDesc(
             receiver, pageable);
         List<Curation> curationList = curationSendByReceiver.stream()
                                                             .map(
                                                                 CurationSend::getCuration)
                                                             .toList();
-        return curationToDto(curationList);
+        return ResponseCurationListDto.builder()
+                                      .curationList(curationToDto(curationList))
+                                      .count(curationSendRepository.countByReceiver(receiver))
+                                      .build();
     }
 
     /**
@@ -188,11 +231,14 @@ public class CurationServiceImpl implements CurationService {
      * @return ResponseCurationDto
      */
     @Override
-    public List<ResponseCurationDto> getSentCurations(Long writer, Pageable pageable) {
+    public ResponseCurationListDto getSentCurations(Long writer, Pageable pageable) {
         List<Curation> curationList = curationRepository.findCurationsByWriterOrderByCreatedAtDesc(
             writer, pageable);
 
-        return curationToDto(curationList);
+        return ResponseCurationListDto.builder()
+                                      .curationList(curationToDto(curationList))
+                                      .count(curationRepository.countByWriter(writer))
+                                      .build();
     }
 
     /**
@@ -200,7 +246,7 @@ public class CurationServiceImpl implements CurationService {
      * @return 수신한 큐레이션 DTO (작성자 닉네임, 큐레이션 ID, 큐레이션 제목, 책 커버 이미지)
      */
     @Override
-    public List<ResponseCurationDto> getStoredCurationList(Long receiver, Pageable pageable) {
+    public ResponseCurationListDto getStoredCurationList(Long receiver, Pageable pageable) {
         List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByIsStoredAndReceiverOrderByCreatedAtDesc(
             true,
             receiver, pageable);
@@ -208,7 +254,12 @@ public class CurationServiceImpl implements CurationService {
                                                             .map(
                                                                 CurationSend::getCuration)
                                                             .toList();
-        return curationToDto(curationList);
+        return ResponseCurationListDto.builder()
+                                      .curationList(curationToDto(curationList))
+                                      .count(
+                                          curationSendRepository.countByReceiverAndIsStoredIsTrue(
+                                              receiver))
+                                      .build();
     }
 
     /**
