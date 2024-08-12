@@ -34,7 +34,6 @@ const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
           <label className='text-gray-700 font-medium w-1/3'>소개글</label>
           <div className='w-2/3 text-left relative group'>
             {' '}
-            {/* 텍스트를 왼쪽 정렬 */}
             <p className='text-gray-700 font-medium line-clamp-3'>
               {member.introduction}
             </p>
