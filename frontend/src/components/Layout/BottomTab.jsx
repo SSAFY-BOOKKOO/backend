@@ -10,7 +10,7 @@ const navItems = [
     component: <FaEnvelope />,
     label: '큐레이션 레터',
   },
-  { path: '/booktalk', component: <FaComments />, label: '커뮤니티' },
+  { path: '/booktalk', component: <FaComments />, label: '북톡' },
   { path: '/mypage', component: <FaUserCircle />, label: '마이페이지' },
 ];
 
