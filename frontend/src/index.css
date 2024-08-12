@@ -78,7 +78,7 @@
 }
 @font-face {
   font-family: 'GyeonggiCheonnyeon';
-  src: url('@assets/fonts/GyeonggiCheonnyeon.ttf') format('truetype');
+  src: url('@assets/fonts/GyeonggiCheonnyeon.woff') format('truetype');
 }
 @font-face {
   font-family: 'Inklipquid';
