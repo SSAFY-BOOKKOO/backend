@@ -52,7 +52,7 @@ const Modal = ({ show, onClose, review }) => {
 };
 
 const ReviewCom = ({ onBackClick, book }) => {
-  const { id, title } = book;
+  const { id, title, author, publisher, summary, coverImgUrl } = book;
   const [editReview, setEditingReview] = useState(false);
   const [reviewText, setReviewText] = useState('');
   const [surfingReviews, setSurfingReviews] = useState([]);
@@ -61,9 +61,13 @@ const ReviewCom = ({ onBackClick, book }) => {
   const [showModal, setShowModal] = useState(false);
   const [currentReview, setCurrentReview] = useState(null);
 
+  const titleMaxLength = 10;
+
+  ///////////////////////////// 파도타기
   // 리뷰 처음 제시
   useEffect(() => {
     fetchReviews();
+    console.log('book 책 정보:', book);
   }, [id]);
 
   const fetchReviews = () => {
@@ -93,7 +97,7 @@ const ReviewCom = ({ onBackClick, book }) => {
     }
   };
 
-  // 내 한줄평 작성
+  ///////////////////////// 내 한줄평 작성
   const handleSaveReview = () => {
     if (reviewText.length > 70) {
       alert('70자 이내로 작성해 주세요!');
@@ -103,15 +107,32 @@ const ReviewCom = ({ onBackClick, book }) => {
     setEditingReview(false);
     const bookId = id;
     authAxiosInstance
-      .post(`/books/${bookId}/reviews`, { content: reviewText, rating: rating })
+      .post(`/books/${bookId}/reviews`, { bookId, text: reviewText })
       .then(res => {
-        console.log('리뷰 아이디: ', res.data.id);
-        book.reviewId = res.data.id;
-        console.log('book 객체!!:', book);
+        console.log('Review saved:', res); // 전체 확인
+        book.reviewId = res.data.id; // book에 reviewId 추가
+        console.log(book); // 북에 들어갔나 확인 -> 들어 갔음
       })
       .catch(err => {
-        console.log(err);
-        console.log(bookId);
+        console.log('Error saving review:', err);
+      });
+  };
+
+  ////////////////////////// 한줄평 삭제 핸들러
+  const handleDeleteReview = () => {
+    const bookId = id;
+    const reviewId = book.reviewId;
+    authAxiosInstance
+      .delete(`/books/${bookId}/reviews/${reviewId}`)
+      .then(res => {
+        console.log('Review Delete:', res); // 전체 확인
+        console.log(book);
+        console.log(book.reviewId);
+      })
+      .catch(err => {
+        console.error('Error deleting review:', err);
+        console.log(book);
+        console.log(book.reviewId);
       });
   };
 
@@ -122,12 +143,17 @@ const ReviewCom = ({ onBackClick, book }) => {
     setShowModal(true);
   };
 
+  const displayTitle =
+    title.length > titleMaxLength
+      ? title.substring(0, titleMaxLength - 1) + '...'
+      : title;
+
   return (
     <div className='relative bg-zinc-300 rounded-lg w-10/12 max-w-md h-full flex flex-col justify-between overflow-auto'>
       <div className='absolute right-6 top-0 bottom-0 shadow-2xl w-1 bg-gray-500 shadow-2xl z-10'></div>
       <div className='flex flex-col items-center p-4'>
-        <h1 className='text-2xl font-bold m-4 pb-12 w-10/12 h-4 text-center text-overflow-1'>
-          {title}
+        <h1 className='text-2xl font-bold m-4 pb-12 w-10/12 h-4 text-center text-overflow-2'>
+          {displayTitle}
         </h1>
 
         <div className='flex justify-between items-center w-10/12 pb-4 pr-2'>
@@ -149,20 +175,19 @@ const ReviewCom = ({ onBackClick, book }) => {
 
         {surfingReviews.map((review, index) => (
           <div key={index} className='flex items-center pb-2 pr-1 mr-4 w-10/12'>
-            <div className='flex justify-between bg-white w-full p-2 mb-1 h-auto rounded-lg opacity-70'>
+            <div className='flex justify-between bg-white w-full p-2 mb-4 h-auto rounded-lg opacity-70'>
               <div
                 className='flex items-center space-x-3 cursor-pointer'
                 onClick={() => handleMoreReview(review)}
               >
+                {/* <CgProfile className='text-2xl mb-5' /> */}
                 <img
                   src={review.member.profilImgUrl}
                   alt='Profile'
                   className='w-11 h-11 rounded-full mr-2'
                 />
                 <div>
-                  <p className='font-bold text-overflow-1'>
-                    {review.member.nickName}
-                  </p>
+                  <p className='font-bold'>{review.member.nickName}</p>
                   <p className='text-overflow-2'>{review.content}</p>
                 </div>
               </div>
@@ -179,27 +204,48 @@ const ReviewCom = ({ onBackClick, book }) => {
               value={reviewText}
               onChange={e => setReviewText(e.target.value)}
               onClick={e => e.stopPropagation()}
-              maxLength={70}
             ></textarea>
           ) : (
             <p className='w-full h-44 p-2 pb-4 border border-gray-400 rounded resize-none'>
               {reviewText || '한줄평을 작성해 보세요!'}
             </p>
           )}
-          <Button
-            text={editReview ? '저장' : '작성'}
-            size='small'
-            color='text-black bg-rose-300'
-            onClick={e => {
-              e.stopPropagation();
-              if (editReview) {
-                handleSaveReview();
-              } else {
-                setEditingReview(true);
-              }
-            }}
-            className='absolute top-36 right-2'
-          ></Button>
+
+          <div className='absolute top-36 right-2 flex space-x-2'>
+            <Button
+              text={editReview ? '저장' : '작성'}
+              size='small'
+              color='text-black bg-rose-300'
+              onClick={e => {
+                e.stopPropagation();
+                if (book.reviewId) {
+                  alert('삭제 후 재등록해 주세요!');
+                  setEditingReview(false);
+                  console.log(book);
+                } else {
+                  if (editReview) {
+                    handleSaveReview();
+                    setEditingReview(false);
+                  } else {
+                    setEditingReview(true); // 작성 가능 상태로 변경
+                  }
+                }
+              }}
+              className='px-3 py-1 rounded-md hover:bg-rose-400 transition duration-150'
+            />
+            <Button
+              text='삭제'
+              size='small'
+              color='text-black bg-rose-300'
+              onClick={e => {
+                e.stopPropagation();
+                handleDeleteReview();
+                setReviewText(''); // textarea의 값을 초기화
+                window.location.reload();
+              }}
+              className='px-3 py-1 rounded-md hover:bg-rose-400 transition duration-150'
+            />
+          </div>
         </div>
         <div className='absolute right-6 top-0 bottom-0 shadow-2xl w-1 bg-gray-700 z-10'></div>
       </div>
