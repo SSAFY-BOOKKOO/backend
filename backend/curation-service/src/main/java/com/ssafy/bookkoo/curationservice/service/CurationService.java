@@ -28,8 +28,4 @@ public interface CurationService {
     // 큐레이션 삭제 (지정삭제)
     void deleteCuration(Long id, Long receiver);
 
-    //TODO 큐레이션 스케쥴 삭제
-
-    //TODO 알림 메일 전송
-
 }

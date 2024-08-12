@@ -21,11 +21,13 @@ import com.ssafy.bookkoo.curationservice.repository.CurationRepository;
 import com.ssafy.bookkoo.curationservice.repository.CurationSendRepository;
 import feign.FeignException.FeignClientException;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 /**
@@ -289,5 +291,17 @@ public class CurationServiceImpl implements CurationService {
             }
         }
         return responseCurationDtoList;
+    }
+
+
+    /**
+     * 매일 오전 4시에  생성된지 15일이 지난 큐레이션들을 삭제하는 메서드
+     */
+    @Scheduled(cron = "* * 4 * * *")
+    public void scheduledDeleteCuration() {
+        // 지금 시간을 기준으로 15일 전에 만들어졌고, 저장하지 않은 큐레이션을 삭제한다.
+        LocalDateTime time = LocalDateTime.now()
+                                          .minusDays(15L);
+        curationSendRepository.deleteCurationSendByIsStoredFalseAndCreatedAtBefore(time);
     }
 }

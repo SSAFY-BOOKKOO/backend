@@ -3,6 +3,7 @@ package com.ssafy.bookkoo.curationservice.repository;
 
 import com.ssafy.bookkoo.curationservice.entity.Curation;
 import com.ssafy.bookkoo.curationservice.entity.CurationSend;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,8 @@ public interface CurationSendRepository extends JpaRepository<CurationSend, Long
     Long countByReceiver(Long receiver);
 
     Long countByReceiverAndIsStoredIsTrue(Long receiver);
+
+    void deleteCurationSendByIsStoredFalseAndCreatedAtBefore(LocalDateTime time);
 
     List<CurationSend> findByCuration(Curation curation);
 
