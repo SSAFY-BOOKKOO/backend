@@ -80,10 +80,14 @@ export const getFollowings = async memberId => {
 
 // 팔로우
 export const postFollow = async memberId => {
+  const bodyData = {
+    memberId,
+  };
+
   try {
     const response = await authAxiosInstance.post(
       'members/follow/follow',
-      memberId
+      bodyData
     );
     return response.data;
   } catch (error) {
@@ -94,10 +98,13 @@ export const postFollow = async memberId => {
 
 // 언팔로우
 export const postUnfollow = async memberId => {
+  const bodyData = {
+    memberId,
+  };
   try {
     const response = await authAxiosInstance.post(
       '/members/follow/unfollow',
-      memberId
+      bodyData
     );
     return response.data;
   } catch (error) {
@@ -107,3 +114,27 @@ export const postUnfollow = async memberId => {
 };
 
 // 팔로워 삭제
+export const deleteFollower = async memberId => {
+  try {
+    const response = await authAxiosInstance.delete(
+      `/members/follow/${memberId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('delete follwer failed:', error);
+    throw error;
+  }
+};
+
+// 닉네임으로 사용자 정보 가져오기
+export const getInfoByNickName = async nickName => {
+  try {
+    const response = await authAxiosInstance.get(
+      `/members/info/name/${nickName}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Get Followees failed:', error);
+    throw error;
+  }
+};

@@ -1,27 +1,29 @@
 import React from 'react';
+import Button from '@components/@common/Button';
 
 const Following = ({ following, handleUnfollow }) => (
   <div>
     <ul className='space-y-4'>
       {following.map(user => (
         <li
-          key={user}
+          key={user?.memberId}
           className='flex items-center justify-between pb-3 px-3 border-b'
         >
           <div className='flex items-center space-x-4'>
             <img
-              src='https://via.placeholder.com/50'
+              src={user?.profileImgUrl}
               alt='user'
               className='w-12 h-12 rounded-full'
             />
-            <span className='text-lg'>{user}</span>
+            <span className='text-lg'>{user?.nickName}</span>
           </div>
-          <button
-            onClick={() => handleUnfollow(user)}
-            className='bg-pink-400 hover:bg-pink-400 text-gray-700 py-1 px-3 rounded'
+          <Button
+            onClick={() => handleUnfollow(user?.memberId)}
+            className='bg-pink-500 hover:bg-pink-500 active:bg-pink-400'
+            size='small'
           >
-            팔로잉 취소
-          </button>
+            취소
+          </Button>
         </li>
       ))}
     </ul>
