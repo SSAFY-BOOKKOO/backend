@@ -147,9 +147,10 @@ public class QuoteServiceImpl implements QuoteService {
     }
 
     @Override
-    public String opticalCharacterRecognition(MultipartFile image) {
-        
-        return "";
+    public Integer getQuoteCount(Long memberId) {
+        MemberInfo memberInfo = getMemberInfo(memberId);
+        return memberInfo.getQuotes()
+                         .size();
     }
 
     private MemberInfo getMemberInfo(Long memberId) {
