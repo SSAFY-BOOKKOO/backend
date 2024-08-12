@@ -33,6 +33,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final AuthService authService;
     private final ObjectMapper objectMapper;
 
+    public final static String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";
+
     @Value("${config.frontend}")
     private String FRONTEND_URL;
 
@@ -53,6 +55,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.info("authentication : {}", authentication);
         log.info("authentication principal: {}", authentication.getPrincipal());
         Object principal = authentication.getPrincipal();
+
+        CookieUtils.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
         // ResponseSocialRegisterDto이면 ROLE_GUEST
         if (principal instanceof SocialRegisterDto socialRegisterDto) {
             ResponseSocialRegisterDto registerDto
