@@ -32,9 +32,14 @@ const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
         </div>
         <div className='mb-4 flex'>
           <label className='text-gray-700 font-medium w-1/3'>소개글</label>
-          <p className='text-gray-700 font-medium w-2/3 text-right max-h-24 overflow-y-auto'>
-            {member.introduction}
-          </p>
+          <div className='w-2/3 text-right relative group'>
+            <p className='text-gray-700 font-medium line-clamp-3'>
+              {member.introduction}
+            </p>
+            <div className='absolute left-0 bottom-0 w-full bg-gray-800 text-white text-sm rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10'>
+              {member.introduction}
+            </div>
+          </div>
         </div>
         <div className='mb-4 flex'>
           <label className='text-gray-700 font-medium w-1/3'>
