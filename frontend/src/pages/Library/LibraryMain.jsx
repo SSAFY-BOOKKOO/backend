@@ -44,6 +44,7 @@ const LibraryMain = () => {
   const libraryRef = useRef(null);
 
   useEffect(() => {
+    console.log('/libraries/me fetch check');
     const fetchLibraries = async () => {
       try {
         const response = await authAxiosInstance.get(`/libraries/me`);
@@ -68,6 +69,7 @@ const LibraryMain = () => {
   }, []);
 
   useEffect(() => {
+    console.log('/members/info fetch check');
     const fetchMemberInfo = async () => {
       try {
         const response = await authAxiosInstance.get('/members/info');
