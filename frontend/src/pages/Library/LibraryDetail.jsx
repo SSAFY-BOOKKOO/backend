@@ -6,7 +6,7 @@ import { useAtom } from 'jotai';
 import useModal from '@hooks/useModal';
 import ReviewCom from '@components/Library/Detail/ReviewCom';
 import ColorPicker from '@components/Library/BookCreate/ColorPicker';
-import ShelfSelectStep from '@components/Library/BookCreate/ShelfSelectStep';
+import ShelfChange from '@components/Library/Detail/ShelfChange';
 import SettingsModal from '@components/@common/SettingsModal';
 import { PRESET_COLORS } from '@constants/ColorData';
 import { bookDataAtom } from '@atoms/bookCreateAtom';
@@ -271,7 +271,7 @@ const LibraryDetail = () => {
             >
               &times;
             </button>
-            <ShelfSelectStep onClose={handleCloseShelfSelect} />
+            <ShelfChange onClose={handleCloseShelfSelect} />
           </div>
         </div>
       )}

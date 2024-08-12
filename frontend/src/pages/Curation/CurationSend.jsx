@@ -10,6 +10,7 @@ import Spinner from '@components/@common/Spinner';
 const CurationSend = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [countLetters, setCountLetters] = useState(0);
 
   // const { sendLetters } = location.state || { sendLetters: [] };
 
@@ -26,7 +27,8 @@ const CurationSend = () => {
     authAxiosInstance
       .get('/curations/mycuration', { params: { page } })
       .then(res => {
-        setLetters(res.data);
+        setLetters(res.data.curationList);
+        setCountLetters(res.data.count);
         console.log(res);
       })
       .catch(err => {
@@ -64,7 +66,7 @@ const CurationSend = () => {
         <>
           <CurationTab />
           <p className='font-bold text-green-400 px-8 pt-3 pb-1'>
-            보낸 레터 수: {sendLetters.length}
+            보낸 레터 수: {countLetters}
           </p>
           {sendLetters.length > 0 ? (
             <div className='flex-1 overflow-y-auto px-8'>

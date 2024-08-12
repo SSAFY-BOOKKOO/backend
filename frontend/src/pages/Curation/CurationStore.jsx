@@ -13,6 +13,7 @@ const CurationStore = () => {
   const [storedLetters, setStoredLetters] = useState([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true); // 로딩 상태 추가
+  const [countLetters, setCountLetters] = useState(0);
 
   // 레터 상세보기
   const handleLetterClick = letter => {
@@ -40,7 +41,8 @@ const CurationStore = () => {
         },
       })
       .then(res => {
-        setStoredLetters(res.data);
+        setStoredLetters(res.data.curationList);
+        setCountLetters(res.data.count);
         console.log(res);
       })
       .catch(err => {
@@ -55,7 +57,7 @@ const CurationStore = () => {
     <div className='flex flex-col'>
       <CurationTab />
       <p className='font-bold text-green-400 px-8 pt-3 pb-1'>
-        보관한 레터 수: {storedLetters.length}
+        보관한 레터 수: {countLetters}
       </p>
       {loading ? (
         <Spinner />

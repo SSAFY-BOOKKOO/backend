@@ -19,14 +19,15 @@ const CurationReceive = () => {
   const [storeLetters, setStoreLetters] = useState([]);
   const [selectedLetters, setSelectedLetters] = useState([]);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [countLetters, setCountLetters] = useState(0);
 
   // 컴포넌트가 마운트될 때 로컬 스토리지에서 storeLetters를 불러옴
-  useEffect(() => {
-    const stored = localStorage.getItem('storeLetters');
-    if (stored) {
-      setStoreLetters(JSON.parse(stored));
-    }
-  }, []);
+  // useEffect(() => {
+  //   const stored = localStorage.getItem('storeLetters');
+  //   if (stored) {
+  //     setStoreLetters(JSON.parse(stored));
+  //   }
+  // }, []);
 
   // storeLetters가 변경될 때마다 로컬 스토리지에 저장
   useEffect(() => {
@@ -37,7 +38,7 @@ const CurationReceive = () => {
     authAxiosInstance
       .get('/curations/store', { params: { page } })
       .then(res => {
-        setStoreLetters(res.data);
+        setStoreLetters(res.data.curationList);
         console.log(storeLetters);
       })
       .catch(err => {
@@ -50,8 +51,8 @@ const CurationReceive = () => {
     authAxiosInstance
       .get('/curations', { params: { page } })
       .then(res => {
-        setLetters(res.data);
-        console.log(res);
+        setLetters(res.data.curationList);
+        setCountLetters(res.data.count);
       })
       .catch(err => {
         console.log('error:', err);
@@ -147,9 +148,7 @@ const CurationReceive = () => {
         </p>
       </div>
       <div className='flex justify-between items-center px-8 pt-3 pb-1'>
-        <p className='font-bold text-green-400'>
-          받은 레터 수: {letters.length}
-        </p>
+        <p className='font-bold text-green-400'>받은 레터 수: {countLetters}</p>
         <FaTrashCan
           className='text-xl cursor-pointer'
           onClick={() => setIsDeleting(!isDeleting)}
