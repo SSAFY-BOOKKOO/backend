@@ -47,6 +47,10 @@ dependencies {
 
 	// spring configuration processor
 	implementation 'org.springframework.boot:spring-boot-configuration-processor:3.3.2'
+
+	//minIO
+	implementation 'io.minio:minio:8.5.11'
+
 }
 
 dependencyManagement {
