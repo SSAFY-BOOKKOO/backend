@@ -6,7 +6,7 @@ import Alert from '../../@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
 import CreateLibraryModal from './CreateLibraryModal';
 import ChangeLibraryNameModal from './ChangeLibraryNameModal';
-import ChangeFontStyleModal from './ChangeFontStyleModal'; // 추가된 모달
+import ChangeFontStyleModal from './ChangeFontStyleModal';
 import CaptureButton from './CaptureButton';
 
 const LibraryOptions = ({
@@ -21,7 +21,7 @@ const LibraryOptions = ({
   newLibraryName,
   setNewLibraryName,
   changeLibraryName,
-  changeFontStyle, // 폰트 스타일 변경 함수 추가
+  changeFontStyle,
   viewOnly = false,
   libraryRef,
 }) => {
@@ -31,7 +31,7 @@ const LibraryOptions = ({
   const [showChangeLibraryNameModal, setShowChangeLibraryNameModal] =
     useState(false);
   const [showChangeFontStyleModal, setShowChangeFontStyleModal] =
-    useState(false); // 폰트 변경 모달 상태 추가
+    useState(false);
   const setAlert = useSetAtom(alertAtom);
 
   const handleDeleteLibrary = () => {
