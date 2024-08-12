@@ -100,6 +100,17 @@ public class QuoteController {
                              .build();
     }
 
+    @GetMapping("/count")
+    @Operation(summary = "멤버의 글귀 개수 반환 API",
+        description = "멤버가 작성한 글귀의 개수를 반환하는 API")
+    public ResponseEntity<Integer> getMyQuoteCount(
+        @RequestHeader HttpHeaders headers
+    ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+        Integer count = quoteService.getQuoteCount(memberId);
+        return ResponseEntity.ok(count);
+    }
+
     @PostMapping(value = "/ocr", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "OCR 이미지 텍스트 추출 API",
         description = "OCR을 통해 글귀의 텍스트를 가져옵니다.")
