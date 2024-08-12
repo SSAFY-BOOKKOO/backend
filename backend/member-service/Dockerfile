@@ -15,6 +15,7 @@ COPY gradle gradle
 COPY build.gradle .
 COPY settings.gradle .
 COPY src src
+ENV GOOGLE_APPLICATION_CREDENTIALS=src/main/resources/bookkoo_google.json
 RUN dos2unix ./gradlew
 RUN chmod +x ./gradlew
 RUN ./gradlew bootJar
