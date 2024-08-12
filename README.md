@@ -161,9 +161,13 @@
 ### Backend
 
 ![Java](https://img.shields.io/badge/Java-634533.svg?&style=for-the-badge)
-![SpringBoot](https://img.shields.io/badge/Spring_Boot-6DB33F.svg?&style=for-the-badge&logo=SpringBoot&logEoColor=white)
+![SpringBoot](https://img.shields.io/badge/Spring_Boot-6DB33F.svg?&style=for-the-badge&logo=SpringBoot&logoColor=white)
 ![SpringSecurity](https://img.shields.io/badge/Spring_Security-6DB33F.svg?&style=for-the-badge&logo=SpringSecurity&logoColor=white)
+![SpringCloud](https://img.shields.io/badge/Spring_Cloud-6DB33F.svg?&style=for-the-badge&logo=Spring&logoColor=white)
 ![SpringJPA](https://img.shields.io/badge/Spring_JPA-6DB33F.svg?&style=for-the-badge)
+![SpringCloudGateway](https://img.shields.io/badge/Spring_Cloud_Gateway-6DB33F.svg?&style=for-the-badge&logoColor=white)
+![SpringCloudEureka](https://img.shields.io/badge/Spring_Cloud_Eureka-6DB33F.svg?&style=for-the-badge&logoColor=white)
+![QueryDSL](https://img.shields.io/badge/QueryDSL-1D9FD7.svg?&style=for-the-badge&logoColor=white)
 
 ### **외부 API**
 - Google Cloud Vision
