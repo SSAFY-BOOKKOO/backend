@@ -1,6 +1,6 @@
-package com.ssafy.bookkoo.commonservice.s3.controller;
+package com.ssafy.bookkoo.commonservice.file.controller;
 
-import com.ssafy.bookkoo.commonservice.s3.service.S3Service;
+import com.ssafy.bookkoo.commonservice.file.service.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -14,16 +14,16 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/commons/file")
-public class S3Controller {
+public class FileController {
 
-    private final S3Service s3Service;
+    private final FileService fileService;
 
     @PostMapping
     public ResponseEntity<String> uploadFile(
         @RequestPart("file") MultipartFile file,
         @RequestPart("bucket") String bucket
     ) {
-        String fileKey = s3Service.saveToBucket(file, bucket);
+        String fileKey = fileService.saveToBucket(file, bucket);
         return ResponseEntity.ok(fileKey);
     }
 
@@ -32,7 +32,7 @@ public class S3Controller {
         @RequestParam("file") String file,
         @RequestParam("bucket") String bucket
     ) {
-        s3Service.deleteToBucket(file, bucket);
+        fileService.deleteToBucket(file, bucket);
         return ResponseEntity.ok()
                              .build();
     }
@@ -43,7 +43,7 @@ public class S3Controller {
         @PathVariable(value = "fileName") String fileName
     ) {
         HttpHeaders headers = new HttpHeaders();
-        byte[] file = s3Service.getFile(bucket, fileName);
+        byte[] file = fileService.getFile(bucket, fileName);
         headers.setContentType(MediaType.IMAGE_JPEG);
         headers.setContentLength(file.length);
         return ResponseEntity.ok()
