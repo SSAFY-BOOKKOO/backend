@@ -132,18 +132,18 @@ const LibraryDetail = () => {
 
                 <div>
                   <div className='flex flex-col items-center'>
-                    <div className=' w-11/12 h-96 pt-6 pr-7 pl-12 cursor-pointer rounded-lg mt-[2rem] z-0 flex justify-center'>
+                    <div className='absolute w-11/12 h-96 pt-6 pr-7 pl-12 cursor-pointer rounded-lg mt-[2rem] z-0 flex justify-center'>
                       <img
                         src={coverImgUrl}
                         alt={title}
                         onClick={() => setShowReview(true)}
-                        className='relative w-full h-full'
+                        className=' w-full h-full'
                       />
 
-                      <IoBookmarkSharp className='absolute top-5 right-16 flex items-center justify-center w-16 h-32 text-blue-500 z-10' />
+                      <IoBookmarkSharp className='absolute top-0 right-14 flex items-center justify-center w-24 h-32 text-green-400 z-10' />
                       {bookData.status === 'READ' && (
                         <span
-                          className='absolute flex flex-col items-center justify-center right-[5.5rem] text-black text-xs mb-5 font-bold z-20'
+                          className='absolute flex flex-col items-center justify-center right-[5.8rem] top-8 text-black text-mb mb-5 font-bold z-20'
                           style={{
                             writingMode: 'vertical-rl',
                             textOrientation: 'upright',
@@ -155,11 +155,11 @@ const LibraryDetail = () => {
                       )}
                       {bookData.status === 'READING' && (
                         <span
-                          className='absolute right-[5.5rem] text-black text-xs mb-5 font-bold z-20'
+                          className='absolute right-[5.8rem] mt-1 text-black text-md mb-5 font-bold z-20'
                           style={{
                             writingMode: 'vertical-rl',
                             textOrientation: 'upright',
-                            letterSpacing: '-0.23em',
+                            letterSpacing: '-0.1em',
                           }}
                         >
                           읽는중
@@ -167,11 +167,11 @@ const LibraryDetail = () => {
                       )}
                       {bookData.status === 'DIB' && (
                         <span
-                          className='absolute flex items-center justify-center right-[5.5rem] text-black text-xs mb-5 font-bold z-20'
+                          className='absolute flex items-center justify-center right-[5.6rem] top-10 mt-1 text-black text-lg mb-5 font-bold z-20'
                           style={{
                             writingMode: 'vertical-rl',
                             textOrientation: 'upright',
-                            letterSpacing: '-0.23em',
+                            letterSpacing: '-0.1em',
                           }}
                         >
                           찜
@@ -186,14 +186,14 @@ const LibraryDetail = () => {
                       actions={actions}
                       className='z-50'
                     />
-                    {/* 읽은 기간 로직 (수정예정) */}
-                    <p className='m-2 pl-3'>
-                      {bookData.startAt
-                        ? `${bookData.startAt}~${bookData.endAt}`
-                        : ''}
-                    </p>
                   </div>
+                  {/* 읽은 기간 로직 (수정예정) */}
                 </div>
+                <p className='flex items-center justify-center mb-9'>
+                  {bookData.startAt
+                    ? `${bookData.startAt}~${bookData.endAt}`
+                    : ''}
+                </p>
               </div>
 
               {/* 2. 핑크 영역 (띠지) */}
