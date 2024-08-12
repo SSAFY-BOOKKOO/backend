@@ -51,7 +51,7 @@ const Login = () => {
 
       // 로그인 성공
       localStorage.setItem('ACCESS_TOKEN', data.accessToken);
-      localStorage.setItem('USER_NICKNAME', userData.nickName);
+      localStorage.setItem('MEMBER_ID', userData.memberId);
 
       setIsAuthenticated(true);
       navigate('/');

@@ -72,7 +72,7 @@ const Notification = () => {
 
   return (
     <WrapContainer>
-      <div className='max-w-md mx-auto h-screen flex flex-col'>
+      <div className='max-w-md mx-auto flex flex-col'>
         <header className='bg-white flex items-center pb-3 justify-between z-10 p-4'>
           <IconButton onClick={handleBack} icon={IoArrowBack} />
           <h1 className='text-lg font-semibold'>알림</h1>

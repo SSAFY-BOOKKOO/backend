@@ -11,7 +11,8 @@ const App = () => {
     '/search',
     '/notification',
     '/intro',
-    '/mypage/friend',
+    '/mypage/friend/search',
+    '/booktalk/create',
   ].includes(location.pathname);
   const isBottomTab = ['/intro'].includes(location.pathname);
 

@@ -1,0 +1,10 @@
+.custom-day-picker .rdp-caption_dropdowns {
+  display: flex;
+  flex-direction: row-reverse; /* 드롭다운 순서를 반대로 설정 */
+  justify-content: center; /* 중앙 정렬 */
+}
+
+.custom-day-picker .rdp-dropdown_month,
+.custom-day-picker .rdp-dropdown_year {
+  margin: 0 5px; /* 간격 조정 */
+}

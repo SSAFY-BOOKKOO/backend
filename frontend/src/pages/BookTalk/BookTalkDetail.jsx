@@ -1,51 +1,74 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ChatBubble from '@components/@common/ChatBubble';
 import Button from '@components/@common/Button';
 import Textarea from '@components/@common/Textarea';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
-import TopDownButton from '@components/@common/TopDownButton';
+import { useLocation, useParams } from 'react-router-dom';
+import { useInView } from 'react-intersection-observer';
+import useModal from '@hooks/useModal';
+import ProfileModal from '@components/@common/ProfileModal';
+import useBookTalkChatsInfiniteScroll from '@hooks/useBookTalkChatsInfiniteScroll';
+import Spinner from '@components/@common/Spinner';
 import {
-  getBookTalkChats,
   postBookTalkChat,
   postBookTalkEnter,
+  postBookTalkLike,
 } from '@services/BookTalk';
-import { useLocation, useParams } from 'react-router-dom';
+import { QueryClient } from '@tanstack/react-query';
 
 const BookTalkDetail = () => {
   const location = useLocation();
-  const params = useParams();
   const { bookTalkId } = useParams();
   const { book } = location.state;
-  const userNickName = localStorage.getItem('USER_NICKNAME');
+  const memberId = localStorage.getItem('MEMBER_ID');
   const [inputMessage, setInputMessage] = useState('');
-  const [messageList, setMessageList] = useState([]);
-  const messagesEndRef = useRef(null);
-
   const [connected, setConnected] = useState(false);
+  const [messageList, setMessageList] = useState([]);
   const client = useRef(null);
+  const chatContainerRef = useRef(null);
+  const messagesEndRef = useRef(null);
+  const [initialLoading, setInitialLoading] = useState(true);
+
+  const { ref, inView } = useInView();
+  const { isOpen, toggleModal, closeModal } = useModal();
+  const [modalUser, setModalUser] = useState(null);
+
+  const queryClient = new QueryClient();
+  const { data, fetchNextPage, isFetchingNextPage, hasNextPage } =
+    useBookTalkChatsInfiniteScroll(bookTalkId);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView();
   };
 
-  // 스크롤 아래로
-  useEffect(scrollToBottom, [messageList]);
-
-  // 채팅 연결
   useEffect(() => {
     connect();
-    getChats();
-
-    return () => disconnect();
+    return () => {
+      disconnect();
+      queryClient.removeQueries({ queryKey: ['bookTalkChats', bookTalkId] });
+    };
   }, []);
 
-  // 메세지 추가
-  const addMessage = useCallback(newMessage => {
-    setMessageList(prevList => [...prevList, newMessage]);
-  }, []);
+  useEffect(() => {
+    if (data?.pages) {
+      setMessageList(data.pages.flatMap(page => page));
+    }
+  }, [data]);
 
-  // 메세지 작성
+  useEffect(() => {
+    if (initialLoading && messageList.length > 0) {
+      scrollToBottom();
+      setInitialLoading(false);
+    }
+  }, [messageList, initialLoading]);
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage, isFetchingNextPage]);
+
   const handleInputChange = e => {
     const message = e.target.value;
     if (message.length <= 1000) {
@@ -53,94 +76,147 @@ const BookTalkDetail = () => {
     }
   };
 
-  // 메세지 전송
   const handleSendMessage = async () => {
     if (inputMessage.trim() !== '') {
       await postBookTalkChat(bookTalkId, inputMessage);
       setInputMessage('');
     }
+
+    scrollToBottom();
   };
 
-  // 채팅방 연결
   const connect = () => {
     client.current = new Client({
       webSocketFactory: () =>
         new SockJS('https://api.i11a506.ssafy.io/booktalks/connect'),
-      debug: function (str) {
-        console.log(str);
-      },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
     });
 
-    client.current.onConnect = async frame => {
+    client.current.onConnect = async () => {
       setConnected(true);
       await postBookTalkEnter(bookTalkId);
 
       client.current.subscribe(`/booktalks/sub/chat/${bookTalkId}`, message => {
-        console.log(JSON.stringify(JSON.parse(message.body)));
-
-        // 채팅 가져오기
         const newMessage = JSON.parse(message.body);
-        addMessage(newMessage);
+        console.log(newMessage);
+
+        queryClient.setQueryData(['bookTalkChats', bookTalkId], old => {
+          if (!old) return old;
+
+          const newPages = [...old.pages];
+          newPages[0] = [newMessage, ...newPages[0]];
+
+          return {
+            ...old,
+            pages: newPages,
+          };
+        });
+
+        setMessageList(prevList => [newMessage, ...prevList]);
       });
     };
-
-    client.current.onStompError = frame => {};
 
     client.current.activate();
   };
 
-  // 채팅 가져오기
-  const getChats = async () => {
-    const data = await getBookTalkChats(bookTalkId);
-    console.log(data);
-
-    setMessageList(data.reverse());
-  };
-
-  // 채팅방 연결 제거
   const disconnect = () => {
     if (client.current !== null) {
       client.current.deactivate();
     }
-
     setConnected(false);
+  };
+
+  const handleProfileClick = user => {
+    setModalUser(user);
+    toggleModal();
+  };
+
+  const handleLikeClick = async chatMessageId => {
+    // 기존 messageList 상태 백업
+    const previousMessageList = [...messageList];
+
+    // messageList 업데이트
+    const updatedMessageList = messageList.map(message => {
+      if (message.messageId === chatMessageId) {
+        return {
+          ...message,
+          like: message.isMemberLiked ? message.like - 1 : message.like + 1,
+          isMemberLiked: !message.isMemberLiked,
+        };
+      }
+      return message;
+    });
+
+    setMessageList(updatedMessageList);
+
+    try {
+      await postBookTalkLike(chatMessageId);
+      queryClient.invalidateQueries(['bookTalkChats', bookTalkId]);
+    } catch (error) {
+      setMessageList(previousMessageList);
+    }
+  };
+
+  const renderMessages = () => {
+    if (!messageList.length) return null;
+
+    return messageList.map((message, index) => (
+      <ChatBubble
+        key={message?.messageId}
+        message={message?.message}
+        role={message.memberId === memberId ? 'user' : 'other'}
+        showProfile={message?.memberId !== memberId}
+        nickName={message.nickName}
+        time={message.createdAt}
+        showLikes={true}
+        likes={message?.like}
+        isMemberLiked={message?.isMemberLiked}
+        profileImage={message?.profileImgUrl}
+        profileClick={() =>
+          handleProfileClick({
+            nickName: message.nickName,
+            profileImgUrl: message.profileImgUrl,
+          })
+        }
+        onLikeClick={() => handleLikeClick(message?.messageId)}
+      />
+    ));
   };
 
   return (
     <div className='flex flex-col min-h-[calc(100vh-121px)] w-full'>
-      <div className='flex justify-center w-full'>
-        <div className='flex flex-col items-center w-3/4 max-w-md'>
-          <div className='w-32 min-h-40 my-4 flex justify-center'>
+      <ProfileModal
+        isOpen={isOpen}
+        onRequestClose={closeModal}
+        nickname={modalUser?.nickName}
+        profileImgUrl={modalUser?.profileImgUrl}
+      />
+      <div className='sticky top-0 z-10 bg-white shadow p-4'>
+        <div className='flex items-center justify-between'>
+          <div className='flex items-center'>
             <img
               src={book?.coverImgUrl}
-              alt='Book Cover'
-              className='rounded-lg'
+              alt='book_cover'
+              className='w-16 h-20 rounded-lg mr-4'
             />
-          </div>
-
-          <div className='text-center mb-3'>
-            <h2 className='text-xl font-semibold'>{book.title}</h2>
-            <p className='text-gray-500'>{book.author}</p>
+            <div>
+              <h2 className='text-lg font-semibold text-overflow-2'>
+                {book.title}
+              </h2>
+              <p className='text-gray-500 text-overflow-1'>{book.author}</p>
+            </div>
           </div>
         </div>
       </div>
-      <div className='flex-1 overflow-y-auto p-4 scrollbar-none flex flex-col-reverse'>
-        <div className='space-y-4'>
-          {messageList.map((message, index) => (
-            <ChatBubble
-              key={index}
-              message={message?.message}
-              role={message?.nickName === userNickName ? 'user' : 'other'}
-              showProfile={message?.role !== 'user'}
-              showLikes={true}
-              likes={message?.likes}
-              profileImage={message?.profileImage}
-            />
-          ))}
-        </div>
+      {isFetchingNextPage && <Spinner infiniteScroll />}
+      <div ref={ref}></div>
+      <div
+        ref={chatContainerRef}
+        className='flex-1 overflow-y-auto p-4 scrollbar-none flex flex-col-reverse'
+      >
+        {renderMessages()}
       </div>
       <div ref={messagesEndRef} />
       <div className='bg-white p-4 sticky bottom-0'>
