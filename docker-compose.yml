@@ -189,7 +189,7 @@ services:
   member-service:
     container_name: member-service
     environment: 
-      - GOOGLE_APPLICATION_CREDENTIALS=./backend/member-service/src/main/resources/bookkoo_google.json
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/config/bookkoo_google.json
     build:
       context: ./backend/member-service
     ports:
@@ -206,6 +206,7 @@ services:
       timeout: 3s
       retries: 3
     volumes:
+      - ./config/member-service:/app/config
       - ./logs/member-service:/app/logs
   
   booktalk-service:
