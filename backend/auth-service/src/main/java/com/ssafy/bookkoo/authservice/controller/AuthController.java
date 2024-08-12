@@ -80,6 +80,7 @@ public class AuthController {
         authService.logout(memberId);
         //쿠키 만료 시간 0으로 설정
         Cookie cookie = CookieUtils.secureCookieGenerate(REFRESH_TOKEN_NAME, "", Duration.ZERO);
+        cookie.setDomain("ssafy.io");
         response.addCookie(cookie);
         return ResponseEntity.ok()
                              .build();
