@@ -14,11 +14,13 @@ import com.ssafy.bookkoo.booktalkservice.exception.BookTalkNotFoundException;
 import com.ssafy.bookkoo.booktalkservice.repository.BookTalkMapperRepository;
 import com.ssafy.bookkoo.booktalkservice.repository.BookTalkRepository;
 import feign.FeignException;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -190,4 +192,15 @@ public class BookTalkServiceImpl implements BookTalkService {
             throw new BookNotFoundException();
         }
     }
+
+    @Scheduled(cron = "* * 0 * * *")
+    @Transactional
+    public void dayCountDelete() {
+        List<BookTalk> bookTalkList = bookTalkRepository.findAll();
+        for (BookTalk bookTalk : bookTalkList) {
+            bookTalk.dayCountDelete();
+        }
+    }
+
+    
 }
