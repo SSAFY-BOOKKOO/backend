@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const ChangeFontStyleModal = ({
   showModal,
@@ -11,6 +11,13 @@ const ChangeFontStyleModal = ({
 }) => {
   const [localFontName, setLocalFontName] = useState(fontName || '');
   const [localFontSize, setLocalFontSize] = useState(fontSize || '0');
+
+  useEffect(() => {
+    if (!showModal) {
+      setLocalFontName('');
+      setLocalFontSize('0');
+    }
+  }, [showModal]);
 
   const handleSave = () => {
     changeFontStyle(localFontName, localFontSize);

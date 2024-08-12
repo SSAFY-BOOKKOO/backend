@@ -32,11 +32,13 @@ const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
         </div>
         <div className='mb-4 flex'>
           <label className='text-gray-700 font-medium w-1/3'>소개글</label>
-          <div className='w-2/3 text-right relative group'>
+          <div className='w-2/3 text-left relative group'>
+            {' '}
+            {/* 텍스트를 왼쪽 정렬 */}
             <p className='text-gray-700 font-medium line-clamp-3'>
               {member.introduction}
             </p>
-            <div className='absolute left-0 bottom-0 w-full bg-gray-800 text-white text-sm rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10'>
+            <div className='absolute left-0 top-full w-full bg-gray-800 text-white text-sm rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10'>
               {member.introduction}
             </div>
           </div>
