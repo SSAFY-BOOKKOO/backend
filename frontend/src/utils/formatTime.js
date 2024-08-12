@@ -1,5 +1,8 @@
 import {
   formatDistanceToNow,
+  isToday,
+  isYesterday,
+  isThisYear,
   format,
   differenceInMinutes,
   differenceInHours,
@@ -36,5 +39,28 @@ export const formatRelativeTime = date => {
   } else {
     // 7일 이상
     return format(adjustedDate, 'yyyy년 MM월 dd일', { locale: ko });
+  }
+};
+
+export const formatChatTime = date => {
+  const dateObj = new Date(date);
+  if (!isValid(dateObj)) {
+    return '';
+  }
+
+  const adjustedDate = addHours(dateObj, TIME_DIFFERENCE);
+
+  if (isToday(adjustedDate)) {
+    // 오늘: 시:분 (오전/오후)
+    return format(adjustedDate, 'a h:mm', { locale: ko });
+  } else if (isYesterday(adjustedDate)) {
+    // 어제
+    return '어제';
+  } else if (isThisYear(adjustedDate)) {
+    // 올해 내의 다른 날: 월/일
+    return format(adjustedDate, 'M월 d일');
+  } else {
+    // 작년 이전: 년/월/일
+    return format(adjustedDate, 'yyyy년 M월 d일');
   }
 };

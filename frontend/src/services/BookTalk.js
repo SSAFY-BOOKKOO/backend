@@ -94,3 +94,16 @@ export const postBookTalkChat = async (bookTalkId, content) => {
     throw error;
   }
 };
+
+// 채팅 좋아요
+export const postBookTalkLike = async chatMessageId => {
+  try {
+    const response = await authAxiosInstance.post(
+      `/booktalks/chat/like/${chatMessageId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('post booktalk like failed:', error);
+    throw error;
+  }
+};

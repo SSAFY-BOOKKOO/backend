@@ -8,8 +8,8 @@ import useMyBookTalkInfiniteScroll from '@hooks/useMyBookTalkInfiniteScroll';
 import Spinner from '@components/@common/Spinner';
 
 const sortOptions = [
-  { id: 1, value: 'chat', name: '채팅순' },
-  { id: 2, value: 'time', name: '최근 대화순' },
+  { id: 1, value: 'time', name: '최근 대화순' },
+  { id: 2, value: 'chat', name: '채팅순' },
 ];
 
 const BookTalkMore = () => {

@@ -50,18 +50,21 @@ const BookItem = ({ book, onClick, onCreateClick }) => {
     };
 
     authAxiosInstance
-      .post('/books', bookData)
+      .post('/books/isbn', bookData)
       .then(res => {
         console.log('ID 받아라!!:', res.data.id);
         book.id = res.data.id;
+
         console.log('book 객체!!:', book);
+
+        const updatedBook = { ...book, id: book.id };
+        onCreateClick(updatedBook);
+        navigateToCreate();
       })
       .catch(err => {
         console.log('error:', err);
       });
 
-    onCreateClick();
-    navigateToCreate();
     console.log('눌렀음');
   };
 
