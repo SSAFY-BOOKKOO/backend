@@ -263,7 +263,7 @@ public class MemberServiceImpl implements MemberService {
                                      .libraryStyleDto(LibraryStyleDto.builder()
                                                                      .libraryColor("default")
                                                                      .fontName("default")
-                                                                     .fontSize("default")
+                                                                     .fontSize("0")
                                                                      .build())
                                      .build();
         libraryServiceClient.createLibrary(memberId, createLibraryDto);
