@@ -72,7 +72,20 @@ public class StatsController {
      * @return 읽은 권수
      */
     @GetMapping("/read")
-    @Operation
+    @Operation(
+        summary = "독서 권수 통계에 들어갈 데이터 반환",
+        description = """
+            ## 독서 읽은 권수 통계에 들어갈 데이터 반환
+
+
+            ### Input:
+            | Name | Type  | Description |
+            |-----|-----|-------|
+            | startAt | LocalDate | 시작일 |
+            | endAt | LocalDate | 끝일 |
+
+            """
+    )
     public ResponseEntity<Integer> getCountOfREAD(
         @RequestHeader HttpHeaders headers,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startAt,

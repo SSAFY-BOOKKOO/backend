@@ -10,6 +10,7 @@ import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseAladinSearchDetail;
 import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseOriginAladinAPI;
 import com.ssafy.bookkoo.bookservice.dto.aladin.ResponseOriginAladinDetail;
 import com.ssafy.bookkoo.bookservice.dto.book.CheckExistBookByIsbnDto;
+import com.ssafy.bookkoo.bookservice.exception.AladdinAPIException;
 import com.ssafy.bookkoo.bookservice.mapper.BookMapper;
 import com.ssafy.bookkoo.bookservice.repository.book.BookRepository;
 import java.io.IOException;
@@ -77,6 +78,11 @@ public class AladinAPIHandler {
             ResponseOriginAladinAPI originResponse = objectMapper.readValue(response.body(),
                 ResponseOriginAladinAPI.class);
             ResponseAladinAPI apiResponse = bookMapper.toResponseAladinAPI(originResponse);
+
+            // null 체크 추가
+            if (apiResponse.getItem() == null) {
+                throw new AladdinAPIException();
+            }
 
             // coverImgUrl 값 변환(기본에서 큰 사이즈로)
             apiResponse.getItem()

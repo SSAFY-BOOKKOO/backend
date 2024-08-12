@@ -132,12 +132,46 @@ public class MemberExceptionHandler {
 
     /**
      * 권한이 없는 리소스에 접근할 때 발생하는 예외
+     *
      * @param e
      * @return
      */
     @ExceptionHandler(UnAuthorizationException.class)
     public ResponseEntity<String> handleUnAuthorizationException(UnAuthorizationException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * OCR을 통해 추출한 텍스트가 없을 경우 발생하는 예외
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(TextNotDetectedException.class)
+    public ResponseEntity<String> handleTextNotDetectedException(TextNotDetectedException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * 파일을 업로드 하지 않았을 경우 발생하는 예외
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(FileNotExistException.class)
+    public ResponseEntity<String> handleFileNotExistException(FileNotExistException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * OCR을 수행 중 에러 발생 시 발생하는 예외
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(OCRProcessingException.class)
+    public ResponseEntity<String> handleOCRProcessingException(OCRProcessingException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR )
                              .body(e.getMessage());
     }
 }
