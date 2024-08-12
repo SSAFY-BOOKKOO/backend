@@ -6,6 +6,7 @@ import com.ssafy.bookkoo.curationservice.dto.RequestCreateCurationDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDetailDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDto;
+import com.ssafy.bookkoo.curationservice.dto.ResponseCurationListDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseRecipientDto;
 import com.ssafy.bookkoo.curationservice.entity.Curation;
@@ -57,7 +58,6 @@ public class CurationServiceImpl implements CurationService {
                                     .content(createCurationDto.content())
                                     .build();
         curationRepository.save(curation);
-        // 멤버 ID Token에서 가져오기
         List<ResponseRecipientDto> recipients = memberServiceClient.getLetterRecipients(writer);
 
         for (ResponseRecipientDto recipient : recipients) {
@@ -131,14 +131,17 @@ public class CurationServiceImpl implements CurationService {
      * @return ResponseCurationDto
      */
     @Override
-    public List<ResponseCurationDto> getCurationList(Long receiver, Pageable pageable) {
+    public ResponseCurationListDto getCurationList(Long receiver, Pageable pageable) {
         List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByReceiverOrderByCreatedAtDesc(
             receiver, pageable);
         List<Curation> curationList = curationSendByReceiver.stream()
                                                             .map(
                                                                 CurationSend::getCuration)
                                                             .toList();
-        return curationToDto(curationList);
+        return ResponseCurationListDto.builder()
+                                      .curationList(curationToDto(curationList))
+                                      .count(curationSendRepository.countByReceiver(receiver))
+                                      .build();
     }
 
     /**
@@ -191,11 +194,14 @@ public class CurationServiceImpl implements CurationService {
      * @return ResponseCurationDto
      */
     @Override
-    public List<ResponseCurationDto> getSentCurations(Long writer, Pageable pageable) {
+    public ResponseCurationListDto getSentCurations(Long writer, Pageable pageable) {
         List<Curation> curationList = curationRepository.findCurationsByWriterOrderByCreatedAtDesc(
             writer, pageable);
 
-        return curationToDto(curationList);
+        return ResponseCurationListDto.builder()
+                                      .curationList(curationToDto(curationList))
+                                      .count(curationRepository.countByWriter(writer))
+                                      .build();
     }
 
     /**
@@ -203,7 +209,7 @@ public class CurationServiceImpl implements CurationService {
      * @return 수신한 큐레이션 DTO (작성자 닉네임, 큐레이션 ID, 큐레이션 제목, 책 커버 이미지)
      */
     @Override
-    public List<ResponseCurationDto> getStoredCurationList(Long receiver, Pageable pageable) {
+    public ResponseCurationListDto getStoredCurationList(Long receiver, Pageable pageable) {
         List<CurationSend> curationSendByReceiver = curationSendRepository.findCurationSendsByIsStoredAndReceiverOrderByCreatedAtDesc(
             true,
             receiver, pageable);
@@ -211,7 +217,12 @@ public class CurationServiceImpl implements CurationService {
                                                             .map(
                                                                 CurationSend::getCuration)
                                                             .toList();
-        return curationToDto(curationList);
+        return ResponseCurationListDto.builder()
+                                      .curationList(curationToDto(curationList))
+                                      .count(
+                                          curationSendRepository.countByReceiverAndIsStoredIsTrue(
+                                              receiver))
+                                      .build();
     }
 
     /**
