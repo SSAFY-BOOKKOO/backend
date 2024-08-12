@@ -43,45 +43,35 @@ const LibraryMain = () => {
   const [bookChanges, setBookChanges] = useState([]);
   const libraryRef = useRef(null);
 
-  useEffect(() => {
-    console.log('/libraries/me fetch check');
-    const fetchLibraries = async () => {
-      try {
-        const response = await authAxiosInstance.get(`/libraries/me`);
-        console.log(response);
-        const libraries = response.data;
-        const libraryDetailsPromises = libraries.map(library =>
-          authAxiosInstance.get(`/libraries/${library.id}`)
-        );
-        const librariesDetails = await Promise.all(libraryDetailsPromises);
-        setLibraries(librariesDetails.map(response => response.data));
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchLibraries = async () => {
+    try {
+      const response = await authAxiosInstance.get(`/libraries/me`);
+      const libraries = response.data;
+      const libraryDetailsPromises = libraries.map(library =>
+        authAxiosInstance.get(`/libraries/${library.id}`)
+      );
+      const librariesDetails = await Promise.all(libraryDetailsPromises);
+      setLibraries(librariesDetails.map(response => response.data));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  const fetchMemberInfo = async () => {
+    try {
+      const response = await authAxiosInstance.get('/members/info');
+      setMember(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
     const token = localStorage.getItem('ACCESS_TOKEN');
     if (token) {
       fetchLibraries();
-    }
-  }, []);
-
-  useEffect(() => {
-    console.log('/members/info fetch check');
-    const fetchMemberInfo = async () => {
-      try {
-        const response = await authAxiosInstance.get('/members/info');
-        setMember(response.data);
-        console.log(response);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    const token = localStorage.getItem('ACCESS_TOKEN');
-    if (token) {
       fetchMemberInfo();
     }
   }, []);
@@ -89,12 +79,12 @@ const LibraryMain = () => {
   useEffect(() => {
     if (location.state && location.state.deleteBookId) {
       const deleteBookId = location.state.deleteBookId;
-      setLibraries(prevLibraries => {
-        return prevLibraries.map(library => ({
+      setLibraries(prevLibraries =>
+        prevLibraries.map(library => ({
           ...library,
           books: library.books.filter(book => book.book.id !== deleteBookId),
-        }));
-      });
+        }))
+      );
     }
   }, [location.state]);
 
@@ -259,10 +249,7 @@ const LibraryMain = () => {
     try {
       const libraryId = libraries[activeLibrary].id;
       await authAxiosInstance.delete(`/libraries/${libraryId}`);
-      setLibraries(prev => {
-        const newLibraries = prev.filter((_, index) => index !== activeLibrary);
-        return newLibraries;
-      });
+      setLibraries(prev => prev.filter((_, index) => index !== activeLibrary));
       setActiveLibrary(0);
       setShowMenu(false);
     } catch (error) {
@@ -296,8 +283,8 @@ const LibraryMain = () => {
             libraryOrder: libraries.length + 1,
             libraryStyleDto: {
               libraryColor: '#FFFFFF',
-              fontName: '쿠키런!',
-              fontSize: '3',
+              fontName: 'default',
+              fontSize: '0',
             },
           });
 
@@ -336,11 +323,12 @@ const LibraryMain = () => {
     );
   }
 
+  const currentLibraryStyleDto = libraries[activeLibrary]?.libraryStyleDto;
+
   return (
     <DndProvider backend={MultiBackend} options={HTML5toTouch}>
       <div className='bg-white'>
         {member && <MemberProfile member={member} />}
-
         <LibraryOptions
           activeLibrary={activeLibrary}
           setActiveLibrary={setActiveLibrary}
@@ -362,6 +350,8 @@ const LibraryMain = () => {
               books={libraries[activeLibrary]?.books || []}
               moveBook={moveBook}
               onBookClick={handleBookClick}
+              viewOnly={false}
+              libraryStyleDto={currentLibraryStyleDto}
             />
           )}
         </div>
