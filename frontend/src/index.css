@@ -78,19 +78,19 @@
 }
 @font-face {
   font-family: 'GyeonggiCheonnyeon';
-  src: url('@assets/fonts/GyeonggiCheonnyeon.woff') format('truetype');
+  src: url('@assets/fonts/GyeonggiCheonnyeon.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Inklipquid';
-  src: url('@assets/fonts/Inklipquid.ttf') format('truetype');
+  src: url('@assets/fonts/Inklipquid.woff2') format('woff2');
 }
 @font-face {
   font-family: 'JejuDoldam';
-  src: url('@assets/fonts/JejuDoldam.ttf') format('truetype');
+  src: url('@assets/fonts/JejuDoldam.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Kdg';
-  src: url('@assets/fonts/Kdg.ttf') format('truetype');
+  src: url('@assets/fonts/Kdg.woff2') format('woff2');
 }
 * {
   font-family: 'Pretendard';
