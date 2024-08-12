@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSetAtom } from 'jotai';
 import Button from '@components/@common/Button';
 import Alert from '@components/@common/Alert';
@@ -15,6 +15,7 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
   });
   const [errors, setErrors] = useState({});
   const setAlert = useSetAtom(alertAtom);
+  const introductionRef = useRef(null); // textarea에 대한 ref 생성
 
   useEffect(() => {
     if (member) {
@@ -26,6 +27,13 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
       });
     }
   }, [member]);
+
+  useEffect(() => {
+    if (introductionRef.current) {
+      introductionRef.current.style.height = 'auto';
+      introductionRef.current.style.height = `${introductionRef.current.scrollHeight}px`;
+    }
+  }, [formData.introduction]);
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
@@ -59,14 +67,21 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
   const handleFileChange = e => {
     const file = e.target.files[0];
     if (file) {
-      setFormData({
-        ...formData,
-        profileImgUrl: file,
-      });
-      setErrors(prevErrors => ({
-        ...prevErrors,
-        profileImgUrl: '',
-      }));
+      if (file.type !== 'image/webp') {
+        setFormData({
+          ...formData,
+          profileImgUrl: file,
+        });
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          profileImgUrl: '',
+        }));
+      } else {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          profileImgUrl: 'WEBP 형식의 파일은 지원되지 않습니다.',
+        }));
+      }
     }
   };
 
@@ -114,14 +129,11 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
           }
         );
 
-        console.log(response.data);
-
         setAlert({
           isOpen: true,
           confirmOnly: true,
           message: '프로필이 성공적으로 업데이트되었습니다.',
         });
-
         onSave({
           nickName: formData.nickname,
           categories: formData.categories,
@@ -130,8 +142,6 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
         });
       } catch (error) {
         console.error('Failed to update profile:', error);
-        console.log(error.response.data); // 서버 응답 데이터 로깅
-
         setAlert({
           isOpen: true,
           confirmOnly: true,
@@ -174,25 +184,39 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
           )}
         </div>
         <div className='mb-4'>
-          <label
-            className='block mb-2 text-sm font-medium text-gray-700'
-            htmlFor='profileImgUrl'
-          >
+          <label className='block mb-2 text-sm font-medium text-gray-700'>
             프로필 이미지
           </label>
-          <input
-            type='file'
-            id='profileImgUrl'
-            name='profileImgUrl'
-            onChange={handleFileChange}
-            className='mt-1 p-2 block w-full border rounded-md'
-          />
+          <div className='flex items-center mt-2'>
+            <input
+              type='file'
+              accept='image/*'
+              onChange={handleFileChange}
+              className='hidden'
+              id='profile_img_input'
+            />
+            <Button
+              text='찾기'
+              type='button'
+              color='text-white bg-green-400 active:bg-green-600'
+              size='small'
+              full={false}
+              onClick={() =>
+                document.getElementById('profile_img_input').click()
+              }
+            />
+          </div>
           {formData.profileImgUrl && formData.profileImgUrl instanceof File && (
             <img
               src={URL.createObjectURL(formData.profileImgUrl)}
               alt='Profile Preview'
               className='mt-2 w-32 h-32 object-cover rounded-full inline-block'
             />
+          )}
+          {errors.profileImgUrl && (
+            <p className='text-red-500 text-xs italic'>
+              {errors.profileImgUrl}
+            </p>
           )}
         </div>
         <div className='mb-4'>
@@ -227,9 +251,12 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
             name='introduction'
             value={formData.introduction}
             onChange={handleChange}
+            ref={introductionRef}
             className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
               errors.introduction ? 'border-red-500' : ''
             }`}
+            rows={1}
+            style={{ resize: 'none', overflow: 'hidden' }}
           />
           {errors.introduction && (
             <p className='text-red-500 text-xs italic'>{errors.introduction}</p>

@@ -6,13 +6,15 @@ const ScrollToTop = ({ children }) => {
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = 0;
+    if (!pathname.includes('/booktalk/detail')) {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = 0;
+      }
     }
   }, [pathname]);
 
   return (
-    <div ref={scrollRef} className='flex-1 overflow-y-auto'>
+    <div ref={scrollRef} className='flex-1 overflow-y-auto overflow-x-hidden'>
       {children}
     </div>
   );

@@ -10,6 +10,7 @@ import { getLibrarySearchBooks } from '@services/Library';
 import Spinner from '@components/@common/Spinner';
 import { useAtomValue } from 'jotai';
 import { isLoadingAtom } from '@atoms/loadingAtom';
+import { postBookTalkSearch } from '@services/BookTalk';
 
 const LibrarySearch = () => {
   const navigate = useNavigate();
@@ -49,10 +50,10 @@ const LibrarySearch = () => {
       const results = await Promise.allSettled([
         getLibrarySearchBooks(text, tag),
         getAladinBooks(text, tag),
-        // 북톡 API 추가 예정
+        postBookTalkSearch(text, tag),
       ]);
 
-      const [libraryResult, aladinResult] = results;
+      const [libraryResult, aladinResult, bookTalkResult] = results;
 
       setSearchResults({
         library:
@@ -61,7 +62,8 @@ const LibrarySearch = () => {
           aladinResult.status === 'fulfilled'
             ? aladinResult.value.item || []
             : [],
-        bookTalk: books, // 더미 데이터
+        bookTalk:
+          bookTalkResult.status === 'fulfilled' ? bookTalkResult.value : [],
       });
 
       setSearchParams({ text, tag });
@@ -89,6 +91,7 @@ const LibrarySearch = () => {
     <WrapContainer className='mt-4'>
       <Spinner />
       <SearchForm
+        placeholder='책을 검색하세요'
         searchText={searchText}
         setSearchText={setSearchText}
         onSubmit={handleSearchSubmit}

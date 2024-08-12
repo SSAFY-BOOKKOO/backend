@@ -1,0 +1,99 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.1'
+    id 'io.spring.dependency-management' version '1.1.5'
+}
+
+group = 'com.ssafy.bookkoo'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('springCloudVersion', "2023.0.2")
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    //Spring Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    //Spring Cloud Client
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+    //Postgresql
+    runtimeOnly 'org.postgresql:postgresql'
+
+    //Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    //Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4'
+
+    //Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    //QueryDSL
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    //Mail AWS SES
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'com.amazonaws:aws-java-sdk-ses:1.12.761'
+
+    // MapStruct
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+
+    //openfeign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    // spring configuration processor
+    implementation 'org.springframework.boot:spring-boot-configuration-processor:3.3.2'
+    
+    //구글 Vision
+    implementation 'com.google.cloud:google-cloud-vision:3.5.0'
+
+    //actuator,  prometheus
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+clean {
+    delete file('src/main/generated')
+}

@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaCalendarDays, FaClipboardList } from 'react-icons/fa6';
 import { MdPeopleAlt } from 'react-icons/md';
 import { BsChatSquareQuoteFill } from 'react-icons/bs';
-import profileImgSample from '@assets/images/profile_img_sample.png';
 import settingIcon from '@assets/icons/setting.png';
 import { authAxiosInstance } from '@services/axiosInstance';
 import IconButton from '@components/@common/IconButton';
-import ProfileModal from '@components/MyPage/Profile/ProfileModal.jsx';
+import ProfileModal from '@components/@common/ProfileModal.jsx';
+import { postCategories } from '@services/Book';
+import Button from '@components/@common/Button';
+import Spinner from '@components/@common/Spinner';
 
 const MyPage = () => {
   const [member, setMember] = useState(null);
   const [categories, setCategories] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMemberInfo = async () => {
@@ -20,30 +24,34 @@ const MyPage = () => {
         const memberResponse = await authAxiosInstance.get('/members/info');
         setMember(memberResponse.data);
 
-        const categoriesResponse =
-          await authAxiosInstance.post('/categories/search');
-        setCategories(categoriesResponse.data);
+        const categoriesResponse = await postCategories();
+        setCategories(categoriesResponse);
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchMemberInfo();
   }, []);
 
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center min-h-screen'>
+        <Spinner />
+      </div>
+    );
+  }
+
   if (!member) {
-    return <div>Loading...</div>;
+    return <div>Error loading data.</div>;
   }
 
   const getCategoryName = categoryId => {
     const category = categories.find(cat => cat.id === categoryId);
     return category ? category.name : '';
   };
-
-  const displayCategories =
-    member.categories.length > 4
-      ? member.categories.slice(0, 2).concat(['...'])
-      : member.categories;
 
   const handleProfileClick = () => {
     setIsModalOpen(true);
@@ -53,12 +61,24 @@ const MyPage = () => {
     setIsModalOpen(false);
   };
 
+  const handleLogout = async () => {
+    try {
+      await authAxiosInstance.post('/auth/logout');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      localStorage.removeItem('MEMBER_ID');
+      localStorage.removeItem('ACCESS_TOKEN');
+      navigate('/login');
+    }
+  };
+
   return (
-    <div className='p-4 min-h-[43rem]'>
+    <div className='relative p-4 min-h-[43rem] pb-20'>
       <div className='flex items-start justify-between mb-8'>
         <div className='flex items-start space-x-8 w-full'>
           <img
-            src={member.profileImgUrl || profileImgSample}
+            src={member.profileImgUrl}
             alt='profile'
             className='w-32 h-32 rounded-full cursor-pointer'
             onClick={handleProfileClick}
@@ -74,14 +94,21 @@ const MyPage = () => {
                 />
               </Link>
             </div>
-            <p className='text-md'>{member.introduction}</p>
+            <div className='w-full text-left relative group'>
+              <p className='text-md text-gray-700 font-medium line-clamp-4'>
+                {member.introduction}
+              </p>
+              <div className='absolute left-0 top-full w-full bg-gray-800 text-white text-sm rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10'>
+                {member.introduction}
+              </div>
+            </div>
             <div className='flex flex-wrap mt-2'>
-              {displayCategories.map((category, index) => (
+              {member.categories.map((category, index) => (
                 <span
                   key={index}
                   className='mr-2 mb-2 px-2 py-1 border rounded-lg text-gray-700 bg-pink-100'
                 >
-                  {category === '...' ? '...' : getCategoryName(category)}
+                  {getCategoryName(category)}
                 </span>
               ))}
             </div>
@@ -89,7 +116,7 @@ const MyPage = () => {
         </div>
       </div>
       <hr className='my-4' />
-      <div className='flex justify-around text-center'>
+      <div className='flex justify-around text-center mb-8'>
         <div className='flex flex-col items-center'>
           <Link to='/mypage/statistics'>
             <button className='p-4 rounded-full'>
@@ -121,10 +148,18 @@ const MyPage = () => {
           <p className='text-lg'>친구</p>
         </div>
       </div>
+      <Button
+        text='로그아웃'
+        color='text-white bg-pink-500 active:bg-pink-600'
+        size='small'
+        full={false}
+        className='absolute up-4 right-4'
+        onClick={handleLogout}
+      />
       <ProfileModal
         isOpen={isModalOpen}
         onRequestClose={closeModal}
-        profileImgUrl={member.profileImgUrl || profileImgSample}
+        profileImgUrl={member.profileImgUrl}
         nickname={member.nickName}
         introduction={member.introduction}
       />

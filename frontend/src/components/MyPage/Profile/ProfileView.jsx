@@ -1,6 +1,5 @@
 import React from 'react';
 import Button from '@components/@common/Button';
-import profileImgSample from '@assets/images/profile_img_sample.png';
 
 const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
   const getCategoryName = categoryId => {
@@ -25,7 +24,7 @@ const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
           </label>
           <div className='w-2/3 text-right'>
             <img
-              src={member.profileImgUrl || profileImgSample}
+              src={member.profileImgUrl}
               alt='Profile'
               className='w-16 h-16 rounded-full inline-block'
             />
@@ -33,9 +32,15 @@ const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
         </div>
         <div className='mb-4 flex'>
           <label className='text-gray-700 font-medium w-1/3'>소개글</label>
-          <p className='text-gray-700 font-medium w-2/3 text-right max-h-24 overflow-y-auto'>
-            {member.introduction}
-          </p>
+          <div className='w-2/3 text-left relative group'>
+            {' '}
+            <p className='text-gray-700 font-medium line-clamp-3'>
+              {member.introduction}
+            </p>
+            <div className='absolute left-0 top-full w-full bg-gray-800 text-white text-sm rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10'>
+              {member.introduction}
+            </div>
+          </div>
         </div>
         <div className='mb-4 flex'>
           <label className='text-gray-700 font-medium w-1/3'>
@@ -64,7 +69,7 @@ const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
           <Button
             text='변경'
             size='medium'
-            color='text-white bg-blue-500 active:bg-blue-600'
+            color='text-white bg-green-400 active:bg-green-500'
             onClick={onChangePassword}
           />
         </div>
@@ -77,7 +82,7 @@ const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
           <Button
             text='탈퇴'
             size='medium'
-            color='text-white bg-pink-400 active:bg-pink-600'
+            color='text-white bg-pink-500 active:bg-pink-600'
             onClick={() => console.log('탈퇴')}
           />
         </div>

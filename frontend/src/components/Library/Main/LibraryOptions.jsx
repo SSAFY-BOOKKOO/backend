@@ -6,7 +6,8 @@ import Alert from '../../@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
 import CreateLibraryModal from './CreateLibraryModal';
 import ChangeLibraryNameModal from './ChangeLibraryNameModal';
-import { authAxiosInstance } from '@services/axiosInstance';
+import ChangeFontStyleModal from './ChangeFontStyleModal';
+import CaptureButton from './CaptureButton';
 
 const LibraryOptions = ({
   activeLibrary,
@@ -20,12 +21,16 @@ const LibraryOptions = ({
   newLibraryName,
   setNewLibraryName,
   changeLibraryName,
-  viewOnly = false, // 추가된 viewOnly prop
+  changeFontStyle,
+  viewOnly = false,
+  libraryRef,
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showChangeLibraryNameModal, setShowChangeLibraryNameModal] =
+    useState(false);
+  const [showChangeFontStyleModal, setShowChangeFontStyleModal] =
     useState(false);
   const setAlert = useSetAtom(alertAtom);
 
@@ -38,6 +43,19 @@ const LibraryOptions = ({
       });
     } else {
       setShowDeleteModal(true);
+    }
+  };
+
+  const handleCreateLibraryOption = () => {
+    if (libraries.length >= 3) {
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '서재는 최대 3개까지만 생성할 수 있습니다.',
+      });
+    } else {
+      setShowMenu(false);
+      setShowCreateModal(true);
     }
   };
 
@@ -55,9 +73,13 @@ const LibraryOptions = ({
     },
     {
       label: '서재 생성',
+      onClick: handleCreateLibraryOption,
+    },
+    {
+      label: '폰트 변경',
       onClick: () => {
         setShowMenu(false);
-        setShowCreateModal(true);
+        setShowChangeFontStyleModal(true);
       },
     },
   ];
@@ -78,14 +100,19 @@ const LibraryOptions = ({
           ))}
         </select>
       </div>
-      {!viewOnly && (
-        <SettingsModal
-          isOpen={isSettingsOpen}
-          onClose={() => setIsSettingsOpen(false)}
-          onToggle={() => setIsSettingsOpen(!isSettingsOpen)}
-          actions={actions}
-        />
-      )}
+      <div>
+        <div className='p-1 mr-3 mt-1'>
+          <CaptureButton targetRef={libraryRef} />
+        </div>
+        {!viewOnly && (
+          <SettingsModal
+            isOpen={isSettingsOpen}
+            onClose={() => setIsSettingsOpen(false)}
+            onToggle={() => setIsSettingsOpen(!isSettingsOpen)}
+            actions={actions}
+          />
+        )}
+      </div>
       <DeleteLibraryModal
         showDeleteModal={showDeleteModal}
         deleteLibrary={deleteLibrary}
@@ -106,6 +133,17 @@ const LibraryOptions = ({
           changeLibraryName(libraries[activeLibrary].id, newLibraryName)
         }
         setShowModal={setShowChangeLibraryNameModal}
+      />
+      <ChangeFontStyleModal
+        showModal={showChangeFontStyleModal}
+        fontName={libraries[activeLibrary]?.libraryStyleDto?.fontName}
+        setFontName={name => setFontName(libraries[activeLibrary].id, name)}
+        fontSize={libraries[activeLibrary]?.libraryStyleDto?.fontSize}
+        setFontSize={size => setFontSize(libraries[activeLibrary].id, size)}
+        changeFontStyle={(name, size) =>
+          changeFontStyle(libraries[activeLibrary].id, name, size)
+        }
+        setShowModal={setShowChangeFontStyleModal}
       />
       <Alert />
     </div>

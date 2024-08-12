@@ -1,16 +1,35 @@
 import React from 'react';
 import Button from '../@common/Button';
+import RegisterInput from './RegisterInput';
+import RadioButton from '../@common/RadioButton';
 
-const RegisterStep3 = ({ formData, errors, handleChange, handleSubmit }) => {
+const RegisterStep3 = ({
+  formData,
+  errors,
+  handleChange,
+  handleSubmit,
+  handlePrevStep,
+}) => {
   const handleFormSubmit = e => {
     e.preventDefault();
     handleSubmit(e);
   };
 
+  const reviewVisibilityTags = [
+    { id: 1, value: 'PUBLIC', name: '전체 공개' },
+    { id: 2, value: 'FOLLOWER_PUBLIC', name: '팔로워 공개' },
+    { id: 3, value: 'PRIVATE', name: '비공개' },
+  ];
+
   return (
     <>
-      <h3 className='text-xl font-bold mb-4 text-center'>추가 설정</h3>
-      <label className='block mb-2 text-sm font-medium text-gray-700'>
+      <div className='text-center mb-4'>
+        <h3 className='text-xl font-bold text-left'>추가 설정</h3>
+        <p className='text-gray-500 text-left'>
+          다른 유저와의 교류를 위한 정보
+        </p>
+      </div>
+      <label className='block mb-2 text-md font-medium text-gray-700'>
         큐레이션 레터 수신 알림
         <div className='mt-2'>
           <input
@@ -24,48 +43,38 @@ const RegisterStep3 = ({ formData, errors, handleChange, handleSubmit }) => {
           <span>수신 여부</span>
         </div>
       </label>
-      <label className='block mb-2 text-sm font-medium text-gray-700'>
+      <label className='block mb-2 text-md font-medium text-gray-700'>
         한줄평 공개 설정
-        <div className='flex space-x-4 mt-2 justify-center'>
-          <label className='flex items-center'>
-            <input
-              type='radio'
-              id='reviewVisibility-public'
-              name='reviewVisibility'
-              value='PUBLIC'
-              checked={formData.reviewVisibility === 'PUBLIC'}
-              onChange={handleChange}
-            />
-            <span className='ml-2'>전체 공개</span>
-          </label>
-          <label className='flex items-center'>
-            <input
-              type='radio'
-              id='reviewVisibility-follower_public'
-              name='reviewVisibility'
-              value='FOLLOWER_PUBLIC'
-              checked={formData.reviewVisibility === 'FOLLOWER_PUBLIC'}
-              onChange={handleChange}
-            />
-            <span className='ml-2'>팔로워 공개</span>
-          </label>
-          <label className='flex items-center'>
-            <input
-              type='radio'
-              id='reviewVisibility-private'
-              name='reviewVisibility'
-              value='PRIVATE'
-              checked={formData.reviewVisibility === 'PRIVATE'}
-              onChange={handleChange}
-            />
-            <span className='ml-2'>비공개</span>
-          </label>
-        </div>
+        <RadioButton
+          tags={reviewVisibilityTags}
+          selectedTag={formData.reviewVisibility}
+          setSelectedTag={value =>
+            handleChange({ target: { name: 'reviewVisibility', value } })
+          }
+        />
         {errors.reviewVisibility && (
           <p className='text-red-500 text-sm'>{errors.reviewVisibility}</p>
         )}
       </label>
-      <div className='flex justify-end mt-6'>
+      <RegisterInput
+        labelText='소개글'
+        type='textarea'
+        id='introduction'
+        name='introduction'
+        value={formData.introduction}
+        onChange={handleChange}
+        required
+        error={errors.introduction}
+      />
+      <div className='flex justify-between mt-6'>
+        <Button
+          text='이전'
+          type='button'
+          color='text-white bg-gray-500 active:bg-gray-600'
+          size='medium'
+          full={false}
+          onClick={handlePrevStep}
+        />
         <Button
           text='가입 완료'
           type='submit'

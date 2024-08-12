@@ -7,6 +7,7 @@ import { authAxiosInstance } from '@services/axiosInstance';
 import { useAtom } from 'jotai';
 import { alertAtom } from '@atoms/alertAtom';
 import Alert from '@components/@common/Alert';
+import { postCategories } from '@services/Book';
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -21,9 +22,8 @@ const ProfilePage = () => {
     try {
       const memberResponse = await authAxiosInstance.get('/members/info');
       setMember(memberResponse.data);
-      const categoriesResponse =
-        await authAxiosInstance.post('/categories/search');
-      setCategories(categoriesResponse.data);
+      const categoriesResponse = await postCategories();
+      setCategories(categoriesResponse);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -45,6 +45,7 @@ const ProfilePage = () => {
       categories: updatedInfo.categories ?? prevMember.categories,
     }));
     setIsEditing(false);
+    window.location.reload();
   };
 
   const handleChangePassword = () => setIsChangingPassword(true);
@@ -73,8 +74,8 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className='max-w-md mx-auto mt-10'>
-      <div className='flex border-b mb-6'>
+    <div className='max-w-md mx-auto'>
+      <div className='flex border-b '>
         <button
           className={`flex-1 py-2 text-center ${
             activeTab === 'profile'

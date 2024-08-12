@@ -6,10 +6,12 @@ import Input from '@components/@common/Input';
 import Alert from '@components/@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
 import { validateForm } from '@utils/ValidateForm';
+import { axiosInstance } from '@services/axiosInstance';
 
 const PasswordFind = () => {
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [, setAlert] = useAtom(alertAtom);
 
@@ -21,20 +23,41 @@ const PasswordFind = () => {
     }));
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
+    setLoading(true);
     const validationConfig = { email: true };
     const formData = { email };
     const newErrors = validateForm(formData, validationConfig);
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      setAlert({
-        isOpen: true,
-        confirmOnly: true,
-        message: '비밀번호 재설정 이메일이 전송되었습니다.',
-        onConfirm: () => navigate('/login'),
-      });
+      try {
+        await axiosInstance.post('/members/register/password/reset', email, {
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+        });
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '비밀번호 재설정 이메일이 전송되었습니다.',
+          onConfirm: () => navigate('/login'),
+        });
+      } catch (error) {
+        const errorMessage =
+          error.response?.data ||
+          '이메일 전송에 실패했습니다. 다시 시도해주세요.';
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: errorMessage,
+        });
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setLoading(false);
     }
   };
 
@@ -63,6 +86,7 @@ const PasswordFind = () => {
               color='text-white bg-green-400 active:bg-green-600'
               size='large'
               full
+              disabled={loading}
             />
           </div>
         </form>

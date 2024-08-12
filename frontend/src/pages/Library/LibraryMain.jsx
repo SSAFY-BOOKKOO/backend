@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { DndProvider } from 'react-dnd';
 import { MultiBackend, TouchTransition } from 'react-dnd-multi-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import MemberProfile from '@components/Library/Main/MemberProfile';
 import LibraryOptions from '@components/Library/Main/LibraryOptions';
 import BookShelf from '@components/Library/Main/BookShelf';
 import Alert from '@components/@common/Alert';
+import Spinner from '@components/@common/Spinner';
 import { alertAtom } from '@atoms/alertAtom';
 import { authAxiosInstance } from '@services/axiosInstance';
 
@@ -33,15 +34,21 @@ const LibraryMain = () => {
   const [newLibraryName, setNewLibraryName] = useState('');
   const [createLibraryName, setCreateLibraryName] = useState('');
   const [activeLibrary, setActiveLibrary] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
   const [, setAlert] = useAtom(alertAtom);
   const [member, setMember] = useState(null);
   const [libraries, setLibraries] = useState([]);
+  const [bookChanges, setBookChanges] = useState([]);
+  const libraryRef = useRef(null);
 
   useEffect(() => {
+    console.log('/libraries/me fetch check');
     const fetchLibraries = async () => {
       try {
         const response = await authAxiosInstance.get(`/libraries/me`);
+        console.log(response);
         const libraries = response.data;
         const libraryDetailsPromises = libraries.map(library =>
           authAxiosInstance.get(`/libraries/${library.id}`)
@@ -50,23 +57,33 @@ const LibraryMain = () => {
         setLibraries(librariesDetails.map(response => response.data));
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchLibraries();
+    const token = localStorage.getItem('ACCESS_TOKEN');
+    if (token) {
+      fetchLibraries();
+    }
   }, []);
 
   useEffect(() => {
+    console.log('/members/info fetch check');
     const fetchMemberInfo = async () => {
       try {
         const response = await authAxiosInstance.get('/members/info');
         setMember(response.data);
+        console.log(response);
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchMemberInfo();
+    const token = localStorage.getItem('ACCESS_TOKEN');
+    if (token) {
+      fetchMemberInfo();
+    }
   }, []);
 
   useEffect(() => {
@@ -81,63 +98,77 @@ const LibraryMain = () => {
     }
   }, [location.state]);
 
-  const moveBook = async (fromIndex, toIndex) => {
+  const moveBook = (fromIndex, toIndex) => {
     const libraryId = libraries[activeLibrary].id;
-    const movedBook = libraries[activeLibrary].books.find(
-      book => book.bookOrder === fromIndex + 1
-    );
+    setLibraries(prevLibraries => {
+      const newLibraries = prevLibraries.map(library => {
+        if (library.id === libraryId) {
+          const newBooks = [...library.books];
+          const movedBookIndex = newBooks.findIndex(
+            book => book.bookOrder === fromIndex + 1
+          );
+          newBooks[movedBookIndex].bookOrder = toIndex + 1;
 
-    if (movedBook) {
-      try {
-        await authAxiosInstance.put(`/libraries/${libraryId}/books`, [
-          {
-            bookOrder: toIndex + 1,
-            bookColor: movedBook.bookColor,
-            startAt: movedBook.startAt,
-            endAt: movedBook.endAt,
-            status: movedBook.status,
-            rating: movedBook.rating,
-            bookId: movedBook.book.id,
-          },
-        ]);
-
-        setLibraries(prevLibraries => {
-          const newLibraries = prevLibraries.map(library => {
-            if (library.id === libraryId) {
-              const newBooks = [...library.books];
-              const movedBookIndex = newBooks.findIndex(
-                book => book.bookOrder === fromIndex + 1
-              );
-              newBooks[movedBookIndex].bookOrder = toIndex + 1;
-
-              newBooks.forEach(book => {
-                if (
-                  book.bookOrder === toIndex + 1 &&
-                  book.book.id !== newBooks[movedBookIndex].book.id
-                ) {
-                  book.bookOrder = fromIndex + 1;
-                }
-              });
-
-              return {
-                ...library,
-                books: newBooks.sort((a, b) => a.bookOrder - b.bookOrder),
-              };
+          newBooks.forEach(book => {
+            if (
+              book.bookOrder === toIndex + 1 &&
+              book.book.id !== newBooks[movedBookIndex].book.id
+            ) {
+              book.bookOrder = fromIndex + 1;
             }
-            return library;
           });
-          return newLibraries;
-        });
-      } catch (error) {
-        console.error('책 순서 변경에 실패했습니다:', error);
-        setAlert({
-          isOpen: true,
-          confirmOnly: true,
-          message: '책 순서 변경에 실패했습니다. 다시 시도해 주세요.',
-        });
-      }
-    }
+
+          return {
+            ...library,
+            books: newBooks.sort((a, b) => a.bookOrder - b.bookOrder),
+          };
+        }
+        return library;
+      });
+
+      setBookChanges(prevChanges => [
+        ...prevChanges,
+        { fromIndex, toIndex, libraryId },
+      ]);
+
+      return newLibraries;
+    });
   };
+
+  useEffect(() => {
+    const handleSaveChanges = async () => {
+      if (bookChanges.length > 0) {
+        try {
+          const libraryId = libraries[activeLibrary].id;
+          const changesToApply = libraries[activeLibrary].books.map(book => ({
+            bookOrder: book.bookOrder,
+            bookColor: book.bookColor,
+            startAt: book.startAt,
+            endAt: book.endAt,
+            status: book.status,
+            rating: book.rating,
+            bookId: book.book.id,
+          }));
+
+          await authAxiosInstance.put(
+            `/libraries/${libraryId}/books`,
+            changesToApply
+          );
+        } catch (error) {
+          console.error('책 순서 변경에 실패했습니다:', error);
+          setAlert({
+            isOpen: true,
+            confirmOnly: true,
+            message: '책 순서 변경에 실패했습니다. 다시 시도해 주세요.',
+          });
+        }
+      }
+    };
+
+    return () => {
+      handleSaveChanges();
+    };
+  }, [bookChanges, libraries, activeLibrary, setAlert]);
 
   const changeLibraryName = async (libraryId, newName) => {
     try {
@@ -151,6 +182,8 @@ const LibraryMain = () => {
         libraryOrder: existingLibrary.libraryOrder,
         libraryStyleDto: {
           libraryColor: existingLibrary.libraryStyleDto.libraryColor,
+          fontName: existingLibrary.libraryStyleDto.fontName,
+          fontSize: existingLibrary.libraryStyleDto.fontSize,
         },
       });
 
@@ -175,6 +208,48 @@ const LibraryMain = () => {
         isOpen: true,
         confirmOnly: true,
         message: '서재명 변경에 실패했습니다. 다시 시도해 주세요.',
+      });
+      console.error(error);
+    }
+  };
+
+  const changeFontStyle = async (libraryId, fontName, fontSize) => {
+    try {
+      const existingLibraryResponse = await authAxiosInstance.get(
+        `/libraries/${libraryId}`
+      );
+      const existingLibrary = existingLibraryResponse.data;
+
+      await authAxiosInstance.patch(`/libraries/${libraryId}`, {
+        libraryStyleDto: {
+          libraryColor: existingLibrary.libraryStyleDto.libraryColor,
+          fontName: fontName || existingLibrary.libraryStyleDto.fontName,
+          fontSize: fontSize || existingLibrary.libraryStyleDto.fontSize,
+        },
+      });
+
+      setLibraries(prev => {
+        const newLibraries = [...prev];
+        const libraryIndex = newLibraries.findIndex(
+          lib => lib.id === libraryId
+        );
+        if (libraryIndex !== -1) {
+          newLibraries[libraryIndex].libraryStyleDto.fontName = fontName;
+          newLibraries[libraryIndex].libraryStyleDto.fontSize = fontSize;
+        }
+        return newLibraries;
+      });
+
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '폰트 스타일이 성공적으로 변경되었습니다.',
+      });
+    } catch (error) {
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '폰트 스타일 변경에 실패했습니다. 다시 시도해 주세요.',
       });
       console.error(error);
     }
@@ -221,6 +296,8 @@ const LibraryMain = () => {
             libraryOrder: libraries.length + 1,
             libraryStyleDto: {
               libraryColor: '#FFFFFF',
+              fontName: '쿠키런!',
+              fontSize: '3',
             },
           });
 
@@ -251,9 +328,17 @@ const LibraryMain = () => {
     });
   };
 
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center min-h-screen'>
+        <Spinner />
+      </div>
+    );
+  }
+
   return (
     <DndProvider backend={MultiBackend} options={HTML5toTouch}>
-      <div className='bg-white min-h-screen'>
+      <div className='bg-white'>
         {member && <MemberProfile member={member} />}
 
         <LibraryOptions
@@ -268,15 +353,18 @@ const LibraryMain = () => {
           newLibraryName={newLibraryName}
           setNewLibraryName={setNewLibraryName}
           changeLibraryName={changeLibraryName}
+          libraryRef={libraryRef}
+          changeFontStyle={changeFontStyle}
         />
-
-        {libraries.length > 0 && (
-          <BookShelf
-            books={libraries[activeLibrary]?.books || []}
-            moveBook={moveBook}
-            onBookClick={handleBookClick}
-          />
-        )}
+        <div ref={libraryRef}>
+          {libraries.length > 0 && (
+            <BookShelf
+              books={libraries[activeLibrary]?.books || []}
+              moveBook={moveBook}
+              onBookClick={handleBookClick}
+            />
+          )}
+        </div>
       </div>
       <Alert />
     </DndProvider>

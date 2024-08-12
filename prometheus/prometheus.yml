@@ -1,0 +1,44 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'gateway-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['bookkoo-gateway:8080']
+  - job_name: 'member-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['member-service:8081']
+  - job_name: 'book-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['book-service:8082']
+  - job_name: 'library-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['library-service:8083']
+  - job_name: 'curation-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['curation-service:8084']
+  - job_name: 'auth-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['auth-service:8085']
+  - job_name: 'common-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['common-service:8086']
+  - job_name: 'booktalk-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['booktalk-service:8087']
+  - job_name: 'notification-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['notification-service:8088']
+ 
+  
+
+

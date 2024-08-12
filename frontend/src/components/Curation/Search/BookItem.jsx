@@ -96,15 +96,14 @@ const BookItem = ({ book, onClick, onCreateClick }) => {
 
         console.log('book 객체!!:', book);
 
-        // const updatedBook = { ...book, id: book.id };
-        // onCreateClick(updatedBook);
-        // navigateToCreate();
+        const updatedBook = { ...book, id: book.id };
+        onCreateClick(updatedBook);
+        navigateToCreate();
       })
       .catch(err => {
         console.log('error:', err);
       });
-    onCreateClick();
-    navigateToCreate();
+
     console.log('눌렀음');
   };
 

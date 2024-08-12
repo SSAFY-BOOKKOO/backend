@@ -11,6 +11,8 @@ const useNotificationInfiniteScroll = () => {
       }
       return allPages.length + 1;
     },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 };
 
