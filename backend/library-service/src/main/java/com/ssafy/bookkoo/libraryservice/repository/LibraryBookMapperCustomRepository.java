@@ -55,7 +55,10 @@ public interface LibraryBookMapperCustomRepository {
      * @param bookIds  book ID 리스트
      * @return List<Long> 갖고있는 책 ID
      */
-    List<Long> findBookIdsByMemberIdAndBookIds(Long memberId, List<Long> bookIds);
+    List<Long> findBookIdsByMemberIdAndBookIds(
+        Long memberId,
+        List<Long> bookIds
+    );
 
     /**
      * 해당 서재의 가장 큰 book Order 값 찾기
@@ -97,5 +100,31 @@ public interface LibraryBookMapperCustomRepository {
      * @param endAt    끝일
      * @return List<Long>
      */
-    List<Long> findBookIdsByMemberIdUpdatedAt(Long memberId, LocalDate startAt, LocalDate endAt);
+    List<Long> findBookIdsByMemberIdUpdatedAt(
+        Long memberId,
+        LocalDate startAt,
+        LocalDate endAt
+    );
+
+    /**
+     * 시간 내에 읽은 권수
+     *
+     * @param memberId memberId
+     * @param startAt  startAt
+     * @param endAt    endAt
+     * @return 읽은 권수
+     */
+    Integer countBooksByMemberIdDuration(
+        Long memberId,
+        LocalDate startAt,
+        LocalDate endAt
+    );
+
+    /**
+     * 서재에서 가장 작은 빈 값 찾기
+     *
+     * @param libraryId 서재 ID
+     * @return 가장 작은 빈 bookOrder
+     */
+    Integer findFirstMissingBookOrderByLibraryId(Long libraryId);
 }

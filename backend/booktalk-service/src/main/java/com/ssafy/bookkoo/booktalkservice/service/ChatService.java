@@ -25,6 +25,16 @@ public interface ChatService {
      * <p>
      * 메세지 번호, 독서록 번호, 작성자 닉네임, 작성자 프로필 이미지, 메세지 내용, 좋아요 수, 작성 시간
      */
-    List<ResponseChatMessageDto> getMessageList(Long bookTalkId, LocalDateTime time);
+    List<ResponseChatMessageDto> getMessageList(Long bookTalkId, LocalDateTime time, Long memberId);
+
+
+    /**
+     * 좋아요 상태를 토글하는 메서드
+     *
+     * @param chatMessageId : 해당 채팅 아이디
+     * @param memberId      : 토글할 멤버
+     * @return : 변화된 좋아요 상태 정보
+     */
+    Boolean chatMessageLikeToggle(String chatMessageId, Long memberId);
 
 }

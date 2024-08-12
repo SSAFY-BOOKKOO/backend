@@ -1,20 +1,29 @@
 import React from 'react';
 import Input from '@components/@common/Input';
 import IconButton from '@components/@common/IconButton';
-import { IoSearchSharp } from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom';
+import { IoSearchSharp, IoArrowBack } from 'react-icons/io5';
 
-const SearchForm = ({ searchText, setSearchText, onSubmit }) => {
+const SearchForm = ({ searchText, setSearchText, onSubmit, placeholder }) => {
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
     <form
-      className='mb-4 w-full flex flex-row items-center justify-center'
+      className='mb-4 w-full flex items-center justify-between'
       onSubmit={onSubmit}
     >
-      <div className='flex-grow'>
+      <IconButton onClick={handleBack} icon={IoArrowBack} />
+      <div className='flex-grow mx-2'>
         <Input
           id='searchText'
-          placeholder='책을 검색하세요'
+          placeholder={placeholder}
           value={searchText}
           onChange={e => setSearchText(e.target.value)}
+          customClass='w-full'
         />
       </div>
       <IconButton type='submit' icon={IoSearchSharp} />

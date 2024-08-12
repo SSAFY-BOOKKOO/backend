@@ -19,6 +19,7 @@ const LibraryOptions = ({
   newLibraryName,
   setNewLibraryName,
   changeLibraryName,
+  viewOnly = false,
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -39,6 +40,19 @@ const LibraryOptions = ({
     }
   };
 
+  const handleCreateLibraryOption = () => {
+    if (libraries.length >= 3) {
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '서재는 최대 3개까지만 생성할 수 있습니다.',
+      });
+    } else {
+      setShowMenu(false);
+      setShowCreateModal(true);
+    }
+  };
+
   const actions = [
     {
       label: '서재명 변경',
@@ -53,10 +67,7 @@ const LibraryOptions = ({
     },
     {
       label: '서재 생성',
-      onClick: () => {
-        setShowMenu(false);
-        setShowCreateModal(true);
-      },
+      onClick: handleCreateLibraryOption,
     },
   ];
 
@@ -76,12 +87,14 @@ const LibraryOptions = ({
           ))}
         </select>
       </div>
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        onToggle={() => setIsSettingsOpen(!isSettingsOpen)}
-        actions={actions}
-      />
+      {!viewOnly && (
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          onToggle={() => setIsSettingsOpen(!isSettingsOpen)}
+          actions={actions}
+        />
+      )}
       <DeleteLibraryModal
         showDeleteModal={showDeleteModal}
         deleteLibrary={deleteLibrary}
@@ -98,7 +111,9 @@ const LibraryOptions = ({
         showModal={showChangeLibraryNameModal}
         newLibraryName={newLibraryName}
         setNewLibraryName={setNewLibraryName}
-        changeLibraryName={changeLibraryName}
+        changeLibraryName={() =>
+          changeLibraryName(libraries[activeLibrary].id, newLibraryName)
+        }
         setShowModal={setShowChangeLibraryNameModal}
       />
       <Alert />

@@ -1,86 +1,91 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Following from '@components/MyPage/Friend/Following.jsx';
 import Follower from '@components/MyPage/Friend/Follower.jsx';
-import detailedUserData from '@mocks/FollowUserData';
+import { getFollowers, getFollowings, postUnfollow } from '@services/Member';
+import WrapContainer from '@components/Layout/WrapContainer';
+import Button from '@components/@common/Button';
+import { deleteFollower } from '@services/Member';
 
-const UserPage = () => {
-  const [userData, setUserData] = useState(detailedUserData);
-  const currentUser = userData.find(user => user.username === 'user1');
+const Friend = () => {
   const [view, setView] = useState('following');
-  const handleUnfollow = username => {
-    setUserData(prevData => {
-      const newData = prevData.map(user => {
-        if (user.username === 'user1') {
-          return {
-            ...user,
-            following: user.following.filter(follow => follow !== username),
-          };
-        }
-        if (user.username === username) {
-          return {
-            ...user,
-            followers: user.followers.filter(follower => follower !== 'user1'),
-          };
-        }
-        return user;
-      });
-      return newData;
-    });
+  const [followings, setFollowings] = useState([]);
+  const [followers, setFollowers] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    handleGetFollowers('');
+    handleGetFollowings('');
+  }, []);
+
+  const handleGetFollowers = async () => {
+    try {
+      const data = await getFollowers();
+      setFollowers(data);
+    } catch (error) {}
   };
 
-  const handleRemoveFollower = username => {
-    setUserData(prevData => {
-      const newData = prevData.map(user => {
-        if (user.username === 'user1') {
-          return {
-            ...user,
-            followers: user.followers.filter(follower => follower !== username),
-          };
-        }
-        if (user.username === username) {
-          return {
-            ...user,
-            following: user.following.filter(follow => follow !== 'user1'),
-          };
-        }
-        return user;
-      });
-      return newData;
-    });
+  const handleGetFollowings = async () => {
+    try {
+      const data = await getFollowings();
+      setFollowings(data);
+    } catch (error) {}
+  };
+
+  const handleUnfollow = async memberId => {
+    try {
+      await postUnfollow(memberId);
+      handleGetFollowings(); // 새로고침
+    } catch (error) {
+      console.error('unfollow', error);
+    }
+  };
+
+  const handleRemoveFollower = async memberId => {
+    try {
+      await deleteFollower(memberId);
+      handleGetFollowers(); //새로고침
+    } catch (error) {
+      console.error('remove follower', error);
+    }
   };
 
   return (
-    <div className='px-8'>
-      <h1 className='text-center text-2xl font-bold mb-2'>
-        {currentUser.username}
-      </h1>
-      <div className='flex space-x-4 mb-2'>
-        <button
-          onClick={() => setView('following')}
-          className={`py-2 px-4 mb-2 ${view === 'following' ? 'border-b-2 border-black' : ''}`}
+    <WrapContainer className='mt-4'>
+      <div className='flex space-x-4 mb-2 justify-between items-center'>
+        <div>
+          <button
+            onClick={() => setView('following')}
+            className={`py-2 px-4 mb-2 ${view === 'following' ? 'border-b-2 border-black' : ''}`}
+          >
+            팔로잉
+          </button>
+          <button
+            onClick={() => setView('followers')}
+            className={`py-2 px-4 mb-2 ${view === 'followers' ? 'border-b-2 border-black' : ''}`}
+          >
+            팔로워
+          </button>
+        </div>
+
+        <Button
+          onClick={() => navigate('/mypage/friend/search')}
+          size='small'
+          className=' mb-2'
         >
-          팔로잉
-        </button>
-        <button
-          onClick={() => setView('followers')}
-          className={`py-2 px-4 mb-2 ${view === 'followers' ? 'border-b-2 border-black' : ''}`}
-        >
-          팔로워
-        </button>
+          친구 찾기
+        </Button>
       </div>
       {view === 'following' ? (
-        <Following
-          following={currentUser.following}
-          handleUnfollow={handleUnfollow}
-        />
+        <Following following={followings} handleUnfollow={handleUnfollow} />
       ) : (
         <Follower
-          followers={currentUser.followers}
+          followers={followers}
           handleRemoveFollower={handleRemoveFollower}
         />
       )}
-    </div>
+    </WrapContainer>
   );
 };
 
-export default UserPage;
+export default Friend;

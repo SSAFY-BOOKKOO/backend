@@ -1,11 +1,21 @@
-import { forwardRef, useEffect, useId, useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState, forwardRef } from 'react';
 import { DayPicker } from 'react-day-picker';
 import { format, isValid, parse } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import 'react-day-picker/dist/style.css';
 import Input from '../../@common/Input';
 import IconButton from '@components/@common/IconButton';
 import { IoCloseSharp } from 'react-icons/io5';
+import 'react-day-picker/dist/style.css';
+import './DatePicker.css';
+
+const customLocale = {
+  ...ko,
+  formatCaption: (date, options) => {
+    const year = format(date, 'yyyy', options);
+    const month = format(date, 'MM', options);
+    return `${year}년 ${month}월`;
+  },
+};
 
 const DatePicker = forwardRef(
   ({ onChange, startDate, endDate, ...props }, ref) => {
@@ -84,6 +94,7 @@ const DatePicker = forwardRef(
             value={inputValue}
             onChange={handleInputChange}
             placeholder='yyyy-MM-dd'
+            disabled
           />
           <button
             className='ml-2 text-gray-500 hover:text-gray-700'
@@ -111,8 +122,8 @@ const DatePicker = forwardRef(
           <DayPicker
             captionLayout='dropdown'
             fromYear={new Date().getFullYear() - 10}
-            toYear={new Date().getFullYear()}
-            locale={ko}
+            toYear={new Date().getFullYear() + 10}
+            locale={customLocale}
             month={month}
             onMonthChange={setMonth}
             initialFocus
@@ -120,6 +131,7 @@ const DatePicker = forwardRef(
             selected={selectedDate}
             onSelect={handleDayPickerSelect}
             disabled={[{ before: startDate, after: endDate }]}
+            className='custom-day-picker'
           />
         </dialog>
       </div>

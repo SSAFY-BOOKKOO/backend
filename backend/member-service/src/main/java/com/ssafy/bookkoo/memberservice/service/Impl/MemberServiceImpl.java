@@ -261,7 +261,9 @@ public class MemberServiceImpl implements MemberService {
                                      .name("기본 서재")
                                      .libraryOrder(1)
                                      .libraryStyleDto(LibraryStyleDto.builder()
-                                                                     .libraryColor("#FFFFFF")
+                                                                     .libraryColor("default")
+                                                                     .fontName("default")
+                                                                     .fontSize("default")
                                                                      .build())
                                      .build();
         libraryServiceClient.createLibrary(memberId, createLibraryDto);

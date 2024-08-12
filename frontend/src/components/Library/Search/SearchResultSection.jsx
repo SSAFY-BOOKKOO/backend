@@ -31,7 +31,7 @@ const SearchResultSection = ({
                 />
               ) : (
                 <BookItem
-                  key={book.book_id}
+                  key={book.isbn}
                   book={book}
                   onClick={() => onItemClick(book)}
                 />

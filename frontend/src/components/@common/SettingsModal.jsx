@@ -20,7 +20,7 @@ const SettingsModal = ({ isOpen, onClose, onToggle, actions }) => {
   }, [isOpen, onClose]);
 
   return (
-    <div ref={menuRef} className='absolute top-2 right-2'>
+    <div ref={menuRef} className='absolute top-2 right-2 z-20'>
       <button className='p-4' onClick={onToggle}>
         <div className='absolute top-1 right-3 z-10 cursor-pointer text-3xl'>
           &#x22EE;

@@ -7,12 +7,16 @@ import SearchForm from '@components/Library/Search/SearchForm';
 import SearchResultSection from '@components/Library/Search/SearchResultSection';
 import { getAladinBooks } from '@services/Book';
 import { getLibrarySearchBooks } from '@services/Library';
+import Spinner from '@components/@common/Spinner';
+import { useAtomValue } from 'jotai';
+import { isLoadingAtom } from '@atoms/loadingAtom';
+import { postBookTalkSearch } from '@services/BookTalk';
 
 const LibrarySearch = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [loading, setLoading] = useState(false); // 로딩여부
+  const isLoading = useAtomValue(isLoadingAtom);
   const [isSearched, setIsSearched] = useState(false); // 검색여부
   const [searchText, setSearchText] = useState(''); // 검색 내용
   const [selectedTag, setSelectedTag] = useState('Title'); // 검색 카테고리
@@ -41,27 +45,30 @@ const LibrarySearch = () => {
 
   const handleSearch = async (text, tag) => {
     setIsSearched(true);
-    setLoading(true);
+
     try {
-      // API 호출 로직 (현재는 더미 데이터)
+      const results = await Promise.allSettled([
+        getLibrarySearchBooks(text, tag),
+        getAladinBooks(text, tag),
+        postBookTalkSearch(text, tag),
+      ]);
 
-      // 내 서재
-      const libraryBooksData = await getLibrarySearchBooks(text, tag);
-      // 도서
-      const aladinBooksData = await getAladinBooks(text, tag);
+      const [libraryResult, aladinResult, bookTalkResult] = results;
 
-      // 북톡
       setSearchResults({
-        library: libraryBooksData,
-        bookStore: aladinBooksData.item || [],
-        bookTalk: books,
+        library:
+          libraryResult.status === 'fulfilled' ? libraryResult.value : [],
+        bookStore:
+          aladinResult.status === 'fulfilled'
+            ? aladinResult.value.item || []
+            : [],
+        bookTalk:
+          bookTalkResult.status === 'fulfilled' ? bookTalkResult.value : [],
       });
 
-      setSearchParams({ text, tag }); // 쿼리 스트링에 검색어와 태그 저장
+      setSearchParams({ text, tag });
     } catch (error) {
-      console.error('error', error);
-    } finally {
-      setLoading(false);
+      console.error('Unexpected error', error);
     }
   };
 
@@ -82,7 +89,9 @@ const LibrarySearch = () => {
 
   return (
     <WrapContainer className='mt-4'>
+      <Spinner />
       <SearchForm
+        placeholder='책을 검색하세요'
         searchText={searchText}
         setSearchText={setSearchText}
         onSubmit={handleSearchSubmit}
@@ -92,8 +101,7 @@ const LibrarySearch = () => {
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
       />
-      {loading && <div>Loading...</div>}
-      {isSearched && (
+      {isSearched && !isLoading && (
         <>
           <SearchResultSection
             title='내 서재 검색'

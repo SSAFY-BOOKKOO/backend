@@ -1,104 +1,96 @@
 import React from 'react';
 import RegisterInput from './RegisterInput';
 import Button from '../@common/Button';
+import { useSetAtom } from 'jotai';
+import { alertAtom } from '@atoms/alertAtom';
+import RadioButton from '../@common/RadioButton';
 
 const RegisterStep2 = ({
   formData,
   errors,
   handleChange,
   handleCategoryChange,
+  categoriesList,
   handlePrevStep,
-  handleSubmit,
+  handleNextStep,
 }) => {
+  const setAlert = useSetAtom(alertAtom);
+
+  const handleYearChange = e => {
+    const { value } = e.target;
+    if (value <= 0) {
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '출생연도 0 이하로 설정할 수 없습니다.',
+      });
+      return;
+    }
+    handleChange(e);
+  };
+
+  const genderTags = [
+    { id: 1, value: 'MALE', name: '남성' },
+    { id: 2, value: 'FEMALE', name: '여성' },
+    { id: 3, value: 'NONE', name: '선택 안함' },
+  ];
+
   return (
     <>
-      <h3 className='text-xl font-bold mb-4 text-center'>
-        추가 정보를 알려주세요.
-      </h3>
-      <RegisterInput
-        labelText='연령'
-        type='number'
-        id='year'
-        name='year'
-        value={formData.year}
-        onChange={handleChange}
-        required
-        error={errors.year}
-      />
-      <label className='block mb-2 text-sm font-medium text-gray-700'>
+      <div className='text-center mb-4'>
+        <h3 className='text-xl font-bold text-left'>
+          추가 정보를 입력해주세요
+        </h3>
+        <p className='text-gray-500 text-left'>
+          연령, 성별, 취향을 토대로 책을 추천해드립니다.
+        </p>
+      </div>
+      <label className='block mb-2 text-md font-medium text-gray-700'>
+        출생 연도
+        <RegisterInput
+          type='number'
+          id='year'
+          name='year'
+          value={formData.year}
+          onChange={handleYearChange}
+          required
+          error={errors.year}
+        />
+      </label>
+      <label className='block mb-2 text-md font-medium text-gray-700'>
         성별
-        <div className='flex space-x-4 mt-2 justify-center'>
-          <label className='flex items-center'>
-            <input
-              type='radio'
-              id='gender-male'
-              name='gender'
-              value='MALE'
-              checked={formData.gender === 'MALE'}
-              onChange={handleChange}
-            />
-            <span className='ml-2'>남성</span>
-          </label>
-          <label className='flex items-center'>
-            <input
-              type='radio'
-              id='gender-female'
-              name='gender'
-              value='FEMALE'
-              checked={formData.gender === 'FEMALE'}
-              onChange={handleChange}
-            />
-            <span className='ml-2'>여성</span>
-          </label>
-          <label className='flex items-center'>
-            <input
-              type='radio'
-              id='gender-none'
-              name='gender'
-              value='NONE'
-              checked={formData.gender === 'NONE'}
-              onChange={handleChange}
-            />
-            <span className='ml-2'>선택 안함</span>
-          </label>
-        </div>
+        <RadioButton
+          tags={genderTags}
+          selectedTag={formData.gender}
+          setSelectedTag={value =>
+            handleChange({ target: { name: 'gender', value } })
+          }
+        />
         {errors.gender && (
           <p className='text-red-500 text-sm'>{errors.gender}</p>
         )}
       </label>
-      <RegisterInput
-        labelText='소개글'
-        type='textarea'
-        id='introduction'
-        name='introduction'
-        value={formData.introduction}
-        onChange={handleChange}
-        required
-        error={errors.introduction}
-      />
-      <label className='block mb-2 text-sm font-medium text-gray-700'>
+      <label className='block mb-2 text-md font-medium text-gray-700'>
         선호 카테고리
         <div className='flex flex-wrap mt-2 justify-center'>
-          {[1, 2, 3, 4, 5].map(category => (
-            <div key={category} className='mr-2 mb-2'>
-              <label className='flex items-center border px-2 py-1 rounded-lg cursor-pointer'>
+          {categoriesList.map(category => (
+            <div key={category.id} className='mr-2 mb-2'>
+              <label
+                className={`flex items-center border px-2 py-1 rounded-lg cursor-pointer ${
+                  formData.categories.includes(category.id)
+                    ? 'bg-pink-500 text-white'
+                    : 'bg-gray-400 text-white'
+                }`}
+              >
                 <input
                   type='checkbox'
                   name='categories'
-                  value={category}
-                  checked={formData.categories.includes(category)}
+                  value={category.id}
+                  checked={formData.categories.includes(category.id)}
                   onChange={() => handleCategoryChange(category)}
                   className='hidden'
                 />
-                <span
-                  className={`ml-2 ${
-                    formData.categories.includes(category)
-                      ? 'text-green-500'
-                      : 'text-gray-700'
-                  }`}
-                >
-                  {category}
-                </span>
+                <span>{category.name}</span>
               </label>
             </div>
           ))}
@@ -109,17 +101,17 @@ const RegisterStep2 = ({
           text='이전'
           type='button'
           color='text-white bg-gray-500 active:bg-gray-600'
-          size='large'
+          size='medium'
           full={false}
           onClick={handlePrevStep}
         />
         <Button
-          text='가입 완료'
+          text='다음'
           type='button'
           color='text-white bg-green-400 active:bg-green-600'
-          size='large'
+          size='medium'
           full={false}
-          onClick={handleSubmit}
+          onClick={handleNextStep}
         />
       </div>
     </>

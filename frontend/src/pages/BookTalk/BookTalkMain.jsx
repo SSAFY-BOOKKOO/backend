@@ -1,49 +1,83 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BookTalkItem from '@components/@common/Book/BookTalkItem';
 import PopularBook from '@components/BookTalk/PopularBook';
 import WrapContainer from '@components/Layout/WrapContainer';
 import Button from '@components/@common/Button';
-import { books } from '@mocks/BookData';
+import Spinner from '@components/@common/Spinner';
 import { useNavigate } from 'react-router-dom';
-import useModal from '@hooks/useModal';
-import BookSearch from '@components/Curation/BookSearch';
+import BookSearch from '@components/Curation/Search/BookSearch';
+import { getMyBookTalk, getPopularBookTalk } from '../../services/BookTalk';
 
 const BookTalkMain = () => {
   const navigate = useNavigate();
-  const { isOpen, toggleModal } = useModal();
 
-  const [participatedBooks, setParticipatedBooks] = useState(books);
-  const [popularBooks, setPopularBooks] = useState(books);
+  const [participatedBooks, setParticipatedBooks] = useState([]);
+  const [popularBooks, setPopularBooks] = useState([]);
 
-  const handleMorePage = () => {
+  const handleMorePageMove = () => {
     navigate(`/booktalk/more`);
   };
 
-  const handleDetailPage = id => {
-    navigate(`/booktalk/detail/${id}`);
+  const handleDetailPageMove = book => {
+    navigate(`/booktalk/detail/${book?.bookTalkId}`, { state: { book: book } });
   };
+
+  const handleCreatePageMove = () => {
+    navigate(`/booktalk/create`);
+  };
+
+  const handlePopularBooks = async () => {
+    const data = await getPopularBookTalk();
+    setPopularBooks(data);
+  };
+
+  const handleParticipatedBooks = async () => {
+    const data = await getMyBookTalk();
+    setParticipatedBooks(data);
+  };
+
+  useEffect(() => {
+    Promise.all([handlePopularBooks(), handleParticipatedBooks()]);
+  }, []);
 
   return (
     <WrapContainer>
+      <Spinner />
       <div className='flex justify-between items-center mb-6'>
-        <Button onClick={toggleModal}>채팅방 생성</Button>
+        <Button onClick={handleCreatePageMove} size='small'>
+          채팅방 생성
+        </Button>
       </div>
       <div>
         <h2 className='text-green-400 text-lg font-bold mb-4'>
           ✅ 내가 참여한 도서
         </h2>
-        {participatedBooks?.slice(0, 3)?.map((book, index) => (
-          <BookTalkItem
-            key={index}
-            book={book}
-            onClick={() => handleDetailPage(book.book_id)}
-          />
-        ))}
-        <div className='flex justify-end text-sm cursor-pointer'>
-          <button className='text-gray-500' onClick={handleMorePage}>
-            더보기
-          </button>
-        </div>
+
+        {participatedBooks?.length > 0 ? (
+          participatedBooks
+            ?.slice(0, 3)
+            .map((book, index) => (
+              <BookTalkItem
+                key={index}
+                book={book}
+                onClick={() => handleDetailPageMove(book)}
+              />
+            ))
+        ) : (
+          <div className='flex flex-col items-center text-center bg-gray-100 space-y-4 p-4 m-4 rounded'>
+            <p>
+              아직 참여한 도서가 없습니다. <br />
+              북톡에 참여해보세요!
+            </p>
+          </div>
+        )}
+        {participatedBooks.length > 0 && (
+          <div className='flex justify-end text-sm cursor-pointer'>
+            <button className='text-gray-500' onClick={handleMorePageMove}>
+              더보기
+            </button>
+          </div>
+        )}
       </div>
       <div className='mt-6'>
         <h2 className='text-pink-500 text-lg font-bold mb-4'>
@@ -55,14 +89,13 @@ const BookTalkMain = () => {
               <PopularBook
                 key={index}
                 book={book}
-                onClick={() => handleDetailPage(book.book_id)}
+                onClick={() => handleDetailPageMove(book)}
               />
             ))}
           </div>
           <div className='absolute top-0 right-0 bottom-0 w-8 from-white pointer-events-none'></div>
         </div>
       </div>
-      <BookSearch isOpen={isOpen} onRequestClose={toggleModal} />
     </WrapContainer>
   );
 };

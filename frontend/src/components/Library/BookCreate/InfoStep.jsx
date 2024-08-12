@@ -13,19 +13,19 @@ const InfoStep = () => {
   const [bookData, setBookData] = useAtom(bookDataAtom);
 
   const handleStartDateChange = date => {
-    setBookData(prev => ({ ...prev, startDate: date.target.value }));
+    setBookData(prev => ({ ...prev, startAt: date.target.value }));
   };
 
   const handleEndDateChange = date => {
-    setBookData(prev => ({ ...prev, endDate: date.target.value }));
+    setBookData(prev => ({ ...prev, endAt: date.target.value }));
   };
 
   const handleRatingChange = rating => {
     setBookData(prev => ({ ...prev, rating }));
   };
 
-  const handleColorChange = color => {
-    setBookData(prev => ({ ...prev, color }));
+  const handleColorChange = bookColor => {
+    setBookData(prev => ({ ...prev, bookColor }));
   };
 
   // 달력
@@ -33,26 +33,26 @@ const InfoStep = () => {
   return (
     <div>
       <div className='flex flex-col'>
-        {bookData.status !== 'want' && (
+        {bookData.status !== 'DIB' && (
           <>
             <h2 className='mb-3 text-lg'>시작 날짜</h2>
             <DatePicker
               onChange={handleStartDateChange}
-              endDate={bookData.endDate}
+              endDate={bookData.endAt}
             />
           </>
         )}
-        {bookData.status === 'read' && (
+        {bookData.status === 'READ' && (
           <>
             <h2 className='my-3 text-lg'>종료 날짜</h2>
             <DatePicker
               onChange={handleEndDateChange}
-              startDate={bookData.startDate}
+              startDate={bookData.startAt}
             />
           </>
         )}
       </div>
-      {bookData.status === 'read' && (
+      {bookData.status === 'READ' && (
         <>
           <h2 className='my-3 text-lg'>별점</h2>
           <StarRating
@@ -64,7 +64,7 @@ const InfoStep = () => {
       <h2 className='my-3 text-lg'>책 색상</h2>
       <ColorPicker
         presetColors={PRESET_COLORS}
-        selected={bookData.color}
+        selected={bookData.bookColor}
         onChange={handleColorChange}
       />
     </div>

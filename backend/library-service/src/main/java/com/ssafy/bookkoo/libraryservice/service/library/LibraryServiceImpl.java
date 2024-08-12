@@ -21,6 +21,7 @@ import com.ssafy.bookkoo.libraryservice.entity.LibraryStyle;
 import com.ssafy.bookkoo.libraryservice.entity.MapperKey;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import com.ssafy.bookkoo.libraryservice.exception.BookAlreadyMappedException;
+import com.ssafy.bookkoo.libraryservice.exception.LibraryBookLimitExceededException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryBookNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryIsNotYoursException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryLimitExceededException;
@@ -85,6 +86,10 @@ public class LibraryServiceImpl implements LibraryService {
         LibraryStyle libraryStyle = LibraryStyle.builder()
                                                 .libraryColor(libraryDto.libraryStyleDto()
                                                                         .libraryColor())
+                                                .fontName(libraryDto.libraryStyleDto()
+                                                                    .fontName())
+                                                .fontSize(libraryDto.libraryStyleDto()
+                                                                    .fontSize())
                                                 .library(library)
                                                 .build();
         // 서재 스타일 저장하기
@@ -238,7 +243,8 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     @Transactional
     public ResponseLibraryDto updateLibrary(
-        Long memberId, Long libraryId,
+        Long memberId,
+        Long libraryId,
         RequestUpdateLibraryDto libraryDto
     ) {
         // 서재 찾기
@@ -292,11 +298,18 @@ public class LibraryServiceImpl implements LibraryService {
 
         // 2.2 엔티티 생성
         LibraryBookMapper lbMapper = libraryBookMapperMapper.toEntity(mapperDto, mapperKey);
-        // 2.3 가장 큰 BookOrder 값 + 1을 넣어주기
-        int maxBookOrder = libraryBookMapperRepository.findMaxBookOrderByLibraryId(libraryId);
-        lbMapper.setBookOrder(
-            maxBookOrder + 1);
-        // lbMapper와 서재 매핑해주기
+        // 2.3 빈 곳 중 가장 작은 숫자에 넣기
+        Integer smallestMissingBookOrder = libraryBookMapperRepository.findFirstMissingBookOrderByLibraryId(
+            libraryId);
+
+        // 빈곳이 없으면 에러처리
+        if (smallestMissingBookOrder == null) {
+            throw new LibraryBookLimitExceededException();
+        }
+        // 빈 자리가 있을 때 넣기
+        lbMapper.setBookOrder(smallestMissingBookOrder);
+
+        // lbMapper 와 서재 매핑해주기
         lbMapper.setLibrary(library);
         // 2.3 매퍼 엔티티 저장
         libraryBookMapperRepository.save(lbMapper);
@@ -417,7 +430,9 @@ public class LibraryServiceImpl implements LibraryService {
                                       .name("기본 서재")
                                       .libraryOrder(1)
                                       .libraryStyleDto(LibraryStyleDto.builder()
-                                                                      .libraryColor("#FFFFFF")
+                                                                      .libraryColor("default")
+                                                                      .fontName("default")
+                                                                      .fontSize("default")
                                                                       .build())
                                       .build();
     }
@@ -498,18 +513,11 @@ public class LibraryServiceImpl implements LibraryService {
      */
     @Override
     @Transactional
-    public Boolean deleteLibrary(Long memberId, Long libraryId) {
-        Optional<Library> libraryOpt = libraryRepository.findById(libraryId);
-
-        // 서재가 없을 때
-        if (libraryOpt.isEmpty()) {
-            throw new LibraryNotFoundException(libraryId);
-        }
-
-        // 서재가 내게 아닐 때
-        if (!isLibraryOwnedByUser(libraryOpt.get(), memberId)) {
-            throw new LibraryIsNotYoursException();
-        }
+    public Boolean deleteLibrary(
+        Long memberId,
+        Long libraryId
+    ) {
+        checkIsValidLibraryOwner(memberId, libraryId);
 
         // 서재가 존재하면서, 소유자가 확실하다면, 삭제
         try {
@@ -579,19 +587,12 @@ public class LibraryServiceImpl implements LibraryService {
      */
     @Override
     @Transactional
-    public void deleteBookFromLibrary(Long memberId, Long libraryId, Long bookId) {
-        // 1. library 가 내꺼인지 찾기
-        Optional<Library> libraryOpt = libraryRepository.findById(libraryId);
-
-        // 서재가 없을 때
-        if (libraryOpt.isEmpty()) {
-            throw new LibraryNotFoundException(libraryId);
-        }
-
-        // 서재가 내게 아닐 때
-        if (!isLibraryOwnedByUser(libraryOpt.get(), memberId)) {
-            throw new LibraryIsNotYoursException();
-        }
+    public void deleteBookFromLibrary(
+        Long memberId,
+        Long libraryId,
+        Long bookId
+    ) {
+        checkIsValidLibraryOwner(memberId, libraryId);
 
         // 2. library_book_mapper 에서 삭제시켜버리기
         MapperKey mapperKey = new MapperKey();
@@ -601,13 +602,79 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     /**
+     * 해당 서재가 유효하고, 내 서재인지 확인
+     *
+     * @param memberId  사용자 ID
+     * @param libraryId 서재 ID
+     */
+    @Transactional(readOnly = true)
+    protected void checkIsValidLibraryOwner(
+        Long memberId,
+        Long libraryId
+    ) {
+        // 1. library 가 내꺼인지 찾기
+        Optional<Library> libraryOpt = libraryRepository.findById(libraryId);
+
+        // 서재가 없을 때
+        if (libraryOpt.isEmpty()) {
+            throw new LibraryNotFoundException(libraryId);
+        }
+
+        // 서재가 내게 아닐 때
+        if (!libraryOpt.get()
+                       .getMemberId()
+                       .equals(memberId)) {
+            throw new LibraryIsNotYoursException();
+        }
+    }
+
+    /**
+     * 서재에서 책 색상 변경하기
+     *
+     * @param memberId  사용자 ID
+     * @param libraryId 서재 ID
+     * @param bookId    책 ID
+     * @param bookColor 책 색상
+     */
+    @Override
+    @Transactional
+    public void updateBookColorFromLibrary(
+        Long memberId,
+        Long libraryId,
+        Long bookId,
+        String bookColor
+    ) {
+        checkIsValidLibraryOwner(memberId, libraryId);
+
+        // 2. library_book_mapper 에서 수정시키기
+        MapperKey mapperKey = new MapperKey();
+        mapperKey.setLibraryId(libraryId);
+        mapperKey.setBookId(bookId);
+
+        Optional<LibraryBookMapper> lbm = libraryBookMapperRepository.findById(mapperKey);
+        if (lbm.isEmpty()) {
+            throw new LibraryBookNotFoundException(
+                "(libraryId, bookId) not found: (" + libraryId + " , " + bookId + ")");
+        }
+
+        LibraryBookMapper lbMapper = lbm.get();
+
+        lbMapper.setBookColor(bookColor);
+
+        libraryBookMapperRepository.save(lbMapper);
+    }
+
+    /**
      * 해당 서재가 해당 사용자의 서재인지 확인
      *
      * @param library  서재 ID
      * @param memberId 사용자 ID
      * @return true/false
      */
-    private boolean isLibraryOwnedByUser(Library library, Long memberId) {
+    private boolean isLibraryOwnedByUser(
+        Library library,
+        Long memberId
+    ) {
         return library.getMemberId()
                       .equals(memberId);
     }

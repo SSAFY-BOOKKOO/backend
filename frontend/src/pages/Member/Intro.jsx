@@ -1,14 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import DecoIcon from '@assets/icons/intro_deco.png';
-import WrapContainer from '../../components/Layout/WrapContainer';
+import WrapContainer from '@components/Layout/WrapContainer';
+import LibraryImg from '@assets/images/intro_library.png';
 
 const Intro = () => {
   return (
-    <WrapContainer>
-      <div className='flex mt-3 flex-col items-center justify-center p-4 bg-white overflow-hidden'>
-        <div className='text-left relative'>
-          <h1 className='text-3xl font-bold mb-2 relative z-10'>
+    <WrapContainer className='flex items-center justify-center min-h-screen '>
+      <div className='flex flex-col items-center justify-center p-6 bg-white mx-4'>
+        <div className='text-left relative w-full'>
+          <h1 className='text-3xl font-bold mb-4 relative z-10'>
             지금 가입해서
             <br />
             나만의 서재를 꾸며보세요!
@@ -16,18 +17,16 @@ const Intro = () => {
           <img
             src={DecoIcon}
             alt='deco'
-            className='absolute top-0 right-0 -z-0 opacity-65'
+            className='absolute top-0 right-0 -z-0 opacity-65 w-24'
           />
           <Link
             to='/login'
-            className='inline-block text-black font-medium mt-3 mb-5'
+            className='inline-block text-black font-medium mt-4 mb-6 hover:underline'
           >
             꾸미러 가기 →
           </Link>
-          <div className='mt-6 bg-yellow-700 p-4 rounded-xl shadow-lg w-80'>
-            <div className='bg-yellow-900 h-32 w-full mb-4 rounded-xl'></div>
-            <div className='bg-yellow-900 h-32 w-full mb-4 rounded-xl'></div>
-            <div className='bg-yellow-900 h-32 w-full mb-4 rounded-xl'></div>
+          <div className='mt-4'>
+            <img src={LibraryImg} alt='library' className='w-full' />
           </div>
         </div>
       </div>

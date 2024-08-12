@@ -5,7 +5,9 @@ import Button from '@components/@common/Button';
 import useInput from '@hooks/useInput';
 import { useNavigate } from 'react-router-dom';
 import SocialLoginButton from '@components/Login/SocialLoginButton';
-import { postLogin } from '@services/Member';
+import { postLogin, getMemberInfo } from '@services/Member';
+import { useAtom } from 'jotai';
+import { isAuthenticatedAtom } from '@atoms/authAtom';
 
 const Login = () => {
   const {
@@ -18,6 +20,7 @@ const Login = () => {
   });
 
   const [errorMessage, setErrorMessage] = useState('');
+  const [, setIsAuthenticated] = useAtom(isAuthenticatedAtom); // 로그인 여부
 
   const navigate = useNavigate();
 
@@ -35,6 +38,8 @@ const Login = () => {
     return !(loginInfo.email && loginInfo.password);
   }, [loginInfo]);
 
+  const getNickname = async () => {};
+
   const handleLogin = async e => {
     e.preventDefault();
 
@@ -42,10 +47,13 @@ const Login = () => {
 
     try {
       const data = await postLogin(loginInfo);
+      const userData = await getMemberInfo();
 
       // 로그인 성공
       localStorage.setItem('ACCESS_TOKEN', data.accessToken);
+      localStorage.setItem('MEMBER_ID', userData.memberId);
 
+      setIsAuthenticated(true);
       navigate('/');
 
       // 페이지 이동 하기

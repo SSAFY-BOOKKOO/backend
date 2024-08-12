@@ -11,9 +11,9 @@ const ReadingStatusStep = () => {
   };
 
   const readingState = [
-    { index: 1, value: 'read', text: '읽음' },
-    { index: 2, value: 'reading', text: '읽는 중' },
-    { index: 3, value: 'want', text: '찜' },
+    { index: 1, value: 'READ', text: '읽음' },
+    { index: 2, value: 'READING', text: '읽는 중' },
+    { index: 3, value: 'DIB', text: '찜' },
   ];
 
   return (

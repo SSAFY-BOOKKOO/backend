@@ -10,8 +10,13 @@ import { showAlertAtom } from '@atoms/alertAtom';
 import IconButton from '@components/@common/IconButton';
 import { IoCloseSharp } from 'react-icons/io5';
 import Alert from '../../@common/Alert';
+import { postLibraryBook } from '@services/Library';
 
-const BookCreateModal = ({ isCreateModalOpen, toggleCreateModal }) => {
+const BookCreateModal = ({
+  isCreateModalOpen,
+  toggleCreateModal,
+  selectedBook,
+}) => {
   const [step, setStep] = useState(1);
   const [bookData, setBookData] = useAtom(bookDataAtom);
   const [, showAlert] = useAtom(showAlertAtom);
@@ -28,53 +33,72 @@ const BookCreateModal = ({ isCreateModalOpen, toggleCreateModal }) => {
     toggleCreateModal();
     setStep(1);
     setBookData({
-      status: 'read',
-      startDate: '',
-      endDate: '',
+      status: 'READ',
+      startAt: '',
+      endAt: '',
       rating: 0,
-      color: '',
-      library_id: 1,
-      library: 'library1',
-    });
-  };
-
-  const handleShowAlert = () => {
-    showAlert('빈칸을 입력해주세요.', true, () => {
-      // 확인
+      bookColor: '',
+      libraryId: 0,
     });
   };
 
   const validateBookData = bookData => {
-    if (bookData.status === 'read') {
+    if (bookData.status === 'READ') {
       if (
-        !bookData.startDate ||
-        !bookData.endDate ||
+        !bookData.startAt ||
+        !bookData.endAt ||
         !bookData.rating ||
-        !bookData.color
+        !bookData.bookColor ||
+        bookData.libraryId === 0
       ) {
         return false;
       }
-    } else if (bookData.status === 'reading') {
-      if (!bookData.startDate || !bookData.color) {
+    } else if (bookData.status === 'READING') {
+      if (
+        !bookData.startAt ||
+        !bookData.bookColor ||
+        bookData.libraryId === 0
+      ) {
         return false;
       }
-    } else if (bookData.status === 'want') {
-      if (!bookData.color) {
+    } else if (bookData.status === 'DIB') {
+      if (!bookData.bookColor || bookData.libraryId === 0) {
         return false;
       }
     }
     return true;
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     // 유효성 검사
     if (!validateBookData(bookData)) {
-      handleShowAlert();
+      showAlert('빈칸을 입력해주세요.', true, () => {
+        // 확인
+      });
       return;
     }
+    const bodyData = {
+      bookColor: bookData.bookColor,
+      startAt: bookData.startAt,
+      endAt: bookData.endAt,
+      status: bookData.status,
+      rating: bookData.rating,
+      bookDto: selectedBook,
+    };
 
-    // 등록 서버 연동
-    reset();
+    try {
+      const data = await postLibraryBook(bookData.libraryId, bodyData);
+      showAlert('책이 성공적으로 등록되었습니다.', true, () => {
+        reset();
+      });
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        showAlert(error.response.data, true, () => {});
+      } else {
+        // 그 외의 에러
+        showAlert('오류가 발생했습니다. 다시 시도해주세요.', true, () => {});
+      }
+    }
   };
 
   if (!isCreateModalOpen) return null;

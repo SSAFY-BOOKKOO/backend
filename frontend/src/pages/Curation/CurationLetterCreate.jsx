@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Input from '@components/@common/Input';
 import Button from '@components/@common/Button';
-import BookSearch from '@components/Curation/BookSearch';
 import { useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
+import { curationBookAtom } from '@atoms/curationBookAtom';
+import { authAxiosInstance } from '../../services/axiosInstance';
 
 const CreateLetter = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
-
   const navigate = useNavigate();
+  const [book] = useAtom(curationBookAtom);
+
+  useEffect(() => {
+    console.log('Book object:', book);
+    // console.log(`Book Id: ${book.id}`);
+  }, [book]);
 
   const handleTitleChange = e => {
     setTitle(e.target.value);
@@ -20,15 +26,27 @@ const CreateLetter = () => {
   };
 
   const handleSearchButtonClick = () => {
-    setIsSearchModalOpen(true);
+    navigate('/curation/letter-create/book-search');
   };
 
-  const handleSearchModalClose = () => {
-    setIsSearchModalOpen(false);
-  };
-
+  // 전송 로직
   const handleLetterCreate = () => {
-    navigate('send');
+    const letter = {
+      // bookId: book ? book.id : null,
+      bookId: book.id,
+      title,
+      content,
+    };
+
+    authAxiosInstance
+      .post('/curations', letter)
+      .then(res => {
+        // console.log('Letter send successfully:', res);
+        navigate('/curation/send');
+      })
+      .catch(err => {
+        console.log('error:', err);
+      });
   };
 
   return (
@@ -36,8 +54,20 @@ const CreateLetter = () => {
       <div className='w-full max-w-md'>
         <div className='bg-gray-100 p-4 rounded-lg mb-4'>
           <div className='flex items-center justify-between'>
-            <p className='text-gray-700'>검색 영역</p>
-            {/* 검색 버튼 누르면 BookSearch 연결 */}
+            {book ? (
+              <div className='flex items-center'>
+                <img
+                  src={book.coverImgUrl}
+                  alt={book.title}
+                  className='w-12 h-16 rounded-md shadow-lg'
+                />
+                <div className='ml-4 text-gray-700 text-ellipsis text-overflow-1'>
+                  {book.title}
+                </div>
+              </div>
+            ) : (
+              <div className='text-gray-700'>책을 등록해 주세요!</div>
+            )}
             <button
               className='px-4 py-2 bg-gray-300 rounded-lg text-gray-700'
               onClick={handleSearchButtonClick}
@@ -67,10 +97,6 @@ const CreateLetter = () => {
           onClick={handleLetterCreate}
         />
       </div>
-      <BookSearch
-        isOpen={isSearchModalOpen}
-        onRequestClose={handleSearchModalClose}
-      />
     </div>
   );
 };

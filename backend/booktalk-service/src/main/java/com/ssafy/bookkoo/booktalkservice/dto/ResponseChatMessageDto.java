@@ -11,7 +11,8 @@ public record ResponseChatMessageDto(
     String profileImgUrl,
     String message,
     Long like,
-    String createdAt
+    String createdAt,
+    Boolean isMemberLiked
 ) {
 
 }

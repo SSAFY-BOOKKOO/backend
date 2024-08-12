@@ -30,6 +30,7 @@ ext {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
@@ -74,8 +75,13 @@ dependencies {
 
     // spring configuration processor
     implementation 'org.springframework.boot:spring-boot-configuration-processor:3.3.2'
+    
     //구글 Vision
     implementation 'com.google.cloud:google-cloud-vision:3.5.0'
+
+    //actuator,  prometheus
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
 dependencyManagement {

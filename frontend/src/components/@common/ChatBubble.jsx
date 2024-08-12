@@ -1,57 +1,88 @@
 import React from 'react';
+import { formatChatTime } from '@utils/formatTime';
 
 const ChatBubble = ({
   message,
   role,
   time,
+  nickName,
   showProfile = false,
   showLikes = false,
   likes = 0,
+  isMemberLiked = false,
   profileImage,
   customStyle = {},
+  profileClick,
+  onLikeClick,
 }) => {
-  const handleLike = () => {
-    // 좋아요 api 연동
+  const handleLike = e => {
+    e.stopPropagation();
+    if (onLikeClick) {
+      onLikeClick();
+    }
   };
 
+  const isUser = role === 'user';
+
   return (
-    <div
-      className={`flex ${role === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
-    >
-      {showProfile && role !== 'user' && (
-        <div className='flex justify-center items-center mr-2'>
+    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
+      {showProfile && !isUser && (
+        <div
+          className='flex-shrink-0 w-12 h-12 mr-3 flex items-center justify-center cursor-pointer'
+          onClick={profileClick}
+        >
           <img
             src={profileImage}
             alt='Profile'
-            className='w-11 h-11 rounded-full mr-2'
+            className='max-w-full max-h-full object-contain rounded-full'
           />
         </div>
       )}
-      <div className={`max-w-[80%] ${role === 'user' ? 'order-1' : 'order-2'}`}>
-        <div className='relative'>
-          <div
-            className={`absolute ${role === 'user' ? 'right-0' : 'left-0'} top-5 transform ${role === 'user' ? 'translate-x-1/2' : '-translate-x-1/2'} -translate-y-1/2`}
-          >
+      <div
+        className={`max-w-[80%] ${isUser ? 'items-end' : 'items-start'} flex flex-col`}
+      >
+        {!isUser && (
+          <div className='text-sm text-gray-600 mb-1'>{nickName}</div>
+        )}
+        <div
+          className={`flex items-end ${isUser ? 'flex-row-reverse' : 'flex-row'}`}
+        >
+          <div className='relative'>
             <div
-              className={`w-4 h-4 ${role === 'user' ? 'bg-green-400' : 'bg-gray-200'} rotate-45 transform origin-center ${role === 'user' ? 'mr-2' : 'ml-2'} rounded-sm`}
-              style={customStyle.arrow}
-            ></div>
-          </div>
-          <div
-            className={`
-              ${role === 'user' ? 'bg-green-400 text-white' : 'bg-gray-200 text-gray-800'} 
-              p-3 px-5 rounded-2xl break-words overflow-hidden mt-2
-            `}
-            style={customStyle.bubble}
-          >
-            <p className='text-sm whitespace-pre-wrap leading-6'>{message}</p>
-          </div>
-          {showLikes && (
-            <div className='text-right' onClick={handleLike}>
-              <span className='text-xs text-gray-500'>❤️ {likes}</span>
+              className={`
+                absolute top-[13px] ${isUser ? '-right-1' : '-left-1'}
+                w-4 h-4 ${isUser ? 'bg-green-400' : 'bg-gray-200'} 
+                transform rotate-45
+              `}
+            />
+            <div
+              className={`
+                ${isUser ? 'bg-green-400 text-white' : 'bg-gray-200 text-gray-800'} 
+                p-3 px-5 rounded-2xl break-words overflow-hidden relative
+              `}
+              style={customStyle.bubble}
+            >
+              <p className='text-sm whitespace-pre-wrap leading-6'>{message}</p>
             </div>
-          )}
+          </div>
+          <span
+            className={`text-xs flex-shrink-0 text-gray-500 ${isUser ? 'mr-1' : 'ml-1'} mb-1`}
+          >
+            {formatChatTime(time)}
+          </span>
         </div>
+        {showLikes && (
+          <div
+            className={`flex items-center cursor-pointer mt-1 ${isUser ? 'justify-end' : 'justify-start'}`}
+            onClick={handleLike}
+          >
+            <span
+              className={`text-xs ${isMemberLiked ? 'text-red-500' : 'text-gray-500'}`}
+            >
+              {isMemberLiked ? '❤️' : '🤍'} {likes}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

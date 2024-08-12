@@ -1,9 +1,7 @@
 package com.ssafy.bookkoo.libraryservice.service.stats;
 
 import com.ssafy.bookkoo.libraryservice.client.BookServiceClient;
-import com.ssafy.bookkoo.libraryservice.dto.stats.ResponseCalendarDto;
 import com.ssafy.bookkoo.libraryservice.dto.stats.ResponseStatsCategoryDto;
-import com.ssafy.bookkoo.libraryservice.dto.stats.ResponseStatsTimelineDto;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import com.ssafy.bookkoo.libraryservice.exception.BookClientException;
 import com.ssafy.bookkoo.libraryservice.repository.LibraryBookMapperRepository;
@@ -11,6 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,19 +17,6 @@ public class StatsServiceImpl implements StatsService {
 
     private final LibraryBookMapperRepository libraryBookMapperRepository;
     private final BookServiceClient bookServiceClient;
-
-    /**
-     * 독서 달력에 들어갈 데이터 반환
-     *
-     * @param memberId 사용자 ID
-     * @param startAt  시작 일
-     * @param endAt    끝 일
-     * @return ResponseCalendarDto
-     */
-    @Override
-    public ResponseCalendarDto getCalendar(Long memberId, LocalDate startAt, LocalDate endAt) {
-        return null;
-    }
 
     /**
      * 독서 카테고리 통계 데이터 반환
@@ -65,22 +51,17 @@ public class StatsServiceImpl implements StatsService {
 
 
     /**
-     * 독서 타임라인 데이터 반환
+     * 시간 내에 읽은 권수
      *
-     * @param memberId 사용자 ID
-     * @param startAt  시작 일
-     * @param endAt    끝 일
-     * @return List<ResponseStatsTimelineDto>
+     * @param memberId memberId
+     * @param startAt  startAt
+     * @param endAt    endAt
+     * @return 읽은 권수
      */
     @Override
-    public List<ResponseStatsTimelineDto> getStatsTimeline(
-        Long memberId,
-        LocalDate startAt,
-        LocalDate endAt
-    ) {
-        // 1. 멤버가 서재에 넣은 책 가져오기
-        List<Long> bookIds = libraryBookMapperRepository.findBookIdsByMemberIdUpdatedAt(
-            memberId, startAt, endAt);
-        return List.of();
+    @Transactional(readOnly = true)
+    public Integer getCountOfREAD(Long memberId, LocalDate startAt, LocalDate endAt) {
+        return libraryBookMapperRepository.countBooksByMemberIdDuration(memberId, startAt, endAt);
     }
+
 }
