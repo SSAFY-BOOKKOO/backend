@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "notification-service")
 public interface NotificationServiceClient {
 
-    @PostMapping("/curation")
+    @PostMapping("/notifications/curation")
     public ResponseEntity<HttpStatus> createCurationNotification(
         @RequestBody RequestCreateCurationNotificationDto createCurationNotificationDto
     );
