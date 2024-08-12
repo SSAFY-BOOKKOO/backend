@@ -8,7 +8,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.bookkoo.libraryservice.entity.LibraryBookMapper;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -121,7 +123,10 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
      * @return List<Long> 갖고있는 책 ID
      */
     @Override
-    public List<Long> findBookIdsByMemberIdAndBookIds(Long memberId, List<Long> bookIds) {
+    public List<Long> findBookIdsByMemberIdAndBookIds(
+        Long memberId,
+        List<Long> bookIds
+    ) {
 
         BooleanBuilder predicate = new BooleanBuilder();
 
@@ -253,7 +258,11 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
      * @return 읽은 권수
      */
     @Override
-    public Integer countBooksByMemberIdDuration(Long memberId, LocalDate startAt, LocalDate endAt) {
+    public Integer countBooksByMemberIdDuration(
+        Long memberId,
+        LocalDate startAt,
+        LocalDate endAt
+    ) {
         BooleanBuilder predicate = new BooleanBuilder();
         // 내 서재
         predicate.and(libraryBookMapper.library.memberId.eq(memberId));
@@ -263,8 +272,39 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
         predicate.and(libraryBookMapper.endAt.goe(startAt));
 
         Long count = queryFactory.select(libraryBookMapper.id.bookId.count())
+                                 .from(libraryBookMapper)
+                                 .where(predicate)
                                  .fetchOne();
 
         return count != null ? count.intValue() : 0;
+    }
+
+    /**
+     * 서재에서 가장 작은 빈 값 찾기
+     *
+     * @param libraryId 서재 ID
+     * @return 가장 작은 빈 bookOrder
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Integer findFirstMissingBookOrderByLibraryId(Long libraryId) {
+        // 채워져 있는 순서들을 Set으로 변환하여 검색 최적화
+        Set<Integer> filledOrders = new HashSet<>(queryFactory.select(libraryBookMapper.bookOrder)
+                                                              .from(libraryBookMapper)
+                                                              .where(
+                                                                  libraryBookMapper.library.id.eq(
+                                                                      libraryId))
+                                                              .orderBy(
+                                                                  libraryBookMapper.bookOrder.asc())
+                                                              .fetch());
+
+        // 1부터 27까지의 범위 내에서 빈 자리를 찾기
+        for (int i = 1; i <= 27; i++) {
+            if (!filledOrders.contains(i)) {
+                return i; // 첫 번째 빈 자리 반환
+            }
+        }
+
+        return null; // 모든 자리가 채워져 있으면 null 반환
     }
 }

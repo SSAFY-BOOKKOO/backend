@@ -24,6 +24,7 @@ import com.ssafy.bookkoo.bookservice.exception.InvalidAttributeException;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.hibernate.query.sqm.PathElementException;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Repository;
 
@@ -124,6 +125,7 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
      * @return 검색된 책 리스트
      */
     @Override
+    @Cacheable("book") // 400ms -> 200ms 로 줄음
     public List<Book> findByConditions(RequestSearchBookMultiFieldDto dto) {
         // 동적 쿼리 시작
         BooleanBuilder predicate = new BooleanBuilder();
@@ -195,7 +197,10 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
     }
 
     @Override
-    public ResponseBookOfLibraryDto getBookOfLibrary(Long bookId, Long memberId) {
+    public ResponseBookOfLibraryDto getBookOfLibrary(
+        Long bookId,
+        Long memberId
+    ) {
         // 책 정보 조회
         Book bookEntity = queryFactory.selectFrom(book)
                                       .leftJoin(book.category, category)
@@ -257,7 +262,7 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
      */
     @Override
     public List<ResponseStatsCategoryDto> searchBookCategoryStats(List<Long> bookIds) {
-        
+
         return queryFactory
             .select(
                 new QResponseStatsCategoryDto(

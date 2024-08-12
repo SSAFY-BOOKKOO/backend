@@ -4,6 +4,7 @@ import com.ssafy.bookkoo.memberservice.dto.request.RequestCreateQuoteDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdateQuoteDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseQuoteDetailDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseQuoteDto;
+import com.ssafy.bookkoo.memberservice.service.Impl.OCRService;
 import com.ssafy.bookkoo.memberservice.service.QuoteService;
 import com.ssafy.bookkoo.memberservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class QuoteController {
 
     private final QuoteService quoteService;
+    private final OCRService ocrService;
 
     @GetMapping
     @Operation(summary = "글귀 목록 반환 API"
@@ -95,5 +98,15 @@ public class QuoteController {
         quoteService.deleteQuote(memberId, quoteId);
         return ResponseEntity.noContent()
                              .build();
+    }
+
+    @PostMapping(value = "/ocr", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "OCR 이미지 텍스트 추출 API",
+        description = "OCR을 통해 글귀의 텍스트를 가져옵니다.")
+    public ResponseEntity<String> processingOCR(
+        @RequestParam("image") MultipartFile image
+    ) {
+        String text = ocrService.extractTextFromImage(image);
+        return ResponseEntity.ok(text);
     }
 }

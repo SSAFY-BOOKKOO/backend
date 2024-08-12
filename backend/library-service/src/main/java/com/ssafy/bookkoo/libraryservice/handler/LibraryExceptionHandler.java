@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.libraryservice.handler;
 
 import com.ssafy.bookkoo.libraryservice.exception.BookAlreadyMappedException;
+import com.ssafy.bookkoo.libraryservice.exception.LibraryBookLimitExceededException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryBookNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryIsNotYoursException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryLimitExceededException;
@@ -100,6 +101,12 @@ public class LibraryExceptionHandler {
      */
     @ExceptionHandler(LibraryIsNotYoursException.class)
     public ResponseEntity<String> handleLibraryIsNotYoursException(LibraryIsNotYoursException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(e.getMessage());
+    }
+
+    @ExceptionHandler(LibraryBookLimitExceededException.class)
+    public ResponseEntity<String> handleLibraryBookLimitExceededException(LibraryBookLimitExceededException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body(e.getMessage());
     }
