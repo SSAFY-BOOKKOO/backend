@@ -188,6 +188,8 @@ services:
 
   member-service:
     container_name: member-service
+    environment: 
+      - GOOGLE_APPLICATION_CREDENTIALS=./backend/member-service/src/main/resources/bookkoo_google.json
     build:
       context: ./backend/member-service
     ports:
