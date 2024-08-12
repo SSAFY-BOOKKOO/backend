@@ -2,8 +2,7 @@ package com.ssafy.bookkoo.curationservice.service;
 
 import com.ssafy.bookkoo.curationservice.dto.RequestCreateCurationDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDetailDto;
-import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDto;
-import java.util.List;
+import com.ssafy.bookkoo.curationservice.dto.ResponseCurationListDto;
 import org.springframework.data.domain.Pageable;
 
 public interface CurationService {
@@ -15,13 +14,13 @@ public interface CurationService {
     ResponseCurationDetailDto getCurationDetail(Long curationId, Long memberId);
 
     // 내가 받은 큐레이션 가져오기
-    List<ResponseCurationDto> getCurationList(Long receiver, Pageable pageable);
+    ResponseCurationListDto getCurationList(Long receiver, Pageable pageable);
 
     // 내가 저장한 큐레이션 가져오기
-    List<ResponseCurationDto> getStoredCurationList(Long receiver, Pageable pageable);
+    ResponseCurationListDto getStoredCurationList(Long receiver, Pageable pageable);
 
     // 내가 보낸 큐레이션 가져오기
-    List<ResponseCurationDto> getSentCurations(Long writer, Pageable pageable);
+    ResponseCurationListDto getSentCurations(Long writer, Pageable pageable);
 
     // 큐레이션 보관하기
     void changeCurationStoredStatus(Long id, Long receiver);
