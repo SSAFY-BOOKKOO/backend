@@ -432,7 +432,7 @@ public class LibraryServiceImpl implements LibraryService {
                                       .libraryStyleDto(LibraryStyleDto.builder()
                                                                       .libraryColor("default")
                                                                       .fontName("default")
-                                                                      .fontSize("default")
+                                                                      .fontSize("0")
                                                                       .build())
                                       .build();
     }
@@ -662,6 +662,73 @@ public class LibraryServiceImpl implements LibraryService {
         lbMapper.setBookColor(bookColor);
 
         libraryBookMapperRepository.save(lbMapper);
+    }
+
+    /**
+     * 책 서재 이동하기
+     *
+     * @param memberId        사용자 ID
+     * @param libraryId       서재 ID
+     * @param bookId          책 ID
+     * @param targetLibraryId 바꿀 서재 ID
+     */
+    @Override
+    @Transactional
+    public void updateBookLibraryIdFromLibrary(
+        Long memberId,
+        Long libraryId,
+        Long bookId,
+        Long targetLibraryId
+    ) {
+        checkIsValidLibraryOwner(memberId, libraryId);
+
+        // 2. library_book_mapper 에서 수정시키기
+        MapperKey mapperKey = new MapperKey();
+        mapperKey.setLibraryId(libraryId);
+        mapperKey.setBookId(bookId);
+
+        Optional<LibraryBookMapper> lbm = libraryBookMapperRepository.findById(mapperKey);
+        if (lbm.isEmpty()) {
+            throw new LibraryBookNotFoundException(
+                "(libraryId, bookId) not found: (" + libraryId + " , " + bookId + ")");
+        }
+
+        LibraryBookMapper lbMapper = lbm.get();
+
+        // 3. 새 서재 찾기
+        Optional<Library> targetLibrary = libraryRepository.findById(targetLibraryId);
+        if (targetLibrary.isEmpty()) {
+            throw new LibraryNotFoundException(targetLibraryId);
+        }
+
+        // 3. 매핑 정보 수정 (서재 변경)
+        MapperKey newMapperKey = new MapperKey();
+        newMapperKey.setLibraryId(targetLibraryId);
+        newMapperKey.setBookId(bookId);
+
+        // 새 bookOrder : 빈 곳 중 가장 작은 숫자에 넣기
+        Integer smallestMissingBookOrder = libraryBookMapperRepository.findFirstMissingBookOrderByLibraryId(
+            targetLibraryId);
+
+        // 빈곳이 없으면 에러처리
+        if (smallestMissingBookOrder == null) {
+            throw new LibraryBookLimitExceededException();
+        }
+
+        // 4. 새 매핑 생성
+        LibraryBookMapper newLbMapper = LibraryBookMapper.builder()
+                                                         .id(newMapperKey)
+                                                         .bookOrder(smallestMissingBookOrder)
+                                                         .bookColor(lbMapper.getBookColor())
+                                                         .startAt(lbMapper.getStartAt())
+                                                         .endAt(lbMapper.getEndAt())
+                                                         .status(lbMapper.getStatus())
+                                                         .rating(lbMapper.getRating())
+                                                         .build();
+        newLbMapper.setLibrary(targetLibrary.get());
+        // 기존 매핑 삭제 및 새 매핑 저장
+        libraryBookMapperRepository.delete(lbMapper);
+        libraryBookMapperRepository.save(newLbMapper);
     }
 
     /**
