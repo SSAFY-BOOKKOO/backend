@@ -8,6 +8,7 @@ import com.ssafy.bookkoo.booktalkservice.dto.other.RequestSearchBookMultiFieldDt
 import com.ssafy.bookkoo.booktalkservice.service.BookTalkService;
 import com.ssafy.bookkoo.booktalkservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -78,7 +79,7 @@ public class BookTalkController {
     )
     @PostMapping
     public ResponseEntity<Long> createBookTalk(
-        @RequestBody RequestCreateBookTalkDto dto
+        @Valid @RequestBody RequestCreateBookTalkDto dto
     ) {
         Long bookTalkId = bookTalkService.createBookTalk(dto);
         return ResponseEntity.ok(bookTalkId);
