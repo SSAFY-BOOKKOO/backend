@@ -66,7 +66,7 @@ public class MemberController {
     @GetMapping("/validation")
     @Operation(description = "이메일로 발송된 인증번호를 검증합니다.", summary = "인증번호 검증")
     public ResponseEntity<HttpStatus> checkEmailValidation(
-        RequestCertificationDto requestCertificationDto
+        @Valid RequestCertificationDto requestCertificationDto
     ) {
         memberService.checkValidationEmail(requestCertificationDto);
         return ResponseEntity.ok()
