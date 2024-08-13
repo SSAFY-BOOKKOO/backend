@@ -325,6 +325,47 @@ const LibraryMain = () => {
 
   const currentLibraryStyleDto = libraries[activeLibrary]?.libraryStyleDto;
 
+  const changeLibraryColor = async (libraryId, colorClassName) => {
+    try {
+      const existingLibraryResponse = await authAxiosInstance.get(
+        `/libraries/${libraryId}`
+      );
+      const existingLibrary = existingLibraryResponse.data;
+
+      await authAxiosInstance.patch(`/libraries/${libraryId}`, {
+        libraryStyleDto: {
+          ...existingLibrary.libraryStyleDto,
+          libraryColor: colorClassName,
+        },
+      });
+
+      setLibraries(prev => {
+        const newLibraries = [...prev];
+        const libraryIndex = newLibraries.findIndex(
+          lib => lib.id === libraryId
+        );
+        if (libraryIndex !== -1) {
+          newLibraries[libraryIndex].libraryStyleDto.libraryColor =
+            colorClassName;
+        }
+        return newLibraries;
+      });
+
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '서재 색이 성공적으로 변경되었습니다.',
+      });
+    } catch (error) {
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '서재 색 변경에 실패했습니다. 다시 시도해 주세요.',
+      });
+      console.error(error);
+    }
+  };
+
   return (
     <DndProvider backend={MultiBackend} options={HTML5toTouch}>
       <div className='bg-white'>
@@ -343,6 +384,7 @@ const LibraryMain = () => {
           changeLibraryName={changeLibraryName}
           libraryRef={libraryRef}
           changeFontStyle={changeFontStyle}
+          changeLibraryColor={changeLibraryColor} // Pass the color change function
         />
         <div ref={libraryRef}>
           {libraries.length > 0 && (
@@ -351,7 +393,7 @@ const LibraryMain = () => {
               moveBook={moveBook}
               onBookClick={handleBookClick}
               viewOnly={false}
-              libraryStyleDto={currentLibraryStyleDto}
+              libraryStyleDto={libraries[activeLibrary]?.libraryStyleDto}
             />
           )}
         </div>
