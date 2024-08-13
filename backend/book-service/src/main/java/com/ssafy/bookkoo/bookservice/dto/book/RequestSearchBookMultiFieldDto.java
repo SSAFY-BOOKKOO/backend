@@ -1,7 +1,6 @@
 package com.ssafy.bookkoo.bookservice.dto.book;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.Builder;
 
@@ -13,11 +12,9 @@ public record RequestSearchBookMultiFieldDto(
     List<SearchBookConditionDto> conditions,
 
     @Schema(description = "한 페이지에 표시할 항목 수", example = "10")
-    @Positive
     Integer limit,
 
     @Schema(description = "페이지 번호 (0부터 시작)", example = "0")
-    @Positive
     Integer offset
 ) {
 
