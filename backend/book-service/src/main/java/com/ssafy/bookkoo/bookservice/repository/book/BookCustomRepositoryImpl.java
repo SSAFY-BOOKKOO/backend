@@ -2,9 +2,11 @@ package com.ssafy.bookkoo.bookservice.repository.book;
 
 import static com.querydsl.core.types.Projections.constructor;
 import static com.ssafy.bookkoo.bookservice.entity.QBook.book;
+import static com.ssafy.bookkoo.bookservice.entity.QCategory.category;
 import static com.ssafy.bookkoo.bookservice.entity.QReview.review;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -199,45 +201,64 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
         Long bookId,
         Long memberId
     ) {
-        // 책 정보 조회
-        Book bookEntity = queryFactory.selectFrom(book)
-                                      .where(book.id.eq(bookId))
-                                      .fetchOne();
+        // 책 정보와 리뷰, 카테고리를 한 번에 조회
+        Tuple result = queryFactory.select(
+                                       book.id,
+                                       book.coverImgUrl,
+                                       book.author,
+                                       book.publisher,
+                                       book.summary,
+                                       book.title,
+                                       book.isbn,
+                                       book.itemPage,
+                                       book.sizeDepth,
+                                       book.sizeHeight,
+                                       book.sizeWidth,
+                                       book.publishedAt,
+                                       category.id,
+                                       category.name,
+                                       review.id,
+                                       review.content
+                                   )
+                                   .from(book)
+                                   .leftJoin(book.category, category)
+                                   .leftJoin(review)
+                                   .on(review.book.id.eq(bookId)
+                                                     .and(review.memberId.eq(memberId)))
+                                   .where(book.id.eq(bookId))
+                                   .fetchOne();
 
-        if (bookEntity == null) {
+        if (result == null) {
             return null;
         }
 
-        // 리뷰 조회
-        ResponseReviewDto reviewDto = queryFactory.select(
-                                                      constructor(ResponseReviewDto.class,
-                                                          review.id,
-                                                          review.book.id,
-                                                          review.content
-                                                      ))
-                                                  .from(review)
-                                                  .where(review.book.id.eq(bookId)
-                                                                       .and(review.memberId.eq(
-                                                                           memberId)))
-                                                  .fetchOne();
+        CategoryDto categoryDto = new CategoryDto(
+            result.get(category.id),
+            result.get(category.name)
+        );
 
-        CategoryDto categoryDto = new CategoryDto(bookEntity.getCategory()
-                                                            .getId(), bookEntity.getCategory()
-                                                                                .getName());
+        ResponseReviewDto reviewDto = null;
+        if (result.get(review.id) != null) {
+            reviewDto = new ResponseReviewDto(
+                result.get(review.id),
+                bookId,
+                result.get(review.content)
+            );
+        }
 
         return new ResponseBookOfLibraryDto(
-            bookEntity.getId(),
-            bookEntity.getCoverImgUrl(),
-            bookEntity.getAuthor(),
-            bookEntity.getPublisher(),
-            bookEntity.getSummary(),
-            bookEntity.getTitle(),
-            bookEntity.getIsbn(),
-            bookEntity.getItemPage(),
-            bookEntity.getSizeDepth(),
-            bookEntity.getSizeHeight(),
-            bookEntity.getSizeWidth(),
-            bookEntity.getPublishedAt(),
+            result.get(book.id),
+            result.get(book.coverImgUrl),
+            result.get(book.author),
+            result.get(book.publisher),
+            result.get(book.summary),
+            result.get(book.title),
+            result.get(book.isbn),
+            result.get(book.itemPage),
+            result.get(book.sizeDepth),
+            result.get(book.sizeHeight),
+            result.get(book.sizeWidth),
+            result.get(book.publishedAt),
             categoryDto,
             reviewDto
         );
