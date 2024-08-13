@@ -1,19 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Input from '../../@common/Input';
 import Textarea from '../../@common/Textarea';
 import Button from '../../@common/Button';
 
-const QuoteInput = ({ addQuote, setShowInput }) => {
-  const [quote, setQuote] = useState('');
-  const [info, setInfo] = useState('');
+const QuoteInput = ({
+  addQuote,
+  setShowInput,
+  initialQuote,
+  initialSource,
+  isEdit,
+  quoteId,
+}) => {
+  const [content, setContent] = useState(initialQuote || '');
+  const [source, setSource] = useState(initialSource || '');
+
+  useEffect(() => {
+    setContent(initialQuote);
+    setSource(initialSource);
+  }, [initialQuote, initialSource]);
 
   const handleSubmit = e => {
     e.preventDefault();
-    if (quote.trim()) {
-      addQuote({ quote, info });
-      setQuote('');
-      setInfo('');
-      setShowInput(false);
+    if (content.trim()) {
+      addQuote({ quoteId, content, source });
+      setContent('');
+      setSource('');
     }
   };
 
@@ -24,19 +35,19 @@ const QuoteInput = ({ addQuote, setShowInput }) => {
         <form onSubmit={handleSubmit}>
           <Textarea
             placeholder='여기에 문장을 입력해주세요'
-            value={quote}
-            onChange={e => setQuote(e.target.value)}
+            value={content}
+            onChange={e => setContent(e.target.value)}
             maxLength={200}
           />
           <Input
             type='text'
             placeholder='페이지 및 기타 정보 (예: p.29)'
-            value={info}
-            onChange={e => setInfo(e.target.value)}
+            value={source}
+            onChange={e => setSource(e.target.value)}
           />
           <div className='flex justify-end mt-3'>
             <Button type='submit' className='mr-3'>
-              완료
+              {isEdit ? '수정' : '등록'}
             </Button>
             <Button
               onClick={() => setShowInput(false)}
