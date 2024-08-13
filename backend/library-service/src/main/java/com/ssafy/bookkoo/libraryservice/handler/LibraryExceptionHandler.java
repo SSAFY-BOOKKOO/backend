@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.libraryservice.handler;
 
 import com.ssafy.bookkoo.libraryservice.exception.BookAlreadyMappedException;
+import com.ssafy.bookkoo.libraryservice.exception.BookClientException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryBookLimitExceededException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryBookNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryIsNotYoursException;
@@ -8,8 +9,11 @@ import com.ssafy.bookkoo.libraryservice.exception.LibraryLimitExceededException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryMoveToSameLibraryException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.MemberNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -130,6 +134,46 @@ public class LibraryExceptionHandler {
     public ResponseEntity<String> handleLibraryMoveToSameLibraryException(
         LibraryMoveToSameLibraryException e
     ) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * 파라미터 valid 에 벗어나는 잘못된 값을 넣으면 나오는 에러
+     *
+     * @param ex MethodArgumentNotValidException
+     * @return 에러코드 + 에러설명
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        // 모든 에러를 가져와서 메시지 구성
+        List<String> errorMessages = ex.getBindingResult()
+                                       .getFieldErrors()
+                                       .stream()
+                                       .map(fieldError -> String.format(
+                                           "Field '%s': %s",
+                                           fieldError.getField(),
+                                           fieldError.getDefaultMessage()
+                                       ))
+                                       .toList();
+
+        // 에러 메시지들을 JSON 형식의 배열로 반환
+        String errorMessageJson = errorMessages.stream()
+                                               .map(message -> "\"" + message + "\"")
+                                               .collect(Collectors.joining(", ", "[", "]"));
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(errorMessageJson);
+    }
+
+    /**
+     * 북 클라이언트 통신 중 에러 처리
+     *
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(BookClientException.class)
+    public ResponseEntity<String> handleBookClientException(BookClientException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body(e.getMessage());
     }
