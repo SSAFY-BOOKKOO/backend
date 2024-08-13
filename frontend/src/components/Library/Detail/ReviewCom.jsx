@@ -15,7 +15,7 @@ const Modal = ({ show, onClose, review }) => {
   const navigate = useNavigate();
 
   const handleLibraryNavigation = () => {
-    const nickname = review.member.nickName;
+    const nickname = review?.review.member.nickName;
     navigate('/library', { state: { nickname } });
   };
 
@@ -258,6 +258,7 @@ const ReviewCom = ({ onBackClick, book }) => {
                     handleSaveReview();
                     handleConfirmReview();
                     setEditingReview(false);
+                    alert('저장 되었습니다!');
                     window.location.reload();
                   } else {
                     setEditingReview(true); // 작성 가능 상태로 변경

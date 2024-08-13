@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import useModal from '@hooks/useModal';
 import SettingsModal from '@components/@common/SettingsModal';
 import { authAxiosInstance } from '../../services/axiosInstance';
 
 const CurationLetterDetail = () => {
   const { id } = useParams();
+  const location = useLocation();
   const { isOpen, closeModal, toggleModal } = useModal();
   const [nickName, setnickName] = useState('');
   const [letter, setLetter] = useState('');
+  const modalVisible = location.state?.modalVisible ?? true; // 기본값은 true로 설정
 
   useEffect(() => {
     authAxiosInstance
@@ -82,7 +84,7 @@ const CurationLetterDetail = () => {
             onToggle={toggleModal}
             actions={actions}
           /> */}
-          {nickName !== letter.writer && (
+          {nickName !== letter.writer && modalVisible && (
             <SettingsModal
               isOpen={isOpen}
               onClose={closeModal}

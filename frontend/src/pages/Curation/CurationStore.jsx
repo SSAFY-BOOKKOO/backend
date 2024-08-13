@@ -23,7 +23,7 @@ const CurationStore = () => {
       .then(res => {
         console.log('Letter Detail:', res);
         navigate(`/curation/letter/${letter.curationId}`, {
-          state: { letter },
+          state: { letter, modalVisible: false },
         });
       })
       .catch(err => {
