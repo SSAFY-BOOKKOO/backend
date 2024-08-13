@@ -56,34 +56,47 @@ const Quote = () => {
     handleQuoteCount();
   }, []);
 
+  const handleCloseQuoteInput = () => {
+    setShowInput(false);
+    setExtractedText('');
+    setEditQuote(null);
+  };
+
   const createQuote = async quoteData => {
     try {
       await postQuote(quoteData.content, quoteData.source);
       refetch();
-      showAlert('글귀가 생성되었습니다.', false, () => {});
-      setShowInput(false);
+      showAlert('글귀가 생성되었습니다.', true, () => {
+        handleQuoteCount();
+      });
     } catch (error) {
       showAlert('앗 오류가 발생했습니다. 다시 시도해주세요!', true, () => {});
+    } finally {
+      handleCloseQuoteInput();
     }
   };
 
   const updateQuote = async quoteData => {
+    console.log(quoteData);
     try {
       await putQuote(quoteData.quoteId, quoteData.content, quoteData.source);
       refetch();
-      showAlert('글귀가 수정되었습니다.', false, () => {});
-      setShowInput(false);
-      setEditQuote(null);
+      showAlert('글귀가 수정되었습니다.', true, () => {});
     } catch (error) {
       showAlert('앗 오류가 발생했습니다. 다시 시도해주세요!', true, () => {});
+    } finally {
+      handleCloseQuoteInput();
     }
   };
 
   const deleteQuoteHandler = async quoteId => {
     try {
       await deleteQuote(quoteId);
-      refetch();
-      showAlert('글귀가 삭제되었습니다.', false, () => {});
+
+      showAlert('글귀가 삭제되었습니다.', true, () => {
+        handleQuoteCount();
+        refetch();
+      });
     } catch (error) {
       showAlert('앗 오류가 발생했습니다. 다시 시도해주세요!', true, () => {});
     }
@@ -129,7 +142,9 @@ const Quote = () => {
       <div className='flex justify-between items-center mb-4'>
         <h1 className='text-2xl font-bold'>나의 글귀함</h1>
         <div className='flex items-center'>
-          <Button onClick={toggleModal}>글귀 만들기</Button>
+          <Button size='small' onClick={toggleModal}>
+            글귀 만들기
+          </Button>
         </div>
       </div>
       <p className='mb-3'>총 {quoteCount}개</p>
@@ -159,7 +174,8 @@ const Quote = () => {
           initialQuote={editQuote ? editQuote.content : extractedText}
           initialSource={editQuote ? editQuote.source : ''}
           isEdit={!!editQuote} // 수정 여부
-          quoteId={editQuote ? editQuote.id : null} // 수정할 때 quoteId 전달
+          quoteId={editQuote ? editQuote.quoteId : null} // 수정할 때 quoteId 전달
+          onClose={handleCloseQuoteInput}
         />
       )}
       {selectedQuoteIndex !== null && (
