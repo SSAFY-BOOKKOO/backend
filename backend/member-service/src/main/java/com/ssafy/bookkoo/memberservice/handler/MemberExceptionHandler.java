@@ -174,20 +174,53 @@ public class MemberExceptionHandler {
      */
     @ExceptionHandler(OCRProcessingException.class)
     public ResponseEntity<String> handleOCRProcessingException(OCRProcessingException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR )
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * OCR을 수행 중 에러 발생 시 발생하는 예외
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(ImageUploadException.class)
+    public ResponseEntity<String> handleImageUploadException(ImageUploadException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * 알림 생성 오류 (타 서비스 호출에서 예외 발생)
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(CreateNotificationFailException.class)
+    public ResponseEntity<String> handleCreateNotificationFailException(CreateNotificationFailException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * 서재 생성 오류 (타 서비스 호출에서 예외 발생)
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(CreateLibraryFailException.class)
+    public ResponseEntity<String> handleCreateLibraryFailException(CreateLibraryFailException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body(e.getMessage());
     }
 
     /**
      * 파라미터 valid 에 벗어나는 잘못된 값을 넣으면 나오는 에러
      *
-     * @param ex MethodArgumentNotValidException
+     * @param e MethodArgumentNotValidException
      * @return 에러코드 + 에러설명
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException e) {
         // 모든 에러를 가져와서 메시지 구성
-        List<String> errorMessages = ex.getBindingResult()
+        List<String> errorMessages = e.getBindingResult()
                                        .getFieldErrors()
                                        .stream()
                                        .map(fieldError -> String.format(
@@ -205,4 +238,6 @@ public class MemberExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body(errorMessageJson);
     }
+
+
 }
