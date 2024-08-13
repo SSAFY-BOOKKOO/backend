@@ -45,7 +45,6 @@ const ProfilePage = () => {
       categories: updatedInfo.categories ?? prevMember.categories,
     }));
     setIsEditing(false);
-    window.location.reload();
   };
 
   const handleChangePassword = () => setIsChangingPassword(true);

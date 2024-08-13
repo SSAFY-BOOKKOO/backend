@@ -28,7 +28,6 @@ import Quote from './pages/Mypage/Quote.jsx';
 import SearchMore from './pages/Library/SearchMore.jsx';
 import BookTalkMore from './pages/BookTalk/BookTalkMore.jsx';
 import PasswordFind from './pages/Member/PasswordFind.jsx';
-import AdditionalInfo from './pages/Member/AdditionalInfo.jsx';
 import LibraryOthers from './pages/Library/LibraryOthers.jsx';
 import SocialLoginCallback from './components/Login/SocialLoginCallback.jsx';
 import BookTalkCreate from './pages/BookTalk/BookTalkCreate.jsx';
@@ -103,10 +102,6 @@ const router = createBrowserRouter([
   {
     path: 'register',
     element: <Register />,
-  },
-  {
-    path: 'register/additional-info',
-    element: <AdditionalInfo />,
   },
   {
     path: 'find-password',

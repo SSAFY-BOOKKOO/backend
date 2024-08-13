@@ -24,9 +24,11 @@ const RegisterStep3 = ({
   return (
     <>
       <div className='text-center mb-4'>
-        <h3 className='text-xl font-bold text-left'>추가 설정</h3>
+        <h3 className='text-xl font-bold text-left'>
+          추가 정보를 입력해주세요
+        </h3>
         <p className='text-gray-500 text-left'>
-          다른 유저와의 교류를 위한 정보
+          다른 유저와의 교류를 위한 정보입니다.
         </p>
       </div>
       <label className='block mb-2 text-md font-medium text-gray-700'>
@@ -66,6 +68,9 @@ const RegisterStep3 = ({
         required
         error={errors.introduction}
       />
+      {errors.introduction && (
+        <p className='text-red-500 text-sm'>{errors.introduction}</p>
+      )}
       <div className='flex justify-between mt-6'>
         <Button
           text='이전'

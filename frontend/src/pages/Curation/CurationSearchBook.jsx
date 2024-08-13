@@ -8,17 +8,12 @@ import WrapContainer from '@components/Layout/WrapContainer';
 import useModal from '@hooks/useModal';
 import { useSetAtom } from 'jotai';
 import { curationBookAtom } from '../../atoms/curationBookAtom';
-// import { getAladinBooks } from '@services/Book';
-// import CurationLetterCreate from './CurationLetterCreate';
-// import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
 
 const BookSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearched, setIsSearched] = useState(false);
   const [searchParams] = useSearchParams();
-  // const { isOpen, toggleModal } = useModal();
   const [selectedBook, setSelectedBook] = useState(null);
-  // jotai 활용
   const setBook = useSetAtom(curationBookAtom);
 
   const text = searchParams.get('text') || '';
@@ -52,7 +47,7 @@ const BookSearch = () => {
     setIsSearched(true);
   };
 
-  /////////////////도서 등록
+  // 도서 등록
   const handleBookCreateButton = book => {
     setSelectedBook(book);
     console.log({ book });
@@ -61,7 +56,7 @@ const BookSearch = () => {
     navigate('/curation/letter-create');
   };
 
-  //////////////////검색 결과
+  // 검색 결과
 
   const renderBookItem = book => {
     console.log('Book ID:', book.book_id); // Log book_id to the console

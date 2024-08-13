@@ -23,7 +23,7 @@ const CaptureButton = ({ targetRef, onCapture, filename = 'library' }) => {
         };
 
         const blob = await domtoimage.toBlob(targetRef.current, {
-          quality: 1, // 최대 품질로 설정
+          quality: 1,
           height: targetRef.current.scrollHeight * scale,
           width: targetRef.current.scrollWidth * scale,
           style: {

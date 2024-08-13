@@ -8,6 +8,7 @@ import CreateLibraryModal from './CreateLibraryModal';
 import ChangeLibraryNameModal from './ChangeLibraryNameModal';
 import ChangeFontStyleModal from './ChangeFontStyleModal';
 import CaptureButton from './CaptureButton';
+import ChangeLibraryColorModal from './ChangeLibraryColorModal'; // Import the color change modal
 
 const LibraryOptions = ({
   activeLibrary,
@@ -22,6 +23,7 @@ const LibraryOptions = ({
   setNewLibraryName,
   changeLibraryName,
   changeFontStyle,
+  changeLibraryColor,
   viewOnly = false,
   libraryRef,
 }) => {
@@ -32,6 +34,7 @@ const LibraryOptions = ({
     useState(false);
   const [showChangeFontStyleModal, setShowChangeFontStyleModal] =
     useState(false);
+  const [showChangeColorModal, setShowChangeColorModal] = useState(false);
   const setAlert = useSetAtom(alertAtom);
 
   const handleDeleteLibrary = () => {
@@ -80,6 +83,13 @@ const LibraryOptions = ({
       onClick: () => {
         setShowMenu(false);
         setShowChangeFontStyleModal(true);
+      },
+    },
+    {
+      label: '색 변경',
+      onClick: () => {
+        setShowMenu(false);
+        setShowChangeColorModal(true);
       },
     },
   ];
@@ -144,6 +154,14 @@ const LibraryOptions = ({
           changeFontStyle(libraries[activeLibrary].id, name, size)
         }
         setShowModal={setShowChangeFontStyleModal}
+      />
+      <ChangeLibraryColorModal
+        showModal={showChangeColorModal}
+        currentColor={libraries[activeLibrary]?.libraryStyleDto?.libraryColor}
+        changeLibraryColor={color =>
+          changeLibraryColor(libraries[activeLibrary].id, color)
+        }
+        setShowModal={setShowChangeColorModal}
       />
       <Alert />
     </div>
