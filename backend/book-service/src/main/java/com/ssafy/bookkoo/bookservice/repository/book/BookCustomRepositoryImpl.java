@@ -112,6 +112,7 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
      * @return 검색된 책, 없으면 null 반환
      */
     @Override
+    @Cacheable("book")
     public Book findByIsbn(String isbn) {
         return queryFactory.selectFrom(book)
                            .where(book.isbn.eq(isbn))
