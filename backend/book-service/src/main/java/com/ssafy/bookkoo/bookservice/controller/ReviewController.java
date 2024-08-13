@@ -87,18 +87,6 @@ public class ReviewController {
                              .build();
     }
 
-    @Operation(summary = "리뷰 좋아요 토글", description = "특정 책의 특정 리뷰에 좋아요를 토글합니다.")
-    @PostMapping("/{bookId}/reviews/{reviewId}/like")
-    public ResponseEntity<Boolean> toggleLikeReviewById(
-        @RequestHeader HttpHeaders headers,
-        @PathVariable Long bookId,
-        @PathVariable Long reviewId
-    ) {
-        Long memberId = CommonUtil.getMemberId(headers);
-        return ResponseEntity.ok()
-                             .body(reviewService.toggleLikeReview(memberId, bookId, reviewId));
-    }
-
 
     @Operation(summary = "리뷰 파도타기 조회", description = "특정 책의 리뷰 중 자신의 리뷰를 제외한 랜덤 리뷰를 조회합니다.")
     @GetMapping("/{bookId}/reviews/surfing")

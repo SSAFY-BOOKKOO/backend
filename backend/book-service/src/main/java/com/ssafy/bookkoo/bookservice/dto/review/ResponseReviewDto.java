@@ -14,13 +14,7 @@ public record ResponseReviewDto(
     Long bookId,
 
     @Schema(description = "리뷰 내용", example = "This book provides great insights into modern programming practices.")
-    String content,
-
-    @Schema(description = "리뷰 평점", example = "5")
-    Integer rating,
-
-    @Schema(description = "좋아요 개수", example = "25")
-    Integer likeCount
+    String content
 
 ) {
 
