@@ -23,7 +23,7 @@ const LibraryOptions = ({
   setNewLibraryName,
   changeLibraryName,
   changeFontStyle,
-  changeLibraryColor, // Add this prop
+  changeLibraryColor,
   viewOnly = false,
   libraryRef,
 }) => {
@@ -34,7 +34,7 @@ const LibraryOptions = ({
     useState(false);
   const [showChangeFontStyleModal, setShowChangeFontStyleModal] =
     useState(false);
-  const [showChangeColorModal, setShowChangeColorModal] = useState(false); // State for color change modal
+  const [showChangeColorModal, setShowChangeColorModal] = useState(false);
   const setAlert = useSetAtom(alertAtom);
 
   const handleDeleteLibrary = () => {

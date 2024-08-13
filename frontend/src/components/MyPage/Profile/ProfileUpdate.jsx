@@ -154,7 +154,7 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
           profileImgUrl: response.data.profileImgUrl,
         });
       } catch (error) {
-        console.error('Failed to update profile:', error);
+        console.error(error);
         setAlert({
           isOpen: true,
           confirmOnly: true,
