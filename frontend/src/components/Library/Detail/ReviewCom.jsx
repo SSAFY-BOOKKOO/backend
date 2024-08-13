@@ -67,7 +67,6 @@ const ReviewCom = ({ onBackClick, book }) => {
   // 리뷰 처음 제시
   useEffect(() => {
     fetchReviews();
-    console.log('book 책 정보:', book);
   }, [id]);
 
   const fetchReviews = () => {
@@ -76,7 +75,6 @@ const ReviewCom = ({ onBackClick, book }) => {
       .get(`/books/${bookId}/reviews/surfing`, { params: { bookId } })
       .then(res => {
         setSurfingReviews(Array.isArray(res.data) ? res.data : []);
-        console.log('Fetched reviews:', res.data);
       })
       .catch(err => {
         console.log(err);
@@ -111,7 +109,7 @@ const ReviewCom = ({ onBackClick, book }) => {
       .then(res => {
         console.log('Review saved:', res); // 전체 확인
         book.reviewId = res.data.id; // book에 reviewId 추가
-        console.log(book); // 북에 들어갔나 확인 -> 들어 갔음
+        console.log(book); // 북에 들어갔나 확인
       })
       .catch(err => {
         console.log('Error saving review:', err);
@@ -126,13 +124,9 @@ const ReviewCom = ({ onBackClick, book }) => {
       .delete(`/books/${bookId}/reviews/${reviewId}`)
       .then(res => {
         console.log('Review Delete:', res); // 전체 확인
-        console.log(book);
-        console.log(book.reviewId);
       })
       .catch(err => {
         console.error('Error deleting review:', err);
-        console.log(book);
-        console.log(book.reviewId);
       });
   };
 
@@ -220,7 +214,9 @@ const ReviewCom = ({ onBackClick, book }) => {
               onClick={e => {
                 e.stopPropagation();
                 if (book.reviewId) {
-                  alert('삭제 후 재등록해 주세요!');
+                  alert(
+                    '이미 리뷰가 등록되어 있습니다.\n리뷰 재등록을 원하신다면 삭제 후 재등록해 주세요!'
+                  );
                   setEditingReview(false);
                   console.log(book);
                 } else {

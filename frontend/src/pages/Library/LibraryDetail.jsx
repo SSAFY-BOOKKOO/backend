@@ -38,8 +38,6 @@ const LibraryDetail = () => {
         const book = response.data.book;
         setBook(book);
 
-        console.log('bookResponse:', bookResponse);
-        // console.log(book);
         setBookData({
           status: bookResponse.status || 'READ',
           startAt: bookResponse.startAt || '',
@@ -76,12 +74,9 @@ const LibraryDetail = () => {
       })
       .then(res => {
         console.log('book Delete:', res);
-        // console.log(book);
       })
       .catch(err => {
         console.error('Error deleting review:', err);
-        console.log(bookId);
-        console.log(libraryId);
       });
   };
 
@@ -91,7 +86,6 @@ const LibraryDetail = () => {
 
   const handleColorChange = color => {
     setBookData(prev => ({ ...prev, bookColor: color }));
-    console.log(bookData);
     authAxiosInstance
       .patch(`/libraries/${libraryId}/books/${bookId}`, null, {
         params: { bookColor: color },
@@ -101,8 +95,6 @@ const LibraryDetail = () => {
       })
       .catch(err => {
         console.error('color change err:', err);
-        console.log(bookId);
-        console.log(libraryId);
       });
     setShowColorPicker(false);
   };
