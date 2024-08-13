@@ -5,7 +5,6 @@ import com.ssafy.bookkoo.curationservice.dto.RequestCreateCurationDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDetailDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationDto;
 import com.ssafy.bookkoo.curationservice.dto.ResponseCurationListDto;
-import com.ssafy.bookkoo.curationservice.exception.DtoValidationException;
 import com.ssafy.bookkoo.curationservice.service.CurationService;
 import com.ssafy.bookkoo.curationservice.service.OpenAiService;
 import com.ssafy.bookkoo.curationservice.util.CommonUtil;
@@ -18,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -98,15 +96,8 @@ public class CurationController {
     @Operation(summary = "큐레이션 보내기", description = "큐레이션 레터를 생성하고 보내기")
     public ResponseEntity<Void> createCuration(
         @RequestHeader HttpHeaders headers,
-        @RequestBody @Valid RequestCreateCurationDto requestCreateCurationDto,
-        Errors errors
+        @RequestBody @Valid RequestCreateCurationDto requestCreateCurationDto
     ) {
-        // DTO 오류 검증
-        if (errors.hasErrors()) {
-            throw new DtoValidationException(errors.getAllErrors()
-                                                   .get(0)
-                                                   .getDefaultMessage());
-        }
         // token 에서 사용자 ID 가져오기
         Long memberId = CommonUtil.getMemberId(headers);
         curationService.createCuration(memberId, requestCreateCurationDto);

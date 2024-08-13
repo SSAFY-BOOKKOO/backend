@@ -48,7 +48,9 @@ public class BookController {
     @Operation(summary = "책 생성",
         description = "책 생성시 사용하는 API"
     )
-    public ResponseEntity<ResponseBookDto> addBook(@RequestBody RequestCreateBookDto bookDto) {
+    public ResponseEntity<ResponseBookDto> addBook(
+        @Valid @RequestBody RequestCreateBookDto bookDto
+    ) {
         ResponseBookDto createdBook = bookService.createBook(bookDto);
         return ResponseEntity.ok()
                              .body(createdBook);
@@ -152,7 +154,9 @@ public class BookController {
      */
     @PostMapping("/isbn")
     @Operation(summary = "isbn으로 책 조회 또는 생성", description = "책을 isbn으로 조회하거나 존재하지 않으면 생성하는 API")
-    public ResponseEntity<ResponseBookDto> getOrCreateBookByIsbn(@RequestBody RequestCreateBookDto bookDto) {
+    public ResponseEntity<ResponseBookDto> getOrCreateBookByIsbn(
+        @Valid @RequestBody RequestCreateBookDto bookDto
+    ) {
         ResponseBookDto bookResult = bookService.getOrCreateBookByBookData(bookDto);
         return ResponseEntity.ok()
                              .body(bookResult);

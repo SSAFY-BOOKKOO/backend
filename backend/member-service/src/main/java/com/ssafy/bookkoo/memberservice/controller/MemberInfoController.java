@@ -122,7 +122,7 @@ public class MemberInfoController {
         description = "멤버의 공개 범위 설정을 변경하는 API 입니다. ReviewVisibility[PUBLIC, FOLLOWER_PUBLIC, PRIVATE]")
     public ResponseEntity<HttpStatus> updateMemberSetting(
         @RequestHeader HttpHeaders headers,
-        @RequestBody RequestMemberSettingDto memberSettingDto
+        @Valid @RequestBody RequestMemberSettingDto memberSettingDto
     ) {
         Long id = CommonUtil.getMemberId(headers);
         memberInfoService.updateMemberSetting(id, memberSettingDto);

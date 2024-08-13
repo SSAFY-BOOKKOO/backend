@@ -14,9 +14,12 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
@@ -108,5 +111,16 @@ public class ChatServiceImpl implements ChatService {
         Boolean status = chatMessage.toggleLike(memberId);
         chatMessageRepository.save(chatMessage);
         return status;
+    }
+
+
+    @Transactional
+    @Scheduled(cron = "0 0 4 * * *")
+    public void scheduledBookTalkDelete() {
+        LocalDateTime deleteTime = LocalDateTime.now()
+                                                .minusDays(15);
+        List<Long> toDeleteBookTalks = chatMessageRepository.findBookTalkIdsWithLatestChatBefore(
+            deleteTime);
+        chatMessageRepository.deleteAllByBookTalkIdIn(toDeleteBookTalks);
     }
 }

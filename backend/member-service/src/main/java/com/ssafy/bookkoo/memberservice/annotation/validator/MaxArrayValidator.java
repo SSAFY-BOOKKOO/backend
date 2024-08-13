@@ -24,7 +24,7 @@ public class MaxArrayValidator implements ConstraintValidator<MaxArray, Integer[
         }
 
         for (Integer i : value) {
-            if (i != null && i > maxValue && i < minValue) {
+            if (i > maxValue || i < minValue) {
                 return false;
             }
         }

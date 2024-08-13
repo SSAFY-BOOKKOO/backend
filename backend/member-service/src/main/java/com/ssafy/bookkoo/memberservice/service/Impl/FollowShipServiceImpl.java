@@ -6,6 +6,7 @@ import com.ssafy.bookkoo.memberservice.dto.response.ResponseFollowShipDto;
 import com.ssafy.bookkoo.memberservice.entity.FollowShip;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import com.ssafy.bookkoo.memberservice.exception.AlreadyFollowedException;
+import com.ssafy.bookkoo.memberservice.exception.CreateNotificationFailException;
 import com.ssafy.bookkoo.memberservice.exception.FollowShipNotFoundException;
 import com.ssafy.bookkoo.memberservice.repository.FollowShipRepository;
 import com.ssafy.bookkoo.memberservice.service.FollowShipService;
@@ -61,7 +62,12 @@ public class FollowShipServiceImpl implements FollowShipService {
                                                 .followerId(followerId)
                                                 .memberId(followeeId)
                                                 .build();
-        notificationServiceClient.createFollowNotification(createFollowNotificationDto);
+
+        try {
+            notificationServiceClient.createFollowNotification(createFollowNotificationDto);
+        } catch (Exception e) {
+            throw new CreateNotificationFailException();
+        }
     }
 
 

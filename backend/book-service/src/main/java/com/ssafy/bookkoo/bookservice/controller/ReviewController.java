@@ -6,6 +6,7 @@ import com.ssafy.bookkoo.bookservice.dto.review.ResponseSurfingReviewDto;
 import com.ssafy.bookkoo.bookservice.service.review.ReviewService;
 import com.ssafy.bookkoo.bookservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -50,7 +51,7 @@ public class ReviewController {
     public ResponseEntity<ResponseReviewDto> createReview(
         @RequestHeader HttpHeaders headers,
         @PathVariable Long bookId,
-        @RequestBody RequestReviewDto requestReviewDto
+        @Valid @RequestBody RequestReviewDto requestReviewDto
     ) {
         Long memberId = CommonUtil.getMemberId(headers);
         ResponseReviewDto createdReview = reviewService.addReview(memberId, bookId,

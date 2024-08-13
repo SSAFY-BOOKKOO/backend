@@ -63,6 +63,10 @@ dependencies {
 
     //openfeign
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    // validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
 }
 
 dependencyManagement {
