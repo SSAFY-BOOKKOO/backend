@@ -2,7 +2,6 @@ package com.ssafy.bookkoo.bookservice.repository.book;
 
 import static com.querydsl.core.types.Projections.constructor;
 import static com.ssafy.bookkoo.bookservice.entity.QBook.book;
-import static com.ssafy.bookkoo.bookservice.entity.QCategory.category;
 import static com.ssafy.bookkoo.bookservice.entity.QReview.review;
 
 import com.querydsl.core.BooleanBuilder;
@@ -202,7 +201,6 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
     ) {
         // 책 정보 조회
         Book bookEntity = queryFactory.selectFrom(book)
-                                      .leftJoin(book.category, category)
                                       .where(book.id.eq(bookId))
                                       .fetchOne();
 
@@ -210,7 +208,7 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
             return null;
         }
 
-        // 리뷰와 likeCount 조회
+        // 리뷰 조회
         ResponseReviewDto reviewDto = queryFactory.select(
                                                       constructor(ResponseReviewDto.class,
                                                           review.id,
@@ -221,7 +219,6 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
                                                   .where(review.book.id.eq(bookId)
                                                                        .and(review.memberId.eq(
                                                                            memberId)))
-                                                  .groupBy(review.id)
                                                   .fetchOne();
 
         CategoryDto categoryDto = new CategoryDto(bookEntity.getCategory()
