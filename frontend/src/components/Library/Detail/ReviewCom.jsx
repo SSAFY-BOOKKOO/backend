@@ -174,7 +174,7 @@ const ReviewCom = ({ onBackClick, book }) => {
         </div>
 
         {surfingReviews.map((review, index) => (
-          <div key={index} className='flex items-center pb-2 pr-1 mr-4 w-10/12'>
+          <div key={index} className='flex items-center pb-0 pr-1 mr-4 w-10/12'>
             <div className='flex justify-between bg-white w-full p-2 mb-4 h-auto rounded-lg opacity-70'>
               <div
                 className='flex items-center space-x-3 cursor-pointer'
@@ -204,6 +204,7 @@ const ReviewCom = ({ onBackClick, book }) => {
               value={reviewText}
               onChange={e => setReviewText(e.target.value)}
               onClick={e => e.stopPropagation()}
+              maxLength='70'
             ></textarea>
           ) : (
             <p className='w-full h-44 p-2 pb-4 border border-gray-400 rounded resize-none'>
