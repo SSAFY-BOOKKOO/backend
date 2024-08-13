@@ -270,7 +270,7 @@ const LibraryDetail = () => {
             >
               &times;
             </button>
-            <ShelfChange onClose={handleCloseShelfSelect} />
+            <ShelfChange book={book} onClose={handleCloseShelfSelect} />
           </div>
         </div>
       )}
