@@ -56,7 +56,7 @@ public class LibraryController {
     @Operation(summary = "서재 생성", description = "서재 생성 API")
     public ResponseEntity<ResponseLibraryDto> createLibrary(
         @RequestHeader HttpHeaders headers,
-        @RequestBody RequestCreateLibraryDto dto
+        @Valid @RequestBody RequestCreateLibraryDto dto
     ) {
         Long memberId = CommonUtil.getMemberId(headers);
 
