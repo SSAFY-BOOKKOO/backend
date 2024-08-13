@@ -298,8 +298,8 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
                                                                   libraryBookMapper.bookOrder.asc())
                                                               .fetch());
 
-        // 1부터 27까지의 범위 내에서 빈 자리를 찾기
-        for (int i = 1; i <= 27; i++) {
+        // 1부터 21까지의 범위 내에서 빈 자리를 찾기
+        for (int i = 1; i <= 21; i++) {
             if (!filledOrders.contains(i)) {
                 return i; // 첫 번째 빈 자리 반환
             }
