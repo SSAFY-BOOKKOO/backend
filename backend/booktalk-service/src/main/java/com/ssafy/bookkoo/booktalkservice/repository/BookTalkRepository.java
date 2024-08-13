@@ -51,6 +51,4 @@ public interface BookTalkRepository extends JpaRepository<BookTalk, Long> {
     List<BookTalk> findAllByOrderByDayMessageCountDesc(Pageable pageable);
 
     List<BookTalk> findByUpdatedAtBefore(LocalDateTime time);
-
-    void scheduledBookTalkDelete(BookTalk bookTalk);
 }
