@@ -24,7 +24,7 @@ const SocialLoginCallback = () => {
       getNickname(); // 닉네임 저장
       setIsAuthenticated(true);
 
-      navigate('/library');
+      navigate('/');
     } else {
       navigate('/login');
     }
