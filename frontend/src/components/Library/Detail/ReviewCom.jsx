@@ -60,9 +60,22 @@ const ReviewCom = ({ onBackClick, book }) => {
   const [reviewId, setReviewId] = useState(null); // Store the review ID
   const [showModal, setShowModal] = useState(false);
   const [currentReview, setCurrentReview] = useState(null);
+  const [reviewContent, setReviewContent] = useState('');
 
   const titleMaxLength = 10;
 
+  // 내가 쓴 리뷰 확인
+  // useEffect(() => {
+  //   handleConfirmReview();
+  // }, []);
+
+  useEffect(() => {
+    console.log(book);
+  }, []);
+
+  useEffect(() => {
+    console.log(reviewContent);
+  }, [reviewContent]);
   ///////////////////////////// 파도타기
   // 리뷰 처음 제시
   useEffect(() => {
@@ -95,6 +108,22 @@ const ReviewCom = ({ onBackClick, book }) => {
     }
   };
 
+  // 한줄평 조회
+  const handleConfirmReview = () => {
+    const bookId = id;
+    const reviewId = book.review.id;
+    authAxiosInstance
+      .get(`/books/${bookId}/reviews/${reviewId}`)
+      .then(res => {
+        console.log('Review:', res.data); // 전체 확인
+        setReviewContent(res.data.content);
+      })
+      .catch(err => {
+        console.log('Error confirm review:', err);
+        console.log('book:', book);
+      });
+  };
+
   ///////////////////////// 내 한줄평 작성
   const handleSaveReview = () => {
     if (reviewText.length > 70) {
@@ -105,10 +134,12 @@ const ReviewCom = ({ onBackClick, book }) => {
     setEditingReview(false);
     const bookId = id;
     authAxiosInstance
-      .post(`/books/${bookId}/reviews`, { bookId, text: reviewText })
+      .post(`/books/${bookId}/reviews`, { content: reviewContent })
       .then(res => {
         console.log('Review saved:', res); // 전체 확인
+        setReviewContent(res.data.content);
         book.reviewId = res.data.id; // book에 reviewId 추가
+        book.review = res.data.content;
         console.log(book); // 북에 들어갔나 확인
       })
       .catch(err => {
@@ -123,7 +154,8 @@ const ReviewCom = ({ onBackClick, book }) => {
     authAxiosInstance
       .delete(`/books/${bookId}/reviews/${reviewId}`)
       .then(res => {
-        console.log('Review Delete:', res); // 전체 확인
+        console.log('Review Delete:', res); // 전체 확인\
+        console.log('삭제 완료');
       })
       .catch(err => {
         console.error('Error deleting review:', err);
@@ -195,14 +227,14 @@ const ReviewCom = ({ onBackClick, book }) => {
           {editReview ? (
             <textarea
               className='w-full h-44 p-2 bg-white border border-gray-400 rounded resize-none'
-              value={reviewText}
-              onChange={e => setReviewText(e.target.value)}
+              value={review.content}
+              onChange={e => setReviewContent(e.target.value)}
               onClick={e => e.stopPropagation()}
               maxLength='70'
             ></textarea>
           ) : (
             <p className='w-full h-44 p-2 pb-4 border border-gray-400 rounded resize-none'>
-              {reviewText || '한줄평을 작성해 보세요!'}
+              {book.review.content || '한줄평을 작성해 보세요!'}
             </p>
           )}
 
@@ -217,11 +249,14 @@ const ReviewCom = ({ onBackClick, book }) => {
                   alert(
                     '이미 리뷰가 등록되어 있습니다.\n리뷰 재등록을 원하신다면 삭제 후 재등록해 주세요!'
                   );
+                  handleConfirmReview();
+
                   setEditingReview(false);
                   console.log(book);
                 } else {
                   if (editReview) {
                     handleSaveReview();
+                    handleConfirmReview();
                     setEditingReview(false);
                   } else {
                     setEditingReview(true); // 작성 가능 상태로 변경

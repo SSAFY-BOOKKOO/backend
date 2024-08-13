@@ -74,6 +74,7 @@ const LibraryDetail = () => {
       })
       .then(res => {
         console.log('book Delete:', res);
+        navigate('/');
       })
       .catch(err => {
         console.error('Error deleting review:', err);
