@@ -35,9 +35,6 @@ const BookShelf = ({
       ? 'bg-[#d2a679]'
       : getSecondaryColorClass(primaryColorClass);
 
-  console.log('Primary Color Class:', primaryColorClass);
-  console.log('Secondary Color Class:', secondaryColorClass);
-
   const allSlots = Array.from({ length: totalSlots }, (_, index) => {
     const book = books.find(book => book.bookOrder === index + 1);
     return book && book.book ? (
