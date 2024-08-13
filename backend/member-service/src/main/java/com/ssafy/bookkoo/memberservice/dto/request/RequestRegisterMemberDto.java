@@ -21,7 +21,6 @@ public record RequestRegisterMemberDto(
     @Size(max = 10, message = "닉네임은 최대 10자 입니다.")
     @NotBlank(message = "닉네임은 공백일 수 없습니다.")
     String nickName,
-    @Past(message = "출생년도가 올바르지 않습니다.")
     Integer year,
     Gender gender,
     @MaxArray(minValue = 1, maxValue = 15, message = "카테고리에 대한 값이 유효하지 않습니다.")
