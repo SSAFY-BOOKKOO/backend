@@ -145,8 +145,15 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
         setAlert({
           isOpen: true,
           confirmOnly: true,
-          message: '프로필이 성공적으로 업데이트되었습니다.',
+          message: (
+            <>
+              앗! 오류가 발생했습니다.
+              <br />
+              잠시 후 다시 시도해주세요!
+            </>
+          ),
         });
+
         onSave({
           nickName: formData.nickname,
           categories: formData.categories,
@@ -158,14 +165,26 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
         setAlert({
           isOpen: true,
           confirmOnly: true,
-          message: '프로필 업데이트 중 오류가 발생했습니다.',
+          message: (
+            <>
+              앗! 오류가 발생했습니다.
+              <br />
+              잠시 후 다시 시도해주세요!
+            </>
+          ),
         });
       }
     } else {
       setAlert({
         isOpen: true,
         confirmOnly: true,
-        message: '폼에 오류가 있습니다. 다시 확인해 주세요.',
+        message: (
+          <>
+            앗! 오류가 발생했습니다.
+            <br />
+            잠시 후 다시 시도해주세요!
+          </>
+        ),
       });
     }
   };
