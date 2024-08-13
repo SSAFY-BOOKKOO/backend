@@ -21,10 +21,9 @@ const LibraryDetail = () => {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showShelfSelect, setShowShelfSelect] = useState(false);
   const [bookData, setBookData] = useAtom(bookDataAtom); // jotai로 받은 북 데이터
+  const [selectedColor, setSelectedColor] = useState(bookData.bookColor);
   const navigate = useNavigate();
   const maxLength = 80;
-  // const authorMaxLength = 14;
-  // const titleMaxLength = 10;
   const [book, setBook] = useState(null); // api로 받은 북데이터
   const { isOpen, closeModal, toggleModal } = useModal();
 
@@ -39,7 +38,7 @@ const LibraryDetail = () => {
         setBook(book);
 
         console.log('bookResponse:', bookResponse);
-        // console.log(book);
+
         setBookData({
           status: bookResponse.status || 'READ',
           startAt: bookResponse.startAt || '',
@@ -48,6 +47,7 @@ const LibraryDetail = () => {
           bookColor: bookResponse.bookColor || '',
           libraryId: libraryId,
         });
+        setSelectedColor(bookResponse.bookColor || '');
       } catch (error) {
         console.error('Failed to fetch book data:', error);
       }
@@ -69,19 +69,16 @@ const LibraryDetail = () => {
   } = book;
 
   const handleDelete = () => {
-    // navigate('/library', { state: { deleteBookId: bookId } });
     authAxiosInstance
       .delete(`/libraries/${libraryId}/books/${bookId}`, {
         params: { libraryId, bookId },
       })
       .then(res => {
         console.log('book Delete:', res);
-        // console.log(book);
+        navigate('/library', { state: { deleteBookId: bookId } });
       })
       .catch(err => {
         console.error('Error deleting review:', err);
-        console.log(bookId);
-        console.log(libraryId);
       });
   };
 
@@ -91,7 +88,6 @@ const LibraryDetail = () => {
 
   const handleColorChange = color => {
     setBookData(prev => ({ ...prev, bookColor: color }));
-    console.log(bookData);
     authAxiosInstance
       .patch(`/libraries/${libraryId}/books/${bookId}`, null, {
         params: { bookColor: color },
@@ -101,8 +97,6 @@ const LibraryDetail = () => {
       })
       .catch(err => {
         console.error('color change err:', err);
-        console.log(bookId);
-        console.log(libraryId);
       });
     setShowColorPicker(false);
   };
@@ -147,7 +141,6 @@ const LibraryDetail = () => {
               book={book}
             />
           ) : (
-            // 앞면
             <div className='w-10/12 max-w-md h-full flex flex-col'>
               {/* 1. 회색 영역 */}
               <div className='relative bg-zinc-300 rounded-t-lg w-3/2 max-w-md h-4/5 flex flex-col justify-between overflow-auto'>
@@ -202,7 +195,6 @@ const LibraryDetail = () => {
                         </span>
                       )}
                     </div>
-                    {/* 모달 */}
                     <SettingsModal
                       isOpen={isOpen}
                       onClose={closeModal}
@@ -211,7 +203,6 @@ const LibraryDetail = () => {
                       className='z-50'
                     />
                   </div>
-                  {/* 읽은 기간 로직 (수정예정) */}
                 </div>
                 <p className='flex items-center justify-center mb-9'>
                   {bookData.startAt
@@ -244,23 +235,36 @@ const LibraryDetail = () => {
           )}
         </CSSTransition>
       </SwitchTransition>
+
       {showColorPicker && (
-        <div className='fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50'>
-          <div className='relative bg-white p-4 rounded-lg'>
-            <button
-              className='absolute top-0 right-2 text-xl font-bold'
-              onClick={handleCloseColorPicker}
-            >
-              &times;
-            </button>
+        <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-20'>
+          <div className='bg-white p-6 rounded-lg shadow-lg w-80 max-w-full'>
+            <h2 className='text-xl font-bold mb-4'>책 색 변경</h2>
             <ColorPicker
               presetColors={PRESET_COLORS}
-              // selected={bookData.color}
-              onChange={handleColorChange}
+              selected={selectedColor}
+              onChange={setSelectedColor}
             />
+            <div className='flex justify-end mt-4'>
+              <button
+                onClick={() => {
+                  handleColorChange(selectedColor);
+                }}
+                className='bg-green-400 text-white p-2 rounded-lg mr-2'
+              >
+                확인
+              </button>
+              <button
+                onClick={handleCloseColorPicker}
+                className='bg-gray-500 text-white p-2 rounded-lg'
+              >
+                취소
+              </button>
+            </div>
           </div>
         </div>
       )}
+
       {showShelfSelect && (
         <div className='fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50'>
           <div className='relative bg-white p-4 rounded-lg'>
