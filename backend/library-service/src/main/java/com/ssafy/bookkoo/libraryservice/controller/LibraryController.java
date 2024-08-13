@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
@@ -129,9 +130,13 @@ public class LibraryController {
     public ResponseEntity<ResponseLibraryDto> getLibrary(
         @PathVariable Long libraryId,
         @RequestParam(required = false) Status filter,
-        @PageableDefault
+        @PageableDefault(size = 21) // 기본 사이즈 21로 설정
         Pageable pageable
     ) {
+        // pageable이 null이면 기본 PageRequest 생성
+        if (pageable == null) {
+            pageable = PageRequest.of(0, 21); // 첫 번째 페이지와 기본 사이즈 21로 설정
+        }
         return ResponseEntity.ok()
                              .body(libraryService.getLibrary(libraryId, filter, pageable));
     }
