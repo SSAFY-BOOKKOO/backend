@@ -205,14 +205,31 @@ export const postQuote = async (content, source, backgroundImg = null) => {
 };
 
 // 글귀 수정
-export const putQuote = async (quoteId, content, source) => {
-  const quoteData = {
+export const putQuote = async (
+  quoteId,
+  content,
+  source,
+  backgroundImg = null
+) => {
+  const quoteDto = JSON.stringify({
     quoteId,
     source,
     content,
-  };
+  });
+
+  let formData = new FormData();
+  formData.append('quoteDto', quoteDto);
+
+  if (backgroundImg) {
+    formData.append('backgroundImg', backgroundImg);
+  }
+
   try {
-    const response = await authAxiosInstance.put('/members/quote', quoteData);
+    const response = await authAxiosInstance.put('/members/quote', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   } catch (error) {
     console.error('put quote failed:', error);
@@ -236,8 +253,8 @@ export const getQuoteDetail = async quoteId => {
 // 글귀 삭제
 export const deleteQuote = async quoteId => {
   try {
-    const response = await authAxiosInstance.get(
-      `/members/quote/detail/${quoteId}`
+    const response = await authAxiosInstance.delete(
+      `/members/quote/${quoteId}`
     );
     return response.data;
   } catch (error) {
