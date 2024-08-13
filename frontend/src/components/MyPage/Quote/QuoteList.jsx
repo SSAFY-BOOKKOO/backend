@@ -2,10 +2,15 @@ import React, { useState } from 'react';
 import { BiSolidQuoteAltLeft, BiSolidQuoteAltRight } from 'react-icons/bi';
 import useModal from '@hooks/useModal';
 import SettingsModal from '../../@common/SettingsModal';
+import { useAtom } from 'jotai';
+import { showAlertAtom } from '@atoms/alertAtom';
+import Alert from '@components/@common/Alert';
 
 const QuoteList = ({ quotes, onQuoteClick, onEditClick, onDeleteClick }) => {
   const [activeIndex, setActiveIndex] = useState(null);
   const { isOpen, toggleModal } = useModal();
+
+  const [, showAlert] = useAtom(showAlertAtom);
 
   // 글귀 수정
   const handleQuoteUpdate = index => {
@@ -15,8 +20,17 @@ const QuoteList = ({ quotes, onQuoteClick, onEditClick, onDeleteClick }) => {
 
   // 글귀 삭제
   const handleQuoteDelete = index => {
+    console.log(index);
     const quote = quotes[index];
-    onDeleteClick(quote.id); // 글귀 삭제
+
+    showAlert(
+      '정말 글귀를 삭제하시겠습니까?',
+      false,
+      () => {
+        onDeleteClick(quote.quoteId); // 글귀 삭제
+      },
+      () => {}
+    );
   };
 
   const handleSettingsClick = (e, index) => {
@@ -32,6 +46,7 @@ const QuoteList = ({ quotes, onQuoteClick, onEditClick, onDeleteClick }) => {
 
   return (
     <div>
+      <Alert />
       {quotes.map((quoteData, index) => (
         <div
           key={index}
