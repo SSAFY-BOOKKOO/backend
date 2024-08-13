@@ -7,7 +7,7 @@ import LibraryImg from '@assets/images/intro_library.png';
 const Intro = () => {
   return (
     <WrapContainer className='flex items-center justify-center min-h-screen '>
-      <div className='flex flex-col items-center justify-center p-6 bg-white mx-4'>
+      <div className='flex flex-col items-center justify-center p-3 bg-white mx-3'>
         <div className='text-left relative w-full'>
           <h1 className='text-3xl font-bold mb-4 relative z-10'>
             지금 가입해서
