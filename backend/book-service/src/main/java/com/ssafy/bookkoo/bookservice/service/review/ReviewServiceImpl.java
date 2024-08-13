@@ -8,8 +8,6 @@ import com.ssafy.bookkoo.bookservice.dto.review.ResponseReviewDto;
 import com.ssafy.bookkoo.bookservice.dto.review.ResponseSurfingReviewDto;
 import com.ssafy.bookkoo.bookservice.entity.Book;
 import com.ssafy.bookkoo.bookservice.entity.Review;
-import com.ssafy.bookkoo.bookservice.entity.ReviewLike;
-import com.ssafy.bookkoo.bookservice.entity.ReviewMemberId;
 import com.ssafy.bookkoo.bookservice.exception.BookNotFoundException;
 import com.ssafy.bookkoo.bookservice.exception.ReviewDeleteFailedException;
 import com.ssafy.bookkoo.bookservice.exception.ReviewHasWrittenException;
@@ -17,11 +15,9 @@ import com.ssafy.bookkoo.bookservice.exception.ReviewIsNotYoursException;
 import com.ssafy.bookkoo.bookservice.exception.ReviewNotFoundException;
 import com.ssafy.bookkoo.bookservice.mapper.ReviewMapper;
 import com.ssafy.bookkoo.bookservice.repository.book.BookRepository;
-import com.ssafy.bookkoo.bookservice.repository.review.ReviewLikeRepository;
 import com.ssafy.bookkoo.bookservice.repository.review.ReviewRepository;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,7 +32,6 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final BookRepository bookRepository;
-    private final ReviewLikeRepository reviewLikeRepository;
     private final ReviewMapper reviewMapper;
     private final MemberServiceClient memberServiceClient;
 
@@ -94,43 +89,9 @@ public class ReviewServiceImpl implements ReviewService {
                               .book(book)
                               .memberId(memberId)
                               .content(requestReviewDto.content())
-                              .rating(requestReviewDto.rating())
                               .build();
         Review savedReview = reviewRepository.save(review);
         return reviewMapper.toDto(savedReview);
-    }
-
-    /**
-     * 특정 리뷰에 대한 좋아요 상태를 토글합니다.
-     *
-     * @param memberId 회원 ID
-     * @param bookId   책 ID
-     * @param reviewId 리뷰 ID
-     * @return 토글된 좋아요 상태 (true: 좋아요 추가됨, false: 좋아요 제거됨)
-     */
-    @Override
-    @Transactional
-    public Boolean toggleLikeReview(Long memberId, Long bookId, Long reviewId) {
-        Review review = findReviewByIdWithException(reviewId);
-
-        ReviewMemberId reviewMemberId = new ReviewMemberId(reviewId, memberId);
-        // 리뷰 좋아요가 이미 있는지 확인
-        Optional<ReviewLike> existingReviewLike = reviewLikeRepository.findById(
-            reviewMemberId);
-
-        if (existingReviewLike.isPresent()) {
-            // 이미 존재하면 삭제 (좋아요 취소)
-            reviewLikeRepository.delete(existingReviewLike.get());
-            return false; // 좋아요 취소됨
-        } else {
-            // 존재하지 않으면 저장 (좋아요 추가)
-            ReviewLike reviewLike = ReviewLike.builder()
-                                              .memberId(memberId)
-                                              .review(review)
-                                              .build();
-            reviewLikeRepository.save(reviewLike);
-            return true;
-        }
     }
 
     /**
@@ -163,17 +124,15 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     /**
-     * 사용자 탈퇴시 사용자의 한줄평, 좋아요 삭제
+     * 사용자 탈퇴시 사용자의 한줄평 삭제
      *
      * @param memberId 사용자 id
      */
     @Override
     @Transactional
     public void deleteReviewsByMemberId(Long memberId) {
-        // review 삭제 + 해당 리뷰와 연관된 reviewLike 도 삭제
+        // review 삭제
         reviewRepository.deleteByMemberId(memberId);
-        // member 와 연관된 reviewLike 삭제
-        reviewLikeRepository.deleteByMemberId(memberId);
     }
 
     /**
@@ -202,9 +161,6 @@ public class ReviewServiceImpl implements ReviewService {
         // 리뷰 업데이트
         if (dto.content() != null) {
             reviewToUpdate.setContent(dto.content());
-        }
-        if (dto.rating() != null) {
-            reviewToUpdate.setRating(dto.rating());
         }
 
         // 저장
@@ -261,9 +217,6 @@ public class ReviewServiceImpl implements ReviewService {
                                        .bookId(review.getBook()
                                                      .getId())
                                        .content(review.getContent())
-                                       .rating(review.getRating())
-                                       .likeCount(review.getLikes()
-                                                        .size())
                                        .member(surfingMemberInfo)
                                        .build();
     }

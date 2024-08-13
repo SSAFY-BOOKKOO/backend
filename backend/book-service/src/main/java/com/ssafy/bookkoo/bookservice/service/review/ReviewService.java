@@ -38,16 +38,6 @@ public interface ReviewService {
     ResponseReviewDto addReview(Long memberId, Long bookId, RequestReviewDto requestReviewDto);
 
     /**
-     * 특정 리뷰에 대한 좋아요 상태를 토글합니다.
-     *
-     * @param memberId 회원 ID
-     * @param bookId   책 ID
-     * @param reviewId 리뷰 ID
-     * @return 토글된 좋아요 상태 (true: 좋아요 추가됨, false: 좋아요 제거됨)
-     */
-    Boolean toggleLikeReview(Long memberId, Long bookId, Long reviewId);
-
-    /**
      * 특정 회원을 제외한 랜덤 리뷰 목록을 조회합니다.
      *
      * @param memberId 회원 ID

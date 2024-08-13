@@ -4,7 +4,6 @@ import static com.querydsl.core.types.Projections.constructor;
 import static com.ssafy.bookkoo.bookservice.entity.QBook.book;
 import static com.ssafy.bookkoo.bookservice.entity.QCategory.category;
 import static com.ssafy.bookkoo.bookservice.entity.QReview.review;
-import static com.ssafy.bookkoo.bookservice.entity.QReviewLike.reviewLike;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -216,15 +215,9 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
                                                       constructor(ResponseReviewDto.class,
                                                           review.id,
                                                           review.book.id,
-                                                          review.content,
-                                                          review.rating,
-                                                          reviewLike.id.count()
-                                                                       .intValue()
-                                                                       .as("likeCount")
+                                                          review.content
                                                       ))
                                                   .from(review)
-                                                  .leftJoin(reviewLike)
-                                                  .on(reviewLike.review.id.eq(review.id))
                                                   .where(review.book.id.eq(bookId)
                                                                        .and(review.memberId.eq(
                                                                            memberId)))

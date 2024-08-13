@@ -30,7 +30,6 @@ public interface ReviewMapper {
      * @return 변환된 ResponseReviewDto
      */
     @Mapping(target = "bookId", source = "book.id")
-    @Mapping(target = "likeCount", expression = "java(review.getLikeCount())")
     ResponseReviewDto toDto(Review review);
 
     /**
@@ -40,6 +39,5 @@ public interface ReviewMapper {
      * @return 변환된 ResponseReviewDto 리스트
      */
     @Mapping(target = "bookId", source = "book.id")
-    @Mapping(target = "likeCount", expression = "java(review.getLikeCount())")
     List<ResponseReviewDto> toDto(List<Review> reviews);
 }

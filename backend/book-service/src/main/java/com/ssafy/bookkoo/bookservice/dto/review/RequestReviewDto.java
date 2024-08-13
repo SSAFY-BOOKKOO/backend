@@ -8,10 +8,7 @@ import lombok.Builder;
 public record RequestReviewDto(
 
     @Schema(description = "리뷰 내용", example = "This is a great book!")
-    String content,
-
-    @Schema(description = "리뷰 평점", example = "5")
-    Integer rating
+    String content
 ) {
 
 }
