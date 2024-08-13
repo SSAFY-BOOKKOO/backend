@@ -37,7 +37,7 @@ const Modal = ({ show, onClose, review }) => {
             X
           </button>
         </div>
-        <p>{review?.content}</p>
+        <p>{review?.content || '리뷰 내용을 불러올 수 없습니다.'}</p>
         <div className='flex justify-center items-center h-full'>
           <button
             onClick={handleLibraryNavigation}
@@ -111,7 +111,7 @@ const ReviewCom = ({ onBackClick, book }) => {
   // 한줄평 조회
   const handleConfirmReview = () => {
     const bookId = id;
-    const reviewId = book.review.id;
+    const reviewId = book.reviewId;
     authAxiosInstance
       .get(`/books/${bookId}/reviews/${reviewId}`)
       .then(res => {
@@ -126,10 +126,10 @@ const ReviewCom = ({ onBackClick, book }) => {
 
   ///////////////////////// 내 한줄평 작성
   const handleSaveReview = () => {
-    if (reviewText.length > 70) {
-      alert('70자 이내로 작성해 주세요!');
-      return;
-    }
+    // if (!reviewContent) {
+    //   alert('리뷰 내용을 입력해 주세요.');
+    //   return;
+    // }
 
     setEditingReview(false);
     const bookId = id;
@@ -150,7 +150,7 @@ const ReviewCom = ({ onBackClick, book }) => {
   ////////////////////////// 한줄평 삭제 핸들러
   const handleDeleteReview = () => {
     const bookId = id;
-    const reviewId = book.reviewId;
+    const reviewId = book.review.id;
     authAxiosInstance
       .delete(`/books/${bookId}/reviews/${reviewId}`)
       .then(res => {
@@ -227,14 +227,14 @@ const ReviewCom = ({ onBackClick, book }) => {
           {editReview ? (
             <textarea
               className='w-full h-44 p-2 bg-white border border-gray-400 rounded resize-none'
-              value={review.content}
+              value={reviewContent}
               onChange={e => setReviewContent(e.target.value)}
               onClick={e => e.stopPropagation()}
               maxLength='70'
             ></textarea>
           ) : (
             <p className='w-full h-44 p-2 pb-4 border border-gray-400 rounded resize-none'>
-              {book.review.content || '한줄평을 작성해 보세요!'}
+              {book.review ? book.review.content : '한줄평을 작성해 보세요!'}
             </p>
           )}
 
@@ -245,7 +245,7 @@ const ReviewCom = ({ onBackClick, book }) => {
               color='text-black bg-rose-300'
               onClick={e => {
                 e.stopPropagation();
-                if (book.reviewId) {
+                if (book.review) {
                   alert(
                     '이미 리뷰가 등록되어 있습니다.\n리뷰 재등록을 원하신다면 삭제 후 재등록해 주세요!'
                   );
@@ -258,6 +258,7 @@ const ReviewCom = ({ onBackClick, book }) => {
                     handleSaveReview();
                     handleConfirmReview();
                     setEditingReview(false);
+                    window.location.reload();
                   } else {
                     setEditingReview(true); // 작성 가능 상태로 변경
                   }
@@ -272,7 +273,7 @@ const ReviewCom = ({ onBackClick, book }) => {
               onClick={e => {
                 e.stopPropagation();
                 handleDeleteReview();
-                setReviewText(''); // textarea의 값을 초기화
+                setReviewContent(''); // textarea의 값을 초기화
                 window.location.reload();
               }}
               className='px-3 py-1 rounded-md hover:bg-rose-400 transition duration-150'
