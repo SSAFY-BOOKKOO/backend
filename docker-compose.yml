@@ -1,42 +1,10 @@
 services:
-  prometheus:
-    build: ./prometheus
-    ports:
-      - "3002:9090"
-    networks:
-      - bookkoo-net
-
-  grafana:
-    image: grafana/grafana
-    ports:
-      - "3000:3000"
-    networks:
-      - bookkoo-net
-    depends_on:
-      - prometheus
-
   react-app:
     container_name: react-container
     build:
       context: ./frontend
     networks:
       - bookkoo-net
-  
-  loki:
-    image: grafana/loki:latest
-    ports:
-      - "3003:3100"
-    command: -config.file=/etc/loki/local-config.yaml
-    networks:
-      - bookkoo-net
-
-  promtail:
-    build: ./promtail
-    volumes:
-      - ./logs:/logs
-    networks:
-      - bookkoo-net
-  
   auth-service:
     container_name: auth-service
     build:
