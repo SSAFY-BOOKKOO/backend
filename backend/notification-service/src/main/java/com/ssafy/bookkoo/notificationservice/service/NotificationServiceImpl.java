@@ -114,8 +114,7 @@ public class NotificationServiceImpl implements NotificationService {
         return notifications.stream()
                             .map(notification -> {
                                 if (notification instanceof CommunityNotification communityNotification) {
-                                    //TODO: 커뮤니티 알림 관련 정보 가져와서 추가 필요
-                                    return null;
+                                    return ResponseCommunityNotificationDto.toDto(communityNotification);
                                 } else if (notification instanceof CurationNotification curationNotification) {
                                     ResponseMemberInfoDto memberInfo
                                         = memberServiceClient.getMemberInfo(curationNotification.getWriterId());
