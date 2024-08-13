@@ -7,8 +7,20 @@ import { authAxiosInstance } from '../../services/axiosInstance';
 const CurationLetterDetail = () => {
   const { id } = useParams();
   const { isOpen, closeModal, toggleModal } = useModal();
-
+  const [nickName, setnickName] = useState('');
   const [letter, setLetter] = useState('');
+
+  useEffect(() => {
+    authAxiosInstance
+      .get('/members/info')
+      .then(res => {
+        console.log('member info:', res.data.nickName);
+        setnickName(res.data.nickName);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }, []);
 
   useEffect(() => {
     authAxiosInstance
@@ -64,12 +76,20 @@ const CurationLetterDetail = () => {
         </div>
         {/* 설정 모달 */}
         <div className='relative flex flex-col items-center p-6 pt-32 z-30'>
-          <SettingsModal
+          {/* <SettingsModal
             isOpen={isOpen}
             onClose={closeModal}
             onToggle={toggleModal}
             actions={actions}
-          />
+          /> */}
+          {nickName !== letter.writer && (
+            <SettingsModal
+              isOpen={isOpen}
+              onClose={closeModal}
+              onToggle={toggleModal}
+              actions={actions}
+            />
+          )}
         </div>
         <div className='min-h-44 px-6 py-8 text-center scrollbar-none'>
           <h2 className='text-xl font-bold mb-2'>{letter.title}</h2>

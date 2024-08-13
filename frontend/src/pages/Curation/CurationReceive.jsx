@@ -18,6 +18,10 @@ const CurationReceive = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [countLetters, setCountLetters] = useState(0);
 
+  // 받은 레터 조회
+  useEffect(() => {
+    console.log(letters);
+  }, []);
   // storeLetters가 변경될 때마다 로컬 스토리지에 저장
   useEffect(() => {
     localStorage.setItem('storeLetters', JSON.stringify(storeLetters));
@@ -41,6 +45,7 @@ const CurationReceive = () => {
       .then(res => {
         setLetters(res.data.curationList);
         setCountLetters(res.data.count);
+        console.log(res);
       })
       .catch(err => {
         console.log('error:', err);
