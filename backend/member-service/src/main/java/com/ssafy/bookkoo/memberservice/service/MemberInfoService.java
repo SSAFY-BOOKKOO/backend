@@ -6,6 +6,7 @@ import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberProfileDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseRecipientDto;
+import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,4 +33,6 @@ public interface MemberInfoService {
     void updateMemberInfo(Long id, RequestUpdateMemberInfoDto memberInfoUpdateDto, MultipartFile profileImg);
 
     List<ResponseRecipientDto> getRecipientsInfo(List<Long> recipientIds);
+
+    MemberInfo getMemberInfoEntity(Long memberId);
 }

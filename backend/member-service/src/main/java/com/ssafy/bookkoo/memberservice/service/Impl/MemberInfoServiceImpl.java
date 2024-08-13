@@ -207,6 +207,12 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         return memberInfoRepository.findByRecipientsInfoByIds(recipientIds);
     }
 
+    @Override
+    public MemberInfo getMemberInfoEntity(Long memberId) {
+        return memberInfoRepository.findById(memberId)
+                                   .orElseThrow(MemberInfoNotExistException::new);
+    }
+
     /**
      * 이전 닉네임과 같으면 중복체크 X
      * 다르면 중복 체크

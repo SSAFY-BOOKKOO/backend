@@ -13,6 +13,7 @@ import com.ssafy.bookkoo.memberservice.exception.UnAuthorizationException;
 import com.ssafy.bookkoo.memberservice.mapper.QuoteMapper;
 import com.ssafy.bookkoo.memberservice.repository.MemberInfoRepository;
 import com.ssafy.bookkoo.memberservice.repository.QuoteRepository;
+import com.ssafy.bookkoo.memberservice.service.MemberInfoService;
 import com.ssafy.bookkoo.memberservice.service.QuoteService;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +31,7 @@ public class QuoteServiceImpl implements QuoteService {
     private final QuoteRepository quoteRepository;
     private final QuoteMapper quoteMapper;
     private final CommonServiceClient commonServiceClient;
-    private final MemberInfoRepository memberInfoRepository;
+    private final MemberInfoService memberInfoService;
 
     @Value("${config.quote-bucket-name}")
     private String BUCKET;
@@ -154,7 +155,6 @@ public class QuoteServiceImpl implements QuoteService {
     }
 
     private MemberInfo getMemberInfo(Long memberId) {
-        return memberInfoRepository.findById(memberId)
-                                   .orElseThrow(MemberInfoNotExistException::new);
+        return memberInfoService.getMemberInfoEntity(memberId);
     }
 }
