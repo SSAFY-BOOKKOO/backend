@@ -2,8 +2,6 @@ package com.ssafy.bookkoo.libraryservice.dto.library_book;
 
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import java.time.LocalDate;
 
 /**
@@ -27,8 +25,6 @@ public record RequestLibraryBookMapperUpdateDto(
     @Schema(description = "상태", example = "READING")
     Status status,
 
-    @Min(value = 1)
-    @Max(value = 5)
     @Schema(description = "평점", example = "5")
     Integer rating,
 
