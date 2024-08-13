@@ -23,9 +23,11 @@ import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapperKey;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import com.ssafy.bookkoo.memberservice.entity.MemberSetting;
 import com.ssafy.bookkoo.memberservice.enums.SocialType;
+import com.ssafy.bookkoo.memberservice.exception.CreateLibraryFailException;
 import com.ssafy.bookkoo.memberservice.exception.EmailDuplicateException;
 import com.ssafy.bookkoo.memberservice.exception.EmailNotValidException;
 import com.ssafy.bookkoo.memberservice.exception.EmailSendFailException;
+import com.ssafy.bookkoo.memberservice.exception.ImageUploadException;
 import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.memberservice.exception.NickNameDuplicateException;
 import com.ssafy.bookkoo.memberservice.exception.PasswordNotValidException;
@@ -182,7 +184,11 @@ public class MemberServiceImpl implements MemberService {
         //기본 프로필 이미지 or 소셜 로그인의 경우 profileImgUrl
         String imgUrl = profileImgUrl == null ? DEFAULT_MEMBER_IMG_URL : profileImgUrl;
         if (profileImg != null) {
-            imgUrl = commonServiceClient.saveImg(profileImg, BUCKET);
+            try {
+                imgUrl = commonServiceClient.saveImg(profileImg, BUCKET);
+            } catch (Exception e) {
+                throw new ImageUploadException();
+            }
             imgUrl = SERVER + COMMON_URL + imgUrl;
         }
         MemberInfo memberInfo = MemberInfo.builder()
@@ -266,7 +272,12 @@ public class MemberServiceImpl implements MemberService {
                                                                      .fontSize("0")
                                                                      .build())
                                      .build();
-        libraryServiceClient.createLibrary(memberId, createLibraryDto);
+
+        try {
+            libraryServiceClient.createLibrary(memberId, createLibraryDto);
+        } catch (Exception e) {
+            throw new CreateLibraryFailException();
+        }
     }
 
     /**
@@ -328,8 +339,6 @@ public class MemberServiceImpl implements MemberService {
         try {
             commonServiceClient.sendMail(sendEmailDto);
         } catch (Exception e) {
-            log.info("메일 전송 에러 : {}", e.getMessage());
-            log.info("Common-Service Client와 통신 에러 : {}", e.getMessage());
             throw new EmailSendFailException();
         }
     }

@@ -14,7 +14,7 @@ import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import com.ssafy.bookkoo.memberservice.entity.MemberSetting;
 import com.ssafy.bookkoo.memberservice.exception.MemberInfoNotExistException;
 import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
-import com.ssafy.bookkoo.memberservice.exception.ProfileImageUploadException;
+import com.ssafy.bookkoo.memberservice.exception.ImageUploadException;
 import com.ssafy.bookkoo.memberservice.mapper.MemberInfoMapper;
 import com.ssafy.bookkoo.memberservice.repository.MemberCategoryMapperRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberInfoRepository;
@@ -285,14 +285,19 @@ public class MemberInfoServiceImpl implements MemberInfoService {
             try {
                 commonServiceClient.deleteImg(profileImgUrl, BUCKET);
             } catch (Exception e) {
-                throw new ProfileImageUploadException();
+                throw new ImageUploadException();
             }
         }
         updateMemberProfileUrl(profileImg, memberInfo);
     }
 
     protected void updateMemberProfileUrl(MultipartFile profileImg, MemberInfo memberInfo) {
-        String imgUrl = commonServiceClient.saveImg(profileImg, BUCKET);
+        String imgUrl = null;
+        try {
+            imgUrl = commonServiceClient.saveImg(profileImg, BUCKET);
+        } catch (Exception e) {
+            throw new ImageUploadException();
+        }
         imgUrl = SERVER + COMMON_URL + imgUrl;
         memberInfo.setProfileImgUrl(imgUrl);
         memberInfoRepository.flush();

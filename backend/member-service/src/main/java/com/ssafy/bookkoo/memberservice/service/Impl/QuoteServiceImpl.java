@@ -7,6 +7,7 @@ import com.ssafy.bookkoo.memberservice.dto.response.ResponseQuoteDetailDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseQuoteDto;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import com.ssafy.bookkoo.memberservice.entity.Quote;
+import com.ssafy.bookkoo.memberservice.exception.ImageUploadException;
 import com.ssafy.bookkoo.memberservice.exception.MemberInfoNotExistException;
 import com.ssafy.bookkoo.memberservice.exception.QuoteNotFoundException;
 import com.ssafy.bookkoo.memberservice.exception.UnAuthorizationException;
@@ -61,7 +62,11 @@ public class QuoteServiceImpl implements QuoteService {
         quote.setMemberInfo(memberInfo);
         String imgUrl = DEFAULT_QUOTE_IMG_URL;
         if (backgroundImg != null) {
-            imgUrl = commonServiceClient.saveImg(backgroundImg, BUCKET);
+            try {
+                imgUrl = commonServiceClient.saveImg(backgroundImg, BUCKET);
+            } catch (Exception e) {
+                throw new ImageUploadException();
+            }
             imgUrl = SERVER + COMMON_URL + imgUrl;
         }
         quote.setBackgroundImgUrl(imgUrl);
@@ -103,7 +108,13 @@ public class QuoteServiceImpl implements QuoteService {
         quote.setContent(updateQuoteDto.content());
         quote.setSource(updateQuoteDto.source());
         if (backgroundImg != null) {
-            String imgUrl = commonServiceClient.saveImg(backgroundImg, BUCKET);
+
+            String imgUrl = null;
+            try {
+                imgUrl = commonServiceClient.saveImg(backgroundImg, BUCKET);
+            } catch (Exception e) {
+                throw new ImageUploadException();
+            }
             imgUrl = SERVER + COMMON_URL + imgUrl;
             quote.setBackgroundImgUrl(imgUrl);
         }
