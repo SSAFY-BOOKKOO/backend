@@ -1,7 +1,9 @@
 package com.ssafy.bookkoo.booktalkservice.service;
 
 import com.ssafy.bookkoo.booktalkservice.client.BookServiceClient;
+import com.ssafy.bookkoo.booktalkservice.client.NotificationServiceClient;
 import com.ssafy.bookkoo.booktalkservice.dto.RequestCreateBookTalkDto;
+import com.ssafy.bookkoo.booktalkservice.dto.RequestCreateCommunityNotificationDto;
 import com.ssafy.bookkoo.booktalkservice.dto.ResponseBookDto;
 import com.ssafy.bookkoo.booktalkservice.dto.ResponseBookTalkDto;
 import com.ssafy.bookkoo.booktalkservice.dto.other.RequestSearchBookMultiFieldDto;
@@ -15,10 +17,13 @@ import com.ssafy.bookkoo.booktalkservice.repository.BookTalkMapperRepository;
 import com.ssafy.bookkoo.booktalkservice.repository.BookTalkRepository;
 import feign.FeignException;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -27,9 +32,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BookTalkServiceImpl implements BookTalkService {
 
+    private static final Logger log = LoggerFactory.getLogger(BookTalkServiceImpl.class);
     private final BookTalkRepository bookTalkRepository;
     private final BookTalkMapperRepository bookTalkMapperRepository;
     private final BookServiceClient bookServiceClient;
+    private final NotificationServiceClient notificationServiceClient;
 
     @Override
     public Long createBookTalk(RequestCreateBookTalkDto dto) {
@@ -193,7 +200,7 @@ public class BookTalkServiceImpl implements BookTalkService {
         }
     }
 
-    @Scheduled(cron = "* * 0 * * *")
+    @Scheduled(cron = "0 0 4 * * *")
     @Transactional
     public void dayCountDelete() {
         List<BookTalk> bookTalkList = bookTalkRepository.findAll();
@@ -202,5 +209,56 @@ public class BookTalkServiceImpl implements BookTalkService {
         }
     }
 
-    
+    @Scheduled(cron = "0 0 4 * * *")
+    @Transactional
+    public void scheduledBookTalkDeleteNotification() {
+
+        LocalDateTime notificationTime = LocalDateTime.now()
+                                                      .minusDays(14);
+        // 14일 된 독서록들에게는 알림을 보내야함
+        List<BookTalk> notiBookTalkList = bookTalkRepository.findByUpdatedAtBefore(
+            notificationTime);
+        notiBookTalkList.forEach(bookTalk -> {
+            // 해당 독서록의 책 이름
+            String bookTitle = null;
+            try {
+                bookTitle = bookServiceClient.getBook(bookTalk.getBook())
+                                             .title();
+            } catch (FeignException e) {
+                log.info("BookTalk : bookServiceClient Error bookId = {}", bookTalk.getBook());
+                // 책 제목을 가져오지 못했을 경우 알림을 생성하지 않는다.
+                return;
+            }
+            // 해당 독서록에 있는 회원 번호 가져오기
+            List<BookTalkMemberMapper> mappers = bookTalkMapperRepository.findByBooktalk(
+                bookTalk);
+            List<Long> members = mappers.stream()
+                                        .map(BookTalkMemberMapper::getMemberId)
+                                        .toList();
+            // 알림 생성 요청
+            try {
+                notificationServiceClient.createCommunityNotification(
+                    RequestCreateCommunityNotificationDto.builder()
+                                                         .memberIds(
+                                                             members.toArray(new Long[0]))
+                                                         .title(bookTitle)
+                                                         .communityId(bookTalk.getId())
+                                                         .build());
+            } catch (FeignException e) {
+                log.info("BookTalk : notificationServiceClient Error bookTalkId = {}",
+                    bookTalk.getId());
+            }
+        });
+    }
+
+    @Scheduled(cron = "0 0 4 * * *")
+    @Transactional
+    public void scheduledBookTalkDelete() {
+        LocalDateTime deleteTime = LocalDateTime.now()
+                                                .minusDays(15);
+        List<BookTalk> deleteBookTalkList = bookTalkRepository.findByUpdatedAtBefore(
+            deleteTime);
+        bookTalkRepository.deleteAll(deleteBookTalkList);
+    }
+
 }
