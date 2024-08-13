@@ -1,4 +1,3 @@
-// utils/validateForm.js
 export const validateForm = (formData, validationConfig) => {
   const newErrors = {};
 
@@ -34,15 +33,27 @@ export const validateForm = (formData, validationConfig) => {
     }
   }
 
-  if (validationConfig.year && !formData.year)
-    newErrors.year = '연령을 입력하세요.';
+  if (validationConfig.birthYear) {
+    if (!formData.birthYear) {
+      newErrors.birthYear = '출생연도를 입력하세요.';
+    } else if (formData.birthYear < 1) {
+      newErrors.birthYear = '출생연도는 1 이상의 숫자여야 합니다.';
+    }
+  }
+
   if (validationConfig.gender && !formData.gender)
     newErrors.gender = '성별을 선택하세요.';
+
   if (validationConfig.categories && formData.categories.length === 0) {
     newErrors.categories = '선호 카테고리를 선택하세요.';
   }
-  if (validationConfig.introduction && !formData.introduction) {
-    newErrors.introduction = '소개글을 입력하세요.';
+
+  if (validationConfig.introduction) {
+    if (!formData.introduction) {
+      newErrors.introduction = '소개글을 입력하세요.';
+    } else if (formData.introduction.length > 200) {
+      newErrors.introduction = '소개글은 200자 이내로 작성해야 합니다.';
+    }
   }
 
   return newErrors;

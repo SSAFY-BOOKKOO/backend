@@ -149,7 +149,13 @@ const LibraryMain = () => {
           setAlert({
             isOpen: true,
             confirmOnly: true,
-            message: '책 순서 변경에 실패했습니다. 다시 시도해 주세요.',
+            message: (
+              <>
+                앗! 오류가 발생했습니다.
+                <br />
+                잠시 후 다시 시도해주세요!
+              </>
+            ),
           });
         }
       }
@@ -197,7 +203,13 @@ const LibraryMain = () => {
       setAlert({
         isOpen: true,
         confirmOnly: true,
-        message: '서재명 변경에 실패했습니다. 다시 시도해 주세요.',
+        message: (
+          <>
+            앗! 오류가 발생했습니다.
+            <br />
+            잠시 후 다시 시도해주세요!
+          </>
+        ),
       });
       console.error(error);
     }
@@ -239,7 +251,13 @@ const LibraryMain = () => {
       setAlert({
         isOpen: true,
         confirmOnly: true,
-        message: '폰트 스타일 변경에 실패했습니다. 다시 시도해 주세요.',
+        message: (
+          <>
+            앗! 오류가 발생했습니다.
+            <br />
+            잠시 후 다시 시도해주세요!
+          </>
+        ),
       });
       console.error(error);
     }
@@ -256,7 +274,13 @@ const LibraryMain = () => {
       setAlert({
         isOpen: true,
         confirmOnly: true,
-        message: '서재 삭제에 실패했습니다. 다시 시도해 주세요.',
+        message: (
+          <>
+            앗! 오류가 발생했습니다.
+            <br />
+            잠시 후 다시 시도해주세요!
+          </>
+        ),
       });
       console.error(error);
     }
@@ -301,7 +325,13 @@ const LibraryMain = () => {
           setAlert({
             isOpen: true,
             confirmOnly: true,
-            message: '서재 생성에 실패했습니다. 다시 시도해 주세요.',
+            message: (
+              <>
+                앗! 오류가 발생했습니다.
+                <br />
+                잠시 후 다시 시도해주세요!
+              </>
+            ),
           });
           console.error(error);
         }
@@ -323,7 +353,52 @@ const LibraryMain = () => {
     );
   }
 
-  const currentLibraryStyleDto = libraries[activeLibrary]?.libraryStyleDto;
+  const changeLibraryColor = async (libraryId, colorClassName) => {
+    try {
+      const existingLibraryResponse = await authAxiosInstance.get(
+        `/libraries/${libraryId}`
+      );
+      const existingLibrary = existingLibraryResponse.data;
+
+      await authAxiosInstance.patch(`/libraries/${libraryId}`, {
+        libraryStyleDto: {
+          ...existingLibrary.libraryStyleDto,
+          libraryColor: colorClassName,
+        },
+      });
+
+      setLibraries(prev => {
+        const newLibraries = [...prev];
+        const libraryIndex = newLibraries.findIndex(
+          lib => lib.id === libraryId
+        );
+        if (libraryIndex !== -1) {
+          newLibraries[libraryIndex].libraryStyleDto.libraryColor =
+            colorClassName;
+        }
+        return newLibraries;
+      });
+
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '서재 색이 성공적으로 변경되었습니다.',
+      });
+    } catch (error) {
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: (
+          <>
+            앗! 오류가 발생했습니다.
+            <br />
+            잠시 후 다시 시도해주세요!
+          </>
+        ),
+      });
+      console.error(error);
+    }
+  };
 
   return (
     <DndProvider backend={MultiBackend} options={HTML5toTouch}>
@@ -343,6 +418,7 @@ const LibraryMain = () => {
           changeLibraryName={changeLibraryName}
           libraryRef={libraryRef}
           changeFontStyle={changeFontStyle}
+          changeLibraryColor={changeLibraryColor}
         />
         <div ref={libraryRef}>
           {libraries.length > 0 && (
@@ -351,7 +427,7 @@ const LibraryMain = () => {
               moveBook={moveBook}
               onBookClick={handleBookClick}
               viewOnly={false}
-              libraryStyleDto={currentLibraryStyleDto}
+              libraryStyleDto={libraries[activeLibrary]?.libraryStyleDto}
             />
           )}
         </div>

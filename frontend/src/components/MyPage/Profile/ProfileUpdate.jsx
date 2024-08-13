@@ -15,7 +15,7 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
   });
   const [errors, setErrors] = useState({});
   const setAlert = useSetAtom(alertAtom);
-  const introductionRef = useRef(null); // textarea에 대한 ref 생성
+  const introductionRef = useRef(null);
 
   useEffect(() => {
     if (member) {
@@ -37,14 +37,27 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value,
-    });
-    setErrors(prevErrors => ({
-      ...prevErrors,
-      [name]: '',
-    }));
+
+    if (name === 'nickname' && value.length > 10) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        nickname: '닉네임은 10자 이내로 작성해야 합니다.',
+      }));
+    } else if (name === 'introduction' && value.length > 200) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        introduction: '소개글은 200자 이내로 작성해야 합니다.',
+      }));
+    } else {
+      setFormData({
+        ...formData,
+        [name]: type === 'checkbox' ? checked : value,
+      });
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        [name]: '',
+      }));
+    }
   };
 
   const handleCategoryChange = categoryId => {
@@ -132,8 +145,15 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
         setAlert({
           isOpen: true,
           confirmOnly: true,
-          message: '프로필이 성공적으로 업데이트되었습니다.',
+          message: (
+            <>
+              앗! 오류가 발생했습니다.
+              <br />
+              잠시 후 다시 시도해주세요!
+            </>
+          ),
         });
+
         onSave({
           nickName: formData.nickname,
           categories: formData.categories,
@@ -141,18 +161,30 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
           profileImgUrl: response.data.profileImgUrl,
         });
       } catch (error) {
-        console.error('Failed to update profile:', error);
+        console.error(error);
         setAlert({
           isOpen: true,
           confirmOnly: true,
-          message: '프로필 업데이트 중 오류가 발생했습니다.',
+          message: (
+            <>
+              앗! 오류가 발생했습니다.
+              <br />
+              잠시 후 다시 시도해주세요!
+            </>
+          ),
         });
       }
     } else {
       setAlert({
         isOpen: true,
         confirmOnly: true,
-        message: '폼에 오류가 있습니다. 다시 확인해 주세요.',
+        message: (
+          <>
+            앗! 오류가 발생했습니다.
+            <br />
+            잠시 후 다시 시도해주세요!
+          </>
+        ),
       });
     }
   };

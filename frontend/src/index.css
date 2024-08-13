@@ -92,6 +92,38 @@
   font-family: 'Kdg';
   src: url('@assets/fonts/Kdg.woff2') format('woff2');
 }
+@font-face {
+  font-family: 'BukkeukkeuMyeongjo';
+  src: url('@assets/fonts/BukkeukkeuMyeongjo.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Eulyoo1945';
+  src: url('@assets/fonts/Eulyoo1945.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'LaundryGothic';
+  src: url('@assets/fonts/LaundryGothic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'LeeSeoYoon';
+  src: url('@assets/fonts/LeeSeoYoon.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'PyeongtaekSemiconductor';
+  src: url('@assets/fonts/PyeongtaekSemiconductor.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'SFHambaknoon';
+  src: url('@assets/fonts/SFHambaknoon.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'HakgyoansimBombanghak';
+  src: url('@assets/fonts/HakgyoansimBombanghak.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'UhBeeBanynany';
+  src: url('@assets/fonts/UhBeeBanynany.woff2') format('woff2');
+}
 * {
   font-family: 'Pretendard';
 }

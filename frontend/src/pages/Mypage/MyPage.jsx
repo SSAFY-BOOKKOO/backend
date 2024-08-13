@@ -16,6 +16,7 @@ const MyPage = () => {
   const [categories, setCategories] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showFullIntroduction, setShowFullIntroduction] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,6 +62,10 @@ const MyPage = () => {
     setIsModalOpen(false);
   };
 
+  const toggleShowFullIntroduction = () => {
+    setShowFullIntroduction(!showFullIntroduction);
+  };
+
   const handleLogout = async () => {
     try {
       await authAxiosInstance.post('/auth/logout');
@@ -94,12 +99,21 @@ const MyPage = () => {
                 />
               </Link>
             </div>
-            <div className='w-full text-left relative group'>
-              <p className='text-md text-gray-700 font-medium line-clamp-4'>
+            <div className='w-full text-left relative'>
+              <p
+                className={`text-md text-gray-700 font-medium ${
+                  showFullIntroduction ? '' : 'line-clamp-3'
+                }`}
+              >
                 {member.introduction}
               </p>
-              <div className='absolute left-0 top-full w-full bg-gray-800 text-white text-sm rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10'>
-                {member.introduction}
+              <div className='flex justify-end'>
+                <button
+                  onClick={toggleShowFullIntroduction}
+                  className='text-blue-500 text-sm mt-1'
+                >
+                  {showFullIntroduction ? '접기' : '더보기'}
+                </button>
               </div>
             </div>
             <div className='flex flex-wrap mt-2'>
