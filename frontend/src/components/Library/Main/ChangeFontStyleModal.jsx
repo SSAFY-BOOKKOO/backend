@@ -42,6 +42,45 @@ const ChangeFontStyleModal = ({
               기본 폰트
             </option>
             <option
+              value='BukkeukkeuMyeongjo'
+              style={{ fontFamily: 'BukkeukkeuMyeongjo' }}
+            >
+              부끄끄 명조체
+            </option>
+            <option value='Eulyoo1945' style={{ fontFamily: 'Eulyoo1945' }}>
+              을유1945체
+            </option>
+            <option
+              value='LaundryGothic'
+              style={{ fontFamily: 'LaundryGothic' }}
+            >
+              런드리 고딕체
+            </option>
+            <option value='LeeSeoYoon' style={{ fontFamily: 'LeeSeoYoon' }}>
+              이서윤체
+            </option>
+            <option
+              value='PyeongtaekSemiconductor'
+              style={{ fontFamily: 'PyeongtaekSemiconductor' }}
+            >
+              평택 반도체체
+            </option>
+            <option value='SFHambaknoon' style={{ fontFamily: 'SFHambaknoon' }}>
+              SF함박눈체
+            </option>
+            <option
+              value='HakgyoansimBombanghak'
+              style={{ fontFamily: 'HakgyoansimBombanghak' }}
+            >
+              학교안심 봄방학체
+            </option>
+            <option
+              value='UhBeeBanynany'
+              style={{ fontFamily: 'UhBeeBanynany' }}
+            >
+              어비 바니나니체
+            </option>
+            <option
               value='GyeonggiCheonnyeon'
               style={{ fontFamily: 'GyeonggiCheonnyeon' }}
             >

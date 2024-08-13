@@ -72,7 +72,7 @@ const RegisterPage = () => {
         const response = await postCategories();
         setCategories(response);
       } catch (error) {
-        console.error('Failed to fetch categories', error);
+        console.error(error);
       }
     };
     fetchCategories();

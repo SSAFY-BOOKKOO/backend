@@ -22,7 +22,7 @@ const RegisterStep2 = ({
       setAlert({
         isOpen: true,
         confirmOnly: true,
-        message: '출생연도 0 이하로 설정할 수 없습니다.',
+        message: '출생연도를 0 이하로 설정할 수 없습니다.',
       });
       return;
     }
