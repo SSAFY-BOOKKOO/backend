@@ -6,8 +6,6 @@ import { BsBookmarkStar, BsBookmarkStarFill } from 'react-icons/bs';
 import { AiFillAlert } from 'react-icons/ai';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
 import { FaTrashCan } from 'react-icons/fa6';
-// import { useAtom } from 'jotai';
-// import { storedLettersAtom } from '../../atoms/CurationStoreAtom';
 import { authAxiosInstance } from '../../services/axiosInstance';
 import { BsEnvelopeHeart } from 'react-icons/bs';
 
@@ -15,19 +13,10 @@ const CurationReceive = () => {
   const navigate = useNavigate();
   const [letters, setLetters] = useState([]);
   const [page, setPage] = useState(0);
-  // const [storedLetters, setStoredLetters] = useAtom(storedLettersAtom);
   const [storeLetters, setStoreLetters] = useState([]);
   const [selectedLetters, setSelectedLetters] = useState([]);
   const [isDeleting, setIsDeleting] = useState(false);
   const [countLetters, setCountLetters] = useState(0);
-
-  // 컴포넌트가 마운트될 때 로컬 스토리지에서 storeLetters를 불러옴
-  // useEffect(() => {
-  //   const stored = localStorage.getItem('storeLetters');
-  //   if (stored) {
-  //     setStoreLetters(JSON.parse(stored));
-  //   }
-  // }, []);
 
   // storeLetters가 변경될 때마다 로컬 스토리지에 저장
   useEffect(() => {
@@ -39,7 +28,6 @@ const CurationReceive = () => {
       .get('/curations/store', { params: { page } })
       .then(res => {
         setStoreLetters(res.data.curationList);
-        console.log(storeLetters);
       })
       .catch(err => {
         console.log('error:', err);
@@ -170,7 +158,6 @@ const CurationReceive = () => {
                 <h2 className='text-lg font-bold text-overflow-1'>
                   {letter.title}
                 </h2>
-                {/* <p>{letter.content}</p> */}
                 <p>{letter.date}</p>
               </div>
               {storeLetters.some(

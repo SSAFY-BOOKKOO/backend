@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import useModal from '@hooks/useModal';
 import SettingsModal from '@components/@common/SettingsModal';
 import { authAxiosInstance } from '../../services/axiosInstance';
 
 const CurationLetterDetail = () => {
-  const navigate = useNavigate();
   const { id } = useParams();
-  const location = useLocation();
-  // const { letter } = location.state;
   const { isOpen, closeModal, toggleModal } = useModal();
 
   const [letter, setLetter] = useState('');

@@ -11,13 +11,6 @@ const CurationSend = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [countLetters, setCountLetters] = useState(0);
-
-  // const { sendLetters } = location.state || { sendLetters: [] };
-
-  useEffect(() => {
-    console.log(sendLetters);
-  }, []);
-
   const [sendLetters, setLetters] = useState([]);
   const [page, setPage] = useState(0); // 페이지 상태 추가
   const [loading, setLoading] = useState(true); // 로딩 상태 추가
