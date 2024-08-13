@@ -2,6 +2,7 @@ package com.ssafy.bookkoo.booktalkservice.repository;
 
 import com.ssafy.bookkoo.booktalkservice.entity.BookTalk;
 import com.ssafy.bookkoo.booktalkservice.entity.BookTalkMemberMapper;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -25,5 +26,13 @@ public interface BookTalkMapperRepository extends JpaRepository<BookTalkMemberMa
      * @return True or False
      */
     Boolean existsByMemberIdAndBooktalk(Long memberId, BookTalk booktalk);
+
+
+    List<BookTalkMemberMapper> findByBooktalkIn(List<BookTalk> booktalks);
+
+    List<BookTalkMemberMapper> findByBooktalkCreatedAtBefore(LocalDateTime time);
+
+    List<BookTalkMemberMapper> findByBooktalk(BookTalk booktalk);
+
 }
 

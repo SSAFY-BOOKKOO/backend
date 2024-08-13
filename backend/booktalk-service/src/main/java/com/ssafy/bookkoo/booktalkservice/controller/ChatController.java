@@ -5,6 +5,7 @@ import com.ssafy.bookkoo.booktalkservice.dto.ResponseChatMessageDto;
 import com.ssafy.bookkoo.booktalkservice.service.ChatService;
 import com.ssafy.bookkoo.booktalkservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +61,7 @@ public class ChatController {
     public void sendMessage(
         @RequestHeader HttpHeaders headers,
         @PathVariable(value = "bookTalkId") Long bookTalkId,
-        @RequestBody RequestChatMessageDto message) {
+        @Valid @RequestBody RequestChatMessageDto message) {
         log.info("Sending message  id : {} msg : {}", bookTalkId, message
             .content());
         Long memberId = CommonUtil.getMemberId(headers);
