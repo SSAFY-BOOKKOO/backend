@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@components/@common/Button';
 
 const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
+  const [showFullIntroduction, setShowFullIntroduction] = useState(false);
+
   const getCategoryName = categoryId => {
     const category = categories?.find(cat => cat.id === categoryId);
     return category ? category.name : '';
+  };
+
+  const toggleShowFullIntroduction = () => {
+    setShowFullIntroduction(!showFullIntroduction);
   };
 
   return (
@@ -32,13 +38,21 @@ const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
         </div>
         <div className='mb-4 flex'>
           <label className='text-gray-700 font-medium w-1/3'>소개글</label>
-          <div className='w-2/3 text-left relative group'>
-            {' '}
-            <p className='text-gray-700 font-medium line-clamp-3'>
+          <div className='w-2/3 text-left relative'>
+            <p
+              className={`text-gray-700 font-medium ${
+                showFullIntroduction ? '' : 'line-clamp-3'
+              }`}
+            >
               {member.introduction}
             </p>
-            <div className='absolute left-0 top-full w-full bg-gray-800 text-white text-sm rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10'>
-              {member.introduction}
+            <div className='flex justify-end'>
+              <button
+                onClick={toggleShowFullIntroduction}
+                className='text-blue-500 text-sm mt-1'
+              >
+                {showFullIntroduction ? '접기' : '더보기'}
+              </button>
             </div>
           </div>
         </div>
