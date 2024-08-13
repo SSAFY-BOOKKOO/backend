@@ -21,6 +21,7 @@ import com.ssafy.bookkoo.libraryservice.entity.LibraryStyle;
 import com.ssafy.bookkoo.libraryservice.entity.MapperKey;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import com.ssafy.bookkoo.libraryservice.exception.BookAlreadyMappedException;
+import com.ssafy.bookkoo.libraryservice.exception.BookClientException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryBookLimitExceededException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryBookNotFoundException;
 import com.ssafy.bookkoo.libraryservice.exception.LibraryIsNotYoursException;
@@ -186,11 +187,14 @@ public class LibraryServiceImpl implements LibraryService {
                                                                                  .offset(
                                                                                      (int) pageable.getOffset())
                                                                                  .build();
-
-        // BookServiceClient를 통해 책 정보를 가져옵니다.
-        List<ResponseBookDto> books = bookServiceClient.getBooksByCondition(
-            filterDto);
-
+        List<ResponseBookDto> books;
+        try {
+            // BookServiceClient를 통해 책 정보를 가져옵니다.
+            books = bookServiceClient.getBooksByCondition(
+                filterDto);
+        } catch (Exception e) {
+            throw new BookClientException(e.getMessage());
+        }
         // 책 정보를 매퍼 정보와 매핑합니다.
         List<ResponseLibraryBookMapperDto> libraryBooks = libraryBookMappers.stream()
                                                                             .map(mapper -> {
@@ -282,10 +286,14 @@ public class LibraryServiceImpl implements LibraryService {
         // 0. 서재 존재 확인
         Library library = findLibraryByIdWithException(libraryId);
 
+        ResponseBookDto bookResponse;
         // 1. 해당 책이 DB에 있는지 확인 후 없으면 생성하는 api 요청하기
-        ResponseBookDto bookResponse = bookServiceClient.getOrCreateBookByBookData(
-            mapperDto.bookDto());
-
+        try {
+            bookResponse = bookServiceClient.getOrCreateBookByBookData(
+                mapperDto.bookDto());
+        } catch (Exception e) {
+            throw new BookClientException(e.getMessage());
+        }
         // 2. 해당 책에 대한 id 값을 받아서 책-서재 매퍼에 추가해 책 등록하기
         // 2.1 mapper key 생성
         MapperKey mapperKey = new MapperKey();
@@ -366,8 +374,12 @@ public class LibraryServiceImpl implements LibraryService {
                                                                                  .build();
 
         // 책 정보 가져오기
-        List<ResponseBookDto> books = bookServiceClient.getBooksByCondition(filterDto);
-
+        List<ResponseBookDto> books;
+        try {
+            books = bookServiceClient.getBooksByCondition(filterDto);
+        } catch (Exception e) {
+            throw new BookClientException(e.getMessage());
+        }
         return books;
     }
 
@@ -472,8 +484,12 @@ public class LibraryServiceImpl implements LibraryService {
         String nickname
     ) {
         // member 정보 가져오기
-        Long memberId = memberServiceClient.getMemberIdByNickName(nickname);
-
+        Long memberId;
+        try {
+            memberId = memberServiceClient.getMemberIdByNickName(nickname);
+        } catch (Exception e) {
+            throw new MemberNotFoundException();
+        }
         // 만약 libraryId에 memberId가 없으면 null
         Library library = libraryRepository.findById(libraryId)
                                            .orElseThrow(
@@ -486,8 +502,12 @@ public class LibraryServiceImpl implements LibraryService {
         }
 
         // book 정보 가져오기
-        ResponseBookOfLibraryDto book = bookServiceClient.getBookOfLibrary(bookId, memberId);
-
+        ResponseBookOfLibraryDto book;
+        try {
+            book = bookServiceClient.getBookOfLibrary(bookId, memberId);
+        } catch (Exception e) {
+            throw new BookClientException(e.getMessage());
+        }
         // mapper key
         MapperKey key = new MapperKey();
         key.setLibraryId(libraryId);
@@ -563,8 +583,14 @@ public class LibraryServiceImpl implements LibraryService {
                                                                                    .limit(5)
                                                                                    .offset(0)
                                                                                    .build();
-        List<ResponseBookDto> books = bookServiceClient.getBooksByCondition(searchField);
 
+        List<ResponseBookDto> books;
+
+        try {
+            books = bookServiceClient.getBooksByCondition(searchField);
+        } catch (Exception e) {
+            throw new BookClientException(e.getMessage());
+        }
         return bookMapper.responseDtoToCustomDto(books);
     }
 
