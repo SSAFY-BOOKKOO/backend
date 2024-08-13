@@ -15,7 +15,7 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
   });
   const [errors, setErrors] = useState({});
   const setAlert = useSetAtom(alertAtom);
-  const introductionRef = useRef(null); // textarea에 대한 ref 생성
+  const introductionRef = useRef(null);
 
   useEffect(() => {
     if (member) {
@@ -37,14 +37,27 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value,
-    });
-    setErrors(prevErrors => ({
-      ...prevErrors,
-      [name]: '',
-    }));
+
+    if (name === 'nickname' && value.length > 10) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        nickname: '닉네임은 10자 이내로 작성해야 합니다.',
+      }));
+    } else if (name === 'introduction' && value.length > 200) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        introduction: '소개글은 200자 이내로 작성해야 합니다.',
+      }));
+    } else {
+      setFormData({
+        ...formData,
+        [name]: type === 'checkbox' ? checked : value,
+      });
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        [name]: '',
+      }));
+    }
   };
 
   const handleCategoryChange = categoryId => {
