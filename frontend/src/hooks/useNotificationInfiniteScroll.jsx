@@ -9,7 +9,7 @@ const useNotificationInfiniteScroll = () => {
       if (lastPage.length === 0) {
         return undefined;
       }
-      return allPages.length + 1;
+      return allPages.length;
     },
     refetchOnWindowFocus: false,
     refetchOnMount: false,
