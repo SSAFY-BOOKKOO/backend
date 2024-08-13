@@ -16,6 +16,7 @@ public interface QuoteMapper {
     @Mapping(target = "backgroundImgUrl", ignore = true)
     Quote toEntity(RequestCreateQuoteDto createQuoteDto);
 
+    @Mapping(target = "quoteId", source = "id")
     ResponseQuoteDto toDto(Quote quote);
 
     ResponseQuoteDetailDto toDetailDto(Quote quote);
