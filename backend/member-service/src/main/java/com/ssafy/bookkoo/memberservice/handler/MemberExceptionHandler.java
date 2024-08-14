@@ -19,7 +19,7 @@ public class MemberExceptionHandler {
      * @return
      */
     @ExceptionHandler(EmailNotValidException.class)
-    public ResponseEntity<String> handleEmailDuplicateException(EmailNotValidException e) {
+    public ResponseEntity<String> handleEmailNotValidException(EmailNotValidException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body(e.getMessage());
     }
@@ -207,6 +207,17 @@ public class MemberExceptionHandler {
      */
     @ExceptionHandler(CreateLibraryFailException.class)
     public ResponseEntity<String> handleCreateLibraryFailException(CreateLibraryFailException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(e.getMessage());
+    }
+
+    /**
+     * 서재 삭제 과정에서 예외 발생
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(DeleteLibrariesFailException.class)
+    public ResponseEntity<String> handleDeleteLibrariesFailException(DeleteLibrariesFailException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body(e.getMessage());
     }
