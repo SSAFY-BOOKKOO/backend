@@ -2,6 +2,7 @@ package com.ssafy.bookkoo.memberservice.entity;
 
 import com.ssafy.bookkoo.memberservice.enums.Gender;
 import com.ssafy.bookkoo.memberservice.global.BaseEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -30,8 +31,8 @@ public class MemberInfo extends BaseEntity {
     @Column(name = "id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Member member;
 
     @Column(name = "member_id")
@@ -48,7 +49,7 @@ public class MemberInfo extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @OneToMany(mappedBy = "memberInfo")
+    @OneToMany(mappedBy = "memberInfo", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<MemberCategoryMapper> categories = new ArrayList<>();
 
     @Setter
@@ -59,19 +60,19 @@ public class MemberInfo extends BaseEntity {
     @Column(name = "profile_img_url")
     private String profileImgUrl;
 
-    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_setting")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private MemberSetting memberSetting;
 
     //해당 멤버를 팔로우하는 팔로우 관계
-    @OneToMany(mappedBy = "followee")
+    @OneToMany(mappedBy = "followee", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<FollowShip> followers = new ArrayList<>();
 
     //해당 멤버가 팔로잉하는 팔로우 관계
-    @OneToMany(mappedBy = "follower")
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<FollowShip> followees = new ArrayList<>();
 
-    @OneToMany(mappedBy = "memberInfo")
+    @OneToMany(mappedBy = "memberInfo", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Quote> quotes = new ArrayList<>();
 
     @Builder

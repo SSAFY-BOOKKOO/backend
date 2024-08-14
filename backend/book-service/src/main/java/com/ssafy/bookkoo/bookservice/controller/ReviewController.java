@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,20 +21,36 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/books")
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewController {
 
     private final ReviewService reviewService;
 
     @Operation(summary = "책 리뷰 조회", description = "특정 책의 모든 리뷰를 조회합니다.")
     @GetMapping("/{bookId}/reviews")
-    public ResponseEntity<List<ResponseReviewDto>> getReviewsByBookId(@PathVariable Long bookId) {
+    public ResponseEntity<List<ResponseReviewDto>> getReviewsByBookId(
+        @PathVariable Long bookId
+    ) {
+        log.info("Retrieve Review by Book Id: {}", bookId);
         List<ResponseReviewDto> reviews = reviewService.getReviewByBookId(bookId);
         return ResponseEntity.ok(reviews);
+    }
+
+    @Operation(summary = "내 리뷰 조회", description = "책 ID와 리뷰 ID를 통해 내 리뷰를 조회합니다.")
+    @GetMapping("/{bookId}/review/me")
+    public ResponseEntity<ResponseReviewDto> getMyReview(
+        @RequestHeader HttpHeaders headers,
+        @PathVariable Long bookId
+    ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+        ResponseReviewDto review = reviewService.getMyReview(bookId, memberId);
+        return ResponseEntity.ok(review);
     }
 
     @Operation(summary = "특정 리뷰 조회", description = "책 ID와 리뷰 ID를 통해 특정 리뷰를 조회합니다.")
@@ -46,6 +63,7 @@ public class ReviewController {
         return ResponseEntity.ok(review);
     }
 
+
     @Operation(summary = "리뷰 작성", description = "특정 책에 대한 리뷰를 작성합니다.")
     @PostMapping("/{bookId}/reviews")
     public ResponseEntity<ResponseReviewDto> createReview(
@@ -53,6 +71,7 @@ public class ReviewController {
         @PathVariable Long bookId,
         @Valid @RequestBody RequestReviewDto requestReviewDto
     ) {
+        log.info("Create Review: {}", requestReviewDto);
         Long memberId = CommonUtil.getMemberId(headers);
         ResponseReviewDto createdReview = reviewService.addReview(memberId, bookId,
             requestReviewDto);
@@ -82,6 +101,7 @@ public class ReviewController {
         @PathVariable Long bookId,
         @PathVariable Long reviewId
     ) {
+        log.info("Delete Review: {}", reviewId);
         Long memberId = CommonUtil.getMemberId(headers);
         reviewService.deleteReviewById(memberId, bookId, reviewId);
         return ResponseEntity.noContent()
@@ -112,10 +132,8 @@ public class ReviewController {
             """
     )
     public ResponseEntity<HttpStatus> deleteReviewOfMember(
-        @RequestHeader HttpHeaders headers
+        @RequestParam("memberId") Long memberId
     ) {
-        Long memberId = CommonUtil.getMemberId(headers);
-
         reviewService.deleteReviewsByMemberId(memberId);
 
         return ResponseEntity.noContent()

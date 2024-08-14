@@ -15,8 +15,9 @@ public class GlobalServiceExceptionHandler implements GlobalFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        log.info("request: {}", exchange.getRequest()
-                                        .getURI());
+        log.info("request: {} : {}", exchange.getRequest()
+                                             .getMethod(), exchange.getRequest()
+                                                                   .getURI());
         log.info("status code : {}", exchange.getResponse()
                                              .getStatusCode());
         return chain.filter(exchange)

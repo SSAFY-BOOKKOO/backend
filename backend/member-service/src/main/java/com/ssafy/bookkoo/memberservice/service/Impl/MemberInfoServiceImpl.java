@@ -1,6 +1,8 @@
 package com.ssafy.bookkoo.memberservice.service.Impl;
 
+import com.ssafy.bookkoo.memberservice.client.BookServiceClient;
 import com.ssafy.bookkoo.memberservice.client.CommonServiceClient;
+import com.ssafy.bookkoo.memberservice.client.LibraryServiceClient;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestMemberSettingDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdateMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
@@ -12,6 +14,7 @@ import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapper;
 import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapperKey;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import com.ssafy.bookkoo.memberservice.entity.MemberSetting;
+import com.ssafy.bookkoo.memberservice.exception.DeleteFailException;
 import com.ssafy.bookkoo.memberservice.exception.MemberInfoNotExistException;
 import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.memberservice.exception.ImageUploadException;
@@ -25,6 +28,7 @@ import com.ssafy.bookkoo.memberservice.service.MemberService;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,7 +47,9 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     private final MemberSettingRepository memberSettingRepository;
     private final MemberCategoryMapperRepository memberCategoryMapperRepository;
     private final MemberService memberService;
-    
+    private final LibraryServiceClient libraryServiceClient;
+    private final BookServiceClient bookServiceClient;
+
     @Value("${config.member-bucket-name}")
     private String BUCKET;
 
@@ -212,6 +218,29 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         return memberInfoRepository.findById(memberId)
                                    .orElseThrow(MemberInfoNotExistException::new);
     }
+
+
+    /**
+     * 회원 탈퇴를 수행합니다.
+     * @param memberId
+     */
+    @Override
+    public void deleteMemberHistory(Long memberId) {
+        try {
+            libraryServiceClient.deleteLibraries(memberId);
+            bookServiceClient.deleteMyReview(memberId);
+        } catch (Exception e) {
+            throw new DeleteFailException();
+        }
+        //클래스 내부 호출은 트랜잭션이 적용되지 않으므로 AopContext를 통해 프록시를 통해 메서드 호출
+        ((MemberInfoServiceImpl) AopContext.currentProxy()).deleteMember(memberId);
+    }
+
+    @Transactional
+    public void deleteMember(Long memberId) {
+        memberInfoRepository.deleteById(memberId);
+    }
+
 
     /**
      * 이전 닉네임과 같으면 중복체크 X

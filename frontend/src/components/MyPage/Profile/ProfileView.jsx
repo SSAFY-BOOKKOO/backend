@@ -49,7 +49,7 @@ const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
         </div>
         <div className='mb-4 flex'>
           <label className='text-gray-700 font-medium w-1/3'>소개글</label>
-          <div className='w-2/3 text-left relative'>
+          <div className='w-2/3 text-right relative'>
             <p
               ref={introductionRef}
               className={`text-gray-700 font-medium ${

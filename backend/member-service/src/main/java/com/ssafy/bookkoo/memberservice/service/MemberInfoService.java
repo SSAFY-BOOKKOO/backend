@@ -35,4 +35,8 @@ public interface MemberInfoService {
     List<ResponseRecipientDto> getRecipientsInfo(List<Long> recipientIds);
 
     MemberInfo getMemberInfoEntity(Long memberId);
+
+    void deleteMember(Long memberId);
+
+    void deleteMemberHistory(Long memberId);
 }

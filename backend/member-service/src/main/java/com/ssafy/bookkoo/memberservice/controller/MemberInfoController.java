@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -155,5 +156,17 @@ public class MemberInfoController {
         ResponseMemberProfileDto memberProfileDto
             = memberInfoService.getMemberProfileInfoByNickName(nickName);
         return ResponseEntity.ok(memberProfileDto);
+    }
+
+
+    @DeleteMapping
+    @Operation(summary = "회원 탈퇴 API", description = "회원이 탈퇴합니다.")
+    public ResponseEntity<HttpStatus> deleteMember(
+        @RequestHeader HttpHeaders headers
+    ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+        memberInfoService.deleteMemberHistory(memberId);
+        return ResponseEntity.ok()
+                             .build();
     }
 }

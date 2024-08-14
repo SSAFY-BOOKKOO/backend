@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.bookkoo.bookkoogateway.client.AuthServiceWebClient;
 import com.ssafy.bookkoo.bookkoogateway.dto.ResponseTokenDto;
 import com.ssafy.bookkoo.bookkoogateway.exception.AccessTokenExpirationException;
+import com.ssafy.bookkoo.bookkoogateway.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.bookkoogateway.exception.RefreshTokenExpirationException;
 import com.ssafy.bookkoo.bookkoogateway.exception.WebClientRequestException;
 import com.ssafy.bookkoo.bookkoogateway.response.CustomErrorResponse;
@@ -62,14 +63,29 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
             return handleAccessTokenExpirationException(request, response,
                 accessTokenExpirationException);
         } else if (ex instanceof WebClientRequestException) {
-            response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+            response.setStatusCode(HttpStatus.BAD_REQUEST);
         } else if (ex instanceof RefreshTokenExpirationException refreshTokenExpirationException) {
             return handleRefreshTokenExpirationException(response, refreshTokenExpirationException);
+        } else if (ex instanceof MemberNotFoundException memberNotFoundException) {
+            return handleMemberNotFoundException(response, memberNotFoundException);
         } else {
             response.setStatusCode(((ResponseStatusException) ex).getStatusCode());
         }
 
         return handleDefaultExceptionWithMessage(ex, response);
+    }
+
+    /**
+     * PASS-PORT를 넣어주어야 할 때 멤버 서비스 호출 중 예외 발생
+     * @param response
+     * @param memberNotFoundException
+     * @return
+     */
+    private Mono<Void> handleMemberNotFoundException(ServerHttpResponse response,
+        MemberNotFoundException memberNotFoundException) {
+        // 404 상태코드 세팅
+        response.setStatusCode(HttpStatus.NOT_FOUND);
+        return handleDefaultExceptionWithMessage(memberNotFoundException, response);
     }
 
     /**

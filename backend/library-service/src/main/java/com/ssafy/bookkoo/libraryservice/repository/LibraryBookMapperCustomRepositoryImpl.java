@@ -209,10 +209,12 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
         }
 
         // 3. 날짜에 대해 쿼리
-        // 책의 읽기 시작 날짜가 주어진 기간의 끝 날짜 이전이거나 같은 경우
-        predicate.and(libraryBookMapper.startAt.loe(endAt));
-        // 책의 읽기 끝 날짜가 주어진 기간의 시작 날짜 이후거나 같은 경우
-        predicate.and(libraryBookMapper.endAt.goe(startAt));
+        if (startAt != null && endAt != null) {
+            // 책의 읽기 시작 날짜가 주어진 기간의 끝 날짜 이전이거나 같은 경우
+            predicate.and(libraryBookMapper.startAt.loe(endAt));
+            // 책의 읽기 끝 날짜가 주어진 기간의 시작 날짜 이후거나 같은 경우
+            predicate.and(libraryBookMapper.endAt.goe(startAt));
+        }
 
         return queryFactory.select(libraryBookMapper.id.bookId)
                            .from(libraryBookMapper)
@@ -268,8 +270,10 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
         predicate.and(libraryBookMapper.library.memberId.eq(memberId));
 
         // 기간 (걸치는 것도 포함!)
-        predicate.and(libraryBookMapper.startAt.loe(endAt));
-        predicate.and(libraryBookMapper.endAt.goe(startAt));
+        if (startAt != null && endAt != null) {
+            predicate.and(libraryBookMapper.startAt.loe(endAt));
+            predicate.and(libraryBookMapper.endAt.goe(startAt));
+        }
 
         Long count = queryFactory.select(libraryBookMapper.id.bookId.count())
                                  .from(libraryBookMapper)

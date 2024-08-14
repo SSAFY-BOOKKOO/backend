@@ -40,12 +40,30 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
         BooleanBuilder predicate = new BooleanBuilder();
         predicate.and(review.book.id.eq(bookId));
         predicate.and(review.memberId.eq(memberId));
-        
+
         Integer fetchOne = queryFactory.selectOne()
                                        .from(review)
                                        .where(predicate)
                                        .fetchFirst();
 
         return fetchOne != null;
+    }
+
+    /**
+     * memberId, bookId로 리뷰 찾기
+     *
+     * @param bookId   책 ID
+     * @param memberId memberId
+     * @return review
+     */
+    @Override
+    public Review findByBookIdMemberId(Long bookId, Long memberId) {
+        BooleanBuilder predicate = new BooleanBuilder();
+        predicate.and(review.book.id.eq(bookId));
+        predicate.and(review.memberId.eq(memberId));
+
+        return queryFactory.selectFrom(review)
+                           .where(predicate)
+                           .fetchOne();
     }
 }
