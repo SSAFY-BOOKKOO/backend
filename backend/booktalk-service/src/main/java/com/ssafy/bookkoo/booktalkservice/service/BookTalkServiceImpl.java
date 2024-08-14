@@ -200,13 +200,10 @@ public class BookTalkServiceImpl implements BookTalkService {
         }
     }
 
-    @Scheduled(cron = "0 0 4 * * *")
+    @Scheduled(cron = "0 0 10 * * *")
     @Transactional
     public void dayCountDelete() {
-        List<BookTalk> bookTalkList = bookTalkRepository.findAll();
-        for (BookTalk bookTalk : bookTalkList) {
-            bookTalk.dayCountDelete();
-        }
+        bookTalkRepository.dayCountDelete();
     }
 
     @Scheduled(cron = "0 0 4 * * *")
