@@ -19,5 +19,6 @@ public interface QuoteMapper {
     @Mapping(target = "quoteId", source = "id")
     ResponseQuoteDto toDto(Quote quote);
 
+    @Mapping(target = "quoteId", source = "id")
     ResponseQuoteDetailDto toDetailDto(Quote quote);
 }

@@ -8,6 +8,9 @@ public record ResponseQuoteDto(
     Long quoteId,
     String source,
     String content,
+    String fontName,
+    String fontColor,
+    Integer fontSize,
     LocalDateTime createdAt
 ) {
 
