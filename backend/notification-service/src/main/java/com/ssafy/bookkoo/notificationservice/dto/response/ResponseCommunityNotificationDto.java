@@ -1,5 +1,6 @@
 package com.ssafy.bookkoo.notificationservice.dto.response;
 
+import com.ssafy.bookkoo.notificationservice.entity.CommunityNotification;
 import com.ssafy.bookkoo.notificationservice.enums.NotificationType;
 import java.time.LocalDateTime;
 import lombok.Builder;
@@ -23,5 +24,15 @@ public class ResponseCommunityNotificationDto extends ResponseNotificationDto {
         super(notificationId, notificationType, createdAt);
         this.communityId = communityId;
         this.title = title;
+    }
+
+    public static ResponseCommunityNotificationDto toDto(CommunityNotification communityNotification) {
+        return ResponseCommunityNotificationDto.builder()
+                                               .notificationId(communityNotification.getId())
+                                               .notificationType(NotificationType.community)
+                                               .communityId(communityNotification.getCommunityId())
+                                               .title(communityNotification.getTitle())
+                                               .createdAt(communityNotification.getCreatedAt())
+                                               .build();
     }
 }

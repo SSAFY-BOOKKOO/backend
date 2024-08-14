@@ -6,6 +6,7 @@ import com.ssafy.bookkoo.bookservice.dto.review.ResponseSurfingReviewDto;
 import com.ssafy.bookkoo.bookservice.service.review.ReviewService;
 import com.ssafy.bookkoo.bookservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -50,7 +51,7 @@ public class ReviewController {
     public ResponseEntity<ResponseReviewDto> createReview(
         @RequestHeader HttpHeaders headers,
         @PathVariable Long bookId,
-        @RequestBody RequestReviewDto requestReviewDto
+        @Valid @RequestBody RequestReviewDto requestReviewDto
     ) {
         Long memberId = CommonUtil.getMemberId(headers);
         ResponseReviewDto createdReview = reviewService.addReview(memberId, bookId,
@@ -85,18 +86,6 @@ public class ReviewController {
         reviewService.deleteReviewById(memberId, bookId, reviewId);
         return ResponseEntity.noContent()
                              .build();
-    }
-
-    @Operation(summary = "리뷰 좋아요 토글", description = "특정 책의 특정 리뷰에 좋아요를 토글합니다.")
-    @PostMapping("/{bookId}/reviews/{reviewId}/like")
-    public ResponseEntity<Boolean> toggleLikeReviewById(
-        @RequestHeader HttpHeaders headers,
-        @PathVariable Long bookId,
-        @PathVariable Long reviewId
-    ) {
-        Long memberId = CommonUtil.getMemberId(headers);
-        return ResponseEntity.ok()
-                             .body(reviewService.toggleLikeReview(memberId, bookId, reviewId));
     }
 
 

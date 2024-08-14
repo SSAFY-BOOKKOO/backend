@@ -17,9 +17,13 @@ public class CommunityNotification extends Notification {
     @Column(name = "community_id")
     private Long communityId;
 
+    @Column(name = "title")
+    private String title;
+
     @Builder
-    public CommunityNotification(Long id, Long memberId, Long communityId) {
+    public CommunityNotification(Long id, Long memberId, Long communityId, String title) {
         super(id, memberId);
         this.communityId = communityId;
+        this.title = title;
     }
 }

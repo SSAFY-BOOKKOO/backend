@@ -6,11 +6,11 @@ import com.ssafy.bookkoo.memberservice.dto.response.ResponseFollowShipDto;
 import com.ssafy.bookkoo.memberservice.entity.FollowShip;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import com.ssafy.bookkoo.memberservice.exception.AlreadyFollowedException;
+import com.ssafy.bookkoo.memberservice.exception.CreateNotificationFailException;
 import com.ssafy.bookkoo.memberservice.exception.FollowShipNotFoundException;
-import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.memberservice.repository.FollowShipRepository;
-import com.ssafy.bookkoo.memberservice.repository.MemberInfoRepository;
 import com.ssafy.bookkoo.memberservice.service.FollowShipService;
+import com.ssafy.bookkoo.memberservice.service.MemberInfoService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class FollowShipServiceImpl implements FollowShipService {
 
     private final FollowShipRepository followShipRepository;
-    private final MemberInfoRepository memberInfoRepository;
+    private final MemberInfoService memberInfoService;
     private final NotificationServiceClient notificationServiceClient;
 
     /**
@@ -62,7 +62,12 @@ public class FollowShipServiceImpl implements FollowShipService {
                                                 .followerId(followerId)
                                                 .memberId(followeeId)
                                                 .build();
-        notificationServiceClient.createFollowNotification(createFollowNotificationDto);
+
+        try {
+            notificationServiceClient.createFollowNotification(createFollowNotificationDto);
+        } catch (Exception e) {
+            throw new CreateNotificationFailException();
+        }
     }
 
 
@@ -152,7 +157,6 @@ public class FollowShipServiceImpl implements FollowShipService {
      * @return
      */
     private MemberInfo getMemberInfo(Long memberId) {
-        return memberInfoRepository.findById(memberId)
-                                   .orElseThrow(MemberNotFoundException::new);
+        return memberInfoService.getMemberInfoEntity(memberId);
     }
 }

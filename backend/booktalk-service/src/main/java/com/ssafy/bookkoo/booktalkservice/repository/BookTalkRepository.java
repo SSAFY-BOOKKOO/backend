@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.booktalkservice.repository;
 
 import com.ssafy.bookkoo.booktalkservice.entity.BookTalk;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
@@ -48,4 +49,6 @@ public interface BookTalkRepository extends JpaRepository<BookTalk, Long> {
      * @return 독서록 리스트
      */
     List<BookTalk> findAllByOrderByDayMessageCountDesc(Pageable pageable);
+
+    List<BookTalk> findByUpdatedAtBefore(LocalDateTime time);
 }

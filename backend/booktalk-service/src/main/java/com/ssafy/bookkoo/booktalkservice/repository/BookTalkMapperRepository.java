@@ -25,5 +25,8 @@ public interface BookTalkMapperRepository extends JpaRepository<BookTalkMemberMa
      * @return True or False
      */
     Boolean existsByMemberIdAndBooktalk(Long memberId, BookTalk booktalk);
+
+    List<BookTalkMemberMapper> findByBooktalk(BookTalk booktalk);
+
 }
 

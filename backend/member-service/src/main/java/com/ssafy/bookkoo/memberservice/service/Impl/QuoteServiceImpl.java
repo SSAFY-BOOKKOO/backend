@@ -7,12 +7,14 @@ import com.ssafy.bookkoo.memberservice.dto.response.ResponseQuoteDetailDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseQuoteDto;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import com.ssafy.bookkoo.memberservice.entity.Quote;
+import com.ssafy.bookkoo.memberservice.exception.ImageUploadException;
 import com.ssafy.bookkoo.memberservice.exception.MemberInfoNotExistException;
 import com.ssafy.bookkoo.memberservice.exception.QuoteNotFoundException;
 import com.ssafy.bookkoo.memberservice.exception.UnAuthorizationException;
 import com.ssafy.bookkoo.memberservice.mapper.QuoteMapper;
 import com.ssafy.bookkoo.memberservice.repository.MemberInfoRepository;
 import com.ssafy.bookkoo.memberservice.repository.QuoteRepository;
+import com.ssafy.bookkoo.memberservice.service.MemberInfoService;
 import com.ssafy.bookkoo.memberservice.service.QuoteService;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +32,7 @@ public class QuoteServiceImpl implements QuoteService {
     private final QuoteRepository quoteRepository;
     private final QuoteMapper quoteMapper;
     private final CommonServiceClient commonServiceClient;
-    private final MemberInfoRepository memberInfoRepository;
+    private final MemberInfoService memberInfoService;
 
     @Value("${config.quote-bucket-name}")
     private String BUCKET;
@@ -61,7 +63,11 @@ public class QuoteServiceImpl implements QuoteService {
         quote.setMemberInfo(memberInfo);
         String imgUrl = DEFAULT_QUOTE_IMG_URL;
         if (backgroundImg != null) {
-            imgUrl = commonServiceClient.saveImg(backgroundImg, BUCKET);
+            try {
+                imgUrl = commonServiceClient.saveImg(backgroundImg, BUCKET);
+            } catch (Exception e) {
+                throw new ImageUploadException();
+            }
             imgUrl = SERVER + COMMON_URL + imgUrl;
         }
         quote.setBackgroundImgUrl(imgUrl);
@@ -103,7 +109,13 @@ public class QuoteServiceImpl implements QuoteService {
         quote.setContent(updateQuoteDto.content());
         quote.setSource(updateQuoteDto.source());
         if (backgroundImg != null) {
-            String imgUrl = commonServiceClient.saveImg(backgroundImg, BUCKET);
+
+            String imgUrl = null;
+            try {
+                imgUrl = commonServiceClient.saveImg(backgroundImg, BUCKET);
+            } catch (Exception e) {
+                throw new ImageUploadException();
+            }
             imgUrl = SERVER + COMMON_URL + imgUrl;
             quote.setBackgroundImgUrl(imgUrl);
         }
@@ -147,13 +159,13 @@ public class QuoteServiceImpl implements QuoteService {
     }
 
     @Override
-    public String opticalCharacterRecognition(MultipartFile image) {
-        
-        return "";
+    public Integer getQuoteCount(Long memberId) {
+        MemberInfo memberInfo = getMemberInfo(memberId);
+        return memberInfo.getQuotes()
+                         .size();
     }
 
     private MemberInfo getMemberInfo(Long memberId) {
-        return memberInfoRepository.findById(memberId)
-                                   .orElseThrow(MemberInfoNotExistException::new);
+        return memberInfoService.getMemberInfoEntity(memberId);
     }
 }

@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.libraryservice.dto.other;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import lombok.Builder;
 
@@ -11,18 +12,22 @@ public record RequestCreateBookDto(
     @Schema(description = "책 표지 이미지 URL", example = "http://example.com/cover.jpg")
     String coverImgUrl,
 
+    @NotBlank
     @Schema(description = "책 저자", example = "Joshua Bloch")
     String author,
 
+    @NotBlank
     @Schema(description = "출판사", example = "Addison-Wesley")
     String publisher,
 
     @Schema(description = "책 요약", example = "Effective Java is a programming book by Joshua Bloch ...")
     String summary,
 
+    @NotBlank
     @Schema(description = "책 제목", example = "Effective Java")
     String title,
 
+    @NotBlank
     @Schema(description = "ISBN", example = "0134685991")
     String isbn,
 

@@ -15,21 +15,12 @@ public class GlobalServiceExceptionHandler implements GlobalFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        System.out.println(exchange.getRequest()
-                                   .getURI() + "this is filter");
-        log.info("{} this is filter", exchange.getRequest()
-                                              .getURI());
-
-        System.out.println(exchange.getResponse()
-                                   .getStatusCode());
+        log.info("request: {}", exchange.getRequest()
+                                        .getURI());
         log.info("status code : {}", exchange.getResponse()
                                              .getStatusCode());
         return chain.filter(exchange)
                     .doFinally((e) -> {
-                        System.out.println("filter 후처리");
-                        System.out.println(exchange.getResponse()
-                                                   .getStatusCode());
-
                     });
     }
 }

@@ -8,6 +8,7 @@ import com.ssafy.bookkoo.memberservice.service.Impl.OCRService;
 import com.ssafy.bookkoo.memberservice.service.QuoteService;
 import com.ssafy.bookkoo.memberservice.util.CommonUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -66,7 +67,7 @@ public class QuoteController {
         , description = "사용자가 새로운 글귀를 생성합니다.")
     public ResponseEntity<HttpStatus> createQuote(
         @RequestHeader HttpHeaders headers,
-        @RequestPart(value = "quoteDto") RequestCreateQuoteDto createQuoteDto,
+        @Valid @RequestPart(value = "quoteDto") RequestCreateQuoteDto createQuoteDto,
         @RequestPart(value = "backgroundImg", required = false) MultipartFile backgroundImg
     ) {
         Long memberId = CommonUtil.getMemberId(headers);
@@ -79,7 +80,7 @@ public class QuoteController {
     @Operation(summary = "글귀 수정 API", description = "글귀를 수정합니다.")
     public ResponseEntity<HttpStatus> updateQuote(
         @RequestHeader HttpHeaders headers,
-        @RequestPart(value = "quoteDto") RequestUpdateQuoteDto updateQuoteDto,
+        @Valid @RequestPart(value = "quoteDto") RequestUpdateQuoteDto updateQuoteDto,
         @RequestPart(value = "backgroundImg", required = false) MultipartFile backgroundImg
     ) {
         Long memberId = CommonUtil.getMemberId(headers);
@@ -98,6 +99,17 @@ public class QuoteController {
         quoteService.deleteQuote(memberId, quoteId);
         return ResponseEntity.noContent()
                              .build();
+    }
+
+    @GetMapping("/count")
+    @Operation(summary = "멤버의 글귀 개수 반환 API",
+        description = "멤버가 작성한 글귀의 개수를 반환하는 API")
+    public ResponseEntity<Integer> getMyQuoteCount(
+        @RequestHeader HttpHeaders headers
+    ) {
+        Long memberId = CommonUtil.getMemberId(headers);
+        Integer count = quoteService.getQuoteCount(memberId);
+        return ResponseEntity.ok(count);
     }
 
     @PostMapping(value = "/ocr", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

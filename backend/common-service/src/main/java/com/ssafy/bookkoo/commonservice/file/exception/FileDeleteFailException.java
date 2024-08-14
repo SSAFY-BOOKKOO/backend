@@ -1,4 +1,4 @@
-package com.ssafy.bookkoo.commonservice.s3.exception;
+package com.ssafy.bookkoo.commonservice.file.exception;
 
 public class FileDeleteFailException extends RuntimeException {
 

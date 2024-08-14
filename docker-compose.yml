@@ -1,59 +1,19 @@
 services:
-  prometheus:
-    build: ./prometheus
-    ports:
-      - "3002:9090"
-    networks:
-      - bookkoo-net
-
-  grafana:
-    image: grafana/grafana
-    ports:
-      - "3000:3000"
-    networks:
-      - bookkoo-net
-    depends_on:
-      - prometheus
-
   react-app:
     container_name: react-container
     build:
       context: ./frontend
     networks:
       - bookkoo-net
-  
-  loki:
-    image: grafana/loki:latest
-    ports:
-      - "3003:3100"
-    command: -config.file=/etc/loki/local-config.yaml
-    networks:
-      - bookkoo-net
-
-  promtail:
-    build: ./promtail
-    volumes:
-      - ./logs:/logs
-    networks:
-      - bookkoo-net
-  
   auth-service:
     container_name: auth-service
     build:
       context: ./backend/auth-service
     ports:
       - "8085:8085"
-    depends_on:
-      eureka-server:
-        condition: service_healthy
     networks:
       - bookkoo-net
     restart: on-failure
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8085/actuator/health || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
     volumes:
       - ./logs/auth-service:/app/logs
 
@@ -64,17 +24,9 @@ services:
     ports:
       - "8086:8086"
       - "587:587"
-    depends_on:
-      eureka-server:
-        condition: service_healthy
     networks:
       - bookkoo-net
     restart: on-failure
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8086/actuator/health || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
     volumes:
       - ./logs/common-service:/app/logs
 
@@ -86,11 +38,6 @@ services:
       - "8761:8761"
     networks:
       - bookkoo-net
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
     restart: on-failure
 
   book-service:
@@ -99,20 +46,9 @@ services:
       context: ./backend/book-service
     ports:
       - "8082:8082"
-    depends_on:
-      eureka-server:
-        condition: service_healthy  
-      auth-service:
-        condition: service_started
-
     networks:
       - bookkoo-net
     restart: on-failure
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8082/actuator/health || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
     volumes:
       - ./logs/book-service:/app/logs
 
@@ -122,27 +58,9 @@ services:
       context: ./backend/bookkoo-gateway
     ports:
       - "8080:8080"
-    depends_on:
-      eureka-server:
-        condition: service_healthy
-      book-service:
-        condition: service_started
-      curation-service:
-        condition: service_started
-      library-service:
-        condition: service_started
-      member-service:
-        condition: service_started
-      auth-service:
-        condition: service_started
     networks:
       - bookkoo-net
     restart: on-failure
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
     volumes:
       - ./logs/gateway-service:/app/logs
 
@@ -152,17 +70,9 @@ services:
       context: ./backend/curation-service
     ports:
       - "8084:8084"
-    depends_on:
-      eureka-server:
-        condition: service_healthy
     networks:
       - bookkoo-net
     restart: on-failure
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8084/actuator/health || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
     volumes:
       - ./logs/curation-service:/app/logs
 
@@ -172,17 +82,9 @@ services:
       context: ./backend/library-service
     ports:
       - "8083:8083"
-    depends_on:
-      eureka-server:
-        condition: service_healthy
     networks:
       - bookkoo-net
     restart: on-failure
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8083/actuator/health || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
     volumes:
       - ./logs/library-service:/app/logs
 
@@ -194,17 +96,9 @@ services:
       context: ./backend/member-service
     ports:
       - "8081:8081"
-    depends_on:
-      eureka-server:
-        condition: service_healthy
     networks:
       - bookkoo-net
     restart: on-failure
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8081/actuator/health || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
     volumes:
       - ./config/member-service:/app/config
       - ./logs/member-service:/app/logs
@@ -215,17 +109,9 @@ services:
       context: ./backend/booktalk-service
     ports:
       - "8087:8087"
-    depends_on:
-      eureka-server:
-        condition: service_healthy
     networks:
       - bookkoo-net
     restart: on-failure
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8087/actuator/health || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
     volumes:
       - ./logs/booktalk-service:/app/logs
 
@@ -235,17 +121,9 @@ services:
       context: ./backend/notification-service
     ports:
       - "8088:8088"
-    depends_on:
-      eureka-server:
-        condition: service_healthy
     networks:
       - bookkoo-net
     restart: on-failure
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8088/actuator/health || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
     volumes:
       - ./logs/notification-service:/app/logs
 
