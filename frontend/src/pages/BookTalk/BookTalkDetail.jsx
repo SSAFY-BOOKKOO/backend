@@ -30,13 +30,17 @@ const BookTalkDetail = () => {
   const messagesEndRef = useRef(null);
   const [initialLoading, setInitialLoading] = useState(true);
 
-  const { ref, inView } = useInView();
   const { isOpen, toggleModal, closeModal } = useModal();
   const [modalUser, setModalUser] = useState(null);
 
   const queryClient = new QueryClient();
-  const { data, fetchNextPage, isFetchingNextPage, hasNextPage } =
+  const { data, fetchNextPage, isFetchingNextPage, hasNextPage, isLoading } =
     useBookTalkChatsInfiniteScroll(bookTalkId);
+
+  const { ref, inView } = useInView({
+    threshold: 0,
+    rootMargin: '600px 0px 0px 0px',
+  });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView();
@@ -46,7 +50,7 @@ const BookTalkDetail = () => {
     connect();
     return () => {
       disconnect();
-      queryClient.removeQueries({ queryKey: ['bookTalkChats', bookTalkId] });
+      //queryClient.removeQueries({ queryKey: ['bookTalkChats', bookTalkId] });
     };
   }, []);
 
@@ -65,7 +69,11 @@ const BookTalkDetail = () => {
 
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
+      fetchNextPage().then(() => {
+        // 데이터가 불러와진 후 스크롤 위치 조정
+        chatContainerRef.current.scrollTop =
+          chatContainerRef.current.scrollHeight;
+      });
     }
   }, [inView, hasNextPage, fetchNextPage, isFetchingNextPage]);
 
@@ -185,6 +193,10 @@ const BookTalkDetail = () => {
     ));
   };
 
+  if (isLoading) {
+    return <Spinner />;
+  }
+
   return (
     <div className='flex flex-col min-h-[calc(100vh-121px)] w-full'>
       <ProfileModal
@@ -218,7 +230,6 @@ const BookTalkDetail = () => {
       >
         {renderMessages()}
       </div>
-      <div ref={messagesEndRef} />
       <div className='bg-white p-4 sticky bottom-0'>
         <div className='max-w-md w-full flex flex-row items-center justify-center mx-auto'>
           <div className='flex-grow'>
@@ -235,6 +246,7 @@ const BookTalkDetail = () => {
           </Button>
         </div>
       </div>
+      <div ref={messagesEndRef} />
     </div>
   );
 };

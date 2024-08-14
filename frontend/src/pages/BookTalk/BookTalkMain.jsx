@@ -13,6 +13,7 @@ const BookTalkMain = () => {
 
   const [participatedBooks, setParticipatedBooks] = useState([]);
   const [popularBooks, setPopularBooks] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleMorePageMove = () => {
     navigate(`/booktalk/more`);
@@ -37,12 +38,20 @@ const BookTalkMain = () => {
   };
 
   useEffect(() => {
-    Promise.all([handlePopularBooks(), handleParticipatedBooks()]);
+    const fetchData = async () => {
+      setIsLoading(true);
+      await Promise.all([handlePopularBooks(), handleParticipatedBooks()]);
+      setIsLoading(false);
+    };
+    fetchData();
   }, []);
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   return (
     <WrapContainer>
-      <Spinner />
       <div className='flex justify-between items-center mb-6'>
         <Button onClick={handleCreatePageMove} size='small'>
           채팅방 생성
