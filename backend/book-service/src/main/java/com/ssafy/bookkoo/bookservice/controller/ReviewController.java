@@ -35,9 +35,8 @@ public class ReviewController {
     @Operation(summary = "책 리뷰 조회", description = "특정 책의 모든 리뷰를 조회합니다.")
     @GetMapping("/{bookId}/reviews")
     public ResponseEntity<List<ResponseReviewDto>> getReviewsByBookId(@PathVariable Long bookId) {
-        log.info("책 리뷰 조회 !! ");
+        log.info("Retrieve Review by Book Id: {}", bookId);
         List<ResponseReviewDto> reviews = reviewService.getReviewByBookId(bookId);
-        log.info("책 리뷰 조회 완료 : " + reviews);
         return ResponseEntity.ok(reviews);
     }
 
@@ -58,11 +57,8 @@ public class ReviewController {
         @PathVariable Long bookId,
         @Valid @RequestBody RequestReviewDto requestReviewDto
     ) {
-        log.info("리뷰 작성하자!");
+        log.info("Create Review: {}", requestReviewDto);
         Long memberId = CommonUtil.getMemberId(headers);
-        log.info("리뷰 작성할 책 : " + bookId);
-        log.info("리뷰 작성 내용 : " + requestReviewDto.content());
-        log.info("리뷰 작성자 : " + memberId);
         ResponseReviewDto createdReview = reviewService.addReview(memberId, bookId,
             requestReviewDto);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -91,10 +87,8 @@ public class ReviewController {
         @PathVariable Long bookId,
         @PathVariable Long reviewId
     ) {
-        log.info("리뷰 삭제하자!!!");
+        log.info("Delete Review: {}", reviewId);
         Long memberId = CommonUtil.getMemberId(headers);
-        log.info("리뷰 삭제할 책 : " + bookId);
-        log.info("리뷰 삭제할 사람 : " + memberId);
         reviewService.deleteReviewById(memberId, bookId, reviewId);
         return ResponseEntity.noContent()
                              .build();
@@ -107,7 +101,6 @@ public class ReviewController {
         @RequestHeader HttpHeaders headers,
         @PathVariable Long bookId
     ) {
-        log.info("파도타기 하자!!");
         Long memberId = CommonUtil.getMemberId(headers);
         return ResponseEntity.ok()
                              .body(reviewService.getRandomReviewExceptMine(memberId, bookId));
