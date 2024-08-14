@@ -158,6 +158,11 @@ public class QuoteServiceImpl implements QuoteService {
         return quoteMapper.toDetailDto(quote);
     }
 
+    /**
+     * 글귀 총 개수를 반환합니다.
+     * @param memberId
+     * @return
+     */
     @Override
     public Integer getQuoteCount(Long memberId) {
         MemberInfo memberInfo = getMemberInfo(memberId);
@@ -165,6 +170,11 @@ public class QuoteServiceImpl implements QuoteService {
                          .size();
     }
 
+    /**
+     * 멤버 서비스로부터 멤버 정보를 받아옵니다.
+     * @param memberId
+     * @return
+     */
     private MemberInfo getMemberInfo(Long memberId) {
         return memberInfoService.getMemberInfoEntity(memberId);
     }
