@@ -69,13 +69,18 @@ const ReviewCom = ({ onBackClick, book }) => {
   //   handleConfirmReview();
   // }, []);
 
-  useEffect(() => {
-    console.log(book);
-  }, []);
+  // useEffect(() => {
+  //   console.log(book);
+  // }, []);
+
+  // useEffect(() => {
+  //   console.log(reviewContent);
+  // }, [reviewContent]);
 
   useEffect(() => {
-    console.log(reviewContent);
-  }, [reviewContent]);
+    console.log(book);
+    setReviewContent(book.review?.content || ''); // book.review.content가 바뀔 때마다 반영
+  }, [book.review?.content]);
   ///////////////////////////// 파도타기
   // 리뷰 처음 제시
   useEffect(() => {
@@ -109,37 +114,32 @@ const ReviewCom = ({ onBackClick, book }) => {
   };
 
   // 한줄평 조회
-  const handleConfirmReview = () => {
-    const bookId = id;
-    const reviewId = book.review.id;
-    authAxiosInstance
-      .get(`/books/${bookId}/reviews/${reviewId}`)
-      .then(res => {
-        console.log('Review:', res.data); // 전체 확인
-        setReviewContent(res.data.content);
-      })
-      .catch(err => {
-        console.log('Error confirm review:', err);
-        console.log('book:', book);
-      });
-  };
+  // const handleConfirmReview = () => {
+  //   const bookId = id;
+  //   const reviewId = book.review.id;
+  //   authAxiosInstance
+  //     .get(`/books/${bookId}/reviews/${reviewId}`)
+  //     .then(res => {
+  //       console.log('Review:', res.data); // 전체 확인
+  //       setReviewContent(res.data.content);
+  //     })
+  //     .catch(err => {
+  //       console.log('Error confirm review:', err);
+  //       console.log('book:', book);
+  //     });
+  // };
 
   ///////////////////////// 내 한줄평 작성
   const handleSaveReview = () => {
-    // if (!reviewContent) {
-    //   alert('리뷰 내용을 입력해 주세요.');
-    //   return;
-    // }
-
     setEditingReview(false);
     const bookId = id;
     authAxiosInstance
       .post(`/books/${bookId}/reviews`, { content: reviewContent })
       .then(res => {
         console.log('Review saved:', res); // 전체 확인
-        setReviewContent(res.data.content);
+        book.review = res.data; // 비어있는 reivew에 생성후 review객체 넣기
+        setReviewContent(res.data.content); // ReivewContent에 content 넣기
         book.reviewId = res.data.id; // book에 reviewId 추가
-        book.review = res.data.content;
         console.log(book); // 북에 들어갔나 확인
       })
       .catch(err => {
@@ -156,6 +156,8 @@ const ReviewCom = ({ onBackClick, book }) => {
       .then(res => {
         console.log('Review Delete:', res); // 전체 확인\
         console.log('삭제 완료');
+        book.review = '';
+        console.log(book);
       })
       .catch(err => {
         console.error('Error deleting review:', err);
@@ -234,9 +236,10 @@ const ReviewCom = ({ onBackClick, book }) => {
             ></textarea>
           ) : (
             <p className='w-full h-44 p-2 pb-4 border border-gray-400 rounded resize-none'>
-              {book.review ? book.review.content : '한줄평을 작성해 보세요!'}
+              {reviewContent || '한줄평을 작성해 보세요!'}
             </p>
           )}
+          {/* review 수정 가능하면 text area, 아니면 북 컨텐트가 있으면 보여주고 없으면 작성하렴 */}
 
           <div className='absolute top-36 right-2 flex space-x-2'>
             <Button
@@ -249,17 +252,17 @@ const ReviewCom = ({ onBackClick, book }) => {
                   alert(
                     '이미 리뷰가 등록되어 있습니다.\n리뷰 재등록을 원하신다면 삭제 후 재등록해 주세요!'
                   );
-                  handleConfirmReview();
+                  // handleConfirmReview();
 
                   setEditingReview(false);
                   console.log(book);
                 } else {
                   if (editReview) {
                     handleSaveReview();
-                    handleConfirmReview();
+                    // handleConfirmReview();
                     setEditingReview(false);
                     alert('저장 되었습니다!');
-                    window.location.reload();
+                    // window.location.reload();
                   } else {
                     setEditingReview(true); // 작성 가능 상태로 변경
                   }
@@ -275,7 +278,7 @@ const ReviewCom = ({ onBackClick, book }) => {
                 e.stopPropagation();
                 handleDeleteReview();
                 setReviewContent(''); // textarea의 값을 초기화
-                window.location.reload();
+                // window.location.reload();
               }}
               className='px-3 py-1 rounded-md hover:bg-rose-400 transition duration-150'
             />
