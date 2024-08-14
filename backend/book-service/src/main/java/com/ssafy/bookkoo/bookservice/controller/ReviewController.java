@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/books")
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -33,6 +35,7 @@ public class ReviewController {
     @Operation(summary = "책 리뷰 조회", description = "특정 책의 모든 리뷰를 조회합니다.")
     @GetMapping("/{bookId}/reviews")
     public ResponseEntity<List<ResponseReviewDto>> getReviewsByBookId(@PathVariable Long bookId) {
+        log.info("Retrieve Review by Book Id: {}", bookId);
         List<ResponseReviewDto> reviews = reviewService.getReviewByBookId(bookId);
         return ResponseEntity.ok(reviews);
     }
@@ -54,6 +57,7 @@ public class ReviewController {
         @PathVariable Long bookId,
         @Valid @RequestBody RequestReviewDto requestReviewDto
     ) {
+        log.info("Create Review: {}", requestReviewDto);
         Long memberId = CommonUtil.getMemberId(headers);
         ResponseReviewDto createdReview = reviewService.addReview(memberId, bookId,
             requestReviewDto);
@@ -83,6 +87,7 @@ public class ReviewController {
         @PathVariable Long bookId,
         @PathVariable Long reviewId
     ) {
+        log.info("Delete Review: {}", reviewId);
         Long memberId = CommonUtil.getMemberId(headers);
         reviewService.deleteReviewById(memberId, bookId, reviewId);
         return ResponseEntity.noContent()
