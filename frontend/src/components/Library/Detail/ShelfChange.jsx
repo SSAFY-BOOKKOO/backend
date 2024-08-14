@@ -31,31 +31,34 @@ const ShelfChange = ({ book, onClose }) => {
     handleLibraryGet();
   }, []);
 
-  const handleLibraryChange = selectedLibraryId => {
-    setBookData(prev => ({ ...prev, libraryId: selectedLibraryId }));
+  const handleLibraryChange = async selectedLibraryId => {
+    try {
+      setBookData(prev => ({ ...prev, libraryId: selectedLibraryId }));
 
-    authAxiosInstance
-      .patch(`/libraries/${bookData.libraryId}/books/${book.id}`, null, {
-        params: { targetLibraryId: selectedLibraryId },
-      })
-      .then(res => {
-        setAlert({
-          isOpen: true,
-          confirmOnly: true,
-          message: '책의 서재가 성공적으로 변경되었습니다!',
-        });
-      })
-      .catch(err => {
-        console.error('library change err:', err);
-        setAlert({
-          isOpen: true,
-          confirmOnly: true,
-          message: '책의 서재 변경에 실패했습니다. 다시 시도해 주세요.',
-        });
+      await authAxiosInstance.patch(
+        `/libraries/${bookData.libraryId}/books/${book.id}`,
+        null,
+        {
+          params: { targetLibraryId: selectedLibraryId },
+        }
+      );
+
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '책의 서재가 성공적으로 변경되었습니다!',
       });
 
-    onClose();
-    navigate('/');
+      onClose();
+      navigate('/');
+    } catch (err) {
+      console.error('library change err:', err);
+      setAlert({
+        isOpen: true,
+        confirmOnly: true,
+        message: '책의 서재 변경에 실패했습니다. 다시 시도해 주세요.',
+      });
+    }
   };
 
   return (

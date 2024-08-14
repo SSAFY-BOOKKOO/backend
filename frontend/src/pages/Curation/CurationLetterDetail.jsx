@@ -1,82 +1,71 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
-import { useSetAtom } from 'jotai';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
 import useModal from '@hooks/useModal';
 import SettingsModal from '@components/@common/SettingsModal';
-import { authAxiosInstance } from '../../services/axiosInstance';
-import { alertAtom } from '@atoms/alertAtom';
+import { authAxiosInstance } from '@services/axiosInstance';
+import { showAlertAtom } from '@atoms/alertAtom';
+import Alert from '@components/@common/Alert';
 
 const CurationLetterDetail = () => {
   const { id } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const { isOpen, closeModal, toggleModal } = useModal();
   const [nickName, setNickName] = useState('');
   const [letter, setLetter] = useState('');
-  const setAlert = useSetAtom(alertAtom);
+  const [, showAlert] = useAtom(showAlertAtom);
   const modalVisible = location.state?.modalVisible ?? true; // 기본값은 true로 설정
 
   useEffect(() => {
-    authAxiosInstance
-      .get('/members/info')
-      .then(res => {
+    const fetchMemberInfo = async () => {
+      try {
+        const res = await authAxiosInstance.get('/members/info');
         setNickName(res.data.nickName);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+      } catch (err) {
+        console.error('Failed to fetch member info:', err);
+      }
+    };
+
+    fetchMemberInfo();
   }, []);
 
   useEffect(() => {
-    authAxiosInstance
-      .get(`/curations/detail/${id}`)
-      .then(res => {
+    const fetchLetterDetail = async () => {
+      try {
+        const res = await authAxiosInstance.get(`/curations/detail/${id}`);
         setLetter(res.data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+      } catch (err) {
+        console.error('Failed to fetch letter detail:', err);
+      }
+    };
+
+    fetchLetterDetail();
   }, [id]);
 
   // 레터 보관
-  const handleLetterStore = () => {
-    authAxiosInstance
-      .post(`/curations/store/${id}`, {})
-      .then(res => {
-        setAlert({
-          isOpen: true,
-          confirmOnly: true,
-          message: '레터가 성공적으로 보관되었습니다!',
-        });
-      })
-      .catch(err => {
-        console.log('error:', err);
-        setAlert({
-          isOpen: true,
-          confirmOnly: true,
-          message: '레터 보관에 실패했습니다. 다시 시도해 주세요.',
-        });
+  const handleLetterStore = async () => {
+    try {
+      await authAxiosInstance.post(`/curations/store/${id}`, {});
+      showAlert('레터가 성공적으로 보관되었습니다!', true, () => {
+        navigate('/curation/receive');
       });
+      console.log('보관');
+    } catch (err) {
+      console.error('Failed to store letter:', err);
+      showAlert('레터 보관에 실패했습니다. 다시 시도해 주세요.', true);
+    }
   };
 
   // 레터 삭제
-  const handleLetterDelete = () => {
-    authAxiosInstance
-      .delete(`/curations/${id}`, {})
-      .then(res => {
-        setAlert({
-          isOpen: true,
-          confirmOnly: true,
-          message: '레터가 성공적으로 삭제되었습니다!',
-        });
-      })
-      .catch(err => {
-        console.log('Error deleting letters:', err);
-        setAlert({
-          isOpen: true,
-          confirmOnly: true,
-          message: '레터 삭제에 실패했습니다. 다시 시도해 주세요.',
-        });
-      });
+  const handleLetterDelete = async () => {
+    try {
+      await authAxiosInstance.delete(`/curations/${id}`, {});
+      showAlert('레터가 성공적으로 삭제되었습니다!', true, () => {});
+    } catch (err) {
+      console.error('Failed to delete letter:', err);
+      showAlert('레터 삭제에 실패했습니다. 다시 시도해 주세요.', true);
+    }
   };
 
   const actions = [
@@ -85,7 +74,8 @@ const CurationLetterDetail = () => {
   ];
 
   return (
-    <div className='flex flex-col items-center justify-start p-4  scrollbar-none'>
+    <div className='flex flex-col items-center justify-start p-4 scrollbar-none'>
+      <Alert />
       <div className='relative bg-white rounded-lg shadow-lg w-full max-w-md mx-auto mt-32 scrollbar-none'>
         <div className='absolute -top-28 w-full flex justify-center z-20'>
           <img
