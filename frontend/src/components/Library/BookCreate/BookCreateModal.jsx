@@ -1,15 +1,14 @@
 import { useAtom } from 'jotai';
-import { useResetAtom } from 'jotai/utils';
 import { modalStepAtom, bookDataAtom } from '@atoms/bookCreateAtom';
 import ReadingStatusStep from './ReadingStatusStep';
 import InfoStep from './InfoStep';
 import ShelfSelectStep from './ShelfSelectStep';
-import Button from '../../@common/Button';
+import Button from '@components/@common/Button';
 import { useEffect, useState } from 'react';
 import { showAlertAtom } from '@atoms/alertAtom';
 import IconButton from '@components/@common/IconButton';
 import { IoCloseSharp } from 'react-icons/io5';
-import Alert from '../../@common/Alert';
+import Alert from '@components/@common/Alert';
 import { postLibraryBook } from '@services/Library';
 
 const BookCreateModal = ({

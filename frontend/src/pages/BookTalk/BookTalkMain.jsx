@@ -6,7 +6,7 @@ import Button from '@components/@common/Button';
 import Spinner from '@components/@common/Spinner';
 import { useNavigate } from 'react-router-dom';
 import BookSearch from '@components/Curation/Search/BookSearch';
-import { getMyBookTalk, getPopularBookTalk } from '../../services/BookTalk';
+import { getMyBookTalk, getPopularBookTalk } from '@services/BookTalk';
 
 const BookTalkMain = () => {
   const navigate = useNavigate();

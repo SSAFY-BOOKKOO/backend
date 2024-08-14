@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { showAlertAtom } from '@atoms/alertAtom';
-import Input from '../../@common/Input';
-import Textarea from '../../@common/Textarea';
-import Button from '../../@common/Button';
+import Input from '@components/@common/Input';
+import Textarea from '@components/@common/Textarea';
+import Button from '@components/@common/Button';
 import QuotePhotoUploader from './QuotePhotoUploader';
 
 const QuoteInput = ({

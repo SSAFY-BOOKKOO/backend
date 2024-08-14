@@ -1,7 +1,7 @@
 import React from 'react';
-import Button from '../@common/Button';
+import Button from '@components/@common/Button';
 import RegisterInput from './RegisterInput';
-import RadioButton from '../@common/RadioButton';
+import RadioButton from '@components/@common/RadioButton';
 
 const RegisterStep3 = ({
   formData,

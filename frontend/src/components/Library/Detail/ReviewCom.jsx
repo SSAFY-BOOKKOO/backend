@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { AiFillStar } from 'react-icons/ai';
-import Button from '../../@common/Button';
+import Button from '@components/@common/Button';
 import { MdOutlineRefresh } from 'react-icons/md';
-import { CgProfile } from 'react-icons/cg';
 import { authAxiosInstance } from '@services/axiosInstance';
 import { useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
+import { showAlertAtom } from '@atoms/alertAtom';
+import Alert from '@components/@common/Alert';
 
 // 모달
 const Modal = ({ show, onClose, review }) => {
@@ -27,7 +28,7 @@ const Modal = ({ show, onClose, review }) => {
         <div className='flex justify-between items-center'>
           <div className='flex items-center'>
             <img
-              src={review?.member?.profilImgUrl}
+              src={review?.member?.profileImgUrl}
               alt='Profile'
               className='w-11 h-11 rounded-full mr-2'
             />
@@ -61,7 +62,7 @@ const ReviewCom = ({ onBackClick, book }) => {
   const [showModal, setShowModal] = useState(false);
   const [currentReview, setCurrentReview] = useState(null);
   const [reviewContent, setReviewContent] = useState('');
-
+  const [, showAlert] = useAtom(showAlertAtom);
   const titleMaxLength = 10;
 
   // 파도타기
@@ -123,6 +124,8 @@ const ReviewCom = ({ onBackClick, book }) => {
       .then(res => {
         setReviewContent(res.data.content);
         setReviewId(res.data.id);
+
+        showAlert('한줄평이 작성되었습니다.', true, () => {});
       })
       .catch(err => {
         console.log('Error saving review:', err);
@@ -136,6 +139,8 @@ const ReviewCom = ({ onBackClick, book }) => {
       .then(res => {
         setReviewContent(res.data.content);
         setReviewId(res.data.id);
+
+        showAlert('한줄평이 수정되었습니다.', true, () => {});
       })
       .catch(err => {
         console.log('Error updating review:', err);
@@ -144,18 +149,25 @@ const ReviewCom = ({ onBackClick, book }) => {
 
   // 한줄평 삭제 핸들러
   const handleDeleteReview = async () => {
-    const bookId = id;
-    await authAxiosInstance
-      .delete(`/books/${bookId}/reviews/${reviewId}`)
-      .then(res => {
-        setReviewContent('');
-        setReviewId(null);
-      })
-      .catch(err => {
-        console.error('Error deleting review:', err);
-      });
+    showAlert(
+      '한줄평을 정말 삭제하시겠습니까?',
+      false,
+      async () => {
+        const bookId = id;
+        await authAxiosInstance
+          .delete(`/books/${bookId}/reviews/${reviewId}`)
+          .then(res => {
+            setReviewContent('');
+            setReviewId(null);
+            showAlert('한줄평이 삭제되었습니다.', true, () => {});
+          })
+          .catch(err => {
+            console.error('Error deleting review:', err);
+          });
+      },
+      () => {}
+    );
   };
-
   // 리뷰 더보기
   const handleMoreReview = review => {
     setCurrentReview(review);
@@ -169,6 +181,7 @@ const ReviewCom = ({ onBackClick, book }) => {
 
   return (
     <div className='relative bg-zinc-300 rounded-lg w-10/12 max-w-md h-full flex flex-col justify-between overflow-auto'>
+      <Alert />
       <div className='absolute right-6 top-0 bottom-0 shadow-2xl w-1 bg-gray-500 shadow-2xl z-10'></div>
       <div className='flex flex-col items-center p-4'>
         <h1 className='text-2xl font-bold m-4 pb-12 w-10/12 h-4 text-center text-overflow-2'>
@@ -200,7 +213,7 @@ const ReviewCom = ({ onBackClick, book }) => {
                 onClick={() => handleMoreReview(review)}
               >
                 <img
-                  src={review.member.profilImgUrl}
+                  src={review.member.profileImgUrl}
                   alt='Profile'
                   className='w-11 h-11 rounded-full mr-2'
                 />
@@ -242,16 +255,18 @@ const ReviewCom = ({ onBackClick, book }) => {
               }}
               className='px-3 py-1 rounded-md hover:bg-rose-400 transition duration-150'
             />
-            <Button
-              text='삭제'
-              size='small'
-              color='text-black bg-rose-300'
-              onClick={e => {
-                e.stopPropagation();
-                handleDeleteReview();
-              }}
-              className='px-3 py-1 rounded-md hover:bg-rose-400 transition duration-150'
-            />
+            {reviewId && (
+              <Button
+                text='삭제'
+                size='small'
+                color='text-black bg-rose-300'
+                onClick={e => {
+                  e.stopPropagation();
+                  handleDeleteReview();
+                }}
+                className='px-3 py-1 rounded-md hover:bg-rose-400 transition duration-150'
+              />
+            )}
           </div>
         </div>
         <div className='absolute right-6 top-0 bottom-0 shadow-2xl w-1 bg-gray-700 z-10'></div>

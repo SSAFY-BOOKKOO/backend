@@ -1,6 +1,6 @@
 import React from 'react';
-import BookItem from '../../@common/Book/BookItem';
-import BookTalkItem from '../../@common/Book/BookTalkItem';
+import BookItem from '@components/@common/Book/BookItem';
+import BookTalkItem from '@components/@common/Book/BookTalkItem';
 
 const SearchResultSection = ({
   title,

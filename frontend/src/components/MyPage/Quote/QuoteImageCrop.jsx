@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
-import Button from '../../@common/Button';
+import Button from '@components/@common/Button';
 
 const QuoteImageCrop = ({ src, onCropComplete, onCancel }) => {
   const [crop, setCrop] = useState();

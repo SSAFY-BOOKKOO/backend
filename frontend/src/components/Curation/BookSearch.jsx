@@ -11,8 +11,6 @@ const BookSearch = ({ isOpen, onRequestClose }) => {
 
   const handleSearchSubmit = event => {
     event.preventDefault();
-    // 여기에 검색 로직을 추가하세요
-    console.log('검색어:', searchTerm);
   };
 
   return (

@@ -3,7 +3,7 @@ import CurationTab from '@components/Curation/CurationTab';
 import { useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
 import { IoIosArrowForward } from 'react-icons/io';
-import { axiosInstance, authAxiosInstance } from '../../services/axiosInstance';
+import { axiosInstance, authAxiosInstance } from '@services/axiosInstance';
 import { BsEnvelopeHeart } from 'react-icons/bs';
 import Spinner from '@components/@common/Spinner';
 
@@ -21,7 +21,6 @@ const CurationStore = () => {
         curationId: letter.curationId,
       })
       .then(res => {
-        console.log('Letter Detail:', res);
         navigate(`/curation/letter/${letter.curationId}`, {
           state: { letter, modalVisible: false },
         });
@@ -42,7 +41,6 @@ const CurationStore = () => {
       .then(res => {
         setStoredLetters(res.data.curationList);
         setCountLetters(res.data.count);
-        console.log(res);
       })
       .catch(err => {
         console.log('error:', err);

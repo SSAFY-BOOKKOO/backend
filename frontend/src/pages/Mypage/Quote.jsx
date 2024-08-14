@@ -152,7 +152,6 @@ const Quote = () => {
     setEditQuote(quote);
     setShowInput(true);
   };
-  console.log(quotes, selectedQuoteIndex);
 
   return (
     <WrapContainer>

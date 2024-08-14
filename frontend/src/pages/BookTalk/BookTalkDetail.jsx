@@ -108,7 +108,6 @@ const BookTalkDetail = () => {
 
       client.current.subscribe(`/booktalks/sub/chat/${bookTalkId}`, message => {
         const newMessage = JSON.parse(message.body);
-        console.log(newMessage);
 
         queryClient.setQueryData(['bookTalkChats', bookTalkId], old => {
           if (!old) return old;

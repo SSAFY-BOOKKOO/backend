@@ -75,10 +75,6 @@ const BookSearch = () => {
       </form>
       {isSearched && (
         <div>
-          {console.log(
-            'books being passed to SearchResultSection:',
-            searchResults.bookStore
-          )}
           {/* SearchBook -> SearchResultSection ->  commond=-book-bookItem*/}
           <SearchResultSection
             title='도서 검색 결과'

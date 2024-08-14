@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AiFillStar } from 'react-icons/ai';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import useModal from '@hooks/useModal';
 import ReviewCom from '@components/Library/Detail/ReviewCom';
 import ColorPicker from '@components/Library/BookCreate/ColorPicker';
@@ -12,6 +12,8 @@ import { PRESET_COLORS } from '@constants/ColorData';
 import { bookDataAtom } from '@atoms/bookCreateAtom';
 import { IoBookmarkSharp } from 'react-icons/io5';
 import { authAxiosInstance } from '@services/axiosInstance';
+import { alertAtom } from '@atoms/alertAtom';
+import Spinner from '@components/@common/Spinner'; // Spinner import
 import './LibraryDetail.css';
 
 const LibraryDetail = () => {
@@ -20,11 +22,13 @@ const LibraryDetail = () => {
   const [showReview, setShowReview] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showShelfSelect, setShowShelfSelect] = useState(false);
-  const [bookData, setBookData] = useAtom(bookDataAtom); // jotai로 받은 북 데이터
+  const [bookData, setBookData] = useAtom(bookDataAtom);
   const [selectedColor, setSelectedColor] = useState(bookData.bookColor);
+  const [isLoading, setIsLoading] = useState(true); // Loading state 추가
+  const setAlert = useSetAtom(alertAtom);
   const navigate = useNavigate();
   const maxLength = 80;
-  const [book, setBook] = useState(null); // api로 받은 북데이터
+  const [book, setBook] = useState(null);
   const { isOpen, closeModal, toggleModal } = useModal();
 
   useEffect(() => {
@@ -48,10 +52,20 @@ const LibraryDetail = () => {
         setSelectedColor(bookResponse.bookColor || '');
       } catch (error) {
         console.error('Failed to fetch book data:', error);
+      } finally {
+        setIsLoading(false); // 데이터 로드가 완료되면 로딩 상태를 해제합니다.
       }
     };
     fetchBookData();
   }, [libraryId, bookId, location.state.nickname]);
+
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center min-h-screen'>
+        <Spinner />
+      </div>
+    );
+  }
 
   if (!book) {
     return <div>Loading...</div>;
@@ -72,11 +86,20 @@ const LibraryDetail = () => {
         params: { libraryId, bookId },
       })
       .then(res => {
-        console.log('book Delete:', res);
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '책이 성공적으로 삭제되었습니다!',
+        });
         navigate('/');
       })
       .catch(err => {
         console.error('Error deleting review:', err);
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '책 삭제에 실패했습니다. 다시 시도해 주세요.',
+        });
       });
   };
 
@@ -91,10 +114,19 @@ const LibraryDetail = () => {
         params: { bookColor: color },
       })
       .then(res => {
-        console.log('color change:', res);
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '책의 색상이 성공적으로 변경되었습니다!',
+        });
       })
       .catch(err => {
         console.error('color change err:', err);
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '책의 색상 변경에 실패했습니다. 다시 시도해 주세요.',
+        });
       });
     setShowColorPicker(false);
   };

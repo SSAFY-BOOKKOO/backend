@@ -1,7 +1,6 @@
 // src/components/Curation/Tab.jsx
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import letterPlus from '../../assets/icons/letterPlus.png';
 import ChatbotFloatingButton from './ChatbotFloatingButton';
 import { LuMailPlus } from 'react-icons/lu';
 

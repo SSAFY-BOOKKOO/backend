@@ -4,19 +4,20 @@ import Button from '@components/@common/Button';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { curationBookAtom } from '@atoms/curationBookAtom';
-import { authAxiosInstance } from '../../services/axiosInstance';
+import { authAxiosInstance } from '@services/axiosInstance';
 import { BsEnvelopeHeart } from 'react-icons/bs';
+import Alert from '@components/@common/Alert';
+import { showAlertAtom } from '@atoms/alertAtom';
 
 const CreateLetter = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const navigate = useNavigate();
   const [book, setBook] = useAtom(curationBookAtom);
-  const [titleLength, setTitleLength] = useState(0); // 제목 글자 수 상태 추가
+  const [titleLength, setTitleLength] = useState(0);
+  const [, showAlert] = useAtom(showAlertAtom);
 
-  useEffect(() => {
-    console.log('book 정보:', book);
-  }, [book]);
+  useEffect(() => {}, [book]);
 
   const handleTitleChange = e => {
     const newTitle = e.target.value;
@@ -36,28 +37,28 @@ const CreateLetter = () => {
   };
 
   // 전송 로직
-  const handleLetterCreate = () => {
+  const handleLetterCreate = async () => {
     const letter = {
       bookId: book ? book.id : null,
       title,
       content,
     };
 
-    authAxiosInstance
-      .post('/curations', letter)
-      .then(res => {
-        console.log('Letter send successfully:', res);
-        console.log('전송된 레터의 정보', book);
-        setBook(null); // 책 정보 초기화
+    try {
+      await authAxiosInstance.post('/curations', letter);
+      showAlert('레터가 성공적으로 전송되었습니다.', true, () => {
         navigate('/curation/send');
-      })
-      .catch(err => {
-        console.log('error:', err);
       });
+      setBook(null); // 책 정보 초기화
+    } catch (err) {
+      console.error('error:', err);
+      showAlert('레터 전송에 실패했습니다. 다시 시도해 주세요.', true);
+    }
   };
 
   return (
     <div className='flex flex-col items-center p-4 mx-8'>
+      <Alert />
       <div className='w-full max-w-md'>
         <div className='bg-gray-100 p-4 rounded-lg mb-4'>
           <div className='flex items-center justify-between'>

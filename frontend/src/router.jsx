@@ -23,7 +23,6 @@ import BookTalkMain from './pages/BookTalk/BookTalkMain.jsx';
 import BookTalkDetail from './pages/BookTalk/BookTalkDetail.jsx';
 import Intro from './pages/Member/Intro.jsx';
 import PrivateRoute from '@components/@common/PrivateRoute';
-import CurationLetterSend from './pages/Curation/CurationLetterSend.jsx';
 import Quote from './pages/Mypage/Quote.jsx';
 import SearchMore from './pages/Library/SearchMore.jsx';
 import BookTalkMore from './pages/BookTalk/BookTalkMore.jsx';
@@ -75,10 +74,6 @@ const router = createBrowserRouter([
           },
 
           { path: 'curation/letter/:id', element: <CurationLetterDetail /> },
-          {
-            path: 'curation/letter-create/send',
-            element: <CurationLetterSend />,
-          },
 
           //booktalk
           { path: 'booktalk', element: <BookTalkMain /> },

@@ -7,9 +7,9 @@ import { BsBookmarkStar, BsBookmarkStarFill } from 'react-icons/bs';
 import { AiFillAlert } from 'react-icons/ai';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
 import { FaTrashCan } from 'react-icons/fa6';
-import { authAxiosInstance } from '../../services/axiosInstance';
+import { authAxiosInstance } from '@services/axiosInstance';
 import { BsEnvelopeHeart } from 'react-icons/bs';
-import Alert from '../../components/@common/Alert';
+import Alert from '@components/@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
 
 const CurationReceive = () => {
@@ -23,9 +23,7 @@ const CurationReceive = () => {
   const setAlert = useSetAtom(alertAtom);
 
   // 받은 레터 조회
-  useEffect(() => {
-    console.log(letters);
-  }, []);
+  useEffect(() => {}, []);
   // storeLetters가 변경될 때마다 로컬 스토리지에 저장
   useEffect(() => {
     localStorage.setItem('storeLetters', JSON.stringify(storeLetters));
@@ -49,7 +47,6 @@ const CurationReceive = () => {
       .then(res => {
         setLetters(res.data.curationList);
         setCountLetters(res.data.count);
-        console.log(res);
       })
       .catch(err => {
         console.log('error:', err);
@@ -83,18 +80,17 @@ const CurationReceive = () => {
         curationId: letter.curationId,
       })
       .then(res => {
-        console.log('Letter stored successfully:', res);
         if (isStoring) {
           setAlert({
             isOpen: true,
             confirmOnly: true,
-            message: '보관이 완료되었습니다.',
+            message: '레터가 성공적으로 보관되었습니다.',
           });
         } else {
           setAlert({
             isOpen: true,
             confirmOnly: true,
-            message: '보관이 해제되었습니다.',
+            message: '레터가 성공적으로 보관이 해제되었습니다.',
           });
         }
       })
@@ -125,12 +121,11 @@ const CurationReceive = () => {
 
     Promise.all(deleteRequests)
       .then(responses => {
-        console.log('Letters deleted successfully:', responses);
         setLetters(
           letters.filter(letter => !selectedLetters.includes(letter.id))
         );
         setSelectedLetters([]);
-        window.location.reload(); // 새로고침 추가
+        window.location.reload();
       })
       .catch(err => {
         console.log('Error deleting letters:', err);
@@ -144,7 +139,6 @@ const CurationReceive = () => {
         curationId: letter.curationId,
       })
       .then(res => {
-        console.log('Letter Detail:', res);
         navigate(`/curation/letter/${letter.curationId}`, {
           state: { letter },
         });

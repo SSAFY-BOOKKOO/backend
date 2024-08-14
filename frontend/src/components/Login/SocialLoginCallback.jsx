@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Spinner from '../@common/Spinner';
+import Spinner from '@components/@common/Spinner';
 import { useAtom } from 'jotai';
 import { isAuthenticatedAtom } from '@atoms/authAtom';
 import { getMemberInfo } from '@services/Member';

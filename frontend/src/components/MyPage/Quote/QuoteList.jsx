@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BiSolidQuoteAltLeft, BiSolidQuoteAltRight } from 'react-icons/bi';
 import useModal from '@hooks/useModal';
-import SettingsModal from '../../@common/SettingsModal';
+import SettingsModal from '@components/@common/SettingsModal';
 import { useAtom } from 'jotai';
 import { showAlertAtom } from '@atoms/alertAtom';
 import Alert from '@components/@common/Alert';
