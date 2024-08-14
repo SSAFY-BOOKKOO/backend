@@ -25,4 +25,13 @@ public interface ReviewCustomRepository {
      * @return true/false
      */
     Boolean existsByBookIdAndMine(Long memberId, Long bookId);
+
+    /**
+     * memberId, bookId로 리뷰 찾기
+     *
+     * @param bookId   책 ID
+     * @param memberId memberId
+     * @return review
+     */
+    Review findByBookIdMemberId(Long bookId, Long memberId);
 }
