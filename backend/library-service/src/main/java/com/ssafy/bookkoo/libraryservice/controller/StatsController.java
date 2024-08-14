@@ -51,8 +51,8 @@ public class StatsController {
     )
     public ResponseEntity<List<ResponseStatsCategoryDto>> getStatsCategories(
         @RequestHeader HttpHeaders headers,
-        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startAt,
-        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endAt,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startAt,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endAt,
         @RequestParam(required = false) Status status
     ) {
         Long memberId = CommonUtil.getMemberId(headers);
@@ -88,8 +88,8 @@ public class StatsController {
     )
     public ResponseEntity<Integer> getCountOfREAD(
         @RequestHeader HttpHeaders headers,
-        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startAt,
-        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endAt
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startAt,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endAt
     ) {
         Long memberId = CommonUtil.getMemberId(headers);
         Integer response = statsService.getCountOfREAD(memberId, startAt, endAt);
