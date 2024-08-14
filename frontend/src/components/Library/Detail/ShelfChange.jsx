@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { bookDataAtom } from '@atoms/bookCreateAtom';
 import ShelfSelectButton from './ShelfSelectButton';
 import { getLibraryList } from '@services/Library';
 import { authAxiosInstance } from '@services/axiosInstance';
 import { useNavigate } from 'react-router-dom';
+import { alertAtom } from '@atoms/alertAtom';
 
 const ShelfChange = ({ book, onClose }) => {
   const [bookData, setBookData] = useAtom(bookDataAtom);
   const [libraries, setLibraries] = useState([]);
+  const setAlert = useSetAtom(alertAtom);
   const navigate = useNavigate();
 
   const handleLibraryGet = async () => {
@@ -36,9 +38,20 @@ const ShelfChange = ({ book, onClose }) => {
       .patch(`/libraries/${bookData.libraryId}/books/${book.id}`, null, {
         params: { targetLibraryId: selectedLibraryId },
       })
-      .then(res => {})
+      .then(res => {
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '책의 서재가 성공적으로 변경되었습니다!',
+        });
+      })
       .catch(err => {
         console.error('library change err:', err);
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '책의 서재 변경에 실패했습니다. 다시 시도해 주세요.',
+        });
       });
 
     onClose();

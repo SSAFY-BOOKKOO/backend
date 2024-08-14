@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
+import { useSetAtom } from 'jotai';
 import useModal from '@hooks/useModal';
 import SettingsModal from '@components/@common/SettingsModal';
 import { authAxiosInstance } from '../../services/axiosInstance';
+import { alertAtom } from '@atoms/alertAtom';
 
 const CurationLetterDetail = () => {
   const { id } = useParams();
   const location = useLocation();
   const { isOpen, closeModal, toggleModal } = useModal();
-  const [nickName, setnickName] = useState('');
+  const [nickName, setNickName] = useState('');
   const [letter, setLetter] = useState('');
+  const setAlert = useSetAtom(alertAtom);
   const modalVisible = location.state?.modalVisible ?? true; // 기본값은 true로 설정
 
   useEffect(() => {
     authAxiosInstance
       .get('/members/info')
       .then(res => {
-        setnickName(res.data.nickName);
+        setNickName(res.data.nickName);
       })
       .catch(err => {
         console.log(err);
@@ -38,20 +41,41 @@ const CurationLetterDetail = () => {
   const handleLetterStore = () => {
     authAxiosInstance
       .post(`/curations/store/${id}`, {})
-      .then(res => {})
+      .then(res => {
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '레터가 성공적으로 보관되었습니다!',
+        });
+      })
       .catch(err => {
         console.log('error:', err);
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '레터 보관에 실패했습니다. 다시 시도해 주세요.',
+        });
       });
   };
 
   // 레터 삭제
   const handleLetterDelete = () => {
-    // 연동
     authAxiosInstance
       .delete(`/curations/${id}`, {})
-      .then(responses => {})
+      .then(res => {
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '레터가 성공적으로 삭제되었습니다!',
+        });
+      })
       .catch(err => {
         console.log('Error deleting letters:', err);
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '레터 삭제에 실패했습니다. 다시 시도해 주세요.',
+        });
       });
   };
 
@@ -72,12 +96,6 @@ const CurationLetterDetail = () => {
         </div>
         {/* 설정 모달 */}
         <div className='relative flex flex-col items-center p-6 pt-32 z-30'>
-          {/* <SettingsModal
-            isOpen={isOpen}
-            onClose={closeModal}
-            onToggle={toggleModal}
-            actions={actions}
-          /> */}
           {nickName !== letter.writer && modalVisible && (
             <SettingsModal
               isOpen={isOpen}

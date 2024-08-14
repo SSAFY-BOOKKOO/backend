@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { AiFillStar } from 'react-icons/ai';
 import Button from '../../@common/Button';
 import { MdOutlineRefresh } from 'react-icons/md';
-import { CgProfile } from 'react-icons/cg';
 import { authAxiosInstance } from '@services/axiosInstance';
 import { useNavigate } from 'react-router-dom';
+import { useSetAtom } from 'jotai';
+import { alertAtom } from '@atoms/alertAtom';
 
 // 모달
 const Modal = ({ show, onClose, review }) => {
@@ -59,6 +59,7 @@ const ReviewCom = ({ onBackClick, book }) => {
   const [showModal, setShowModal] = useState(false);
   const [currentReview, setCurrentReview] = useState(null);
   const [reviewContent, setReviewContent] = useState('');
+  const setAlert = useSetAtom(alertAtom);
 
   const titleMaxLength = 10;
 
@@ -109,7 +110,9 @@ const ReviewCom = ({ onBackClick, book }) => {
           setReviewId(res.data[0].id);
         }
       })
-      .catch(err => {});
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   // 내 한줄평 작성
@@ -121,9 +124,19 @@ const ReviewCom = ({ onBackClick, book }) => {
       .then(res => {
         setReviewContent(res.data.content);
         setReviewId(res.data.id);
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '한줄평이 성공적으로 작성되었습니다!',
+        });
       })
       .catch(err => {
         console.log('Error saving review:', err);
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '한줄평 작성에 실패했습니다. 다시 시도해 주세요.',
+        });
       });
   };
 
@@ -134,9 +147,19 @@ const ReviewCom = ({ onBackClick, book }) => {
       .then(res => {
         setReviewContent(res.data.content);
         setReviewId(res.data.id);
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '한줄평이 성공적으로 수정되었습니다!',
+        });
       })
       .catch(err => {
         console.log('Error updating review:', err);
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '한줄평 수정에 실패했습니다. 다시 시도해 주세요.',
+        });
       });
   };
 
@@ -148,9 +171,19 @@ const ReviewCom = ({ onBackClick, book }) => {
       .then(res => {
         setReviewContent('');
         setReviewId(null);
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '한줄평이 성공적으로 삭제되었습니다!',
+        });
       })
       .catch(err => {
         console.error('Error deleting review:', err);
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '한줄평 삭제에 실패했습니다. 다시 시도해 주세요.',
+        });
       });
   };
 
