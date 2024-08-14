@@ -288,7 +288,7 @@ const RegisterPage = () => {
             isOpen: true,
             confirmOnly: true,
             message: '회원가입이 완료되었습니다.',
-            onConfirm: () => navigate('/library'),
+            onConfirm: () => navigate('/'),
           });
           setStep(3);
         } else {

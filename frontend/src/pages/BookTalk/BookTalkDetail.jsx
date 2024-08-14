@@ -227,7 +227,7 @@ const BookTalkDetail = () => {
               onChange={handleInputChange}
               placeholder='내용을 입력해주세요(1000자 이내)'
               maxLength={1000}
-              customClass='border rounded-l-lg focus:outline-none'
+              customClass='border rounded-l-lg focus:outline-none max-h-36'
             />
           </div>
           <Button type='button' className='ml-2' onClick={handleSendMessage}>

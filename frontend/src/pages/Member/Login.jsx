@@ -47,10 +47,11 @@ const Login = () => {
 
     try {
       const data = await postLogin(loginInfo);
-      const userData = await getMemberInfo();
 
       // 로그인 성공
       localStorage.setItem('ACCESS_TOKEN', data.accessToken);
+
+      const userData = await getMemberInfo();
       localStorage.setItem('MEMBER_ID', userData.memberId);
 
       setIsAuthenticated(true);

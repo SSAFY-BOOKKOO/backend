@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSetAtom } from 'jotai';
 import { useNavigate } from 'react-router-dom';
 import 'swiper/css';
 import CurationTab from '@components/Curation/CurationTab';
@@ -6,29 +7,25 @@ import { BsBookmarkStar, BsBookmarkStarFill } from 'react-icons/bs';
 import { AiFillAlert } from 'react-icons/ai';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
 import { FaTrashCan } from 'react-icons/fa6';
-// import { useAtom } from 'jotai';
-// import { storedLettersAtom } from '../../atoms/CurationStoreAtom';
 import { authAxiosInstance } from '../../services/axiosInstance';
 import { BsEnvelopeHeart } from 'react-icons/bs';
+import Alert from '../../components/@common/Alert';
+import { alertAtom } from '@atoms/alertAtom';
 
 const CurationReceive = () => {
   const navigate = useNavigate();
   const [letters, setLetters] = useState([]);
   const [page, setPage] = useState(0);
-  // const [storedLetters, setStoredLetters] = useAtom(storedLettersAtom);
   const [storeLetters, setStoreLetters] = useState([]);
   const [selectedLetters, setSelectedLetters] = useState([]);
   const [isDeleting, setIsDeleting] = useState(false);
   const [countLetters, setCountLetters] = useState(0);
+  const setAlert = useSetAtom(alertAtom);
 
-  // 컴포넌트가 마운트될 때 로컬 스토리지에서 storeLetters를 불러옴
-  // useEffect(() => {
-  //   const stored = localStorage.getItem('storeLetters');
-  //   if (stored) {
-  //     setStoreLetters(JSON.parse(stored));
-  //   }
-  // }, []);
-
+  // 받은 레터 조회
+  useEffect(() => {
+    console.log(letters);
+  }, []);
   // storeLetters가 변경될 때마다 로컬 스토리지에 저장
   useEffect(() => {
     localStorage.setItem('storeLetters', JSON.stringify(storeLetters));
@@ -39,7 +36,6 @@ const CurationReceive = () => {
       .get('/curations/store', { params: { page } })
       .then(res => {
         setStoreLetters(res.data.curationList);
-        console.log(storeLetters);
       })
       .catch(err => {
         console.log('error:', err);
@@ -53,6 +49,7 @@ const CurationReceive = () => {
       .then(res => {
         setLetters(res.data.curationList);
         setCountLetters(res.data.count);
+        console.log(res);
       })
       .catch(err => {
         console.log('error:', err);
@@ -62,6 +59,8 @@ const CurationReceive = () => {
   const onStore = (event, letter) => {
     event.stopPropagation();
     let updatedStoreLetters;
+    let isStoring;
+
     if (
       storeLetters.some(
         storedLetter => storedLetter.curationId === letter.curationId
@@ -70,10 +69,14 @@ const CurationReceive = () => {
       updatedStoreLetters = storeLetters.filter(
         storedLetter => storedLetter.curationId !== letter.curationId
       );
+      isStoring = false;
     } else {
       updatedStoreLetters = [...storeLetters, letter];
+      isStoring = true;
     }
+
     setStoreLetters(updatedStoreLetters);
+
     // 큐레이션 보관상태 변경
     authAxiosInstance
       .post(`/curations/store/${letter.curationId}`, {
@@ -81,6 +84,19 @@ const CurationReceive = () => {
       })
       .then(res => {
         console.log('Letter stored successfully:', res);
+        if (isStoring) {
+          setAlert({
+            isOpen: true,
+            confirmOnly: true,
+            message: '보관이 완료되었습니다.',
+          });
+        } else {
+          setAlert({
+            isOpen: true,
+            confirmOnly: true,
+            message: '보관이 해제되었습니다.',
+          });
+        }
       })
       .catch(err => {
         console.log('error:', err);
@@ -170,7 +186,6 @@ const CurationReceive = () => {
                 <h2 className='text-lg font-bold text-overflow-1'>
                   {letter.title}
                 </h2>
-                {/* <p>{letter.content}</p> */}
                 <p>{letter.date}</p>
               </div>
               {storeLetters.some(
@@ -225,6 +240,7 @@ const CurationReceive = () => {
           />
         </div>
       )}
+      <Alert />
     </div>
   );
 };

@@ -137,7 +137,7 @@ const MyPage = () => {
               <FaCalendarDays className='w-8 h-8' />
             </button>
           </Link>
-          <p className='text-lg'>통계</p>
+          <p className='text-base'>나의 기록</p>
         </div>
         <div className='flex flex-col items-center'>
           <Link to='/mypage/quote'>
@@ -145,13 +145,7 @@ const MyPage = () => {
               <BsChatSquareQuoteFill className='w-8 h-8' />
             </button>
           </Link>
-          <p className='text-lg'>내 글귀</p>
-        </div>
-        <div className='flex flex-col items-center'>
-          <button className='p-4 rounded-full'>
-            <FaClipboardList className='w-8 h-8' />
-          </button>
-          <p className='text-lg'>내가 쓴 글</p>
+          <p className='text-base'>글귀함</p>
         </div>
         <div className='flex flex-col items-center'>
           <Link to='/mypage/friend'>
@@ -159,7 +153,7 @@ const MyPage = () => {
               <MdPeopleAlt className='w-8 h-8' />
             </button>
           </Link>
-          <p className='text-lg'>친구</p>
+          <p className='text-base'>친구관리</p>
         </div>
       </div>
       <Button
@@ -169,13 +163,6 @@ const MyPage = () => {
         full={false}
         className='absolute up-4 right-4'
         onClick={handleLogout}
-      />
-      <ProfileModal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        profileImgUrl={member.profileImgUrl}
-        nickname={member.nickName}
-        introduction={member.introduction}
       />
     </div>
   );

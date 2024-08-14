@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import CurationTab from '@components/Curation/CurationTab';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
 import { IoIosArrowForward } from 'react-icons/io';
 import { axiosInstance, authAxiosInstance } from '../../services/axiosInstance';
@@ -8,7 +8,6 @@ import { BsEnvelopeHeart } from 'react-icons/bs';
 import Spinner from '@components/@common/Spinner';
 
 const CurationStore = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const [storedLetters, setStoredLetters] = useState([]);
   const [page, setPage] = useState(0);
@@ -24,7 +23,7 @@ const CurationStore = () => {
       .then(res => {
         console.log('Letter Detail:', res);
         navigate(`/curation/letter/${letter.curationId}`, {
-          state: { letter },
+          state: { letter, modalVisible: false },
         });
       })
       .catch(err => {

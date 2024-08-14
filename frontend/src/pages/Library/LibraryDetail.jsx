@@ -37,8 +37,6 @@ const LibraryDetail = () => {
         const book = response.data.book;
         setBook(book);
 
-        console.log('bookResponse:', bookResponse);
-
         setBookData({
           status: bookResponse.status || 'READ',
           startAt: bookResponse.startAt || '',
@@ -75,7 +73,7 @@ const LibraryDetail = () => {
       })
       .then(res => {
         console.log('book Delete:', res);
-        navigate('/library', { state: { deleteBookId: bookId } });
+        navigate('/');
       })
       .catch(err => {
         console.error('Error deleting review:', err);
