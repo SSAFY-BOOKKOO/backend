@@ -12,13 +12,19 @@ const CreateLetter = () => {
   const [content, setContent] = useState('');
   const navigate = useNavigate();
   const [book, setBook] = useAtom(curationBookAtom);
+  const [titleLength, setTitleLength] = useState(0); // 제목 글자 수 상태 추가
 
   useEffect(() => {
     console.log('book 정보:', book);
   }, [book]);
 
   const handleTitleChange = e => {
-    setTitle(e.target.value);
+    const newTitle = e.target.value;
+    if (newTitle.length <= 20) {
+      // 20자 제한
+      setTitle(newTitle);
+      setTitleLength(newTitle.length);
+    }
   };
 
   const handleContentChange = e => {
@@ -82,8 +88,12 @@ const CreateLetter = () => {
             placeholder='제목을 입력해 주세요'
             value={title}
             onChange={handleTitleChange}
-            className='w-full p-3 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-200 focus:border-transparent mb-4'
+            className='w-full p-3 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-200 focus:border-transparent mb-1'
           />
+          <p className='text-right text-gray-500 text-sm mb-4'>
+            {titleLength}/20
+          </p>{' '}
+          {/* 글자 수 표시 */}
           <textarea
             className='w-full p-3 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-200 focus:border-transparent mb-4 h-96 resize-none'
             placeholder='내용을 입력해 주세요'
