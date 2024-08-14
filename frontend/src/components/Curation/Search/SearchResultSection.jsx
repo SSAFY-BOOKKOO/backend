@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import BookItem from '../../Curation/Search/BookItem';
+import BookItem from '@components/Curation/Search/BookItem';
 
 const SearchResultSection = ({ books, onSeeMore }) => {
   return (

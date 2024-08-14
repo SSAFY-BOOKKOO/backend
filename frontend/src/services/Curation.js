@@ -9,11 +9,6 @@ export const postChatbot = async content => {
     },
   ];
 
-  try {
-    const response = await authAxiosInstance.post(`/curations/chat`, bodyData);
-    return response.data;
-  } catch (error) {
-    console.error('chatbot post failed:', error);
-    throw error;
-  }
+  const response = await authAxiosInstance.post(`/curations/chat`, bodyData);
+  return response.data;
 };

@@ -7,9 +7,9 @@ import { BsBookmarkStar, BsBookmarkStarFill } from 'react-icons/bs';
 import { AiFillAlert } from 'react-icons/ai';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
 import { FaTrashCan } from 'react-icons/fa6';
-import { authAxiosInstance } from '../../services/axiosInstance';
+import { authAxiosInstance } from '@services/axiosInstance';
 import { BsEnvelopeHeart } from 'react-icons/bs';
-import Alert from '../../components/@common/Alert';
+import Alert from '@components/@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
 
 const CurationReceive = () => {

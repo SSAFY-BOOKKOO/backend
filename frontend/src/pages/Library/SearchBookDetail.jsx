@@ -3,15 +3,29 @@ import WrapContainer from '@components/Layout/WrapContainer';
 import Button from '@components/@common/Button';
 import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
 import useModal from '@hooks/useModal';
-import Spinner from '@components/@common/Spinner';
 import { getAladinBookByIsbn } from '@services/Book';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
+import { useAtom } from 'jotai';
+import { showAlertAtom } from '@atoms/alertAtom';
+import Alert from '@components/@common/Alert';
+import Spinner from '@components/@common/Spinner';
 
 const SearchBookDetail = () => {
   const { isOpen, toggleModal } = useModal();
+  const location = useLocation();
+  const { bookData } = location.state || {};
   const { bookId } = useParams();
   const [book, setBook] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [, showAlert] = useAtom(showAlertAtom);
+
+  const handleBookCreateButton = () => {
+    if (bookData?.inLibrary) {
+      showAlert('이미 등록된 책입니다.', true, () => {});
+    } else {
+      toggleModal();
+    }
+  };
 
   const handleGetBook = async () => {
     setLoading(true);
@@ -28,12 +42,13 @@ const SearchBookDetail = () => {
 
   useEffect(() => {
     handleGetBook();
-  }, []);
+  }, [bookId]);
 
   return (
     <WrapContainer>
+      <Alert />
       {loading ? (
-        <div className='flex justify-center items-center h-full'>
+        <div className='flex justify-center items-center h-screen'>
           <Spinner />
         </div>
       ) : (
@@ -51,7 +66,7 @@ const SearchBookDetail = () => {
             {book?.publisher} | {book?.publishedAt}
           </p>
           <p className='text-base my-3'>{book?.summary}</p>
-          <Button full onClick={toggleModal}>
+          <Button full onClick={handleBookCreateButton}>
             내 서재에 등록
           </Button>
         </div>

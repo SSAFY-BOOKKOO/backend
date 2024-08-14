@@ -12,6 +12,9 @@ import useModal from '@hooks/useModal';
 import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
 import { getAladinBookByIsbn } from '@services/Book';
 import Spinner from '@components/@common/Spinner';
+import { useAtom } from 'jotai';
+import { showAlertAtom } from '@atoms/alertAtom';
+import Alert from '@components/@common/Alert';
 
 const SearchMore = () => {
   const { type } = useParams();
@@ -21,6 +24,7 @@ const SearchMore = () => {
   const selectedTag = searchParams.get('tag');
   const { isOpen, toggleModal } = useModal();
   const [selectedBook, setSelectedBook] = useState(null);
+  const [, showAlert] = useAtom(showAlertAtom);
 
   const getQuery = () => {
     switch (type) {
@@ -47,18 +51,24 @@ const SearchMore = () => {
   }, [inView, hasNextPage, fetchNextPage]);
 
   const handleBookClick = book => {
-    navigate(`/${type}/detail/${book.isbn}`, { state: { book } });
+    navigate(`/${type}/detail/${book.isbn}`, { state: { bookData: book } });
   };
 
   const handleBookCreateButton = async book => {
-    try {
-      const bookData = await getAladinBookByIsbn(book.isbn);
-      setSelectedBook(bookData);
-    } catch (error) {
-      console.error('error', error);
-    }
+    if (book.inLibrary) {
+      showAlert('이미 등록된 책입니다.', true, () => {});
+      return;
+    } else {
+      try {
+        const bookData = await getAladinBookByIsbn(book.isbn);
 
-    toggleModal();
+        setSelectedBook(bookData);
+      } catch (error) {
+        console.error('error', error);
+      } finally {
+        toggleModal();
+      }
+    }
   };
 
   const renderBookItem = book => {
@@ -104,6 +114,7 @@ const SearchMore = () => {
 
   return (
     <WrapContainer className='mt-4'>
+      <Alert />
       {isLoading && <Spinner />}
       <h1 className='text-2xl font-bold mb-4'>{getTitle()}</h1>
       {data?.pages?.map((page, index) => (
