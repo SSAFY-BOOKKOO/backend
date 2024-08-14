@@ -165,7 +165,7 @@ public class MemberInfoController {
         @RequestHeader HttpHeaders headers
     ) {
         Long memberId = CommonUtil.getMemberId(headers);
-        memberInfoService.deleteMember(memberId);
+        memberInfoService.deleteMemberHistory(memberId);
         return ResponseEntity.ok()
                              .build();
     }
