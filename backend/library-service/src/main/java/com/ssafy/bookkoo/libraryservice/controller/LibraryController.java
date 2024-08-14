@@ -437,11 +437,8 @@ public class LibraryController {
             """
     )
     public ResponseEntity<HttpStatus> deleteLibraryOfMember(
-        @RequestHeader HttpHeaders headers
+        @RequestParam("memberId") Long memberId
     ) {
-        // memberId 가져오기
-        Long memberId = CommonUtil.getMemberId(headers);
-
         libraryService.deleteLibrariesByMemberId(memberId);
 
         return ResponseEntity.noContent()
