@@ -34,19 +34,22 @@ public class ReviewController {
 
     @Operation(summary = "책 리뷰 조회", description = "특정 책의 모든 리뷰를 조회합니다.")
     @GetMapping("/{bookId}/reviews")
-    public ResponseEntity<List<ResponseReviewDto>> getReviewsByBookId(@PathVariable Long bookId) {
+    public ResponseEntity<List<ResponseReviewDto>> getReviewsByBookId(
+        @PathVariable Long bookId
+    ) {
         log.info("Retrieve Review by Book Id: {}", bookId);
         List<ResponseReviewDto> reviews = reviewService.getReviewByBookId(bookId);
         return ResponseEntity.ok(reviews);
     }
 
-    @Operation(summary = "특정 리뷰 조회", description = "책 ID와 리뷰 ID를 통해 특정 리뷰를 조회합니다.")
-    @GetMapping("/{bookId}/reviews/{reviewId}")
+    @Operation(summary = "내 리뷰 조회", description = "책 ID와 리뷰 ID를 통해 내 리뷰를 조회합니다.")
+    @GetMapping("/{bookId}/reviews/me")
     public ResponseEntity<ResponseReviewDto> getReviewById(
-        @PathVariable Long bookId,
-        @PathVariable Long reviewId
+        @RequestHeader HttpHeaders headers,
+        @PathVariable Long bookId
     ) {
-        ResponseReviewDto review = reviewService.getReviewById(bookId, reviewId);
+        Long memberId = CommonUtil.getMemberId(headers);
+        ResponseReviewDto review = reviewService.getReviewById(bookId, memberId);
         return ResponseEntity.ok(review);
     }
 
