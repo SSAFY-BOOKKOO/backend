@@ -1,6 +1,7 @@
 package com.ssafy.bookkoo.memberservice.service.Impl;
 
 import com.ssafy.bookkoo.memberservice.client.CommonServiceClient;
+import com.ssafy.bookkoo.memberservice.client.LibraryServiceClient;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestMemberSettingDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdateMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
@@ -12,6 +13,7 @@ import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapper;
 import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapperKey;
 import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import com.ssafy.bookkoo.memberservice.entity.MemberSetting;
+import com.ssafy.bookkoo.memberservice.exception.DeleteLibrariesFailException;
 import com.ssafy.bookkoo.memberservice.exception.MemberInfoNotExistException;
 import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.memberservice.exception.ImageUploadException;
@@ -43,6 +45,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     private final MemberSettingRepository memberSettingRepository;
     private final MemberCategoryMapperRepository memberCategoryMapperRepository;
     private final MemberService memberService;
+    private final LibraryServiceClient libraryServiceClient;
     
     @Value("${config.member-bucket-name}")
     private String BUCKET;
@@ -212,6 +215,23 @@ public class MemberInfoServiceImpl implements MemberInfoService {
         return memberInfoRepository.findById(memberId)
                                    .orElseThrow(MemberInfoNotExistException::new);
     }
+
+
+    /**
+     * 회원 탈퇴를 수행합니다.
+     * @param memberId
+     */
+    @Override
+    @Transactional
+    public void deleteMember(Long memberId) {
+        try {
+            libraryServiceClient.deleteLibraries(memberId);
+        } catch (Exception e) {
+            throw new DeleteLibrariesFailException();
+        }
+        memberInfoRepository.deleteById(memberId);
+    }
+
 
     /**
      * 이전 닉네임과 같으면 중복체크 X
