@@ -2,6 +2,7 @@ package com.ssafy.bookkoo.bookkoogateway.config.filter;
 
 import com.ssafy.bookkoo.bookkoogateway.client.MemberServiceWebClient;
 import com.ssafy.bookkoo.bookkoogateway.exception.AccessTokenExpirationException;
+import com.ssafy.bookkoo.bookkoogateway.exception.MemberNotFoundException;
 import com.ssafy.bookkoo.bookkoogateway.util.TokenUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -116,8 +117,10 @@ public class TokenAuthenticationFilter implements GlobalFilter {
                                                              authentication));
                                      })
                                      .doOnError(error -> {
-                                         log.error("토큰 필터 에러 {}", error.getMessage());
-                                     });
+                                         log.info("[gateway - 멤버 서비스 호출 에러] : {}",
+                                             error.getMessage());
+                                         throw new MemberNotFoundException();
+                                     } );
     }
 
     private static boolean isNotSkip(String excludedPath, String path) {
