@@ -72,7 +72,6 @@ const LibraryDetail = () => {
         params: { libraryId, bookId },
       })
       .then(res => {
-        console.log('book Delete:', res);
         navigate('/');
       })
       .catch(err => {
@@ -90,9 +89,7 @@ const LibraryDetail = () => {
       .patch(`/libraries/${libraryId}/books/${bookId}`, null, {
         params: { bookColor: color },
       })
-      .then(res => {
-        console.log('color change:', res);
-      })
+      .then(res => {})
       .catch(err => {
         console.error('color change err:', err);
       });

@@ -15,11 +15,6 @@ const CurationSend = () => {
   const [page, setPage] = useState(0); // 페이지 상태 추가
   const [loading, setLoading] = useState(true); // 로딩 상태 추가
 
-  // 보낸 레터 조회
-  useEffect(() => {
-    console.log(sendLetters);
-  }, []);
-
   useEffect(() => {
     setLoading(true); // API 호출 시작 전 로딩 상태 설정
     authAxiosInstance
@@ -27,7 +22,6 @@ const CurationSend = () => {
       .then(res => {
         setLetters(res.data.curationList);
         setCountLetters(res.data.count);
-        console.log(res);
       })
       .catch(err => {
         console.log('error:', err);
@@ -39,14 +33,11 @@ const CurationSend = () => {
 
   // 레터 상세보기
   const handleLetterClick = letter => {
-    console.log(letter);
-    // const curationId = letter.curationId;
     authAxiosInstance
       .get(`/curations/detail/${letter.curationId}`, {
         curationId: letter.curationId,
       })
       .then(res => {
-        console.log('Letter Detail:', res);
         navigate(`/curation/letter/${letter.curationId}`, {
           state: { letter },
         });

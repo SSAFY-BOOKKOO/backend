@@ -16,7 +16,6 @@ const CurationLetterDetail = () => {
     authAxiosInstance
       .get('/members/info')
       .then(res => {
-        console.log('member info:', res.data.nickName);
         setnickName(res.data.nickName);
       })
       .catch(err => {
@@ -29,7 +28,6 @@ const CurationLetterDetail = () => {
       .get(`/curations/detail/${id}`)
       .then(res => {
         setLetter(res.data);
-        console.log(res);
       })
       .catch(err => {
         console.log(err);
@@ -40,9 +38,7 @@ const CurationLetterDetail = () => {
   const handleLetterStore = () => {
     authAxiosInstance
       .post(`/curations/store/${id}`, {})
-      .then(res => {
-        console.log('Letter stored successfully:', res);
-      })
+      .then(res => {})
       .catch(err => {
         console.log('error:', err);
       });
@@ -53,9 +49,7 @@ const CurationLetterDetail = () => {
     // 연동
     authAxiosInstance
       .delete(`/curations/${id}`, {})
-      .then(responses => {
-        console.log('Letters deleted successfully:', responses);
-      })
+      .then(responses => {})
       .catch(err => {
         console.log('Error deleting letters:', err);
       });

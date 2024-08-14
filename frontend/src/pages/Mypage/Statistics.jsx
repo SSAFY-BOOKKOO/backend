@@ -16,32 +16,10 @@ const Statistics = () => {
     return `${year}-${month}-${day}`;
   };
 
-  // 책 정보 받기
-  // useEffect(() => {
-  //   const fetchStatistics = async () => {
-  //     try {
-
-  //       const responses = await Promise.all(
-  //         statuses.map( =>
-  //           authAxiosInstance.get('/stats/categories')
-
-  //       // Combine all responses into one array
-  //       const allData = responses.map(res => res.data).flat();
-  //       setMyBooks(allData);
-  //       console.log(allData);
-  //     } catch (error) {
-  //       console.log('error:', error);
-  //     }
-  //   };
-
-  //   fetchStatistics();
-  // }, []);
-
   useEffect(() => {
     authAxiosInstance
       .get('/stats/categories')
       .then(res => {
-        console.log('category static:', res);
         setMyBooks(res.data);
       })
       .catch(err => {
@@ -97,8 +75,7 @@ const Statistics = () => {
                 display: true,
                 text: '서재 내 책 카테고리',
                 font: {
-                  size: 24, // Set the desired font size here
-                  // color: '#FF6384',
+                  size: 24,
                 },
                 color: 'black', // 제목 폰트 색상 설정
                 padding: {

@@ -12,8 +12,6 @@ const Modal = ({ bookId, onDelete, onColorChange, onShelfChange }) => {
   };
 
   const handleOptionClick = option => {
-    console.log(option);
-
     if (option === '삭제') {
       handleDelete();
     } else if (option === '색 변경') {

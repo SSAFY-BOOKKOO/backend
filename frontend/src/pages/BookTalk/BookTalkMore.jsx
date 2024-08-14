@@ -21,8 +21,6 @@ const BookTalkMore = () => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useMyBookTalkInfiniteScroll(selectedOption);
 
-  console.log(data?.pages[0].data);
-
   useEffect(() => {
     if (inView && hasNextPage) {
       fetchNextPage();

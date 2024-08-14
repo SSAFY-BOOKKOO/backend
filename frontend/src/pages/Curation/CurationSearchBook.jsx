@@ -50,8 +50,6 @@ const BookSearch = () => {
   // 도서 등록
   const handleBookCreateButton = book => {
     setSelectedBook(book);
-    console.log({ book });
-    // jotai 활용
     setBook(book);
     navigate('/curation/letter-create');
   };
@@ -59,9 +57,7 @@ const BookSearch = () => {
   // 검색 결과
 
   const renderBookItem = book => {
-    console.log('Book ID:', book.book_id); // Log book_id to the console
     return (
-      // BookItem으로 클릭 버튼 넘기기
       <BookItem
         key={book.id}
         book={book}

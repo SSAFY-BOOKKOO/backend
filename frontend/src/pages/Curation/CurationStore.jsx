@@ -21,7 +21,6 @@ const CurationStore = () => {
         curationId: letter.curationId,
       })
       .then(res => {
-        console.log('Letter Detail:', res);
         navigate(`/curation/letter/${letter.curationId}`, {
           state: { letter, modalVisible: false },
         });
@@ -42,7 +41,6 @@ const CurationStore = () => {
       .then(res => {
         setStoredLetters(res.data.curationList);
         setCountLetters(res.data.count);
-        console.log(res);
       })
       .catch(err => {
         console.log('error:', err);

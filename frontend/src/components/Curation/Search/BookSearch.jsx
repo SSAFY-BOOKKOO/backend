@@ -35,7 +35,6 @@ const BookSearch = ({ isOpen, onRequestClose, text, tag }) => {
       console.error('error', error);
     } finally {
       setLoading(false);
-      console.log(`결과: ${searchResults}`);
     }
   };
 
@@ -45,8 +44,6 @@ const BookSearch = ({ isOpen, onRequestClose, text, tag }) => {
 
   const handleSearchSubmit = event => {
     event.preventDefault();
-    // submit 작동 확인 // 왜 handleSearch에 안들어가냐구
-    console.log('검색어:', searchTerm);
     handleSearch(searchTerm, searchTag);
   };
 
@@ -84,8 +81,6 @@ const BookSearch = ({ isOpen, onRequestClose, text, tag }) => {
         <SearchResultSection
           title='도서 검색 결과'
           books={searchResults.bookStore}
-          // onItemClick={handleItemClick}
-          // onSeeMore={handleSeeMore}
           type='book'
         />
       </form>
