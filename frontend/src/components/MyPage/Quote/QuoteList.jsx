@@ -12,22 +12,19 @@ const QuoteList = ({ quotes, onQuoteClick, onEditClick, onDeleteClick }) => {
 
   const [, showAlert] = useAtom(showAlertAtom);
 
-  // 글귀 수정
   const handleQuoteUpdate = index => {
     const quote = quotes[index];
-    onEditClick(quote); // 수정 input 열기
+    onEditClick(quote);
   };
 
-  // 글귀 삭제
   const handleQuoteDelete = index => {
-    console.log(index);
     const quote = quotes[index];
 
     showAlert(
       '정말 글귀를 삭제하시겠습니까?',
       false,
       () => {
-        onDeleteClick(quote.quoteId); // 글귀 삭제
+        onDeleteClick(quote.quoteId);
       },
       () => {}
     );

@@ -1,37 +1,57 @@
 import React, { useState, useEffect } from 'react';
+import { useAtom } from 'jotai';
+import { showAlertAtom } from '@atoms/alertAtom';
 import Input from '../../@common/Input';
 import Textarea from '../../@common/Textarea';
 import Button from '../../@common/Button';
+import QuotePhotoUploader from './QuotePhotoUploader';
 
 const QuoteInput = ({
   addQuote,
   setShowInput,
   initialQuote,
   initialSource,
+  initialBackgroundImg,
   isEdit,
   onClose,
   quoteId,
 }) => {
   const [content, setContent] = useState(initialQuote || '');
   const [source, setSource] = useState(initialSource || '');
+  const [backgroundImg, setBackgroundImg] = useState(null);
+  const [previewImage, setPreviewImage] = useState(
+    initialBackgroundImg || null
+  );
+  const [, showAlert] = useAtom(showAlertAtom);
 
   useEffect(() => {
     setContent(initialQuote || '');
     setSource(initialSource || '');
-  }, [initialQuote, initialSource]);
+    setPreviewImage(initialBackgroundImg || null);
+  }, [initialQuote, initialSource, initialBackgroundImg]);
 
   const handleSubmit = e => {
     e.preventDefault();
-    if (isEdit) {
-      addQuote({ quoteId, content, source });
-    } else {
-      addQuote({ content, source });
+    if (!content.trim()) {
+      showAlert('글귀 내용을 입력해주세요.', true);
+      return;
     }
+    if (!source.trim()) {
+      showAlert('출처를 입력해주세요.', true);
+      return;
+    }
+    const quoteData = { quoteId, content, source };
+    if (backgroundImg) {
+      quoteData.backgroundImg = backgroundImg;
+    }
+    addQuote(quoteData);
   };
 
   const resetForm = () => {
     setContent('');
     setSource('');
+    setBackgroundImg(null);
+    setPreviewImage(null);
     setShowInput(false);
   };
 
@@ -40,27 +60,40 @@ const QuoteInput = ({
     if (onClose) onClose();
   };
 
+  const handlePhotoSelect = (file, previewSrc) => {
+    setBackgroundImg(file);
+    setPreviewImage(previewSrc);
+  };
+
   return (
     <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-20'>
-      <div className='bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md h-3/5 flex flex-col'>
+      <div className='bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md max-h-[90vh] flex flex-col'>
         <h2 className='text-xl font-bold mb-4'>나만의 글귀 입력</h2>
-        <form onSubmit={handleSubmit} className='flex flex-col flex-grow'>
-          <div className='flex-grow overflow-auto'>
+        <form
+          onSubmit={handleSubmit}
+          className='flex flex-col flex-grow overflow-auto'
+        >
+          <div className='space-y-2 p-1'>
             <Textarea
               placeholder='여기에 문장을 입력해주세요'
               value={content}
               onChange={e => setContent(e.target.value)}
               maxLength={200}
-              customClass='h-full mb-2'
+              customClass='h-44'
             />
             <Input
               type='text'
               placeholder='페이지 및 기타 정보 (예: p.29)'
               value={source}
               onChange={e => setSource(e.target.value)}
+              customClass='mb-1'
+            />
+            <QuotePhotoUploader
+              onPhotoSelect={handlePhotoSelect}
+              initialImage={previewImage}
             />
           </div>
-          <div className='flex justify-end mt-auto pt-3'>
+          <div className='flex justify-end mt-4 pt-3'>
             <Button type='submit' className='mr-3'>
               {isEdit ? '수정' : '등록'}
             </Button>
