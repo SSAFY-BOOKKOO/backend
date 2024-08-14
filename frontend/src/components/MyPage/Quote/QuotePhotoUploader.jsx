@@ -15,6 +15,11 @@ const QuotePhotoUploader = ({ onPhotoSelect, initialImage }) => {
   const onChangeFile = e => {
     const file = e.target?.files[0];
     if (file) {
+      if (file.size > 3 * 1024 * 1024) {
+        // 3MB 제한
+        showAlert('파일 크기는 3MB를 초과할 수 없습니다.', true, () => {});
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64data = reader.result;

@@ -67,6 +67,15 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
   const handleFileChange = e => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > 3 * 1024 * 1024) {
+        // 3MB 제한
+        setAlert({
+          isOpen: true,
+          confirmOnly: true,
+          message: '파일 크기는 3MB를 초과할 수 없습니다.',
+        });
+        return;
+      }
       if (file.type !== 'image/webp') {
         setFormData({
           ...formData,
