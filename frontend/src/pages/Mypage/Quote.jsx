@@ -64,7 +64,15 @@ const Quote = () => {
 
   const createQuote = async quoteData => {
     try {
-      await postQuote(quoteData.content, quoteData.source);
+      if (quoteData.backgroundImg) {
+        await postQuote(
+          quoteData.content,
+          quoteData.source,
+          quoteData.backgroundImg
+        );
+      } else {
+        await postQuote(quoteData.content, quoteData.source);
+      }
       refetch();
       showAlert('글귀가 생성되었습니다.', true, () => {
         handleQuoteCount();
@@ -77,9 +85,17 @@ const Quote = () => {
   };
 
   const updateQuote = async quoteData => {
-    console.log(quoteData);
     try {
-      await putQuote(quoteData.quoteId, quoteData.content, quoteData.source);
+      if (quoteData.backgroundImg) {
+        await putQuote(
+          quoteData.quoteId,
+          quoteData.content,
+          quoteData.source,
+          quoteData.backgroundImg
+        );
+      } else {
+        await putQuote(quoteData.quoteId, quoteData.content, quoteData.source);
+      }
       refetch();
       showAlert('글귀가 수정되었습니다.', true, () => {});
     } catch (error) {
@@ -136,6 +152,7 @@ const Quote = () => {
     setEditQuote(quote);
     setShowInput(true);
   };
+  console.log(quotes, selectedQuoteIndex);
 
   return (
     <WrapContainer>
@@ -173,14 +190,14 @@ const Quote = () => {
           setShowInput={setShowInput}
           initialQuote={editQuote ? editQuote.content : extractedText}
           initialSource={editQuote ? editQuote.source : ''}
-          isEdit={!!editQuote} // 수정 여부
-          quoteId={editQuote ? editQuote.quoteId : null} // 수정할 때 quoteId 전달
+          isEdit={!!editQuote}
+          quoteId={editQuote ? editQuote.quoteId : null}
           onClose={handleCloseQuoteInput}
         />
       )}
       {selectedQuoteIndex !== null && (
         <QuoteDetailModal
-          guoteData={quotes[selectedQuoteIndex]}
+          quoteId={quotes[selectedQuoteIndex].quoteId}
           setSelectedQuote={setSelectedQuoteIndex}
           onNextQuote={handleNextQuote}
           onPrevQuote={handlePrevQuote}
