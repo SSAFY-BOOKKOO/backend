@@ -237,7 +237,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
     }
 
     @Transactional
-    protected void deleteMember(Long memberId) {
+    public void deleteMember(Long memberId) {
         memberInfoRepository.deleteById(memberId);
     }
 
