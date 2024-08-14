@@ -24,14 +24,11 @@ const BookShelf = ({
 }) => {
   const totalSlots = 21; // 3층에 7개의 슬롯
 
-  if (
-    !libraryStyleDto.libraryColor ||
-    libraryStyleDto.libraryColor === '#FFFFFF'
-  ) {
-    libraryStyleDto.libraryColor = 'bg-[#a27045]';
-  }
-
   let primaryColorClass = libraryStyleDto?.libraryColor;
+
+  if (!primaryColorClass || primaryColorClass === '#FFFFFF') {
+    primaryColorClass = 'bg-[#a27045]';
+  }
 
   const secondaryColorClass =
     primaryColorClass === 'bg-[#a27045]'
@@ -75,9 +72,15 @@ const BookShelf = ({
       <div
         className={`rounded-xl shadow-lg w-full max-w-full overflow-x-auto p-2 ${secondaryColorClass}`}
       >
-        {renderShelf(0, 7, primaryColorClass)} {/* 1층 */}
-        {renderShelf(7, 14, primaryColorClass)} {/* 2층 */}
-        {renderShelf(14, 21, primaryColorClass)} {/* 3층 */}
+        {books.length > 0 ? (
+          <>
+            {renderShelf(0, 7, primaryColorClass)} {/* 1층 */}
+            {renderShelf(7, 14, primaryColorClass)} {/* 2층 */}
+            {renderShelf(14, 21, primaryColorClass)} {/* 3층 */}
+          </>
+        ) : (
+          <p className='text-center text-gray-500'>서재에 책이 없습니다.</p>
+        )}
       </div>
     </div>
   );

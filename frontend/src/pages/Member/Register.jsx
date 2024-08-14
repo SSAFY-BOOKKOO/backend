@@ -72,7 +72,7 @@ const RegisterPage = () => {
         const response = await postCategories();
         setCategories(response);
       } catch (error) {
-        console.error(error);
+        console.error('Failed to fetch categories', error);
       }
     };
     fetchCategories();
@@ -288,9 +288,8 @@ const RegisterPage = () => {
             isOpen: true,
             confirmOnly: true,
             message: '회원가입이 완료되었습니다.',
-            onConfirm: () => navigate('/'),
+            onConfirm: () => navigate('/library'),
           });
-          setStep(3);
         } else {
           setAlert({
             isOpen: true,
