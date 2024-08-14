@@ -43,13 +43,29 @@ public class Quote extends BaseEntity {
     @Column(name = "background_img_url")
     private String backgroundImgUrl;
 
+    @Setter
+    @Column(name = "font_name")
+    private String fontName;
+
+    @Setter
+    @Column(name = "font_color")
+    private String fontColor;
+
+    @Setter
+    @Column(name = "font_size")
+    private Integer fontSize;
+
     @Builder
     public Quote(Long id, MemberInfo memberInfo, String source, String content,
-        String backgroundImgUrl) {
+        String backgroundImgUrl,
+        String fontName, String fontColor, Integer fontSize) {
         this.id = id;
         this.memberInfo = memberInfo;
         this.source = source;
         this.content = content;
         this.backgroundImgUrl = backgroundImgUrl;
+        this.fontName = fontName;
+        this.fontColor = fontColor;
+        this.fontSize = fontSize;
     }
 }
