@@ -7,6 +7,7 @@ import { authAxiosInstance } from '@services/axiosInstance';
 import { useAtom } from 'jotai';
 import { alertAtom } from '@atoms/alertAtom';
 import Alert from '@components/@common/Alert';
+import Spinner from '@components/@common/Spinner'; // 스피너 컴포넌트 임포트
 import { postCategories } from '@services/Book';
 
 const ProfilePage = () => {
@@ -69,12 +70,16 @@ const ProfilePage = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className='flex justify-center items-center min-h-screen'>
+        <Spinner /> {/* 로딩 중에 스피너를 표시 */}
+      </div>
+    );
   }
 
   return (
     <div className='max-w-md mx-auto'>
-      <div className='flex border-b '>
+      <div className='flex border-b'>
         <button
           className={`flex-1 py-2 text-center ${
             activeTab === 'profile'

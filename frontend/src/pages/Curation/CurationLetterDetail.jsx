@@ -13,7 +13,7 @@ const CurationLetterDetail = () => {
   const navigate = useNavigate();
   const { isOpen, closeModal, toggleModal } = useModal();
   const [nickName, setNickName] = useState('');
-  const [letter, setLetter] = useState('');
+  const [letter, setLetter] = useState({});
   const [, showAlert] = useAtom(showAlertAtom);
   const modalVisible = location.state?.modalVisible ?? true; // 기본값은 true로 설정
 
@@ -43,17 +43,29 @@ const CurationLetterDetail = () => {
     fetchLetterDetail();
   }, [id]);
 
-  // 레터 보관
-  const handleLetterStore = async () => {
+  // 레터 보관/보관 해제
+  const handleLetterStoreToggle = async () => {
     try {
       await authAxiosInstance.post(`/curations/store/${id}`, {});
-      showAlert('레터가 성공적으로 보관되었습니다!', true, () => {
-        navigate('/curation/receive');
-      });
-      console.log('보관');
+      const newStoredStatus = !letter.isStored;
+      setLetter(prevLetter => ({ ...prevLetter, isStored: newStoredStatus }));
+      showAlert(
+        newStoredStatus
+          ? '레터가 성공적으로 보관되었습니다!'
+          : '레터 보관이 성공적으로 해제되었습니다!',
+        true,
+        () => {
+          navigate('/curation/receive');
+        }
+      );
     } catch (err) {
-      console.error('Failed to store letter:', err);
-      showAlert('레터 보관에 실패했습니다. 다시 시도해 주세요.', true);
+      console.error('Failed to store/unstore letter:', err);
+      showAlert(
+        letter.isStored
+          ? '레터 보관 해제에 실패했습니다. 다시 시도해 주세요.'
+          : '레터 보관에 실패했습니다. 다시 시도해 주세요.',
+        true
+      );
     }
   };
 
@@ -61,7 +73,9 @@ const CurationLetterDetail = () => {
   const handleLetterDelete = async () => {
     try {
       await authAxiosInstance.delete(`/curations/${id}`, {});
-      showAlert('레터가 성공적으로 삭제되었습니다!', true, () => {});
+      showAlert('레터가 성공적으로 삭제되었습니다!', true, () => {
+        navigate('/curation/receive');
+      });
     } catch (err) {
       console.error('Failed to delete letter:', err);
       showAlert('레터 삭제에 실패했습니다. 다시 시도해 주세요.', true);
@@ -69,7 +83,10 @@ const CurationLetterDetail = () => {
   };
 
   const actions = [
-    { label: '레터 보관', onClick: handleLetterStore },
+    {
+      label: letter.isStored ? '보관 해제' : '레터 보관',
+      onClick: handleLetterStoreToggle,
+    },
     { label: '레터 삭제', onClick: handleLetterDelete },
   ];
 

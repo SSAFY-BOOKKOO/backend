@@ -3,7 +3,7 @@ import WrapContainer from '@components/Layout/WrapContainer';
 import Button from '@components/@common/Button';
 import BookCreateModal from '@components/Library/BookCreate/BookCreateModal';
 import useModal from '@hooks/useModal';
-import { book } from '@mocks/BookData';
+import Spinner from '@components/@common/Spinner';
 import { getAladinBookByIsbn } from '@services/Book';
 import { useParams } from 'react-router-dom';
 
@@ -11,7 +11,7 @@ const SearchBookDetail = () => {
   const { isOpen, toggleModal } = useModal();
   const { bookId } = useParams();
   const [book, setBook] = useState([]);
-  const [loading, setLoading] = useState(false); // 로딩여부
+  const [loading, setLoading] = useState(false);
 
   const handleGetBook = async () => {
     setLoading(true);
@@ -32,25 +32,30 @@ const SearchBookDetail = () => {
 
   return (
     <WrapContainer>
-      {loading && <div>Loading...</div>}
-      <div className=''>
-        <div className='h-96 w-full flex justify-center my-3'>
-          <img
-            src={book?.coverImgUrl}
-            className='max-h-full max-w-full object-contain rounded-lg'
-            alt={book?.title}
-          />
+      {loading ? (
+        <div className='flex justify-center items-center h-full'>
+          <Spinner />
         </div>
-        <p className='text-overflow-2 text-xl font-semibold'>{book?.title}</p>
-        <p className='text-base text-gray-600'>{book?.author}</p>
-        <p className='text-base text-gray-600'>
-          {book?.publisher} | {book?.publishedAt}
-        </p>
-        <p className='text-base my-3'>{book?.summary}</p>
-        <Button full onClick={toggleModal}>
-          내 서재에 등록
-        </Button>
-      </div>
+      ) : (
+        <div className=''>
+          <div className='h-96 w-full flex justify-center my-3'>
+            <img
+              src={book?.coverImgUrl}
+              className='max-h-full max-w-full object-contain rounded-lg'
+              alt={book?.title}
+            />
+          </div>
+          <p className='text-overflow-2 text-xl font-semibold'>{book?.title}</p>
+          <p className='text-base text-gray-600'>{book?.author}</p>
+          <p className='text-base text-gray-600'>
+            {book?.publisher} | {book?.publishedAt}
+          </p>
+          <p className='text-base my-3'>{book?.summary}</p>
+          <Button full onClick={toggleModal}>
+            내 서재에 등록
+          </Button>
+        </div>
+      )}
       <BookCreateModal
         isCreateModalOpen={isOpen}
         toggleCreateModal={toggleModal}

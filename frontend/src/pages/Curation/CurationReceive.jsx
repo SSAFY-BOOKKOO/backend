@@ -84,13 +84,13 @@ const CurationReceive = () => {
           setAlert({
             isOpen: true,
             confirmOnly: true,
-            message: '보관이 완료되었습니다.',
+            message: '레터가 성공적으로 보관되었습니다.',
           });
         } else {
           setAlert({
             isOpen: true,
             confirmOnly: true,
-            message: '보관이 해제되었습니다.',
+            message: '레터가 성공적으로 보관이 해제되었습니다.',
           });
         }
       })
