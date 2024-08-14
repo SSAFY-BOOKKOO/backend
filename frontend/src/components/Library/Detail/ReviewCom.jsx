@@ -111,7 +111,7 @@ const ReviewCom = ({ onBackClick, book }) => {
   // 한줄평 조회
   const handleConfirmReview = () => {
     const bookId = id;
-    const reviewId = book.reviewId;
+    const reviewId = book.review.id;
     authAxiosInstance
       .get(`/books/${bookId}/reviews/${reviewId}`)
       .then(res => {
