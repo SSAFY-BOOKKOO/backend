@@ -1,9 +1,9 @@
 import React from 'react';
 import RegisterInput from './RegisterInput';
-import Button from '../@common/Button';
+import Button from '@components/@common/Button';
 import { useSetAtom } from 'jotai';
 import { alertAtom } from '@atoms/alertAtom';
-import RadioButton from '../@common/RadioButton';
+import RadioButton from '@components/@common/RadioButton';
 
 const RegisterStep2 = ({
   formData,

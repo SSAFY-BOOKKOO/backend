@@ -2,7 +2,7 @@ import React, { useEffect, useId, useRef, useState, forwardRef } from 'react';
 import { DayPicker } from 'react-day-picker';
 import { format, isValid, parse } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import Input from '../../@common/Input';
+import Input from '@components/@common/Input';
 import IconButton from '@components/@common/IconButton';
 import { IoCloseSharp } from 'react-icons/io5';
 import 'react-day-picker/dist/style.css';

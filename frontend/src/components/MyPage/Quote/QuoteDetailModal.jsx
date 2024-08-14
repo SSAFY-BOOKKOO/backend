@@ -4,7 +4,7 @@ import IconButton from '@components/@common/IconButton';
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
 import { IoCloseSharp } from 'react-icons/io5';
 import { BiSolidQuoteAltLeft } from 'react-icons/bi';
-import CaptureButton from '../../Library/Main/CaptureButton';
+import CaptureButton from '@components/Library/Main/CaptureButton';
 import Spinner from '@components/@common/Spinner';
 import { getQuoteDetail } from '@services/Member';
 import { useAtom } from 'jotai';

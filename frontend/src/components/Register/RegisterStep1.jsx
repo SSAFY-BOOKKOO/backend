@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSetAtom } from 'jotai';
 import RegisterInput from './RegisterInput';
-import Button from '../@common/Button';
+import Button from '@components/@common/Button';
 import {
   checkEmailDuplicate,
   checkNicknameDuplicate,
@@ -12,7 +12,7 @@ import {
   errorAtom,
 } from '@atoms/RegisterAtom';
 import { alertAtom } from '@atoms/alertAtom';
-import Alert from '../@common/Alert';
+import Alert from '@components/@common/Alert';
 
 const RegisterStep1 = ({
   formData,

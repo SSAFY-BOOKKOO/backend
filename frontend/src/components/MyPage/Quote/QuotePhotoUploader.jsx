@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useAtom } from 'jotai';
 import { showAlertAtom } from '@atoms/alertAtom';
-import Button from '../../@common/Button';
+import Button from '@components/@common/Button';
 
 const QuotePhotoUploader = ({ onPhotoSelect, initialImage }) => {
   const [imageSrc, setImageSrc] = useState(initialImage || null);

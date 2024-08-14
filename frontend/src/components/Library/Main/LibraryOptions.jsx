@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useSetAtom } from 'jotai';
 import DeleteLibraryModal from './DeleteLibraryModal';
-import SettingsModal from '../../@common/SettingsModal';
-import Alert from '../../@common/Alert';
+import SettingsModal from '@components/@common/SettingsModal';
+import Alert from '@components/@common/Alert';
 import { alertAtom } from '@atoms/alertAtom';
 import CreateLibraryModal from './CreateLibraryModal';
 import ChangeLibraryNameModal from './ChangeLibraryNameModal';
 import ChangeFontStyleModal from './ChangeFontStyleModal';
 import CaptureButton from './CaptureButton';
-import ChangeLibraryColorModal from './ChangeLibraryColorModal'; // Import the color change modal
+import ChangeLibraryColorModal from './ChangeLibraryColorModal';
 
 const LibraryOptions = ({
   activeLibrary,

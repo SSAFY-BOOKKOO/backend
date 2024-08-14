@@ -3,7 +3,7 @@ import CurationTab from '@components/Curation/CurationTab';
 import { useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
 import { IoIosArrowForward } from 'react-icons/io';
-import { axiosInstance, authAxiosInstance } from '../../services/axiosInstance';
+import { axiosInstance, authAxiosInstance } from '@services/axiosInstance';
 import { BsEnvelopeHeart } from 'react-icons/bs';
 import Spinner from '@components/@common/Spinner';
 

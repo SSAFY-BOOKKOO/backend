@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CurationTab from '@components/Curation/CurationTab';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { authAxiosInstance } from '../../services/axiosInstance';
+import { authAxiosInstance } from '@services/axiosInstance';
 import { IoIosArrowBack } from 'react-icons/io';
 import { IoIosArrowForward } from 'react-icons/io';
 import { BsEnvelopeHeart } from 'react-icons/bs';

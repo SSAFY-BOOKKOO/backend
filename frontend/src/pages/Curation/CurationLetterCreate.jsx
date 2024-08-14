@@ -4,10 +4,10 @@ import Button from '@components/@common/Button';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { curationBookAtom } from '@atoms/curationBookAtom';
-import { authAxiosInstance } from '../../services/axiosInstance';
+import { authAxiosInstance } from '@services/axiosInstance';
 import { BsEnvelopeHeart } from 'react-icons/bs';
-import Alert from '../../components/@common/Alert';
-import { showAlertAtom } from '../../atoms/alertAtom';
+import Alert from '@components/@common/Alert';
+import { showAlertAtom } from '@atoms/alertAtom';
 
 const CreateLetter = () => {
   const [title, setTitle] = useState('');

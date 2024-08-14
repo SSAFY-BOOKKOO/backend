@@ -1,4 +1,4 @@
-import { authAxiosInstance } from '../../services/axiosInstance';
+import { authAxiosInstance } from '@services/axiosInstance';
 import React, { useEffect, useState } from 'react';
 // 차트 만들기
 import { Doughnut } from 'react-chartjs-2';

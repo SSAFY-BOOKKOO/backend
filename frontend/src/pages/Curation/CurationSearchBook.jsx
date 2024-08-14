@@ -7,7 +7,7 @@ import useBookInfiniteScroll from '@hooks/useBookInfiniteScroll';
 import WrapContainer from '@components/Layout/WrapContainer';
 import useModal from '@hooks/useModal';
 import { useSetAtom } from 'jotai';
-import { curationBookAtom } from '../../atoms/curationBookAtom';
+import { curationBookAtom } from '@atoms/curationBookAtom';
 
 const BookSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
