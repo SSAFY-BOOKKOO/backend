@@ -1,11 +1,11 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { getLibrarySearchBooks } from '@services/Library';
+import { postBookTalkSearch } from '@services/BookTalk';
 
 const useBookTalkSearchInfiniteScroll = (text, tag, limit = 10) => {
   return useInfiniteQuery({
     queryKey: ['booktalk', text, tag],
     queryFn: ({ pageParam = 0 }) =>
-      getLibrarySearchBooks(text, tag, pageParam, limit),
+      postBookTalkSearch(text, tag, pageParam, limit),
     getNextPageParam: (lastPage, allPages) => {
       if (lastPage.length < limit) {
         return undefined;

@@ -138,3 +138,138 @@ export const getInfoByNickName = async nickName => {
     throw error;
   }
 };
+
+// 글귀 이미지 텍스트 추출
+export const postQuoteOcr = async image => {
+  let formData = new FormData();
+  formData.append('image', image);
+
+  try {
+    const response = await authAxiosInstance.post(
+      '/members/quote/ocr',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('OCR failed:', error);
+    throw error;
+  }
+};
+
+// 글귀 목록 조회
+export const getQuoteList = async (page = 0, size = 10) => {
+  try {
+    const params = {
+      page,
+      size,
+      sort: 'string',
+    };
+
+    const response = await authAxiosInstance.get('/members/quote', { params });
+    return response.data;
+  } catch (error) {
+    console.error('get quote list failed:', error);
+    throw error;
+  }
+};
+// 글귀 생성
+export const postQuote = async (content, source, backgroundImg = null) => {
+  const quoteDto = JSON.stringify({
+    source,
+    content,
+  });
+
+  let formData = new FormData();
+  formData.append('quoteDto', quoteDto);
+
+  if (backgroundImg) {
+    formData.append('backgroundImg', backgroundImg);
+  }
+
+  try {
+    const response = await authAxiosInstance.post('/members/quote', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('post quote failed:', error);
+    throw error;
+  }
+};
+
+// 글귀 수정
+export const putQuote = async (
+  quoteId,
+  content,
+  source,
+  backgroundImg = null
+) => {
+  const quoteDto = JSON.stringify({
+    quoteId,
+    source,
+    content,
+  });
+
+  let formData = new FormData();
+  formData.append('quoteDto', quoteDto);
+
+  if (backgroundImg) {
+    formData.append('backgroundImg', backgroundImg);
+  }
+
+  try {
+    const response = await authAxiosInstance.put('/members/quote', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('put quote failed:', error);
+    throw error;
+  }
+};
+
+// 글귀 상세 보기
+export const getQuoteDetail = async quoteId => {
+  try {
+    const response = await authAxiosInstance.get(
+      `/members/quote/detail/${quoteId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Get Quote detail failed:', error);
+    throw error;
+  }
+};
+
+// 글귀 삭제
+export const deleteQuote = async quoteId => {
+  try {
+    const response = await authAxiosInstance.delete(
+      `/members/quote/${quoteId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('delete Quote detail failed:', error);
+    throw error;
+  }
+};
+
+// 글귀 개수 반환
+export const getQuoteCount = async () => {
+  try {
+    const response = await authAxiosInstance.get(`/members/quote/count`);
+    return response.data;
+  } catch (error) {
+    console.error('Quote count failed:', error);
+    throw error;
+  }
+};

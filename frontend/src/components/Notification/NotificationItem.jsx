@@ -63,7 +63,7 @@ const NotificationItem = ({ notification }) => {
       <div className='flex items-center justify-center bg-green-400 rounded-full p-3 mr-4'>
         <FaRegBell className='text-white' />
       </div>
-      <div className='flex-1'>
+      <div className='flex-1 cursor-pointer'>
         <p className='text-base text-gray-600'>{renderNotification()}</p>
         <p className='text-xs text-gray-400 mt-1'>
           {notification?.createdAt === undefined

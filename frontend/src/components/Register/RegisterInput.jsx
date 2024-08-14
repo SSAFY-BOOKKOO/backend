@@ -29,7 +29,7 @@ const RegisterInput = ({
         <Textarea
           {...commonProps}
           inputWidth='w-full'
-          customClass={`${error ? 'border-red-500' : ''}`}
+          customClass={`${error ? 'border-red-500' : ''} max-h-36`}
         />
       ) : (
         <Input

@@ -1,10 +1,10 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { getNotifications } from '@services/Member';
+import { getQuoteList } from '@services/Member';
 
-const useNotificationInfiniteScroll = () => {
+const useQuoteInfiniteScroll = () => {
   return useInfiniteQuery({
-    queryKey: ['notifications'],
-    queryFn: ({ pageParam = 0 }) => getNotifications(pageParam, 10),
+    queryKey: ['quotes'],
+    queryFn: ({ pageParam = 0 }) => getQuoteList(pageParam, 10),
     getNextPageParam: (lastPage, allPages) => {
       if (lastPage.length === 0) {
         return undefined;
@@ -16,4 +16,4 @@ const useNotificationInfiniteScroll = () => {
   });
 };
 
-export default useNotificationInfiniteScroll;
+export default useQuoteInfiniteScroll;
