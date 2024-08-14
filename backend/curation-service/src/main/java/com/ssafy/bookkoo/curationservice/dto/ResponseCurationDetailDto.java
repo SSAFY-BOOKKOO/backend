@@ -16,7 +16,8 @@ public record ResponseCurationDetailDto(
     String createdAt,
     String bookTitle,
     String author,
-    String summary
+    String summary,
+    Boolean isStored
 ) {
 
 }
