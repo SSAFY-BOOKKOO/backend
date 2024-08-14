@@ -129,6 +129,7 @@ public class CurationServiceImpl implements CurationService {
         ResponseMemberInfoDto writerInfo = memberServiceClient.getMemberInfoById(
             curation.getWriter());
         // 작성자가 본인이 아닐경우 본인에게 온 메세지가 맞는지 확인
+        Boolean isStored = false;
         if (!curation.getWriter()
                      .equals(memberId)) {
             // PassPort 에서 읽은사람 가져오기
@@ -138,6 +139,7 @@ public class CurationServiceImpl implements CurationService {
                                                                   // 자신이 받은 큐레이션이 아닐경우 권한 Exception 던져야함
                                                                   () -> new CurationNotFoundException(
                                                                       curationId));
+            isStored = curationSend.getIsStored();
             //읽기 처리
             curationSend.read();
         }
@@ -157,6 +159,7 @@ public class CurationServiceImpl implements CurationService {
                                             .content(curation
                                                 .getContent())
                                             .writer(writerInfo.nickName())
+                                            .isStored(isStored)
                                             .build();
         } catch (FeignClientException exception) {
             throw new BookNotFoundException(curation.getBook());
