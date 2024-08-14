@@ -19,7 +19,7 @@ public class MemberExceptionHandler {
      * @return
      */
     @ExceptionHandler(EmailNotValidException.class)
-    public ResponseEntity<String> handleEmailDuplicateException(EmailNotValidException e) {
+    public ResponseEntity<String> handleEmailNotValidException(EmailNotValidException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body(e.getMessage());
     }
