@@ -25,7 +25,16 @@ public interface ReviewService {
      * @param memberId 사용자 ID
      * @return 조회된 리뷰 응답 DTO
      */
-    ResponseReviewDto getReviewById(Long bookId, Long memberId);
+    ResponseReviewDto getMyReview(Long bookId, Long memberId);
+
+    /**
+     * 특정 리뷰 ID를 기반으로 리뷰를 조회합니다.
+     *
+     * @param bookId   책 ID
+     * @param reviewId 리뷰 ID
+     * @return 조회된 리뷰 응답 DTO
+     */
+    ResponseReviewDto getReviewById(Long bookId, Long reviewId);
 
     /**
      * 새로운 리뷰를 추가합니다.

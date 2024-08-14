@@ -57,11 +57,26 @@ public class ReviewServiceImpl implements ReviewService {
      */
     @Override
     @Transactional(readOnly = true)
-    public ResponseReviewDto getReviewById(Long bookId, Long memberId) {
+    public ResponseReviewDto getMyReview(Long bookId, Long memberId) {
         Review review = reviewRepository.findByBookIdMemberId(bookId, memberId);
         if (review == null) {
             return null;
         }
+        return reviewMapper.toDto(review);
+    }
+
+    /**
+     * 특정 리뷰 ID를 기반으로 리뷰를 조회합니다.
+     *
+     * @param bookId   책 ID
+     * @param reviewId 리뷰 ID
+     * @return 조회된 리뷰 응답 DTO
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseReviewDto getReviewById(Long bookId, Long reviewId) {
+        Review review = findReviewByIdWithException(reviewId);
+
         return reviewMapper.toDto(review);
     }
 
