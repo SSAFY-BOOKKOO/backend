@@ -212,6 +212,17 @@ public class MemberExceptionHandler {
     }
 
     /**
+     * 서재 삭제 과정에서 예외 발생
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(DeleteLibrariesFailException.class)
+    public ResponseEntity<String> handleDeleteLibrariesFailException(DeleteLibrariesFailException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(e.getMessage());
+    }
+
+    /**
      * 파라미터 valid 에 벗어나는 잘못된 값을 넣으면 나오는 에러
      *
      * @param e MethodArgumentNotValidException
