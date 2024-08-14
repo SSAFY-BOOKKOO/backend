@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
 import Book from './Book';
 import EmptySlot from './EmptySlot';
+import { showAlertAtom } from '@atoms/alertAtom';
 
 const getSecondaryColorClass = primaryColorClass => {
   const colorMap = {
@@ -22,7 +25,24 @@ const BookShelf = ({
   viewOnly,
   libraryStyleDto,
 }) => {
+  const navigate = useNavigate();
+  const [, showAlert] = useAtom(showAlertAtom);
   const totalSlots = 21; // 3층에 7개의 슬롯
+
+  useEffect(() => {
+    if (!viewOnly && books.length === 0) {
+      showAlert(
+        '서재가 비어있습니다. 빈 서재를 클릭하면 검색창으로 이동합니다.',
+        true
+      );
+    }
+  }, [viewOnly, books, showAlert]);
+
+  const handleShelfClick = () => {
+    if (!viewOnly && books.length === 0) {
+      navigate('/search');
+    }
+  };
 
   let primaryColorClass = libraryStyleDto?.libraryColor;
 
@@ -71,6 +91,7 @@ const BookShelf = ({
     <div className='p-4 flex flex-col items-center'>
       <div
         className={`rounded-xl shadow-lg w-full max-w-full overflow-x-auto p-2 ${secondaryColorClass}`}
+        onClick={handleShelfClick}
       >
         {renderShelf(0, 7, primaryColorClass)} {/* 1층 */}
         {renderShelf(7, 14, primaryColorClass)} {/* 2층 */}
