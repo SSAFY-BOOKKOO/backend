@@ -37,4 +37,6 @@ public interface MemberInfoService {
     MemberInfo getMemberInfoEntity(Long memberId);
 
     void deleteMember(Long memberId);
+
+    void deleteMemberHistory(Long memberId);
 }
