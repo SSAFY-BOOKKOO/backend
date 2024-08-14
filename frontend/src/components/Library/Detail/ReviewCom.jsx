@@ -56,31 +56,23 @@ const ReviewCom = ({ onBackClick, book }) => {
   const [editReview, setEditingReview] = useState(false);
   const [reviewText, setReviewText] = useState('');
   const [surfingReviews, setSurfingReviews] = useState([]);
-  const [rating, setRating] = useState(5); // Default rating, adjust as necessary
-  const [reviewId, setReviewId] = useState(null); // Store the review ID
+  const [rating, setRating] = useState(5);
+  const [reviewId, setReviewId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [currentReview, setCurrentReview] = useState(null);
   const [reviewContent, setReviewContent] = useState('');
 
   const titleMaxLength = 10;
 
-  // 내가 쓴 리뷰 확인
-  // useEffect(() => {
-  //   handleConfirmReview();
-  // }, []);
-
-  useEffect(() => {
-    console.log(book);
-  }, []);
-
-  useEffect(() => {
-    console.log(reviewContent);
-  }, [reviewContent]);
-  ///////////////////////////// 파도타기
+  // 파도타기
   // 리뷰 처음 제시
   useEffect(() => {
     fetchReviews();
   }, [id]);
+
+  useEffect(() => {
+    handleConfirmReview();
+  }, []);
 
   const fetchReviews = () => {
     const bookId = id;
@@ -109,53 +101,55 @@ const ReviewCom = ({ onBackClick, book }) => {
   };
 
   // 한줄평 조회
-  const handleConfirmReview = () => {
+  const handleConfirmReview = async () => {
     const bookId = id;
-    const reviewId = book.reviewId;
-    authAxiosInstance
-      .get(`/books/${bookId}/reviews/${reviewId}`)
+    await authAxiosInstance
+      .get(`/books/${bookId}/reviews`)
       .then(res => {
-        console.log('Review:', res.data); // 전체 확인
-        setReviewContent(res.data.content);
+        if (res.data.length > 0) {
+          setReviewContent(res.data[0].content);
+          setReviewId(res.data[0].id);
+        }
       })
-      .catch(err => {
-        console.log('Error confirm review:', err);
-        console.log('book:', book);
-      });
+      .catch(err => {});
   };
 
-  ///////////////////////// 내 한줄평 작성
-  const handleSaveReview = () => {
-    // if (!reviewContent) {
-    //   alert('리뷰 내용을 입력해 주세요.');
-    //   return;
-    // }
-
+  // 내 한줄평 작성
+  const handleSaveReview = async () => {
     setEditingReview(false);
     const bookId = id;
-    authAxiosInstance
+    await authAxiosInstance
       .post(`/books/${bookId}/reviews`, { content: reviewContent })
       .then(res => {
-        console.log('Review saved:', res); // 전체 확인
         setReviewContent(res.data.content);
-        book.reviewId = res.data.id; // book에 reviewId 추가
-        book.review = res.data.content;
-        console.log(book); // 북에 들어갔나 확인
+        setReviewId(res.data.id);
       })
       .catch(err => {
         console.log('Error saving review:', err);
       });
   };
 
-  ////////////////////////// 한줄평 삭제 핸들러
-  const handleDeleteReview = () => {
+  // 내 한줄평 수정
+  const handleUpdateReview = async () => {
+    await authAxiosInstance
+      .put(`/books/${id}/reviews/${reviewId}`, { content: reviewContent })
+      .then(res => {
+        setReviewContent(res.data.content);
+        setReviewId(res.data.id);
+      })
+      .catch(err => {
+        console.log('Error updating review:', err);
+      });
+  };
+
+  // 한줄평 삭제 핸들러
+  const handleDeleteReview = async () => {
     const bookId = id;
-    const reviewId = book.review.id;
-    authAxiosInstance
+    await authAxiosInstance
       .delete(`/books/${bookId}/reviews/${reviewId}`)
       .then(res => {
-        console.log('Review Delete:', res); // 전체 확인\
-        console.log('삭제 완료');
+        setReviewContent('');
+        setReviewId(null);
       })
       .catch(err => {
         console.error('Error deleting review:', err);
@@ -164,7 +158,6 @@ const ReviewCom = ({ onBackClick, book }) => {
 
   // 리뷰 더보기
   const handleMoreReview = review => {
-    console.log('Selected Review:', review); // review 객체 전체를 출력
     setCurrentReview(review);
     setShowModal(true);
   };
@@ -206,7 +199,6 @@ const ReviewCom = ({ onBackClick, book }) => {
                 className='flex items-center space-x-3 cursor-pointer'
                 onClick={() => handleMoreReview(review)}
               >
-                {/* <CgProfile className='text-2xl mb-5' /> */}
                 <img
                   src={review.member.profilImgUrl}
                   alt='Profile'
@@ -224,45 +216,28 @@ const ReviewCom = ({ onBackClick, book }) => {
 
       <div className='pl-8 pt-5 bg-pink-500 rounded-b-md opacity-70 w-full h-[215px] flex-shrink-0'>
         <div className='relative bg-white w-10/12 h-44 rounded-lg opacity-70'>
-          {editReview ? (
-            <textarea
-              className='w-full h-44 p-2 bg-white border border-gray-400 rounded resize-none'
-              value={reviewContent}
-              onChange={e => setReviewContent(e.target.value)}
-              onClick={e => e.stopPropagation()}
-              maxLength='70'
-            ></textarea>
-          ) : (
-            <p className='w-full h-44 p-2 pb-4 border border-gray-400 rounded resize-none'>
-              {book.review ? book.review.content : '한줄평을 작성해 보세요!'}
-            </p>
-          )}
+          <textarea
+            className='w-full h-44 p-2 bg-white border border-gray-400 rounded resize-none'
+            value={reviewContent}
+            placeholder='한줄평을 작성해보세요!'
+            disabled={!editReview}
+            onChange={e => setReviewContent(e.target.value)}
+            onClick={e => e.stopPropagation()}
+            maxLength='70'
+          ></textarea>
 
           <div className='absolute top-36 right-2 flex space-x-2'>
             <Button
-              text={editReview ? '저장' : '작성'}
+              text={editReview ? '저장' : reviewId ? '수정' : '작성'}
               size='small'
               color='text-black bg-rose-300'
-              onClick={e => {
+              onClick={async e => {
                 e.stopPropagation();
-                if (book.review) {
-                  alert(
-                    '이미 리뷰가 등록되어 있습니다.\n리뷰 재등록을 원하신다면 삭제 후 재등록해 주세요!'
-                  );
-                  handleConfirmReview();
-
+                if (editReview) {
+                  reviewId ? handleUpdateReview() : handleSaveReview();
                   setEditingReview(false);
-                  console.log(book);
                 } else {
-                  if (editReview) {
-                    handleSaveReview();
-                    handleConfirmReview();
-                    setEditingReview(false);
-                    alert('저장 되었습니다!');
-                    window.location.reload();
-                  } else {
-                    setEditingReview(true); // 작성 가능 상태로 변경
-                  }
+                  setEditingReview(true);
                 }
               }}
               className='px-3 py-1 rounded-md hover:bg-rose-400 transition duration-150'
@@ -274,8 +249,6 @@ const ReviewCom = ({ onBackClick, book }) => {
               onClick={e => {
                 e.stopPropagation();
                 handleDeleteReview();
-                setReviewContent(''); // textarea의 값을 초기화
-                window.location.reload();
               }}
               className='px-3 py-1 rounded-md hover:bg-rose-400 transition duration-150'
             />

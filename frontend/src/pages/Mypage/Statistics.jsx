@@ -17,32 +17,36 @@ const Statistics = () => {
   };
 
   // 책 정보 받기
+  // useEffect(() => {
+  //   const fetchStatistics = async () => {
+  //     try {
+
+  //       const responses = await Promise.all(
+  //         statuses.map( =>
+  //           authAxiosInstance.get('/stats/categories')
+
+  //       // Combine all responses into one array
+  //       const allData = responses.map(res => res.data).flat();
+  //       setMyBooks(allData);
+  //       console.log(allData);
+  //     } catch (error) {
+  //       console.log('error:', error);
+  //     }
+  //   };
+
+  //   fetchStatistics();
+  // }, []);
+
   useEffect(() => {
-    const fetchStatistics = async () => {
-      try {
-        const statuses = ['DIB', 'READ', 'READING'];
-        const responses = await Promise.all(
-          statuses.map(status =>
-            authAxiosInstance.get('/stats/categories', {
-              params: {
-                startAt: '1000-07-24', // Set your desired start date here
-                endAt: getTodayDate(), // Set today's date as end date
-                status: status, // Current status in the loop
-              },
-            })
-          )
-        );
-
-        // Combine all responses into one array
-        const allData = responses.map(res => res.data).flat();
-        setMyBooks(allData);
-        console.log(allData);
-      } catch (error) {
-        console.log('error:', error);
-      }
-    };
-
-    fetchStatistics();
+    authAxiosInstance
+      .get('/stats/categories')
+      .then(res => {
+        console.log('category static:', res);
+        setMyBooks(res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }, []);
 
   // 도넛차트 세팅

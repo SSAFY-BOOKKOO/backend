@@ -13,7 +13,9 @@ const useBookTalkChatsInfiniteScroll = bookTalkId => {
     },
     initialPageParam: '',
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    refetchOnMount: true,
+    cacheTime: 0,
+    staleTime: 0,
   });
 };
 
