@@ -24,11 +24,14 @@ const BookShelf = ({
 }) => {
   const totalSlots = 21; // 3층에 7개의 슬롯
 
-  let primaryColorClass = libraryStyleDto?.libraryColor;
-
-  if (!primaryColorClass || primaryColorClass === '#FFFFFF') {
-    primaryColorClass = 'bg-[#a27045]';
+  if (
+    !libraryStyleDto.libraryColor ||
+    libraryStyleDto.libraryColor === '#FFFFFF'
+  ) {
+    libraryStyleDto.libraryColor = 'bg-[#a27045]';
   }
+
+  let primaryColorClass = libraryStyleDto?.libraryColor;
 
   const secondaryColorClass =
     primaryColorClass === 'bg-[#a27045]'
