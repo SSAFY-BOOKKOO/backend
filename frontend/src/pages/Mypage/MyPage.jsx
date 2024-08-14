@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaCalendarDays, FaClipboardList } from 'react-icons/fa6';
 import { MdPeopleAlt } from 'react-icons/md';
@@ -17,7 +17,9 @@ const MyPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showFullIntroduction, setShowFullIntroduction] = useState(false);
+  const [isTextClamped, setIsTextClamped] = useState(false);
   const navigate = useNavigate();
+  const introductionRef = useRef(null);
 
   useEffect(() => {
     const fetchMemberInfo = async () => {
@@ -36,6 +38,15 @@ const MyPage = () => {
 
     fetchMemberInfo();
   }, []);
+
+  useEffect(() => {
+    if (introductionRef.current) {
+      const isClamped =
+        introductionRef.current.scrollHeight >
+        introductionRef.current.clientHeight;
+      setIsTextClamped(isClamped);
+    }
+  }, [member]);
 
   if (isLoading) {
     return (
@@ -101,20 +112,23 @@ const MyPage = () => {
             </div>
             <div className='w-full text-left relative'>
               <p
+                ref={introductionRef}
                 className={`text-md text-gray-700 font-medium ${
                   showFullIntroduction ? '' : 'line-clamp-3'
                 }`}
               >
                 {member.introduction}
               </p>
-              <div className='flex justify-end'>
-                <button
-                  onClick={toggleShowFullIntroduction}
-                  className='text-blue-500 text-sm mt-1'
-                >
-                  {showFullIntroduction ? '접기' : '더보기'}
-                </button>
-              </div>
+              {isTextClamped && (
+                <div className='flex justify-end'>
+                  <button
+                    onClick={toggleShowFullIntroduction}
+                    className='text-blue-500 text-sm mt-1'
+                  >
+                    {showFullIntroduction ? '접기' : '더보기'}
+                  </button>
+                </div>
+              )}
             </div>
             <div className='flex flex-wrap mt-2'>
               {member.categories.map((category, index) => (

@@ -149,13 +149,7 @@ const LibraryMain = () => {
           setAlert({
             isOpen: true,
             confirmOnly: true,
-            message: (
-              <>
-                앗! 오류가 발생했습니다.
-                <br />
-                잠시 후 다시 시도해주세요!
-              </>
-            ),
+            message: '책 순서 변경에 실패했습니다. 다시 시도해 주세요.',
           });
         }
       }
@@ -203,13 +197,7 @@ const LibraryMain = () => {
       setAlert({
         isOpen: true,
         confirmOnly: true,
-        message: (
-          <>
-            앗! 오류가 발생했습니다.
-            <br />
-            잠시 후 다시 시도해주세요!
-          </>
-        ),
+        message: '서재명 변경에 실패했습니다. 다시 시도해 주세요.',
       });
       console.error(error);
     }
@@ -251,13 +239,7 @@ const LibraryMain = () => {
       setAlert({
         isOpen: true,
         confirmOnly: true,
-        message: (
-          <>
-            앗! 오류가 발생했습니다.
-            <br />
-            잠시 후 다시 시도해주세요!
-          </>
-        ),
+        message: '폰트 스타일 변경에 실패했습니다. 다시 시도해 주세요.',
       });
       console.error(error);
     }
@@ -274,13 +256,7 @@ const LibraryMain = () => {
       setAlert({
         isOpen: true,
         confirmOnly: true,
-        message: (
-          <>
-            앗! 오류가 발생했습니다.
-            <br />
-            잠시 후 다시 시도해주세요!
-          </>
-        ),
+        message: '서재 삭제에 실패했습니다. 다시 시도해 주세요.',
       });
       console.error(error);
     }
@@ -325,13 +301,7 @@ const LibraryMain = () => {
           setAlert({
             isOpen: true,
             confirmOnly: true,
-            message: (
-              <>
-                앗! 오류가 발생했습니다.
-                <br />
-                잠시 후 다시 시도해주세요!
-              </>
-            ),
+            message: '서재 생성에 실패했습니다. 다시 시도해 주세요.',
           });
           console.error(error);
         }
@@ -352,6 +322,8 @@ const LibraryMain = () => {
       </div>
     );
   }
+
+  const currentLibraryStyleDto = libraries[activeLibrary]?.libraryStyleDto;
 
   const changeLibraryColor = async (libraryId, colorClassName) => {
     try {
@@ -388,13 +360,7 @@ const LibraryMain = () => {
       setAlert({
         isOpen: true,
         confirmOnly: true,
-        message: (
-          <>
-            앗! 오류가 발생했습니다.
-            <br />
-            잠시 후 다시 시도해주세요!
-          </>
-        ),
+        message: '서재 색 변경에 실패했습니다. 다시 시도해 주세요.',
       });
       console.error(error);
     }

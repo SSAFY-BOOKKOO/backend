@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Button from '@components/@common/Button';
 
 const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
   const [showFullIntroduction, setShowFullIntroduction] = useState(false);
+  const [isTextClamped, setIsTextClamped] = useState(false);
+  const introductionRef = useRef(null);
 
   const getCategoryName = categoryId => {
     const category = categories?.find(cat => cat.id === categoryId);
@@ -12,6 +14,15 @@ const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
   const toggleShowFullIntroduction = () => {
     setShowFullIntroduction(!showFullIntroduction);
   };
+
+  useEffect(() => {
+    if (introductionRef.current) {
+      const isClamped =
+        introductionRef.current.scrollHeight >
+        introductionRef.current.clientHeight;
+      setIsTextClamped(isClamped);
+    }
+  }, [member]);
 
   return (
     <div className='space-y-4 mb-16'>
@@ -40,20 +51,23 @@ const ProfileView = ({ member, categories, onEdit, onChangePassword }) => {
           <label className='text-gray-700 font-medium w-1/3'>소개글</label>
           <div className='w-2/3 text-left relative'>
             <p
+              ref={introductionRef}
               className={`text-gray-700 font-medium ${
                 showFullIntroduction ? '' : 'line-clamp-3'
               }`}
             >
               {member.introduction}
             </p>
-            <div className='flex justify-end'>
-              <button
-                onClick={toggleShowFullIntroduction}
-                className='text-blue-500 text-sm mt-1'
-              >
-                {showFullIntroduction ? '접기' : '더보기'}
-              </button>
-            </div>
+            {isTextClamped && (
+              <div className='flex justify-end'>
+                <button
+                  onClick={toggleShowFullIntroduction}
+                  className='text-blue-500 text-sm mt-1'
+                >
+                  {showFullIntroduction ? '접기' : '더보기'}
+                </button>
+              </div>
+            )}
           </div>
         </div>
         <div className='mb-4 flex'>
