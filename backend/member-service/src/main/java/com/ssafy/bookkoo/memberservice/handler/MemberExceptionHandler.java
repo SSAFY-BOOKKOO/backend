@@ -216,8 +216,8 @@ public class MemberExceptionHandler {
      * @param e
      * @return
      */
-    @ExceptionHandler(DeleteLibrariesFailException.class)
-    public ResponseEntity<String> handleDeleteLibrariesFailException(DeleteLibrariesFailException e) {
+    @ExceptionHandler(DeleteFailException.class)
+    public ResponseEntity<String> handleDeleteLibrariesFailException(DeleteFailException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body(e.getMessage());
     }
