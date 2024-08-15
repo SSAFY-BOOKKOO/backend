@@ -36,4 +36,12 @@ public record RequestLibraryBookMapperCreateDto(
 
 ) {
 
+    public RequestLibraryBookMapperCreateDto {
+        if (status == Status.DIB) {
+            startAt = null;
+            endAt = null;
+        } else if (status == Status.READING) {
+            endAt = null;
+        }
+    }
 }
