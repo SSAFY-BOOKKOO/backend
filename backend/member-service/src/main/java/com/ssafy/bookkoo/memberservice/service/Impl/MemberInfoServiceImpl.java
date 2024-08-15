@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -224,6 +225,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      */
     @Override
     @Transactional
+    @CacheEvict(value = "member_profile_info", key = "#memberId")
     @CachePut(value = "member_profile_info", key = "#memberId")
     public ResponseMemberProfileDto updateMemberInfo(
         Long memberId, RequestUpdateMemberInfoDto memberInfoUpdateDto,
