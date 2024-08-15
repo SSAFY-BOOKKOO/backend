@@ -14,8 +14,8 @@ const Friend = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    handleGetFollowers('');
-    handleGetFollowings('');
+    handleGetFollowers();
+    handleGetFollowings();
   }, []);
 
   const handleGetFollowers = async () => {

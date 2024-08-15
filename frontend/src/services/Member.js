@@ -94,6 +94,14 @@ export const getInfoByNickName = async nickName => {
   return response.data;
 };
 
+// 닉네임으로 사용자 정보 가져오기(like)
+export const getInfoByNickNameLike = async nickName => {
+  const response = await authAxiosInstance.get(
+    `/members/info/name/like/${nickName}`
+  );
+  return response.data;
+};
+
 // 글귀 이미지 텍스트 추출
 export const postQuoteOcr = async image => {
   let formData = new FormData();

@@ -1,30 +1,17 @@
 import React from 'react';
-import Button from '@components/@common/Button';
+import ProfileItem from './ProfileItem';
 
 const Following = ({ following, handleUnfollow }) => (
   <div>
     <ul className='space-y-4'>
       {following.map(user => (
-        <li
+        <ProfileItem
           key={user?.memberId}
-          className='flex items-center justify-between pb-3 px-3 border-b'
-        >
-          <div className='flex items-center space-x-4'>
-            <img
-              src={user?.profileImgUrl}
-              alt='user'
-              className='w-12 h-12 rounded-full'
-            />
-            <span className='text-lg'>{user?.nickName}</span>
-          </div>
-          <Button
-            onClick={() => handleUnfollow(user?.memberId)}
-            className='bg-pink-500 hover:bg-pink-500 active:bg-pink-400'
-            size='small'
-          >
-            취소
-          </Button>
-        </li>
+          user={user}
+          actionText='팔로잉 취소'
+          onActionClick={handleUnfollow}
+          buttonClassName='bg-pink-500 hover:bg-pink-500 active:bg-pink-400'
+        />
       ))}
     </ul>
   </div>
