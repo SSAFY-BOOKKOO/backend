@@ -27,6 +27,8 @@ import com.ssafy.bookkoo.memberservice.service.MemberInfoService;
 import com.ssafy.bookkoo.memberservice.service.MemberService;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Value;
@@ -124,6 +126,25 @@ public class MemberInfoServiceImpl implements MemberInfoService {
                                  .getEmail();
         return memberInfoMapper.toResponseProfileDto(email, memberInfo);
     }
+
+    /**
+     * Like를 통해 닉네임으로 멤버 정보 찾기 여러명 반환
+     * @param nickName
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<ResponseMemberProfileDto> getMemberProfileListInfoByNickName(String nickName) {
+        List<MemberInfo> memberInfos = memberInfoRepository.findByNickNameContains(nickName);
+        return memberInfos.stream()
+                          .map(memberInfo -> {
+                              String email = memberInfo.getMember()
+                                                       .getEmail();
+                              return memberInfoMapper.toResponseProfileDto(email, memberInfo);
+                          })
+                          .collect(Collectors.toList());
+    }
+
     /**
      * 멤버 ID(Long)을 통해 멤버 정보를 반환합니다.
      * 멤버 정보 전체를 반환합니다.
