@@ -29,17 +29,10 @@ const BookShelf = ({
   const [, showAlert] = useAtom(showAlertAtom);
   const totalSlots = 21; // 3층에 7개의 슬롯
 
-  useEffect(() => {
-    if (!viewOnly && books.length === 0) {
-      showAlert(
-        '서재가 비어있습니다. 빈 서재를 클릭하면 검색창으로 이동합니다.',
-        true
-      );
-    }
-  }, [viewOnly, books, showAlert]);
 
   const handleShelfClick = () => {
     if (!viewOnly && books.length === 0) {
+      show
       navigate('/search');
     }
   };

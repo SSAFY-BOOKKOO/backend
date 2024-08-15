@@ -68,9 +68,6 @@ const RegisterStep3 = ({
         required
         error={errors.introduction}
       />
-      {errors.introduction && (
-        <p className='text-red-500 text-sm'>{errors.introduction}</p>
-      )}
       <div className='flex justify-between mt-6'>
         <Button
           text='이전'
