@@ -148,7 +148,7 @@ public class MemberInfoController {
     }
 
     @GetMapping("/name/{nickName}")
-    @Operation(summary = "닉네임을 통해 멤버의 프로필 정보를 얻는 API"
+    @Operation(summary = "닉네임을 통해 멤버의 프로필 정보를 얻는 API (동등)"
         , description = "닉네임을 통해 멤버의 프로필 정보를 얻는 API")
     public ResponseEntity<ResponseMemberProfileDto> getMemberProfile(
         @PathVariable(value = "nickName") String nickName
@@ -156,6 +156,17 @@ public class MemberInfoController {
         ResponseMemberProfileDto memberProfileDto
             = memberInfoService.getMemberProfileInfoByNickName(nickName);
         return ResponseEntity.ok(memberProfileDto);
+    }
+
+    @GetMapping("/name/like/{nickName}")
+    @Operation(summary = "닉네임을 통해 멤버의 프로필 정보를 얻는 API (Like)"
+        , description = "닉네임을 통해 멤버의 프로필 정보를 얻는 API")
+    public ResponseEntity<List<ResponseMemberProfileDto>> getMemberProfileByNickName(
+        @PathVariable(value = "nickName") String nickName
+    ) {
+        List<ResponseMemberProfileDto> memberProfileListInfoByNickName
+            = memberInfoService.getMemberProfileListInfoByNickName(nickName);
+        return ResponseEntity.ok(memberProfileListInfoByNickName);
     }
 
 
