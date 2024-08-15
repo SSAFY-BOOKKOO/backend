@@ -20,8 +20,6 @@ const Modal = ({ show, onClose, review }) => {
     navigate('/library', { state: { nickname } });
   };
 
-  console.log('Modal Review:', review);
-
   return (
     <div className='fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50'>
       <div className='bg-green-300 p-3 rounded-lg shadow-lg w-2/3 max-w-md'>
@@ -105,12 +103,10 @@ const ReviewCom = ({ onBackClick, book }) => {
   const handleConfirmReview = async () => {
     const bookId = id;
     await authAxiosInstance
-      .get(`/books/${bookId}/reviews`)
+      .get(`/books/${bookId}/review/me`)
       .then(res => {
-        if (res.data.length > 0) {
-          setReviewContent(res.data[0].content);
-          setReviewId(res.data[0].id);
-        }
+          setReviewContent(res.data.content);
+          setReviewId(res.data.id);
       })
       .catch(err => {});
   };
