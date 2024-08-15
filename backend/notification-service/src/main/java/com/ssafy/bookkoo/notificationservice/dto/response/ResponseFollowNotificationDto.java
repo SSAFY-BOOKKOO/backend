@@ -18,15 +18,19 @@ public class ResponseFollowNotificationDto extends ResponseNotificationDto {
     //팔로우한 사람의 닉네임
     private String nickName;
 
+    private String profileImgUrl;
+
     @Builder
     public ResponseFollowNotificationDto(
         Long notificationId,
         NotificationType notificationType,
         LocalDateTime createdAt,
-        String memberId, String nickName) {
+        String memberId, String nickName,
+        String profileImgUrl) {
         super(notificationId, notificationType, createdAt);
         this.memberId = memberId;
         this.nickName = nickName;
+        this.profileImgUrl = profileImgUrl;
     }
 
     public static ResponseFollowNotificationDto toDto(
@@ -37,6 +41,7 @@ public class ResponseFollowNotificationDto extends ResponseNotificationDto {
                                             .notificationType(NotificationType.follow)
                                             .memberId(memberInfoDto.memberId())
                                             .nickName(memberInfoDto.nickName())
+                                            .profileImgUrl(memberInfoDto.profileImgUrl())
                                             .createdAt(followNotification.getCreatedAt())
                                             .build();
     }
