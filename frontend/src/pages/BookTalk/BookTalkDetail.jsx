@@ -201,7 +201,7 @@ const BookTalkDetail = () => {
       <ProfileModal
         isOpen={isOpen}
         onRequestClose={closeModal}
-        nickname={modalUser?.nickName}
+        user={modalUser}
         profileImgUrl={modalUser?.profileImgUrl}
       />
       <div className='sticky top-0 z-10 bg-white shadow p-4'>
