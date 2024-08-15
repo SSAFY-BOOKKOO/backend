@@ -30,7 +30,7 @@ public interface MemberInfoService {
 
     void updateMemberSetting(Long id, RequestMemberSettingDto memberSettingDto);
 
-    void updateMemberInfo(Long id, RequestUpdateMemberInfoDto memberInfoUpdateDto, MultipartFile profileImg);
+    ResponseMemberProfileDto updateMemberInfo(Long id, RequestUpdateMemberInfoDto memberInfoUpdateDto, MultipartFile profileImg);
 
     List<ResponseRecipientDto> getRecipientsInfo(List<Long> recipientIds);
 
