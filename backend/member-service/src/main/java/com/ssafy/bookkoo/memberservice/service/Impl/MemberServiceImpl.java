@@ -38,6 +38,7 @@ import com.ssafy.bookkoo.memberservice.repository.MemberRepository;
 import com.ssafy.bookkoo.memberservice.repository.MemberSettingRepository;
 import com.ssafy.bookkoo.memberservice.service.MemberService;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -335,12 +336,18 @@ public class MemberServiceImpl implements MemberService {
         RequestSendEmailDto sendEmailDto
             = createEmailSendTemplate(new String[]{email}, "북꾸북꾸 이메일 인증번호", certNum);
 
-        certificationRepository.save(certificationNumber);
+        List<CertificationNumber> certifications = certificationRepository.findByEmail(email);
+
+        for (CertificationNumber certification : certifications) {
+            certificationRepository.deleteById(certification.getId());
+        }
+
         try {
             commonServiceClient.sendMail(sendEmailDto);
         } catch (Exception e) {
             throw new EmailSendFailException();
         }
+        certificationRepository.save(certificationNumber);
     }
 
 
@@ -360,7 +367,6 @@ public class MemberServiceImpl implements MemberService {
                                          requestCertificationDto.email(),
                                          requestCertificationDto.certNum())
                                      .orElseThrow(EmailNotValidException::new);
-        certificationRepository.delete(certificationNumber);
         return true;
     }
 
