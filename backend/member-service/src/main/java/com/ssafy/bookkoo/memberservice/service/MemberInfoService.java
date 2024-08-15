@@ -20,6 +20,8 @@ public interface MemberInfoService {
 
     ResponseMemberProfileDto getMemberProfileInfoByNickName(String nickName);
 
+    List<ResponseMemberProfileDto> getMemberProfileListInfoByNickName(String nickName);
+
     ResponseMemberInfoDto getMemberInfo(Long memberId);
 
     Long getMemberPk(String memberId);
