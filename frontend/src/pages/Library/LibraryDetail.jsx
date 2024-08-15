@@ -13,7 +13,7 @@ import { bookDataAtom } from '@atoms/bookCreateAtom';
 import { IoBookmarkSharp } from 'react-icons/io5';
 import { authAxiosInstance } from '@services/axiosInstance';
 import { alertAtom } from '@atoms/alertAtom';
-import Spinner from '@components/@common/Spinner'; // Spinner import
+import Spinner from '@components/@common/Spinner';
 import './LibraryDetail.css';
 
 const LibraryDetail = () => {
@@ -24,7 +24,7 @@ const LibraryDetail = () => {
   const [showShelfSelect, setShowShelfSelect] = useState(false);
   const [bookData, setBookData] = useAtom(bookDataAtom);
   const [selectedColor, setSelectedColor] = useState(bookData.bookColor);
-  const [isLoading, setIsLoading] = useState(true); // Loading state 추가
+  const [isLoading, setIsLoading] = useState(true);
   const setAlert = useSetAtom(alertAtom);
   const navigate = useNavigate();
   const maxLength = 80;
