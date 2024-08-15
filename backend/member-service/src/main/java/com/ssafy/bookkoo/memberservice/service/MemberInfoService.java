@@ -3,6 +3,7 @@ package com.ssafy.bookkoo.memberservice.service;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestMemberSettingDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdateMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
+import com.ssafy.bookkoo.memberservice.dto.response.ResponseFindMemberProfileDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberProfileDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseRecipientDto;
@@ -20,7 +21,7 @@ public interface MemberInfoService {
 
     ResponseMemberProfileDto getMemberProfileInfoByNickName(String nickName);
 
-    List<ResponseMemberProfileDto> getMemberProfileListInfoByNickName(String nickName);
+    List<ResponseFindMemberProfileDto> getMemberProfileListInfoByNickName(Long memberId, String nickName);
 
     ResponseMemberInfoDto getMemberInfo(Long memberId);
 

@@ -6,14 +6,11 @@ import com.ssafy.bookkoo.memberservice.client.LibraryServiceClient;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestMemberSettingDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdateMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
+import com.ssafy.bookkoo.memberservice.dto.response.ResponseFindMemberProfileDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberProfileDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseRecipientDto;
-import com.ssafy.bookkoo.memberservice.entity.Member;
-import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapper;
-import com.ssafy.bookkoo.memberservice.entity.MemberCategoryMapperKey;
-import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
-import com.ssafy.bookkoo.memberservice.entity.MemberSetting;
+import com.ssafy.bookkoo.memberservice.entity.*;
 import com.ssafy.bookkoo.memberservice.exception.DeleteFailException;
 import com.ssafy.bookkoo.memberservice.exception.MemberInfoNotExistException;
 import com.ssafy.bookkoo.memberservice.exception.MemberNotFoundException;
@@ -130,18 +127,33 @@ public class MemberInfoServiceImpl implements MemberInfoService {
 
     /**
      * Like를 통해 닉네임으로 멤버 정보 찾기 여러명 반환
+     * 자신 제외 및 팔로우 여부 필드 추가 반환
+     * @param memberId
      * @param nickName
      * @return
      */
     @Override
     @Transactional(readOnly = true)
-    public List<ResponseMemberProfileDto> getMemberProfileListInfoByNickName(String nickName) {
-        List<MemberInfo> memberInfos = memberInfoRepository.findByNickNameContains(nickName);
+    public List<ResponseFindMemberProfileDto> getMemberProfileListInfoByNickName(Long memberId, String nickName) {
+        MemberInfo member = memberInfoRepository.findById(memberId)
+                                                .orElseThrow(MemberInfoNotExistException::new);
+        List<FollowShip> followees = member.getFollowees();
+        List<MemberInfo> memberInfos = memberInfoRepository.findTOP10ByNickNameContainsAndIdNe(memberId, nickName);
         return memberInfos.stream()
                           .map(memberInfo -> {
                               String email = memberInfo.getMember()
                                                        .getEmail();
-                              return memberInfoMapper.toResponseProfileDto(email, memberInfo);
+                              boolean isFollow = false;
+                              for (FollowShip followShip : followees) {
+                                  Long followeeId = followShip.getFollowee()
+                                                              .getId();
+                                  if (followeeId.equals(memberInfo.getId())) {
+                                      isFollow = true;
+                                      break;
+                                  }
+                              }
+
+                              return memberInfoMapper.toResponseFindProfileDto(email, isFollow, memberInfo);
                           })
                           .collect(Collectors.toList());
     }

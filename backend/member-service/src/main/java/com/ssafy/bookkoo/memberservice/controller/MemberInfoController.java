@@ -3,6 +3,7 @@ package com.ssafy.bookkoo.memberservice.controller;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestMemberSettingDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdateMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.request.RequestUpdatePasswordDto;
+import com.ssafy.bookkoo.memberservice.dto.response.ResponseFindMemberProfileDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberInfoDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseMemberProfileDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseRecipientDto;
@@ -161,11 +162,13 @@ public class MemberInfoController {
     @GetMapping("/name/like/{nickName}")
     @Operation(summary = "닉네임을 통해 멤버의 프로필 정보를 얻는 API (Like)"
         , description = "닉네임을 통해 멤버의 프로필 정보를 얻는 API")
-    public ResponseEntity<List<ResponseMemberProfileDto>> getMemberProfileByNickName(
+    public ResponseEntity<List<ResponseFindMemberProfileDto>> getMemberProfileByNickName(
+        @RequestHeader HttpHeaders headers,
         @PathVariable(value = "nickName") String nickName
     ) {
-        List<ResponseMemberProfileDto> memberProfileListInfoByNickName
-            = memberInfoService.getMemberProfileListInfoByNickName(nickName);
+        Long memberId = CommonUtil.getMemberId(headers);
+        List<ResponseFindMemberProfileDto> memberProfileListInfoByNickName
+            = memberInfoService.getMemberProfileListInfoByNickName(memberId, nickName);
         return ResponseEntity.ok(memberProfileListInfoByNickName);
     }
 
