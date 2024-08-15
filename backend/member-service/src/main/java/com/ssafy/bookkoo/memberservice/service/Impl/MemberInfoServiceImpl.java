@@ -30,6 +30,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,6 +65,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @param requestUpdatePasswordDto
      */
     @Override
+    @Transactional
     public void updatePassword(Long memberId, RequestUpdatePasswordDto requestUpdatePasswordDto) {
         Member member = memberRepository.findById(memberId)
                                         .orElseThrow(MemberNotFoundException::new);
@@ -80,6 +82,8 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @return
      */
     @Override
+    @Cacheable("member_profile_info")
+    @Transactional(readOnly = true)
     public ResponseMemberProfileDto getMemberProfileInfo(String memberId) {
         MemberInfo memberInfo = memberInfoRepository.findByMemberId(memberId)
                                                     .orElseThrow(MemberNotFoundException::new);
@@ -94,6 +98,8 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @return
      */
     @Override
+    @Cacheable("member_profile_info")
+    @Transactional(readOnly = true)
     public ResponseMemberProfileDto getMemberProfileInfo(Long id) {
         MemberInfo memberInfo = memberInfoRepository.findById(id)
                                                     .orElseThrow(MemberNotFoundException::new);
@@ -108,6 +114,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @return
      */
     @Override
+    @Transactional(readOnly = true)
     public ResponseMemberProfileDto getMemberProfileInfoByNickName(String nickName) {
         MemberInfo memberInfo = memberInfoRepository.findByNickName(nickName)
                                                     .orElseThrow(MemberNotFoundException::new);
@@ -124,6 +131,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @return
      */
     @Override
+    @Transactional(readOnly = true)
     public ResponseMemberInfoDto getMemberInfo(Long memberId) {
         MemberInfo memberInfo = memberInfoRepository.findById(memberId)
                                                     .orElseThrow(MemberNotFoundException::new);
@@ -138,6 +146,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @return
      */
     @Override
+    @Transactional(readOnly = true)
     public Long getMemberPk(String memberId) {
         return memberInfoRepository.findByMemberId(memberId)
                                    .orElseThrow(MemberNotFoundException::new)
@@ -149,6 +158,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @return
      */
     @Override
+    @Transactional(readOnly = true)
     public List<Long> getRandomMemberInfoId(List<Long> followers) {
         return memberInfoRepository.findRandomMemberInfoIdByFollowers(followers);
     }
@@ -159,6 +169,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @return
      */
     @Override
+    @Transactional(readOnly = true)
     public Long getMemberIdByNickName(String nickName) {
         return memberInfoRepository.findByNickName(nickName)
                                    .orElseThrow(MemberNotFoundException::new)
@@ -209,11 +220,13 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @return
      */
     @Override
+    @Transactional(readOnly = true)
     public List<ResponseRecipientDto> getRecipientsInfo(List<Long> recipientIds) {
         return memberInfoRepository.findByRecipientsInfoByIds(recipientIds);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MemberInfo getMemberInfoEntity(Long memberId) {
         return memberInfoRepository.findById(memberId)
                                    .orElseThrow(MemberInfoNotExistException::new);
@@ -225,6 +238,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @param memberId
      */
     @Override
+    @Transactional
     public void deleteMemberHistory(Long memberId) {
         try {
             libraryServiceClient.deleteLibraries(memberId);
