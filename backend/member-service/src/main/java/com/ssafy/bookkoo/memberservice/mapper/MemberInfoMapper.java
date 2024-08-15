@@ -49,6 +49,9 @@ public interface MemberInfoMapper {
      */
     @Named("toAge")
     default int calcAge(Integer year) {
+        if (year == null) {
+            return 20;
+        }
         int currentYear = LocalDate.now()
                                    .getYear();
         return currentYear - year + 1;
