@@ -16,7 +16,11 @@ const Modal = ({ show, onClose, review }) => {
   const navigate = useNavigate();
 
   const handleLibraryNavigation = () => {
-    const nickname = review?.review.member.nickName;
+    if (!review || !review.member) {
+      console.error('Review or member is undefined');
+      return;
+    }
+    const nickname = review.member.nickName;
     navigate('/library', { state: { nickname } });
   };
 
@@ -105,8 +109,8 @@ const ReviewCom = ({ onBackClick, book }) => {
     await authAxiosInstance
       .get(`/books/${bookId}/review/me`)
       .then(res => {
-          setReviewContent(res.data.content);
-          setReviewId(res.data.id);
+        setReviewContent(res.data.content);
+        setReviewId(res.data.id);
       })
       .catch(err => {});
   };
