@@ -35,7 +35,7 @@ public class S3Service implements FileService {
         StringBuilder fileName = new StringBuilder();
         String originalFilename = file.getOriginalFilename();
         if (originalFilename != null) {
-            fileName.append(originalFilename, 0, originalFilename.lastIndexOf("."));
+            fileName.append(UUID.randomUUID());
             fileName.append("_");
             fileName.append(UUID.randomUUID());
             fileName.append(".");
