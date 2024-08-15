@@ -9,6 +9,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.bookkoo.memberservice.dto.response.QResponseRecipientDto;
 import com.ssafy.bookkoo.memberservice.dto.response.ResponseRecipientDto;
 import java.util.List;
+
+import com.ssafy.bookkoo.memberservice.entity.MemberInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -55,6 +57,25 @@ public class MemberInfoCustomRepositoryImpl implements MemberInfoCustomRepositor
                            .innerJoin(memberInfo.member, member)
                            .innerJoin(memberInfo.memberSetting, memberSetting)
                            .where(memberInfo.id.in(recipientIds))
+                           .fetch();
+    }
+
+    /**
+     * 닉네임 검색 시 자신을 제외한
+     * 멤버 정보 10개 반환
+     *
+     * @param id
+     * @param nickName
+     * @return
+     */
+    @Override
+    public List<MemberInfo> findTOP10ByNickNameContainsAndIdNe(Long id, String nickName) {
+        return queryFactory.selectFrom(memberInfo)
+                           .where(
+                               memberInfo.nickName.contains(nickName),
+                               memberInfo.id.ne(id)
+                           )
+                           .limit(10)
                            .fetch();
     }
 }
