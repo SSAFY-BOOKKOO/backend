@@ -30,6 +30,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -82,7 +83,7 @@ public class MemberInfoServiceImpl implements MemberInfoService {
      * @return
      */
     @Override
-    @Cacheable("member_profile_info")
+    @Cacheable(value = "other_member_profile_info", key = "#memberId")
     @Transactional(readOnly = true)
     public ResponseMemberProfileDto getMemberProfileInfo(String memberId) {
         MemberInfo memberInfo = memberInfoRepository.findByMemberId(memberId)
@@ -94,14 +95,14 @@ public class MemberInfoServiceImpl implements MemberInfoService {
 
     /**
      * Long을 통해 반환
-     * @param id
+     * @param memberId
      * @return
      */
     @Override
-    @Cacheable("member_profile_info")
+    @Cacheable(value = "member_profile_info", key = "#memberId")
     @Transactional(readOnly = true)
-    public ResponseMemberProfileDto getMemberProfileInfo(Long id) {
-        MemberInfo memberInfo = memberInfoRepository.findById(id)
+    public ResponseMemberProfileDto getMemberProfileInfo(Long memberId) {
+        MemberInfo memberInfo = memberInfoRepository.findById(memberId)
                                                     .orElseThrow(MemberNotFoundException::new);
         String email = memberInfo.getMember()
                                  .getEmail();
@@ -194,24 +195,31 @@ public class MemberInfoServiceImpl implements MemberInfoService {
 
     /**
      * 멤버 추가 정보를 변경하는 서비스 로직
-     * @param id
+     *
+     * @param memberId
      * @param memberInfoUpdateDto
      * @param profileImg
+     * @return
      */
     @Override
     @Transactional
-    public void updateMemberInfo(Long id, RequestUpdateMemberInfoDto memberInfoUpdateDto,
+    @CachePut(value = "member_profile_info", key = "#memberId")
+    public ResponseMemberProfileDto updateMemberInfo(
+        Long memberId, RequestUpdateMemberInfoDto memberInfoUpdateDto,
         MultipartFile profileImg) {
-        MemberInfo memberInfo = memberInfoRepository.findById(id)
+        MemberInfo memberInfo = memberInfoRepository.findById(memberId)
                                                     .orElseThrow(MemberInfoNotExistException::new);
         checkDuplNickName(memberInfo.getNickName(), memberInfoUpdateDto.nickName());
         memberInfo.setNickName(memberInfoUpdateDto.nickName());
         if (profileImg != null) {
-            updateProfileImg(id, profileImg);
+            updateProfileImg(memberId, profileImg);
         }
         updateCategories(memberInfo, memberInfoUpdateDto.categories());
         memberInfo.setIntroduction(memberInfoUpdateDto.introduction());
         memberInfoRepository.flush();
+        String email = memberInfo.getMember()
+                                 .getEmail();
+        return memberInfoMapper.toResponseProfileDto(email, memberInfo);
     }
 
     /**
