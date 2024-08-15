@@ -99,7 +99,7 @@ public class OpenAiServiceImpl implements OpenAiService {
         promptList.addAll(prompt);
         Map<String, Object> requestBody = new HashMap<>();
         // 사용할 모델 정보
-        requestBody.put("model", "gpt-4o-mini");
+        requestBody.put("model", "gpt-4o");
         // 응답으로 받을 최대 토큰 수
         requestBody.put("messages", promptList);
         try {

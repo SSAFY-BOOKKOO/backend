@@ -3,6 +3,7 @@ package com.ssafy.bookkoo.memberservice.entity;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
@@ -13,6 +14,7 @@ import org.springframework.data.redis.core.index.Indexed;
  */
 
 @Builder
+@Getter
 @RedisHash(value = "cert_num")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CertificationNumber {
