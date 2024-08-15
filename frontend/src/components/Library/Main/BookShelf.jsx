@@ -32,7 +32,6 @@ const BookShelf = ({
 
   const handleShelfClick = () => {
     if (!viewOnly && books.length === 0) {
-      show
       navigate('/search');
     }
   };
