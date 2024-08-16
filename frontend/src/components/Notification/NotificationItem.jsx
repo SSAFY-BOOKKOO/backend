@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaRegBell } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import { formatRelativeTime } from '@utils/formatTime';
+import ProfileModal from '@components/@common/ProfileModal';
+import useModal from '@hooks/useModal';
 
 const NotificationItem = ({ notification }) => {
   const navigate = useNavigate();
+  const { isOpen, toggleModal, closeModal } = useModal();
 
   const renderNotification = () => {
     switch (notification?.notificationType) {
@@ -42,7 +45,7 @@ const NotificationItem = ({ notification }) => {
 
     switch (notification?.notificationType) {
       case 'follow':
-        navigate(``);
+        toggleModal();
         return;
       case 'curation':
         navigate(`/curation/letter/${notification?.curationId}`);
@@ -56,22 +59,35 @@ const NotificationItem = ({ notification }) => {
   };
 
   return (
-    <li
-      className='px-4 py-6 flex items-center justify-start'
-      onClick={handlePageMove}
-    >
-      <div className='flex items-center justify-center bg-green-400 rounded-full p-3 mr-4'>
-        <FaRegBell className='text-white' />
-      </div>
-      <div className='flex-1 cursor-pointer'>
-        <p className='text-base text-gray-600'>{renderNotification()}</p>
-        <p className='text-xs text-gray-400 mt-1'>
-          {notification?.createdAt === undefined
-            ? ''
-            : formatRelativeTime(notification?.createdAt)}
-        </p>
-      </div>
-    </li>
+    <>
+      <li
+        className='px-4 py-6 flex items-center justify-start'
+        onClick={handlePageMove}
+      >
+        <div className='flex items-center justify-center bg-green-400 rounded-full p-3 mr-4'>
+          <FaRegBell className='text-white' />
+        </div>
+        <div className='flex-1 cursor-pointer'>
+          <p className='text-base text-gray-600'>{renderNotification()}</p>
+          <p className='text-xs text-gray-400 mt-1'>
+            {notification?.createdAt === undefined
+              ? ''
+              : formatRelativeTime(notification?.createdAt)}
+          </p>
+        </div>
+      </li>
+      {notification?.notificationType === 'follow' && (
+        <ProfileModal
+          isOpen={isOpen}
+          onRequestClose={closeModal}
+          user={{
+            nickName: notification?.nickName,
+            memberId: notification?.memberId,
+          }}
+          profileImgUrl={notification?.profileImgUrl}
+        />
+      )}
+    </>
   );
 };
 
