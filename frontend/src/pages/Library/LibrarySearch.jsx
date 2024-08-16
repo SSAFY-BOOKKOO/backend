@@ -79,7 +79,11 @@ const LibrarySearch = () => {
 
   // 상세보기
   const showDetailPage = (type, book) => {
-    navigate(`/${type}/detail/${book.isbn}`, { state: { book } });
+    if (type === 'booktalk') {
+      navigate(`/${type}/detail/${book.id}`, { state: { book } });
+    } else {
+      navigate(`/${type}/detail/${book.isbn}`, { state: { book } });
+    }
   };
 
   // 더보기

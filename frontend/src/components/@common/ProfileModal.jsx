@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
-import { authAxiosInstance } from '@services/axiosInstance';
+import IconButton from '@components/@common/IconButton';
+import Button from '@components/@common/Button';
+import { IoCloseSharp } from 'react-icons/io5';
 
 Modal.setAppElement('#root');
 
@@ -9,32 +11,24 @@ const ProfileModal = ({
   isOpen,
   onRequestClose,
   profileImgUrl,
-  nickname,
+  user,
   introduction,
 }) => {
   const navigate = useNavigate();
+  const memberId = localStorage.getItem('MEMBER_ID');
   const [isOwnProfile, setIsOwnProfile] = useState(false);
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const response = await authAxiosInstance.get('/members/info');
-        if (response.data.nickName === nickname) {
-          setIsOwnProfile(true);
-        }
-      } catch (error) {
-        console.error('Failed to fetch user info:', error);
-      }
-    };
-
-    fetchUserInfo();
-  }, [nickname]);
+    if (memberId === user?.memberId) {
+      setIsOwnProfile(true);
+    }
+  }, [user]);
 
   const handleLibraryNavigation = () => {
     if (isOwnProfile) {
       navigate('/');
     } else {
-      navigate('/library', { state: { nickname } });
+      navigate('/library', { state: { nickname: user?.nickName } });
     }
   };
 
@@ -53,20 +47,16 @@ const ProfileModal = ({
           alt='Profile'
           className='w-24 h-24 rounded-full mb-4'
         />
-        <p className='text-lg font-semibold'>{nickname}</p>
+        <p className='text-lg font-semibold'>{user?.nickName}</p>
         <p className='text-sm text-gray-600 mb-4 text-center'>{introduction}</p>
-        <button
-          onClick={handleLibraryNavigation}
-          className='mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
-        >
+        <Button onClick={handleLibraryNavigation}>
           {isOwnProfile ? '내 서재로 이동' : '서재 구경하러가기'}
-        </button>
-        <button
+        </Button>
+        <IconButton
           onClick={onRequestClose}
+          icon={IoCloseSharp}
           className='absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-2xl'
-        >
-          &times;
-        </button>
+        />
       </div>
     </Modal>
   );
