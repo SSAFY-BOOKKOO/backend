@@ -3,7 +3,7 @@ import CurationTab from '@components/Curation/CurationTab';
 import { useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
 import { IoIosArrowForward } from 'react-icons/io';
-import { axiosInstance, authAxiosInstance } from '@services/axiosInstance';
+import { authAxiosInstance } from '@services/axiosInstance';
 import { BsEnvelopeHeart } from 'react-icons/bs';
 import Spinner from '@components/@common/Spinner';
 
@@ -11,8 +11,9 @@ const CurationStore = () => {
   const navigate = useNavigate();
   const [storedLetters, setStoredLetters] = useState([]);
   const [page, setPage] = useState(0);
-  const [loading, setLoading] = useState(true); // 로딩 상태 추가
+  const [loading, setLoading] = useState(true);
   const [countLetters, setCountLetters] = useState(0);
+  const [pageNumber, setPageNumber] = useState(0);
 
   // 레터 상세보기
   const handleLetterClick = letter => {
@@ -31,7 +32,7 @@ const CurationStore = () => {
   };
 
   useEffect(() => {
-    setLoading(true); // API 호출 시작 전 로딩 상태 설정
+    setLoading(true);
     authAxiosInstance
       .get('/curations/store', {
         params: {
@@ -46,9 +47,13 @@ const CurationStore = () => {
         console.log('error:', err);
       })
       .finally(() => {
-        setLoading(false); // API 호출 완료 후 로딩 상태 해제
+        setLoading(false);
       });
   }, [page]);
+
+  useEffect(() => {
+    setPageNumber(Math.floor(countLetters / 10));
+  }, [countLetters]);
 
   return (
     <div className='flex flex-col'>
@@ -91,15 +96,22 @@ const CurationStore = () => {
           <p className='text-center text-md font-bold'>보관함이 비었습니다.</p>
         </div>
       )}
-      {storedLetters.length > 10 && (
+      {countLetters > 0 && (
         <div className='flex justify-center space-x-12 text-2xl pb-4'>
           <IoIosArrowBack
             onClick={() => setPage(prevPage => Math.max(prevPage - 1, 0))}
-            className='cursor-pointer '
+            className={`cursor-pointer ${page === 0 ? 'text-gray-400' : ''}`} // 비활성화 시 회색으로 표시
           />
           <IoIosArrowForward
-            onClick={() => setPage(prevPage => prevPage + 1)}
-            className='cursor-pointer '
+            onClick={() => {
+              if (page < pageNumber) {
+                setPage(prevPage => prevPage + 1);
+              }
+            }}
+            className={`cursor-pointer ${
+              page >= pageNumber ? 'text-gray-400 cursor-not-allowed' : ''
+            }`} // 비활성화 시 회색으로 표시 및 커서 스타일 변경
+            disabled={page >= pageNumber} // 클릭 불가
           />
         </div>
       )}

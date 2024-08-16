@@ -14,6 +14,7 @@ const CurationSend = () => {
   const [sendLetters, setLetters] = useState([]);
   const [page, setPage] = useState(0); // 페이지 상태 추가
   const [loading, setLoading] = useState(true); // 로딩 상태 추가
+  const [pageNumber, setPageNumber] = useState(0);
 
   useEffect(() => {
     setLoading(true); // API 호출 시작 전 로딩 상태 설정
@@ -46,7 +47,9 @@ const CurationSend = () => {
         console.log('error:', err);
       });
   };
-
+  useEffect(() => {
+    setPageNumber(Math.floor(countLetters / 10));
+  }, [countLetters]);
   return (
     <div className='flex flex-col'>
       {loading ? (
@@ -95,15 +98,22 @@ const CurationSend = () => {
             </div>
           )}
 
-          {sendLetters.length > 0 && (
+          {countLetters > 0 && (
             <div className='flex justify-center space-x-12 text-2xl pb-4'>
               <IoIosArrowBack
                 onClick={() => setPage(prevPage => Math.max(prevPage - 1, 0))}
-                className='cursor-pointer '
+                className={`cursor-pointer ${page === 0 ? 'text-gray-400' : ''}`} // 비활성화 시 회색으로 표시
               />
               <IoIosArrowForward
-                onClick={() => setPage(prevPage => prevPage + 1)}
-                className='cursor-pointer '
+                onClick={() => {
+                  if (page < pageNumber) {
+                    setPage(prevPage => prevPage + 1);
+                  }
+                }}
+                className={`cursor-pointer ${
+                  page >= pageNumber ? 'text-gray-400 cursor-not-allowed' : ''
+                }`} // 비활성화 시 회색으로 표시 및 커서 스타일 변경
+                disabled={page >= pageNumber} // 클릭 불가
               />
             </div>
           )}
