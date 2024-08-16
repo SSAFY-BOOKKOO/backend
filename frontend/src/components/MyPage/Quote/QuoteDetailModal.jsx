@@ -61,14 +61,14 @@ const QuoteDetailModal = ({
       ) : (
         <div
           ref={ref}
-          className='bg-white rounded-lg shadow-lg w-11/12 relative mx-2 h-3/5'
+          className={`bg-white rounded-lg shadow-lg w-11/12 max-w-md relative mx-2 h-3/5 ${quoteData?.fontColor}`}
         >
           <img
             src={backgroundImgSrc}
             alt='Background'
             className={`w-full h-full object-cover rounded-lg ${isDefaultBackground ? 'object-top' : 'object-center'}`}
           />
-          <div className='absolute inset-0 flex flex-col justify-center text-black p-8'>
+          <div className='absolute inset-0 flex flex-col justify-center p-8'>
             <BiSolidQuoteAltLeft className='mb-1' />
             <p className='text-lg font-semibold mb-4'>{quoteData?.content}</p>
             <p className='text-sm'>{quoteData?.source}</p>
@@ -79,14 +79,14 @@ const QuoteDetailModal = ({
                 <IconButton
                   onClick={() => setSelectedQuote(null)}
                   icon={IoCloseSharp}
-                  className='bg-transparent text-black p-2 rounded-full text-2xl'
+                  className='bg-transparent p-2 rounded-full text-2xl'
                 />
               </div>
               <div className='absolute bottom-0 right-0 mb-4 mr-4 z-10'>
                 <IconButton
                   onClick={onNextQuote}
                   icon={FaAngleRight}
-                  className='bg-transparent text-black p-2 rounded-full text-2xl'
+                  className='bg-transparent  p-2 rounded-full text-2xl'
                 />
               </div>
               <div className='absolute inset-0 flex justify-center items-end mb-4'>
@@ -100,7 +100,7 @@ const QuoteDetailModal = ({
                 <IconButton
                   onClick={onPrevQuote}
                   icon={FaAngleLeft}
-                  className='bg-transparent text-black p-2 rounded-full text-2xl'
+                  className='bg-transparent  p-2 rounded-full text-2xl'
                 />
               </div>
             </div>

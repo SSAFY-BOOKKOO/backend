@@ -132,10 +132,16 @@ export const getQuoteList = async (page = 0, size = 10) => {
 };
 
 // 글귀 생성
-export const postQuote = async (content, source, backgroundImg = null) => {
+export const postQuote = async (
+  content,
+  source,
+  fontColor,
+  backgroundImg = null
+) => {
   const quoteDto = JSON.stringify({
     source,
     content,
+    fontColor,
   });
 
   let formData = new FormData();
@@ -158,12 +164,14 @@ export const putQuote = async (
   quoteId,
   content,
   source,
+  fontColor,
   backgroundImg = null
 ) => {
   const quoteDto = JSON.stringify({
     quoteId,
     source,
     content,
+    fontColor,
   });
 
   let formData = new FormData();
