@@ -7,6 +7,7 @@ const RadioButton = ({ tags, selectedTag, setSelectedTag }) => {
         <button
           key={tag.id}
           onClick={() => setSelectedTag(tag.value)}
+          type='button'
           className={`
             px-3 py-1 rounded-lg text-white font-medium text-sm
             transition-colors duration-200 ease-in-out
