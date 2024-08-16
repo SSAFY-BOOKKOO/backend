@@ -4,6 +4,7 @@ import static com.ssafy.bookkoo.libraryservice.entity.QLibrary.library;
 import static com.ssafy.bookkoo.libraryservice.entity.QLibraryBookMapper.libraryBookMapper;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.bookkoo.libraryservice.entity.LibraryBookMapper;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
@@ -101,13 +102,13 @@ public class LibraryBookMapperCustomRepositoryImpl implements LibraryBookMapperC
      * @return 책 ID 리스트
      */
     @Override
-    public List<Long> findBookIdsByMemberId(Long memberId) {
+    public List<Tuple> findBookIdsByMemberId(Long memberId) {
 
         BooleanBuilder predicate = new BooleanBuilder();
         // memberId가 일치하는지 확인
         predicate.and(library.memberId.eq(memberId));
 
-        return queryFactory.select(libraryBookMapper.id.bookId)
+        return queryFactory.select(libraryBookMapper.id.bookId, libraryBookMapper.id.libraryId)
                            .from(libraryBookMapper)
                            .join(libraryBookMapper.library, library)
                            .where(predicate)
