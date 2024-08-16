@@ -29,7 +29,6 @@ const BookCreateModal = ({
   };
 
   const reset = () => {
-    toggleCreateModal();
     setStep(1);
     setBookData({
       status: 'READ',
@@ -39,6 +38,8 @@ const BookCreateModal = ({
       bookColor: '',
       libraryId: 0,
     });
+
+    toggleCreateModal();
   };
 
   const validateBookData = bookData => {
