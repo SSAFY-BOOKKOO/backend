@@ -134,21 +134,23 @@ const ProfileUpdate = ({ member, categories, onSave, onCancel }) => {
           {
             headers: {
               'Content-Type': 'multipart/form-data',
-            },
+            }
           }
         );
-
         setAlert({
           isOpen: true,
           confirmOnly: true,
           message: '프로필이 성공적으로 업데이트되었습니다.',
         });
+
         onSave({
           nickName: formData.nickname,
           categories: formData.categories,
           introduction: formData.introduction,
           profileImgUrl: response.data.profileImgUrl,
         });
+
+        window.location.reload();
       } catch (error) {
         console.error('Failed to update profile:', error);
         setAlert({
