@@ -21,9 +21,11 @@ const CurationReceive = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [countLetters, setCountLetters] = useState(0);
   const setAlert = useSetAtom(alertAtom);
+  const [pageNumber, setPageNumber] = useState(0);
 
   // 받은 레터 조회
   useEffect(() => {}, []);
+
   // storeLetters가 변경될 때마다 로컬 스토리지에 저장
   useEffect(() => {
     localStorage.setItem('storeLetters', JSON.stringify(storeLetters));
@@ -47,6 +49,7 @@ const CurationReceive = () => {
       .then(res => {
         setLetters(res.data.curationList);
         setCountLetters(res.data.count);
+        // countLetters의 숫자를 10으로 나눈 값의 몫을 pageNumber로 지정
       })
       .catch(err => {
         console.log('error:', err);
@@ -148,6 +151,10 @@ const CurationReceive = () => {
       });
   };
 
+  useEffect(() => {
+    setPageNumber(Math.floor(countLetters / 10));
+  }, [countLetters]);
+
   return (
     <div className='flex flex-col'>
       <CurationTab />
@@ -168,7 +175,9 @@ const CurationReceive = () => {
         {letters.map(letter => (
           <div key={letter.id} className='flex flex-grow'>
             <div
-              className={`relative flex items-center mb-6 bg-green-50 rounded-lg shadow w-full h-40 transition-transform duration-300 cursor-pointer ${isDeleting ? 'transform -translate-x-1/5' : ''}`}
+              className={`relative flex items-center mb-6 bg-green-50 rounded-lg shadow w-full h-40 transition-transform duration-300 cursor-pointer ${
+                isDeleting ? 'transform -translate-x-1/5' : ''
+              }`}
               onClick={() => handleLetterClick(letter)}
             >
               <img
@@ -222,15 +231,21 @@ const CurationReceive = () => {
           </button>
         </div>
       )}
-      {letters.length > 10 && (
+      {countLetters > 0 && (
         <div className='flex justify-center space-x-12 text-2xl pb-4'>
           <IoIosArrowBack
             onClick={() => setPage(prevPage => Math.max(prevPage - 1, 0))}
-            className='cursor-pointer '
+            className={`cursor-pointer ${page === 0 ? 'text-gray-400' : ''}`}
           />
           <IoIosArrowForward
-            onClick={() => setPage(prevPage => prevPage + 1)}
-            className='cursor-pointer '
+            onClick={() => {
+              if (page < pageNumber) {
+                setPage(prevPage => prevPage + 1);
+              }
+            }}
+            className={`cursor-pointer ${
+              page >= pageNumber ? 'text-gray-400 cursor-not-allowed' : ''
+            }`}
           />
         </div>
       )}

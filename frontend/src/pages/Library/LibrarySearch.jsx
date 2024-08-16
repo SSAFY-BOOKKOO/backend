@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import WrapContainer from '@components/Layout/WrapContainer';
 import RadioButton from '@components/@common/RadioButton';
-import { books } from '@mocks/BookData';
 import SearchForm from '@components/Library/Search/SearchForm';
 import SearchResultSection from '@components/Library/Search/SearchResultSection';
 import { getAladinBooks } from '@services/Book';
+import { getMemberInfo } from '@services/Member';
 import { getLibrarySearchBooks } from '@services/Library';
 import Spinner from '@components/@common/Spinner';
 import { useAtomValue } from 'jotai';
@@ -26,6 +26,7 @@ const LibrarySearch = () => {
     bookStore: [],
     bookTalk: [],
   });
+  const [nickName, setNickName] = useState('');
 
   const tags = [
     { id: 1, name: '제목', value: 'Title' },
@@ -42,6 +43,15 @@ const LibrarySearch = () => {
       handleSearch(queryText, queryTag);
     }
   }, []);
+
+  useEffect(() => {
+    handleGetMemberInfo();
+  }, []);
+
+  const handleGetMemberInfo = async () => {
+    const data = await getMemberInfo();
+    setNickName(data?.nickName);
+  };
 
   const handleSearch = async (text, tag) => {
     setIsSearched(true);
@@ -80,15 +90,21 @@ const LibrarySearch = () => {
   // 상세보기
   const showDetailPage = (type, book) => {
     if (type === 'booktalk') {
-      navigate(`/${type}/detail/${book.id}`, { state: { book } });
+      navigate(`/${type}/detail/${book?.id}`, { state: { book } });
+    } else if (type === 'book') {
+      navigate(`/${type}/detail/${book?.isbn}`, { state: { book } });
     } else {
-      navigate(`/${type}/detail/${book.isbn}`, { state: { book } });
+      navigate(`/${type}/${book?.libraryId}/detail/${book?.id}`, {
+        state: { book, nickname: nickName },
+      });
     }
   };
 
   // 더보기
   const handleSeeMore = type => {
-    navigate(`/search/${type}/more?text=${searchText}&tag=${selectedTag}`);
+    navigate(`/search/${type}/more?text=${searchText}&tag=${selectedTag}`, {
+      state: { nickname: nickName },
+    });
   };
 
   return (
