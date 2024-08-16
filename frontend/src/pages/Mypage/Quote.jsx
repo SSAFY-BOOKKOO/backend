@@ -68,10 +68,15 @@ const Quote = () => {
         await postQuote(
           quoteData.content,
           quoteData.source,
+          quoteData.fontColor,
           quoteData.backgroundImg
         );
       } else {
-        await postQuote(quoteData.content, quoteData.source);
+        await postQuote(
+          quoteData.content,
+          quoteData.source,
+          quoteData.fontColor
+        );
       }
       refetch();
       showAlert('글귀가 생성되었습니다.', true, () => {
@@ -91,10 +96,16 @@ const Quote = () => {
           quoteData.quoteId,
           quoteData.content,
           quoteData.source,
+          quoteData.fontColor,
           quoteData.backgroundImg
         );
       } else {
-        await putQuote(quoteData.quoteId, quoteData.content, quoteData.source);
+        await putQuote(
+          quoteData.quoteId,
+          quoteData.content,
+          quoteData.source,
+          quoteData.fontColor
+        );
       }
       refetch();
       showAlert('글귀가 수정되었습니다.', true, () => {});

@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
+import {
+  useParams,
+  useSearchParams,
+  useNavigate,
+  useLocation,
+} from 'react-router-dom';
 import WrapContainer from '@components/Layout/WrapContainer';
 import SearchBookItem from '@components/Library/Search/SearchBookItem';
 import SearchLibraryItem from '@components/Library/Search/SearchLibraryItem';
@@ -20,6 +25,7 @@ const SearchMore = () => {
   const { type } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const searchText = searchParams.get('text');
   const selectedTag = searchParams.get('tag');
   const { isOpen, toggleModal } = useModal();
@@ -51,7 +57,15 @@ const SearchMore = () => {
   }, [inView, hasNextPage, fetchNextPage]);
 
   const handleBookClick = book => {
-    navigate(`/${type}/detail/${book.isbn}`, { state: { bookData: book } });
+    if (type === 'booktalk') {
+      navigate(`/${type}/detail/${book?.id}`, { state: { book } });
+    } else if (type === 'book') {
+      navigate(`/${type}/detail/${book?.isbn}`, { state: { book } });
+    } else {
+      navigate(`/${type}/${book?.libraryId}/detail/${book?.id}`, {
+        state: { book, nickname: location?.state?.nickname },
+      });
+    }
   };
 
   const handleBookCreateButton = async book => {
@@ -126,6 +140,7 @@ const SearchMore = () => {
         isCreateModalOpen={isOpen}
         toggleCreateModal={toggleModal}
         selectedBook={selectedBook}
+        setSelectedBook={setSelectedBook}
       />
     </WrapContainer>
   );

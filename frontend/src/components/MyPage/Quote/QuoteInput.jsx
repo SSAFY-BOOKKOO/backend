@@ -5,6 +5,7 @@ import Input from '@components/@common/Input';
 import Textarea from '@components/@common/Textarea';
 import Button from '@components/@common/Button';
 import QuotePhotoUploader from './QuotePhotoUploader';
+import RadioButton from '@components/@common/RadioButton';
 
 const QuoteInput = ({
   addQuote,
@@ -23,6 +24,11 @@ const QuoteInput = ({
     initialBackgroundImg || null
   );
   const [, showAlert] = useAtom(showAlertAtom);
+  const [fontColor, setFontColor] = useState('text-black');
+  const fontOptions = [
+    { id: 1, value: 'text-black', name: '검정색' },
+    { id: 2, value: 'text-white', name: '흰색' },
+  ];
 
   useEffect(() => {
     setContent(initialQuote || '');
@@ -40,7 +46,7 @@ const QuoteInput = ({
       showAlert('출처를 입력해주세요.', true);
       return;
     }
-    const quoteData = { quoteId, content, source };
+    const quoteData = { quoteId, content, source, fontColor };
     if (backgroundImg) {
       quoteData.backgroundImg = backgroundImg;
     }
@@ -63,6 +69,10 @@ const QuoteInput = ({
   const handlePhotoSelect = (file, previewSrc) => {
     setBackgroundImg(file);
     setPreviewImage(previewSrc);
+  };
+
+  const handleFontColorChange = value => {
+    setFontColor(value);
   };
 
   return (
@@ -88,6 +98,16 @@ const QuoteInput = ({
               onChange={e => setSource(e.target.value)}
               customClass='mb-1'
             />
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
+                폰트 색상
+              </label>
+              <RadioButton
+                tags={fontOptions}
+                selectedTag={fontColor}
+                setSelectedTag={handleFontColorChange}
+              />
+            </div>
             <QuotePhotoUploader
               onPhotoSelect={handlePhotoSelect}
               initialImage={previewImage}
