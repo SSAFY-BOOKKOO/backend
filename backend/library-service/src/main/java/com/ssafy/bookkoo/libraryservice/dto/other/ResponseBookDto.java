@@ -45,7 +45,27 @@ public record ResponseBookDto(
     LocalDate publishedAt,
 
     @Schema(description = "카테고리 정보")
-    CategoryDto category
+    CategoryDto category,
+
+    Long libraryId
 ) {
 
+    public ResponseBookDto withLibraryId(Long libraryId) {
+        return new ResponseBookDto(
+            this.id,
+            this.coverImgUrl,
+            this.author,
+            this.publisher,
+            this.summary,
+            this.title,
+            this.isbn,
+            this.itemPage,
+            this.sizeDepth,
+            this.sizeHeight,
+            this.sizeWidth,
+            this.publishedAt,
+            this.category,
+            libraryId
+        );
+    }
 }
