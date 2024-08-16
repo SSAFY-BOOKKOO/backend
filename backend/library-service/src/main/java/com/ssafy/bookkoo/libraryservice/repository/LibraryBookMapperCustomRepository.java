@@ -1,5 +1,6 @@
 package com.ssafy.bookkoo.libraryservice.repository;
 
+import com.querydsl.core.Tuple;
 import com.ssafy.bookkoo.libraryservice.entity.LibraryBookMapper;
 import com.ssafy.bookkoo.libraryservice.entity.Status;
 import java.time.LocalDate;
@@ -46,7 +47,7 @@ public interface LibraryBookMapperCustomRepository {
      * @param memberId 멤버 ID
      * @return 책 ID 리스트
      */
-    List<Long> findBookIdsByMemberId(Long memberId);
+    List<Tuple> findBookIdsByMemberId(Long memberId);
 
     /**
      * memberId 와 bookID 리스트를 가지고 내 서재에 등록된 책인지 여부를 반환

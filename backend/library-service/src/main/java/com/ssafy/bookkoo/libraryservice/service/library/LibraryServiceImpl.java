@@ -1,5 +1,8 @@
 package com.ssafy.bookkoo.libraryservice.service.library;
 
+import static com.ssafy.bookkoo.libraryservice.entity.QLibraryBookMapper.libraryBookMapper;
+
+import com.querydsl.core.Tuple;
 import com.ssafy.bookkoo.libraryservice.client.BookServiceClient;
 import com.ssafy.bookkoo.libraryservice.client.MemberServiceClient;
 import com.ssafy.bookkoo.libraryservice.dto.library.LibraryStyleDto;
@@ -343,13 +346,14 @@ public class LibraryServiceImpl implements LibraryService {
         RequestSearchBookMultiFieldDto searchDto
     ) {
         // 라이브러리 ID로 연결된 책 ID 목록을 가져옵니다.
-        List<Long> bookIds = libraryBookMapperRepository.findBookIdsByMemberId(memberId);
+        List<Tuple> bookIds = libraryBookMapperRepository.findBookIdsByMemberId(memberId);
         // 없을 경우
         if (bookIds.isEmpty()) {
             return List.of();
         }
         // 책 ID 목록을 String 목록으로 변환합니다.
         List<String> stringBookIds = bookIds.stream()
+                                            .map(tuple -> tuple.get(libraryBookMapper.id.bookId))
                                             .map(String::valueOf)
                                             .toList();
 
@@ -380,7 +384,27 @@ public class LibraryServiceImpl implements LibraryService {
         } catch (Exception e) {
             throw new BookClientException(e.getMessage());
         }
-        return books;
+
+// 각    책에 해당하는 libraryId를 설정하여 새로운 리스트를 생성합니다.
+        List<ResponseBookDto> updatedBooks = books.stream()
+                                                  .map(book -> {
+                                                      Long libraryId = bookIds.stream()
+                                                                              .filter(
+                                                                                  tuple -> tuple.get(
+                                                                                                    libraryBookMapper.id.bookId)
+                                                                                                .equals(
+                                                                                                    book.id()))
+                                                                              .map(
+                                                                                  tuple -> tuple.get(
+                                                                                      libraryBookMapper.id.libraryId))
+                                                                              .findFirst()
+                                                                              .orElse(
+                                                                                  null);  // libraryId를 찾지 못할 경우 null로 설정
+                                                      return book.withLibraryId(libraryId);
+                                                  })
+                                                  .collect(Collectors.toList());
+
+        return updatedBooks;
     }
 
     @Override
