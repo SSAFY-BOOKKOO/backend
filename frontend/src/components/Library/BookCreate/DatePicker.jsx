@@ -130,7 +130,7 @@ const DatePicker = forwardRef(
             mode='single'
             selected={selectedDate}
             onSelect={handleDayPickerSelect}
-            disabled={[{ before: startDate, after: endDate }]}
+            disabled={[{ before: startDate, after: new Date() }]}
             className='custom-day-picker'
           />
         </dialog>
