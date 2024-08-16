@@ -93,7 +93,7 @@ const BookCreateModal = ({
       });
     } catch (error) {
       if (error.response && error.response.status === 400) {
-        showAlert(error.response.data, true, () => {});
+        showAlert('오류가 발생했습니다. 다시 시도해주세요.', true, () => {});
       } else {
         // 그 외의 에러
         showAlert('오류가 발생했습니다. 다시 시도해주세요.', true, () => {});
