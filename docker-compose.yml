@@ -101,3 +101,6 @@ services:
     restart: on-failure
     volumes:
       - ./logs/notification-service:/app/logs
+networks:
+  npm_infra:
+    external: true
