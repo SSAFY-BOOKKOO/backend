@@ -72,7 +72,9 @@ dependencies {
 	//actuator,  prometheus
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'io.micrometer:micrometer-registry-prometheus'
-}
+
+	//config client
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 
 dependencyManagement {
 	imports {

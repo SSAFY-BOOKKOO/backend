@@ -2,7 +2,7 @@ services:
   auth-service:
     container_name: auth-service
     build:
-      context: ./backend/auth-service
+      context: ./auth-service
     networks:
       - npm_infra
     restart: on-failure
@@ -12,7 +12,7 @@ services:
   common-service:
     container_name: common-service
     build:
-      context: ./backend/common-service
+      context: ./common-service
     networks:
       - npm_infra
     restart: on-failure
@@ -22,7 +22,7 @@ services:
   eureka-server:
     container_name: eureka-server
     build:
-      context: ./backend/eureka-server
+      context: ./eureka-server
     ports:
       - "8761:8761"
     networks:
@@ -32,7 +32,7 @@ services:
   book-service:
     container_name: book-service
     build:
-      context: ./backend/book-service
+      context: .book-service
     networks:
       - npm_infra
     restart: on-failure
@@ -42,7 +42,7 @@ services:
   bookkoo-gateway:
     container_name: bookkoo-gateway
     build:
-      context: ./backend/bookkoo-gateway
+      context: ./bookkoo-gateway
     networks:
       - npm_infra
     restart: on-failure
@@ -52,7 +52,7 @@ services:
   curation-service:
     container_name: curation-service
     build:
-      context: ./backend/curation-service
+      context: ./curation-service
     networks:
       - npm_infra
     restart: on-failure
@@ -62,7 +62,7 @@ services:
   library-service:
     container_name: library-service
     build:
-      context: ./backend/library-service
+      context: ./library-service
     networks:
       - npm_infra
     restart: on-failure
@@ -74,7 +74,7 @@ services:
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/config/bookkoo_google.json
     build:
-      context: ./backend/member-service
+      context: ./member-service
     networks:
       - npm_infra
     restart: on-failure
@@ -85,7 +85,7 @@ services:
   booktalk-service:
     container_name: booktalk-service
     build:
-      context: ./backend/booktalk-service
+      context: ./booktalk-service
     networks:
       - npm_infra
     restart: on-failure
@@ -95,7 +95,7 @@ services:
   notification-service:
     container_name: notification-service
     build:
-      context: ./backend/notification-service
+      context: ./notification-service
     networks:
       - npm_infra
     restart: on-failure

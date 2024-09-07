@@ -48,6 +48,9 @@ dependencies {
     // spring configuration processor
     implementation 'org.springframework.boot:spring-boot-configuration-processor:3.3.2'
 
+    //config client
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+
 }
 
 dependencyManagement {

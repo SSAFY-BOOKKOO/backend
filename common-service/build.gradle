@@ -51,6 +51,9 @@ dependencies {
 	//minIO
 	implementation 'io.minio:minio:8.5.11'
 
+	//config client
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
+
 }
 
 dependencyManagement {
