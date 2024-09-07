@@ -32,7 +32,7 @@ services:
   book-service:
     container_name: book-service
     build:
-      context: .book-service
+      context: ./book-service
     networks:
       - npm_infra
     restart: on-failure
