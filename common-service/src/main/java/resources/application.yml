@@ -1,0 +1,8 @@
+spring:
+  config:
+    import: "optional:configserver:"
+  cloud:
+    config:
+      uri: http//config-server/bookkoo/common-application # Config 서버 URI
+      profile: default  # 사용할 프로파일
+      label: main  # 사용할 Git 레이블 또는 브랜치
