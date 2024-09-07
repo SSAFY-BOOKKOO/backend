@@ -79,7 +79,7 @@ services:
       - npm_infra
     restart: on-failure
     volumes:
-      - ./config/member-service:/app/config
+      - ~/bookkoo-config/member-service:/app/config
       - ~/logs/member-service:/app/logs
 
   booktalk-service:
