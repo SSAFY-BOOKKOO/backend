@@ -75,7 +75,7 @@ dependencies {
 
 	//config client
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
-
+}
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
