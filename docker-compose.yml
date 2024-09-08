@@ -23,8 +23,6 @@ services:
     container_name: eureka-server
     build:
       context: ./eureka-server
-    ports:
-      - "8761:8761"
     networks:
       - npm_infra
     restart: on-failure

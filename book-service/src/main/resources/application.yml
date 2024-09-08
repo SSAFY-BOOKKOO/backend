@@ -1,8 +1,9 @@
 spring:
   config:
-    import: "optional:configserver:"
+    import: "configserver:"
   cloud:
     config:
-      uri: http//config-server/bookkoo/book-application # Config 서버 URI
-      profile: default  # 사용할 프로파일
+      uri: http://config-server:8888  # Config 서버 URI
+      name: bookkoo  # 애플리케이션 이름
+      profile: gateway-application  # 사용할 프로파일
       label: main  # 사용할 Git 레이블 또는 브랜치
