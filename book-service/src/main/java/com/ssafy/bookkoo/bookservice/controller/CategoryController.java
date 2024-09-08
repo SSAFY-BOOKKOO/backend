@@ -67,7 +67,7 @@ public class CategoryController {
     @PostMapping("/init")
     public ResponseEntity<Boolean> initCategoryDB() {
         // 막아놓기
-//        categoryDatabaseInitializer.init();
+        categoryDatabaseInitializer.init();
         return ResponseEntity.ok()
                              .body(true);
     }
