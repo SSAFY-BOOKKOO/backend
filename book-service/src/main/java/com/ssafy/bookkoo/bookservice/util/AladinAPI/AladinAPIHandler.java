@@ -39,7 +39,7 @@ public class AladinAPIHandler {
 
     private final LibraryServiceClient libraryServiceClient;
 
-    @Value("ttbwintiger981754003")
+    @Value("${aladin.api.key}")
     public void setApiKey(String apiKey) {
         AladinAPIHandler.apiKey = apiKey;
     }
